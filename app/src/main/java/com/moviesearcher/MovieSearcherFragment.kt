@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.moviesearcher.Constants.IMAGE_URL
 import com.moviesearcher.entity.Result
 import com.moviesearcher.entity.TrendingResponse
@@ -39,6 +40,14 @@ class MovieSearcherFragment : Fragment() {
             { movieItems ->
                 movieRecyclerView.adapter = MovieAdapter(movieItems)
             })
+
+        movieRecyclerView.addItemDecoration(
+            GridSpacingItemDecoration(
+                3,
+                5,
+                true
+            )
+        )
     }
 
     private class MovieHolder(private val itemImageView: ImageView) :
@@ -70,6 +79,36 @@ class MovieSearcherFragment : Fragment() {
         override fun onBindViewHolder(holder: MovieHolder, position: Int) {
             val movieItem = movieItems.results?.get(position)
             holder.bindMovieItem(movieItem!!)
+        }
+    }
+
+    class GridSpacingItemDecoration(
+        private val spanCount: Int,
+        private val spacing: Int,
+        private val includeEdge: Boolean
+    ) : ItemDecoration() {
+        override fun getItemOffsets(
+            outRect: android.graphics.Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
+        ) {
+            val position = parent.getChildAdapterPosition(view)
+            val column = position % spanCount
+            if (includeEdge) {
+                outRect.left = spacing - column * spacing / spanCount
+                outRect.right = (column + 1) * spacing / spanCount
+                if (position < spanCount) {
+                    outRect.top = spacing
+                }
+                outRect.bottom = spacing
+            } else {
+                outRect.left = column * spacing / spanCount
+                outRect.right = spacing - (column + 1) * spacing / spanCount
+                if (position >= spanCount) {
+                    outRect.top = spacing
+                }
+            }
         }
     }
 
