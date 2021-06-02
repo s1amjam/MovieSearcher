@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +19,9 @@ import com.squareup.picasso.Picasso
 class MovieSearcherFragment : Fragment() {
     private lateinit var movieRecyclerView: RecyclerView
     private lateinit var movieViewModel: MovieViewModel
+    private lateinit var tvViewModel: TvViewModel
+    private lateinit var trendingMovieButton: Button
+    private lateinit var trendingTvButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,8 +30,27 @@ class MovieSearcherFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_movie_searcher, container, false)
 
         movieRecyclerView = view.findViewById(R.id.movie_recycler_view)
+        trendingMovieButton = view.findViewById(R.id.trending_movie_button)
+        trendingTvButton = view.findViewById(R.id.trending_tv_button)
         movieRecyclerView.layoutManager = GridLayoutManager(context, 3)
         movieViewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
+        tvViewModel = ViewModelProvider(this).get(TvViewModel::class.java)
+
+        trendingTvButton.setOnClickListener {
+            tvViewModel.tvItemLiveData.observe(
+                viewLifecycleOwner,
+                { movieItems ->
+                    movieRecyclerView.adapter = MovieAdapter(movieItems)
+                })
+        }
+
+        trendingMovieButton.setOnClickListener {
+            movieViewModel.movieItemLiveData.observe(
+                viewLifecycleOwner,
+                { movieItems ->
+                    movieRecyclerView.adapter = MovieAdapter(movieItems)
+                })
+        }
 
         return view
     }
