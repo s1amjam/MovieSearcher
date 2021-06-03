@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
@@ -16,12 +17,15 @@ import com.moviesearcher.entity.Result
 import com.moviesearcher.entity.TrendingResponse
 import com.squareup.picasso.Picasso
 
+private const val TAG = "MovieSearcherFragment"
+
 class MovieSearcherFragment : Fragment() {
     private lateinit var movieRecyclerView: RecyclerView
     private lateinit var movieViewModel: MovieViewModel
     private lateinit var tvViewModel: TvViewModel
     private lateinit var trendingMovieButton: Button
     private lateinit var trendingTvButton: Button
+    private lateinit var posterImageView: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,11 +36,14 @@ class MovieSearcherFragment : Fragment() {
         movieRecyclerView = view.findViewById(R.id.movie_recycler_view)
         trendingMovieButton = view.findViewById(R.id.trending_movie_button)
         trendingTvButton = view.findViewById(R.id.trending_tv_button)
+
         movieRecyclerView.layoutManager = GridLayoutManager(context, 3)
+
         movieViewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
-        tvViewModel = ViewModelProvider(this).get(TvViewModel::class.java)
 
         trendingTvButton.setOnClickListener {
+            tvViewModel = ViewModelProvider(this).get(TvViewModel::class.java)
+
             tvViewModel.tvItemLiveData.observe(
                 viewLifecycleOwner,
                 { movieItems ->
@@ -80,6 +87,7 @@ class MovieSearcherFragment : Fragment() {
             Picasso.get()
                 .load(IMAGE_URL + movieItem.posterPath)
                 .into(itemImageView)
+            itemImageView.id = movieItem.id!!
         }
     }
 
@@ -91,10 +99,19 @@ class MovieSearcherFragment : Fragment() {
             viewType: Int
         ): MovieHolder {
             val view = layoutInflater.inflate(
-                R.layout.list_item_poster,
+                R.layout.poster_image_view,
                 parent,
                 false
             ) as ImageView
+            posterImageView = view.findViewById(R.id.poster_image_view)
+
+            posterImageView.setOnClickListener {
+                val movieId = it.id
+                val action =
+                    MovieSearcherFragmentDirections
+                        .actionMovieSearcherFragmentToMovieInfoFragment(movieId)
+                this@MovieSearcherFragment.findNavController().navigate(action)
+            }
             return MovieHolder(view)
         }
 
@@ -133,9 +150,5 @@ class MovieSearcherFragment : Fragment() {
                 }
             }
         }
-    }
-
-    companion object {
-        fun newInstance() = MovieSearcherFragment()
     }
 }
