@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.moviesearcher.Constants.IMAGE_URL
-import com.moviesearcher.entity.Result
-import com.moviesearcher.entity.TrendingResponse
+import com.moviesearcher.api.entity.trending.Result
+import com.moviesearcher.api.entity.trending.TrendingResponse
 import com.squareup.picasso.Picasso
 
 private const val TAG = "MovieSearcherFragment"

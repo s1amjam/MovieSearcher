@@ -2,10 +2,13 @@ package com.moviesearcher.api
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.moviesearcher.entity.TrendingResponse
+import com.moviesearcher.api.entity.moviedetails.MovieDetailsResponse
+import com.moviesearcher.api.entity.trending.TrendingResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
+private const val TAG = "Api"
 
 object Api {
 
@@ -28,13 +31,46 @@ object Api {
                 call: Call<TrendingResponse>,
                 response: Response<TrendingResponse>
             ) {
-                Log.d("asdF", call.request().toString())
-                Log.d("asdF", response.body()?.toString()!!)
+                Log.d(TAG, call.request().toString())
+                Log.d(TAG, response.body()?.toString()!!)
                 responseLiveData.value = response.body()
             }
 
             override fun onFailure(
                 call: Call<TrendingResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun getMovieDetails(
+        authToken: String,
+        movieId: Int
+    ): MutableLiveData<MovieDetailsResponse> {
+        val responseLiveData: MutableLiveData<MovieDetailsResponse> = MutableLiveData()
+
+        val resp = MovieSearcherApiService.create()
+            .movieDetails(
+                authToken,
+                movieId
+            )
+
+        resp.enqueue(object : Callback<MovieDetailsResponse> {
+            override fun onResponse(
+                call: Call<MovieDetailsResponse>,
+                response: Response<MovieDetailsResponse>
+            ) {
+                Log.d(TAG, call.request().toString())
+                Log.d(TAG, response.body()?.toString()!!)
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<MovieDetailsResponse>,
                 t: Throwable
             ) {
 

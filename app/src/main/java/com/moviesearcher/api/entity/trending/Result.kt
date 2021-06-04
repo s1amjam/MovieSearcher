@@ -1,4 +1,4 @@
-package com.moviesearcher.entity
+package com.moviesearcher.api.entity.trending
 
 import com.google.gson.annotations.SerializedName
 

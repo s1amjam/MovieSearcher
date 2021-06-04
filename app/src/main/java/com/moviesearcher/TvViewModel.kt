@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.moviesearcher.Constants.ACCESS_TOKEN
 import com.moviesearcher.api.Api
-import com.moviesearcher.entity.TrendingResponse
+import com.moviesearcher.api.entity.trending.TrendingResponse
 
 class TvViewModel : ViewModel() {
     val tvItemLiveData: LiveData<TrendingResponse>
