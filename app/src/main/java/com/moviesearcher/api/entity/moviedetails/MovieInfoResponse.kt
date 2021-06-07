@@ -2,7 +2,7 @@ package com.moviesearcher.api.entity.moviedetails
 
 import com.google.gson.annotations.SerializedName
 
-data class MovieDetailsResponse(
+data class MovieInfoResponse(
     @SerializedName("adult")
     val adult: Boolean?,
     @SerializedName("backdrop_path")

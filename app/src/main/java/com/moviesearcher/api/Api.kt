@@ -1,8 +1,7 @@
 package com.moviesearcher.api
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.moviesearcher.api.entity.moviedetails.MovieDetailsResponse
+import com.moviesearcher.api.entity.moviedetails.MovieInfoResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,7 +18,7 @@ object Api {
     ): MutableLiveData<TrendingResponse> {
         val responseLiveData: MutableLiveData<TrendingResponse> = MutableLiveData()
 
-        val resp = MovieSearcherApiService.create()
+        val resp = ApiService.create()
             .trending(
                 authToken,
                 mediaType,
@@ -31,8 +30,6 @@ object Api {
                 call: Call<TrendingResponse>,
                 response: Response<TrendingResponse>
             ) {
-                Log.d(TAG, call.request().toString())
-                Log.d(TAG, response.body()?.toString()!!)
                 responseLiveData.value = response.body()
             }
 
@@ -50,27 +47,25 @@ object Api {
     fun getMovieDetails(
         authToken: String,
         movieId: Int
-    ): MutableLiveData<MovieDetailsResponse> {
-        val responseLiveData: MutableLiveData<MovieDetailsResponse> = MutableLiveData()
+    ): MutableLiveData<MovieInfoResponse> {
+        val responseLiveData: MutableLiveData<MovieInfoResponse> = MutableLiveData()
 
-        val resp = MovieSearcherApiService.create()
+        val resp = ApiService.create()
             .movieDetails(
                 authToken,
                 movieId
             )
 
-        resp.enqueue(object : Callback<MovieDetailsResponse> {
+        resp.enqueue(object : Callback<MovieInfoResponse> {
             override fun onResponse(
-                call: Call<MovieDetailsResponse>,
-                response: Response<MovieDetailsResponse>
+                call: Call<MovieInfoResponse>,
+                response: Response<MovieInfoResponse>
             ) {
-                Log.d(TAG, call.request().toString())
-                Log.d(TAG, response.body()?.toString()!!)
                 responseLiveData.value = response.body()
             }
 
             override fun onFailure(
-                call: Call<MovieDetailsResponse>,
+                call: Call<MovieInfoResponse>,
                 t: Throwable
             ) {
 

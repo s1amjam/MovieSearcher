@@ -12,9 +12,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.moviesearcher.Constants.IMAGE_URL
 import com.moviesearcher.api.entity.trending.Result
 import com.moviesearcher.api.entity.trending.TrendingResponse
+import com.moviesearcher.api.entity.utils.Constants.IMAGE_URL
 import com.squareup.picasso.Picasso
 
 private const val TAG = "MovieSearcherFragment"
@@ -107,10 +107,7 @@ class MovieSearcherFragment : Fragment() {
 
             posterImageView.setOnClickListener {
                 val movieId = it.id
-                val action =
-                    MovieSearcherFragmentDirections
-                        .actionMovieSearcherFragmentToMovieInfoFragment(movieId)
-                this@MovieSearcherFragment.findNavController().navigate(action)
+                navigateToMovieInfo(movieId)
             }
             return MovieHolder(view)
         }
@@ -120,6 +117,13 @@ class MovieSearcherFragment : Fragment() {
             val movieItem = movieItems.results?.get(position)
             holder.bindMovieItem(movieItem!!)
         }
+    }
+
+    fun navigateToMovieInfo(movieId: Int) {
+        val action =
+            MovieSearcherFragmentDirections
+                .actionMovieSearcherFragmentToMovieInfoFragment(movieId)
+        findNavController().navigate(action)
     }
 
     class GridSpacingItemDecoration(

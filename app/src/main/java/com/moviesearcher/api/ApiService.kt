@@ -1,8 +1,10 @@
 package com.moviesearcher.api
 
-import com.moviesearcher.Constants
-import com.moviesearcher.api.entity.moviedetails.MovieDetailsResponse
+import com.moviesearcher.api.entity.utils.Constants
+import com.moviesearcher.api.entity.moviedetails.MovieInfoResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
@@ -11,17 +13,26 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
 
-interface MovieSearcherApiService {
+interface ApiService {
 
-    companion object Factory {
-        fun create(): MovieSearcherApiService {
+    companion object {
+        fun create(): ApiService {
+            val logger = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BASIC
+            }
+
+            val client = OkHttpClient.Builder()
+                .addInterceptor(logger)
+                .build()
+
             val retrofit = Retrofit.Builder()
+                .client(client)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(Constants.BASE_URL)
                 .build()
 
-            return retrofit.create(MovieSearcherApiService::class.java)
+            return retrofit.create(ApiService::class.java)
         }
     }
 
@@ -36,5 +47,5 @@ interface MovieSearcherApiService {
     fun movieDetails(
         @Header("Authorization") bearerToken: String,
         @Path("movie_id") movieId: Int
-    ): Call<MovieDetailsResponse>
+    ): Call<MovieInfoResponse>
 }
