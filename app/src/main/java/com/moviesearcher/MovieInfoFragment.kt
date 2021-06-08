@@ -9,7 +9,8 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-import com.moviesearcher.api.entity.utils.Constants
+import com.moviesearcher.utils.Constants
+import com.moviesearcher.viewmodel.MovieInfoViewModel
 import com.squareup.picasso.Picasso
 
 private const val TAG = "MovieInfoFragment"
@@ -33,16 +34,16 @@ class MovieInfoFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_movie_info, container, false)
         val movieId = args.movieId
-        movieInfoConstraintLayout = view.findViewById(R.id.movie_details_constraint_layout)
+        movieInfoConstraintLayout = view.findViewById(R.id.movie_info_constraint_layout)
         movieInfoViewModel = MovieInfoViewModel(movieId)
-        movieInfoPosterImageView = view.findViewById(R.id.movie_details_poster_image_view)
-        movieInfoTitle = view.findViewById(R.id.movie_details_title)
-        movieInfoGenres = view.findViewById(R.id.movie_details_genres)
-        movieInfoProductionCountries = view.findViewById(R.id.movie_details_production_countries)
-        movieInfoRuntime = view.findViewById(R.id.movie_details_runtime)
-        movieInfoTagline = view.findViewById(R.id.movie_details_tagline)
-        movieInfoReleaseDate = view.findViewById(R.id.movie_details_release_date)
-        movieInfoOverview = view.findViewById(R.id.movie_details_overview)
+        movieInfoPosterImageView = view.findViewById(R.id.movie_info_poster_image_view)
+        movieInfoTitle = view.findViewById(R.id.movie_info_title)
+        movieInfoGenres = view.findViewById(R.id.movie_info_genres)
+        movieInfoProductionCountries = view.findViewById(R.id.movie_info_production_countries)
+        movieInfoRuntime = view.findViewById(R.id.movie_info_runtime)
+        movieInfoTagline = view.findViewById(R.id.movie_info_tagline)
+        movieInfoReleaseDate = view.findViewById(R.id.movie_info_release_date)
+        movieInfoOverview = view.findViewById(R.id.movie_info_overview)
 
         return view
     }
@@ -52,21 +53,21 @@ class MovieInfoFragment : Fragment() {
 
         movieInfoViewModel.movieInfoLiveData.observe(
             viewLifecycleOwner,
-            { movieDetails ->
+            { movieInfo ->
                 Picasso.get()
-                    .load(Constants.IMAGE_URL + movieDetails?.posterPath)
+                    .load(Constants.IMAGE_URL + movieInfo?.posterPath)
                     .into(movieInfoPosterImageView)
-                movieInfoTitle.text = movieDetails?.title
+                movieInfoTitle.text = movieInfo?.title
                 movieInfoGenres.text =
-                    movieDetails?.genres?.joinToString { genre -> genre.name!! }
+                    movieInfo?.genres?.joinToString { genre -> genre.name!! }
                 movieInfoProductionCountries.text =
-                    movieDetails?.productionCountries?.joinToString { productionCountry ->
+                    movieInfo?.productionCountries?.joinToString { productionCountry ->
                         productionCountry.name!!
                     }
-                movieInfoRuntime.text = movieDetails?.runtime.toString() //TODO: format
-                movieInfoTagline.text = movieDetails?.tagline
-                movieInfoReleaseDate.text = movieDetails?.releaseDate
-                movieInfoOverview.text = movieDetails?.overview
+                movieInfoRuntime.text = movieInfo?.runtime.toString() //TODO: format
+                movieInfoTagline.text = movieInfo?.tagline
+                movieInfoReleaseDate.text = movieInfo?.releaseDate
+                movieInfoOverview.text = movieInfo?.overview
             })
     }
 }

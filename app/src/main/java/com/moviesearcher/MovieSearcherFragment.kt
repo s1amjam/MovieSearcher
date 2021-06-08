@@ -14,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.moviesearcher.api.entity.trending.Result
 import com.moviesearcher.api.entity.trending.TrendingResponse
-import com.moviesearcher.api.entity.utils.Constants.IMAGE_URL
+import com.moviesearcher.utils.Constants.IMAGE_URL
+import com.moviesearcher.viewmodel.MovieViewModel
+import com.moviesearcher.viewmodel.TvViewModel
 import com.squareup.picasso.Picasso
 
 private const val TAG = "MovieSearcherFragment"
@@ -32,16 +34,15 @@ class MovieSearcherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_movie_searcher, container, false)
-
         movieRecyclerView = view.findViewById(R.id.movie_recycler_view)
         trendingMovieButton = view.findViewById(R.id.trending_movie_button)
         trendingTvButton = view.findViewById(R.id.trending_tv_button)
-
         movieRecyclerView.layoutManager = GridLayoutManager(context, 3)
-
         movieViewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
+        trendingMovieButton.isPressed = true
 
         trendingTvButton.setOnClickListener {
+            trendingMovieButton.isPressed = false
             tvViewModel = ViewModelProvider(this).get(TvViewModel::class.java)
 
             tvViewModel.tvItemLiveData.observe(
@@ -120,10 +121,17 @@ class MovieSearcherFragment : Fragment() {
     }
 
     fun navigateToMovieInfo(movieId: Int) {
-        val action =
-            MovieSearcherFragmentDirections
-                .actionMovieSearcherFragmentToMovieInfoFragment(movieId)
-        findNavController().navigate(action)
+        if (trendingMovieButton.isPressed) {
+            val action =
+                MovieSearcherFragmentDirections
+                    .actionMovieSearcherFragmentToMovieInfoFragment(movieId)
+            findNavController().navigate(action)
+        } else {
+            val action =
+                MovieSearcherFragmentDirections
+                    .actionMovieSearcherFragmentToTvInfoFragment(movieId)
+            findNavController().navigate(action)
+        }
     }
 
     class GridSpacingItemDecoration(

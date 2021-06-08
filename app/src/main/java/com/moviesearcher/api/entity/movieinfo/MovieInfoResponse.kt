@@ -1,4 +1,4 @@
-package com.moviesearcher.api.entity.moviedetails
+package com.moviesearcher.api.entity.movieinfo
 
 import com.google.gson.annotations.SerializedName
 

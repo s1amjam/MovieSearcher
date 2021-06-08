@@ -1,8 +1,9 @@
 package com.moviesearcher.api
 
-import com.moviesearcher.api.entity.utils.Constants
-import com.moviesearcher.api.entity.moviedetails.MovieInfoResponse
+import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
+import com.moviesearcher.api.entity.tvinfo.TvInfoResponse
+import com.moviesearcher.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -44,8 +45,14 @@ interface ApiService {
     ): Call<TrendingResponse>
 
     @GET("movie/{movie_id}")
-    fun movieDetails(
+    fun movieInfo(
         @Header("Authorization") bearerToken: String,
         @Path("movie_id") movieId: Int
     ): Call<MovieInfoResponse>
+
+    @GET("tv/{tv_id}")
+    fun tvInfo(
+        @Header("Authorization") bearerToken: String,
+        @Path("tv_id") tvId: Int
+    ): Call<TvInfoResponse>
 }

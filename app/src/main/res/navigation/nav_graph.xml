@@ -21,10 +21,21 @@
         <action
             android:id="@+id/action_movieSearcherFragment_to_movieInfoFragment"
             app:destination="@id/movieInfoFragment" />
+        <action
+            android:id="@+id/action_movieSearcherFragment_to_tvInfoFragment"
+            app:destination="@id/tvInfoFragment" />
     </fragment>
     <activity
         android:id="@+id/movieSearcherActivity"
         android:name="com.moviesearcher.MovieSearcherActivity"
         android:label="activity_movie_searcher"
         tools:layout="@layout/activity_movie_searcher" />
+    <fragment
+        android:id="@+id/tvInfoFragment"
+        android:name="com.moviesearcher.TvInfoFragment"
+        android:label="TvInfoFragment">
+        <argument
+            android:name="tv_id"
+            app:argType="integer" />
+    </fragment>
 </navigation>
