@@ -1,6 +1,7 @@
 package com.moviesearcher.api
 
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
+import com.moviesearcher.api.entity.search.SearchResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
 import com.moviesearcher.api.entity.tvinfo.TvInfoResponse
 import com.moviesearcher.utils.Constants
@@ -13,6 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -55,4 +57,12 @@ interface ApiService {
         @Header("Authorization") bearerToken: String,
         @Path("tv_id") tvId: Int
     ): Call<TvInfoResponse>
+
+    @GET("search/multi")
+    fun search(
+        @Header("Authorization") bearerToken: String,
+        @Query("query", encoded = true) query: String,
+        @Query("page") page: Int = 1, //TODO: remove hardcode
+        //@Query("include_adult") include_adult: Int, //TODO: impl
+    ): Call<SearchResponse>
 }

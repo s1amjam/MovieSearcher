@@ -2,6 +2,7 @@ package com.moviesearcher.api
 
 import androidx.lifecycle.MutableLiveData
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
+import com.moviesearcher.api.entity.search.SearchResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
 import com.moviesearcher.api.entity.tvinfo.TvInfoResponse
 import retrofit2.Call
@@ -98,6 +99,37 @@ object Api {
 
             override fun onFailure(
                 call: Call<TvInfoResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun search(
+        authToken: String,
+        query: String
+    ): MutableLiveData<SearchResponse> {
+        val responseLiveData: MutableLiveData<SearchResponse> = MutableLiveData()
+
+        val resp = ApiService.create()
+            .search(
+                authToken,
+                query
+            )
+
+        resp.enqueue(object : Callback<SearchResponse> {
+            override fun onResponse(
+                call: Call<SearchResponse>,
+                response: Response<SearchResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<SearchResponse>,
                 t: Throwable
             ) {
 

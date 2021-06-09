@@ -38,4 +38,8 @@
             android:name="tv_id"
             app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/searchResultFragment"
+        android:name="com.moviesearcher.SearchResultFragment"
+        android:label="SearchResultFragment" />
 </navigation>

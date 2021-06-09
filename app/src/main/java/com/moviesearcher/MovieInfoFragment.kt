@@ -33,9 +33,8 @@ class MovieInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_movie_info, container, false)
-        val movieId = args.movieId
         movieInfoConstraintLayout = view.findViewById(R.id.movie_info_constraint_layout)
-        movieInfoViewModel = MovieInfoViewModel(movieId)
+        movieInfoViewModel = MovieInfoViewModel()
         movieInfoPosterImageView = view.findViewById(R.id.movie_info_poster_image_view)
         movieInfoTitle = view.findViewById(R.id.movie_info_title)
         movieInfoGenres = view.findViewById(R.id.movie_info_genres)
@@ -50,6 +49,9 @@ class MovieInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val movieId = args.movieId
+        movieInfoViewModel.getMovieInfoById(movieId)
 
         movieInfoViewModel.movieInfoLiveData.observe(
             viewLifecycleOwner,
