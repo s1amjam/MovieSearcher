@@ -30,7 +30,7 @@ data class Result(
     @SerializedName("overview")
     val overview: String?,
     @SerializedName("popularity")
-    val popularity: Int?,
+    val popularity: Double?,
     @SerializedName("poster_path")
     val posterPath: Any?,
     @SerializedName("profile_path")
@@ -42,7 +42,7 @@ data class Result(
     @SerializedName("video")
     val video: Boolean?,
     @SerializedName("vote_average")
-    val voteAverage: Int?,
+    val voteAverage: Double?,
     @SerializedName("vote_count")
     val voteCount: Int?
 )

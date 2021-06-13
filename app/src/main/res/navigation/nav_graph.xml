@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_movieSearcherFragment_to_tvInfoFragment"
             app:destination="@id/tvInfoFragment" />
+        <action
+            android:id="@+id/action_movieSearcherFragment_to_searchResultFragment"
+            app:destination="@id/searchResultFragment" />
     </fragment>
     <activity
         android:id="@+id/movieSearcherActivity"
@@ -41,5 +44,15 @@
     <fragment
         android:id="@+id/searchResultFragment"
         android:name="com.moviesearcher.SearchResultFragment"
-        android:label="SearchResultFragment" />
+        android:label="SearchResultFragment">
+        <argument
+            android:name="searchQuery"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_searchResultFragment_to_movieInfoFragment"
+            app:destination="@id/movieInfoFragment" />
+        <action
+            android:id="@+id/action_searchResultFragment_to_tvInfoFragment"
+            app:destination="@id/tvInfoFragment" />
+    </fragment>
 </navigation>
