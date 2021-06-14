@@ -1,5 +1,6 @@
 package com.moviesearcher.api
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.search.SearchResponse
@@ -125,6 +126,8 @@ object Api {
                 call: Call<SearchResponse>,
                 response: Response<SearchResponse>
             ) {
+                Log.d(TAG, call.request().toString())
+                Log.d(TAG, response.body().toString())
                 responseLiveData.value = response.body()
             }
 

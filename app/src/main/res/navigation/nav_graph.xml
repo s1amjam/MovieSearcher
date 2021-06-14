@@ -13,6 +13,9 @@
         <argument
             android:name="movie_id"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_movieInfoFragment_to_searchResultFragment"
+            app:destination="@id/searchResultFragment" />
     </fragment>
     <fragment
         android:id="@+id/movieSearcherFragment"
@@ -40,6 +43,9 @@
         <argument
             android:name="tv_id"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_tvInfoFragment_to_searchResultFragment"
+            app:destination="@id/searchResultFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchResultFragment"

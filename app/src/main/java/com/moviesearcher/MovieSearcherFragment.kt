@@ -64,6 +64,7 @@ class MovieSearcherFragment : Fragment() {
         trendingTvButton = view.findViewById(R.id.trending_tv_button)
         movieRecyclerView.layoutManager = GridLayoutManager(context, 3)
         movieViewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
+
         //TODO: if we are going back from tv info, movies showing instead of tv
         trendingTvButton.setOnClickListener {
             tvViewModel = ViewModelProvider(this).get(TvViewModel::class.java)

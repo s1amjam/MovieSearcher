@@ -2,12 +2,17 @@ package com.moviesearcher
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.viewmodel.MovieInfoViewModel
@@ -27,6 +32,33 @@ class MovieInfoFragment : Fragment() {
     private lateinit var movieInfoReleaseDate: TextView
     private lateinit var movieInfoOverview: TextView
     private lateinit var movieInfoConstraintLayout: ConstraintLayout
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_movie_searcher, menu)
+
+        val searchItem: MenuItem = menu.findItem(R.id.menu_item_search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.apply {
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(searchQuery: String): Boolean {
+                    navigateToSearchResult(searchQuery)
+                    return false
+                }
+
+                override fun onQueryTextChange(queryText: String): Boolean {
+                    return false
+                }
+            })
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,5 +103,13 @@ class MovieInfoFragment : Fragment() {
                 movieInfoReleaseDate.text = movieInfo?.releaseDate
                 movieInfoOverview.text = movieInfo?.overview
             })
+    }
+
+    private fun navigateToSearchResult(searchQuery: String) {
+        val action =
+            MovieInfoFragmentDirections.actionMovieInfoFragmentToSearchResultFragment(
+                searchQuery
+            )
+        findNavController().navigate(action)
     }
 }

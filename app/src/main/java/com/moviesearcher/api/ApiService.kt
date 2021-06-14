@@ -62,7 +62,7 @@ interface ApiService {
     fun search(
         @Header("Authorization") bearerToken: String,
         @Query("query", encoded = true) query: String,
-        @Query("page") page: Int = 1, //TODO: remove hardcode
-        //@Query("include_adult") include_adult: Int, //TODO: impl
+        @Query("page") page: Int = 1,
+        @Query("include_adult") includeAdult: Boolean = false
     ): Call<SearchResponse>
 }

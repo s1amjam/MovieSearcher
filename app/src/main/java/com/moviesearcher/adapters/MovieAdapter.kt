@@ -23,7 +23,7 @@ class MovieAdapter(
     class MovieHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val moviePoster: ImageView = view.findViewById(R.id.poster_image_view)
 
-        fun bindMovieItem(movieItem: Result) {
+        fun bind(movieItem: Result) {
             Picasso.get()
                 .load(Constants.IMAGE_URL + movieItem.posterPath)
                 .into(moviePoster)
@@ -64,7 +64,7 @@ class MovieAdapter(
     override fun getItemCount(): Int = movieItems.results?.size!!
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         val movieItem = movieItems.results?.get(position)
-        holder.bindMovieItem(movieItem!!)
+        holder.bind(movieItem!!)
     }
 
     class GridSpacingItemDecoration(
