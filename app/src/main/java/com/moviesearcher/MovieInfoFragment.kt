@@ -41,7 +41,7 @@ class MovieInfoFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.fragment_movie_searcher, menu)
+        inflater.inflate(R.menu.fragment_movie_searcher_menu, menu)
 
         val searchItem: MenuItem = menu.findItem(R.id.menu_item_search)
         val searchView = searchItem.actionView as SearchView

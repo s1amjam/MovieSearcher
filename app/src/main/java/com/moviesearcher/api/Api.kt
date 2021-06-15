@@ -2,6 +2,9 @@ package com.moviesearcher.api
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.moviesearcher.api.entity.auth.CreateSessionResponse
+import com.moviesearcher.api.entity.auth.CreateTokenResponse
+import com.moviesearcher.api.entity.auth.RequestToken
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.search.SearchResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
@@ -14,19 +17,10 @@ private const val TAG = "Api"
 
 object Api {
 
-    fun getTrending(
-        authToken: String,
-        mediaType: String,
-        timeWindow: String
-    ): MutableLiveData<TrendingResponse> {
+    fun getTrending(mediaType: String, timeWindow: String): MutableLiveData<TrendingResponse> {
         val responseLiveData: MutableLiveData<TrendingResponse> = MutableLiveData()
 
-        val resp = ApiService.create()
-            .trending(
-                authToken,
-                mediaType,
-                timeWindow
-            )
+        val resp = ApiService.create().trending(mediaType, timeWindow)
 
         resp.enqueue(object : Callback<TrendingResponse> {
             override fun onResponse(
@@ -47,17 +41,10 @@ object Api {
         return responseLiveData
     }
 
-    fun getMovieInfo(
-        authToken: String,
-        movieId: Int
-    ): MutableLiveData<MovieInfoResponse> {
+    fun getMovieInfo(movieId: Int): MutableLiveData<MovieInfoResponse> {
         val responseLiveData: MutableLiveData<MovieInfoResponse> = MutableLiveData()
 
-        val resp = ApiService.create()
-            .movieInfo(
-                authToken,
-                movieId
-            )
+        val resp = ApiService.create().movieInfo(movieId)
 
         resp.enqueue(object : Callback<MovieInfoResponse> {
             override fun onResponse(
@@ -78,17 +65,10 @@ object Api {
         return responseLiveData
     }
 
-    fun getTvInfo(
-        authToken: String,
-        tvId: Int
-    ): MutableLiveData<TvInfoResponse> {
+    fun getTvInfo(tvId: Int): MutableLiveData<TvInfoResponse> {
         val responseLiveData: MutableLiveData<TvInfoResponse> = MutableLiveData()
 
-        val resp = ApiService.create()
-            .tvInfo(
-                authToken,
-                tvId
-            )
+        val resp = ApiService.create().tvInfo(tvId)
 
         resp.enqueue(object : Callback<TvInfoResponse> {
             override fun onResponse(
@@ -109,25 +89,16 @@ object Api {
         return responseLiveData
     }
 
-    fun search(
-        authToken: String,
-        query: String
-    ): MutableLiveData<SearchResponse> {
+    fun search(query: String): MutableLiveData<SearchResponse> {
         val responseLiveData: MutableLiveData<SearchResponse> = MutableLiveData()
 
-        val resp = ApiService.create()
-            .search(
-                authToken,
-                query
-            )
+        val resp = ApiService.create().search(query)
 
         resp.enqueue(object : Callback<SearchResponse> {
             override fun onResponse(
                 call: Call<SearchResponse>,
                 response: Response<SearchResponse>
             ) {
-                Log.d(TAG, call.request().toString())
-                Log.d(TAG, response.body().toString())
                 responseLiveData.value = response.body()
             }
 
@@ -140,5 +111,55 @@ object Api {
         }
         )
         return responseLiveData
+    }
+
+    fun createRequestToken(): MutableLiveData<CreateTokenResponse> {
+        val resp = ApiService.create().newRequestToken()
+        val responseLiveData: MutableLiveData<CreateTokenResponse> = MutableLiveData()
+
+        resp.enqueue(object : Callback<CreateTokenResponse> {
+            override fun onResponse(
+                call: Call<CreateTokenResponse>,
+                response: Response<CreateTokenResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<CreateTokenResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun createSession(requestToken: RequestToken): CreateSessionResponse? {
+        val resp = ApiService.create().createSession(requestToken = requestToken)
+        var enqueuedResponse: CreateSessionResponse? = null
+
+        resp.enqueue(object : Callback<CreateSessionResponse> {
+            override fun onResponse(
+                call: Call<CreateSessionResponse>,
+                response: Response<CreateSessionResponse>
+            ) {
+                Log.d(TAG, call.toString())
+                Log.d(TAG, response.body().toString())
+                Log.d(TAG, response.errorBody().toString())
+                Log.d(TAG, response.message().toString())
+                enqueuedResponse = response.body()!!
+            }
+
+            override fun onFailure(
+                call: Call<CreateSessionResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return enqueuedResponse
     }
 }

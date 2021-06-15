@@ -6,7 +6,6 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.search.SearchResponse
-import com.moviesearcher.utils.Constants.ACCESS_TOKEN
 
 class SearchViewModel : ViewModel() {
     val searchItemLiveData: LiveData<SearchResponse>
@@ -14,10 +13,7 @@ class SearchViewModel : ViewModel() {
 
     init {
         searchItemLiveData = Transformations.switchMap(mutableQuery) { query ->
-            Api.search(
-                ACCESS_TOKEN,
-                query
-            )
+            Api.search(query)
         }
     }
 

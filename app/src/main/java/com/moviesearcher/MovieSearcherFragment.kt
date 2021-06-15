@@ -1,5 +1,7 @@
 package com.moviesearcher
 
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -20,22 +22,25 @@ import com.moviesearcher.viewmodel.TvViewModel
 
 private const val TAG = "MovieSearcherFragment"
 
+//TODO: loading indicator
 class MovieSearcherFragment : Fragment() {
     private lateinit var movieRecyclerView: RecyclerView
     private lateinit var movieViewModel: MovieViewModel
     private lateinit var tvViewModel: TvViewModel
     private lateinit var trendingMovieButton: Button
     private lateinit var trendingTvButton: Button
+    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        sharedPref = activity?.getSharedPreferences("AppPrefs", MODE_PRIVATE)!!
         setHasOptionsMenu(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.fragment_movie_searcher, menu)
+        inflater.inflate(R.menu.fragment_movie_searcher_menu, menu)
 
         val searchItem: MenuItem = menu.findItem(R.id.menu_item_search)
         val searchView = searchItem.actionView as SearchView
@@ -51,6 +56,19 @@ class MovieSearcherFragment : Fragment() {
                     return false
                 }
             })
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.login_button -> {
+                //TODO: handle login
+                AuthorizationDialogFragment().show(
+                    activity?.supportFragmentManager!!, AuthorizationDialogFragment.TAG
+                )
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
