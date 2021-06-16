@@ -2,9 +2,7 @@ package com.moviesearcher.api.entity.auth
 
 import com.google.gson.annotations.SerializedName
 
-data class CreateSessionResponse(
-    @SerializedName("session_id")
-    val sessionId: String? = null,
+data class DeleteSessionResponse(
     @SerializedName("success")
     val success: Boolean? = null
 )

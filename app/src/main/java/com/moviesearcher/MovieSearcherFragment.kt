@@ -1,7 +1,5 @@
 package com.moviesearcher
 
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -17,6 +15,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.adapters.MovieAdapter
+import com.moviesearcher.api.Api
+import com.moviesearcher.api.entity.auth.SessionId
+import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.viewmodel.MovieViewModel
 import com.moviesearcher.viewmodel.TvViewModel
 
@@ -29,12 +30,13 @@ class MovieSearcherFragment : Fragment() {
     private lateinit var tvViewModel: TvViewModel
     private lateinit var trendingMovieButton: Button
     private lateinit var trendingTvButton: Button
-    private lateinit var sharedPref: SharedPreferences
+    private lateinit var sessionId: String
+    private lateinit var authorizeButton: MenuItem
+    private lateinit var logoutButton: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedPref = activity?.getSharedPreferences("AppPrefs", MODE_PRIVATE)!!
         setHasOptionsMenu(true)
     }
 
@@ -44,6 +46,13 @@ class MovieSearcherFragment : Fragment() {
 
         val searchItem: MenuItem = menu.findItem(R.id.menu_item_search)
         val searchView = searchItem.actionView as SearchView
+        authorizeButton = menu.findItem(R.id.login_button)
+        logoutButton = menu.findItem(R.id.logout_button)
+        sessionId = EncryptedSharedPrefs.sharedPrefs(requireContext())
+            .getString("sessionId", "").toString()
+
+        authorizeButton.isVisible = sessionId == ""
+        logoutButton.isVisible = !authorizeButton.isVisible
 
         searchView.apply {
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -62,10 +71,21 @@ class MovieSearcherFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.login_button -> {
-                //TODO: handle login
                 AuthorizationDialogFragment().show(
                     activity?.supportFragmentManager!!, AuthorizationDialogFragment.TAG
                 )
+                true
+            }
+            R.id.logout_button -> {
+                Api.deleteSession(SessionId(sessionId)).observe(requireActivity(),
+                    { response ->
+                        if (response.success == true) {
+                            with(EncryptedSharedPrefs.sharedPrefs(requireContext()).edit()) {
+                                remove("sessionId").apply()
+                            }
+                            activity?.invalidateOptionsMenu()
+                        }
+                    })
                 true
             }
             else -> super.onOptionsItemSelected(item)

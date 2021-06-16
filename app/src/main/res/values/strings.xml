@@ -6,4 +6,5 @@
     <string name="tv_button">Tv</string>
     <string name="search_field">Search</string>
     <string name="login_button">Log In</string>
+    <string name="logout_button">Log Out</string>
 </resources>

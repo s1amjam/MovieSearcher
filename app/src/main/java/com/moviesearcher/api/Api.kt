@@ -1,10 +1,11 @@
 package com.moviesearcher.api
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.moviesearcher.api.entity.auth.CreateSessionResponse
 import com.moviesearcher.api.entity.auth.CreateTokenResponse
+import com.moviesearcher.api.entity.auth.DeleteSessionResponse
 import com.moviesearcher.api.entity.auth.RequestToken
+import com.moviesearcher.api.entity.auth.SessionId
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.search.SearchResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
@@ -136,20 +137,16 @@ object Api {
         return responseLiveData
     }
 
-    fun createSession(requestToken: RequestToken): CreateSessionResponse? {
+    fun createSession(requestToken: RequestToken): MutableLiveData<CreateSessionResponse> {
         val resp = ApiService.create().createSession(requestToken = requestToken)
-        var enqueuedResponse: CreateSessionResponse? = null
+        val responseLiveData: MutableLiveData<CreateSessionResponse> = MutableLiveData()
 
         resp.enqueue(object : Callback<CreateSessionResponse> {
             override fun onResponse(
                 call: Call<CreateSessionResponse>,
                 response: Response<CreateSessionResponse>
             ) {
-                Log.d(TAG, call.toString())
-                Log.d(TAG, response.body().toString())
-                Log.d(TAG, response.errorBody().toString())
-                Log.d(TAG, response.message().toString())
-                enqueuedResponse = response.body()!!
+                responseLiveData.value = response.body()
             }
 
             override fun onFailure(
@@ -160,6 +157,29 @@ object Api {
             }
         }
         )
-        return enqueuedResponse
+        return responseLiveData
+    }
+
+    fun deleteSession(sessionId: SessionId): MutableLiveData<DeleteSessionResponse> {
+        val resp = ApiService.create().deleteSession(sessionId = sessionId)
+        val responseLiveData: MutableLiveData<DeleteSessionResponse> = MutableLiveData()
+
+        resp.enqueue(object : Callback<DeleteSessionResponse> {
+            override fun onResponse(
+                call: Call<DeleteSessionResponse>,
+                response: Response<DeleteSessionResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<DeleteSessionResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
     }
 }

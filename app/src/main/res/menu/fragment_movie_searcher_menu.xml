@@ -9,4 +9,7 @@
     <item
         android:id="@+id/login_button"
         android:title="@string/login_button" />
+    <item
+        android:id="@+id/logout_button"
+        android:title="@string/logout_button" />
 </menu>

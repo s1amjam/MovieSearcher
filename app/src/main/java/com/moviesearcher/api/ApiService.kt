@@ -2,7 +2,9 @@ package com.moviesearcher.api
 
 import com.moviesearcher.api.entity.auth.CreateSessionResponse
 import com.moviesearcher.api.entity.auth.CreateTokenResponse
+import com.moviesearcher.api.entity.auth.DeleteSessionResponse
 import com.moviesearcher.api.entity.auth.RequestToken
+import com.moviesearcher.api.entity.auth.SessionId
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.search.SearchResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
@@ -18,6 +20,8 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.HTTP
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -76,6 +80,9 @@ interface ApiService {
     @GET("authentication/token/new")
     fun newRequestToken(): Call<CreateTokenResponse>
 
-    @GET("authentication/session/new")
+    @POST("authentication/session/new")
     fun createSession(@Body requestToken: RequestToken): Call<CreateSessionResponse>
+
+    @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
+    fun deleteSession(@Body sessionId: SessionId): Call<DeleteSessionResponse>
 }
