@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/movieSearcherFragment">
+    app:startDestination="@id/movie_searcher_fragment">
 
     <fragment
-        android:id="@+id/movieInfoFragment"
+        android:id="@+id/movie_info_fragment"
         android:name="com.moviesearcher.MovieInfoFragment"
         android:label="fragment_movie_info"
         tools:layout="@layout/fragment_movie_info">
@@ -14,51 +14,51 @@
             android:name="movie_id"
             app:argType="integer" />
         <action
-            android:id="@+id/action_movieInfoFragment_to_searchResultFragment"
-            app:destination="@id/searchResultFragment" />
+            android:id="@+id/action_movie_info_fragment_to_search_result_fragment"
+            app:destination="@id/search_result_fragment" />
     </fragment>
     <fragment
-        android:id="@+id/movieSearcherFragment"
+        android:id="@+id/movie_searcher_fragment"
         android:name="com.moviesearcher.MovieSearcherFragment"
         android:label="MovieSearcherFragment">
         <action
-            android:id="@+id/action_movieSearcherFragment_to_movieInfoFragment"
-            app:destination="@id/movieInfoFragment" />
+            android:id="@+id/action_movie_searcher_fragment_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
         <action
-            android:id="@+id/action_movieSearcherFragment_to_tvInfoFragment"
-            app:destination="@id/tvInfoFragment" />
+            android:id="@+id/action_movie_searcher_fragment_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
         <action
-            android:id="@+id/action_movieSearcherFragment_to_searchResultFragment"
-            app:destination="@id/searchResultFragment" />
+            android:id="@+id/action_movie_searcher_fragment_to_search_result_fragment"
+            app:destination="@id/search_result_fragment" />
     </fragment>
     <activity
-        android:id="@+id/movieSearcherActivity"
+        android:id="@+id/movie_searcher_activity"
         android:name="com.moviesearcher.MovieSearcherActivity"
         android:label="activity_movie_searcher"
         tools:layout="@layout/activity_movie_searcher" />
     <fragment
-        android:id="@+id/tvInfoFragment"
+        android:id="@+id/tv_info_fragment"
         android:name="com.moviesearcher.TvInfoFragment"
         android:label="TvInfoFragment">
         <argument
             android:name="tv_id"
             app:argType="integer" />
         <action
-            android:id="@+id/action_tvInfoFragment_to_searchResultFragment"
-            app:destination="@id/searchResultFragment" />
+            android:id="@+id/action_tv_info_fragment_to_search_result_fragment"
+            app:destination="@id/search_result_fragment" />
     </fragment>
     <fragment
-        android:id="@+id/searchResultFragment"
+        android:id="@+id/search_result_fragment"
         android:name="com.moviesearcher.SearchResultFragment"
         android:label="SearchResultFragment">
         <argument
             android:name="searchQuery"
             app:argType="string" />
         <action
-            android:id="@+id/action_searchResultFragment_to_movieInfoFragment"
-            app:destination="@id/movieInfoFragment" />
+            android:id="@+id/action_search_result_fragment_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
         <action
-            android:id="@+id/action_searchResultFragment_to_tvInfoFragment"
-            app:destination="@id/tvInfoFragment" />
+            android:id="@+id/action_search_result_fragment_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
     </fragment>
 </navigation>
