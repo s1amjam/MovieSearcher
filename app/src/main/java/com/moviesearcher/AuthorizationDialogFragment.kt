@@ -7,6 +7,7 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.auth.RequestToken
@@ -44,11 +45,15 @@ class AuthorizationDialogFragment : DialogFragment() {
                             sessionId = response.sessionId.toString()
 
                             with(EncryptedSharedPrefs.sharedPrefs(requireContext()).edit()) {
-                                putString("sessionId", sessionId)
-                                apply()
-                                activity?.invalidateOptionsMenu()
-                                dismiss()
+                                putString("sessionId", sessionId).apply()
                             }
+
+                            parentFragmentManager.setFragmentResult(
+                                "sessionId",
+                                bundleOf("bundleKey" to sessionId)
+                            )
+
+                            dismiss()
                         })
                 }
             }
