@@ -61,4 +61,10 @@
             android:id="@+id/action_search_result_fragment_to_tv_info_fragment"
             app:destination="@id/tv_info_fragment" />
     </fragment>
+    <fragment
+        android:id="@+id/my_lists_fragment"
+        android:name="com.moviesearcher.MyListsFragment"
+        android:label="fragment_my_lists"
+        tools:layout="@layout/fragment_my_lists">
+    </fragment>
 </navigation>

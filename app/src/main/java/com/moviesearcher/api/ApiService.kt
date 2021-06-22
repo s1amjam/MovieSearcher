@@ -1,10 +1,12 @@
 package com.moviesearcher.api
 
+import com.moviesearcher.api.entity.account.AccountResponse
 import com.moviesearcher.api.entity.auth.CreateSessionResponse
 import com.moviesearcher.api.entity.auth.CreateTokenResponse
 import com.moviesearcher.api.entity.auth.DeleteSessionResponse
 import com.moviesearcher.api.entity.auth.RequestToken
 import com.moviesearcher.api.entity.auth.SessionId
+import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.search.SearchResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
@@ -85,4 +87,14 @@ interface ApiService {
 
     @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
     fun deleteSession(@Body sessionId: SessionId): Call<DeleteSessionResponse>
+
+    @GET("account")
+    fun getAccount(@Query("session_id") sessionId: String): Call<AccountResponse>
+
+    @GET("account/{account_id}/lists")
+    fun getCreatedLists(
+        @Path("account_id") accountId: Int?,
+        @Query("session_id") sessionId: String?,
+        @Query("page") page: Int = 1
+    ): Call<ListResponse>
 }

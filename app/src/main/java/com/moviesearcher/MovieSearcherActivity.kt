@@ -22,8 +22,9 @@ private const val TAG = "MovieSearcherActivity"
 class MovieSearcherActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var sessionId: String
-    private lateinit var authorizeButton: MenuItem
+    private lateinit var loginButton: MenuItem
     private lateinit var logoutButton: MenuItem
+    private lateinit var myListsButton: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,22 +44,26 @@ class MovieSearcherActivity : AppCompatActivity() {
         navigationView.inflateMenu(R.menu.navigation_drawer_menu)
         val menu = navigationView.menu
 
-        authorizeButton = menu.findItem(R.id.login_button)
+        loginButton = menu.findItem(R.id.login_button)
         logoutButton = menu.findItem(R.id.logout_button)
+        myListsButton = menu.findItem(R.id.my_lists_fragment)
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.movie_info_fragment,
                 R.id.movie_searcher_fragment,
                 R.id.tv_info_fragment,
-                R.id.search_result_fragment
+                R.id.search_result_fragment,
+                R.id.my_lists_fragment
             ), drawerLayout
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        authorizeButton.isVisible = sessionId == ""
-        logoutButton.isVisible = !authorizeButton.isVisible
+        val isSessionIdEmpty = sessionId == ""
+        loginButton.isVisible = isSessionIdEmpty
+        logoutButton.isVisible = !isSessionIdEmpty
+        myListsButton.isVisible = !isSessionIdEmpty
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -68,18 +73,45 @@ class MovieSearcherActivity : AppCompatActivity() {
                     )
 
                     supportFragmentManager.setFragmentResultListener(
-                        "sessionId",
+                        "sessionIdKey",
                         this
                     ) { _, bundle ->
-                        val result = bundle.getString("bundleKey")
-                        Log.d(TAG, result.toString())
+                        val result = bundle.getString("sessionId")
+                        var includeAdult: Boolean
+                        var id: Int?
+                        lateinit var avatar: String
+                        lateinit var username: String
+                        lateinit var name: String
 
-                        if (result != "") {
+                        if (result != null || result != "") {
                             this.sessionId = result.toString()
-                            authorizeButton.isVisible = false
+                            loginButton.isVisible = false
                             logoutButton.isVisible = true
+                            myListsButton.isVisible = true
+
                             navigationView.invalidate()
                             drawerLayout.close()
+
+                            Api.getAccount(sessionId)
+                                .observe(this, { accountResponse ->
+                                    username = accountResponse.username.toString()
+                                    id = accountResponse.id
+                                    name = accountResponse.name.toString()
+                                    includeAdult = accountResponse.includeAdult!!
+                                    avatar = accountResponse.avatar.toString()
+                                    Log.d(TAG, username)
+                                    with(
+                                        EncryptedSharedPrefs.sharedPrefs(applicationContext).edit()
+                                    ) {
+                                        putString("sessionId", sessionId)
+                                        putString("avatar", avatar)
+                                        putString("id", id.toString())
+                                        putString("username", username)
+                                        putString("includeAdult", includeAdult.toString())
+                                        putString("name", name)
+                                        apply()
+                                    }
+                                })
                         }
                     }
                     true
@@ -88,10 +120,19 @@ class MovieSearcherActivity : AppCompatActivity() {
                     Api.deleteSession(SessionId(sessionId)).observe(this,
                         { response ->
                             if (response.success == true) {
-                                with(EncryptedSharedPrefs.sharedPrefs(baseContext).edit()) {
-                                    remove("sessionId").apply()
-                                    authorizeButton.isVisible = true
+                                with(EncryptedSharedPrefs.sharedPrefs(applicationContext).edit()) {
+                                    remove("sessionId")
+                                    remove("avatar")
+                                    remove("id")
+                                    remove("username")
+                                    remove("includeAdult")
+                                    remove("name")
+                                        .apply()
+
+                                    loginButton.isVisible = true
                                     logoutButton.isVisible = false
+                                    myListsButton.isVisible = false
+
                                     navigationView.invalidate()
                                     drawerLayout.close()
                                 }
@@ -99,11 +140,20 @@ class MovieSearcherActivity : AppCompatActivity() {
                         })
                     true
                 }
+                R.id.my_lists_fragment -> {
+                    val sessionId = EncryptedSharedPrefs.sharedPrefs(applicationContext)
+                        .getString("sessionId", null)
+                    val id: Int? =
+                        EncryptedSharedPrefs.sharedPrefs(applicationContext).getString("id", null)
+                            ?.toInt()
+                    navController.navigate(R.id.my_lists_fragment)
+
+                    true
+                }
                 else -> super.onOptionsItemSelected(menuItem)
             }
         }
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_container)
