@@ -18,7 +18,7 @@ import com.moviesearcher.api.entity.auth.SessionId
 import com.moviesearcher.utils.EncryptedSharedPrefs
 
 private const val TAG = "MovieSearcherActivity"
-
+//TODO: remove everything to a separate class?
 class MovieSearcherActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var sessionId: String
@@ -54,7 +54,8 @@ class MovieSearcherActivity : AppCompatActivity() {
                 R.id.movie_searcher_fragment,
                 R.id.tv_info_fragment,
                 R.id.search_result_fragment,
-                R.id.my_lists_fragment
+                R.id.my_lists_fragment,
+                R.id.my_list_fragment
             ), drawerLayout
         )
 
@@ -141,11 +142,6 @@ class MovieSearcherActivity : AppCompatActivity() {
                     true
                 }
                 R.id.my_lists_fragment -> {
-                    val sessionId = EncryptedSharedPrefs.sharedPrefs(applicationContext)
-                        .getString("sessionId", null)
-                    val id: Int? =
-                        EncryptedSharedPrefs.sharedPrefs(applicationContext).getString("id", null)
-                            ?.toInt()
                     navController.navigate(R.id.my_lists_fragment)
 
                     true

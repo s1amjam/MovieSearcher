@@ -66,5 +66,17 @@
         android:name="com.moviesearcher.MyListsFragment"
         android:label="fragment_my_lists"
         tools:layout="@layout/fragment_my_lists">
+        <action
+            android:id="@+id/action_my_lists_fragment_to_myListFragment"
+            app:destination="@id/my_list_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/my_list_fragment"
+        android:name="com.moviesearcher.MyListFragment"
+        android:label="fragment_my_list"
+        tools:layout="@layout/fragment_my_list" >
+        <argument
+            android:name="list_id"
+            app:argType="integer" />
     </fragment>
 </navigation>

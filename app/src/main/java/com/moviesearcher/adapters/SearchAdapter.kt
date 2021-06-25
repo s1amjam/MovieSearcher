@@ -17,8 +17,7 @@ import com.squareup.picasso.Picasso
 class SearchAdapter(
     private val searchItems: SearchResponse,
     private val navController: NavController
-) :
-    RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
+) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     class SearchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val searchItemPoster: ImageView =
