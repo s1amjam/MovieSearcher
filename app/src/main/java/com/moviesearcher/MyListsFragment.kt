@@ -2,13 +2,8 @@ package com.moviesearcher
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,37 +14,9 @@ import com.moviesearcher.viewmodel.MyListsViewModel
 
 private const val TAG = "MyListsFragment"
 
-class MyListsFragment : Fragment() {
+class MyListsFragment : BaseFragment() {
     private lateinit var myListsRecyclerView: RecyclerView
     private lateinit var myListsViewModel: MyListsViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setHasOptionsMenu(true)
-    }
-
-    //TODO: remove to a separate class
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.fragment_movie_searcher_menu, menu)
-
-        val searchItem: MenuItem = menu.findItem(R.id.menu_item_search)
-        val searchView = searchItem.actionView as SearchView
-
-        searchView.apply {
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(searchQuery: String): Boolean {
-                    navigateToSearchResult(searchQuery)
-                    return false
-                }
-
-                override fun onQueryTextChange(queryText: String): Boolean {
-                    return false
-                }
-            })
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,13 +46,5 @@ class MyListsFragment : Fragment() {
             { myListItems ->
                 myListsRecyclerView.adapter = MyListAdapter(myListItems, findNavController())
             })
-    }
-
-    private fun navigateToSearchResult(searchQuery: String) {
-        val action =
-            TvInfoFragmentDirections.actionTvInfoFragmentToSearchResultFragment(
-                searchQuery
-            )
-        findNavController().navigate(action)
     }
 }

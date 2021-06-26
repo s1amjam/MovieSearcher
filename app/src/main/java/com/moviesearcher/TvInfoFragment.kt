@@ -2,17 +2,11 @@ package com.moviesearcher
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.viewmodel.TvInfoViewModel
@@ -20,7 +14,7 @@ import com.squareup.picasso.Picasso
 
 private const val TAG = "TvInfoFragment"
 
-class TvInfoFragment : Fragment() {
+class TvInfoFragment : BaseFragment() {
     private val args by navArgs<TvInfoFragmentArgs>()
     private lateinit var tvInfoViewModel: TvInfoViewModel
     private lateinit var tvInfoPosterImageView: ImageView
@@ -31,33 +25,6 @@ class TvInfoFragment : Fragment() {
     private lateinit var tvInfoFirstAirDate: TextView
     private lateinit var tvInfoOverview: TextView
     private lateinit var tvInfoConstraintLayout: ConstraintLayout
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.fragment_movie_searcher_menu, menu)
-
-        val searchItem: MenuItem = menu.findItem(R.id.menu_item_search)
-        val searchView = searchItem.actionView as SearchView
-
-        searchView.apply {
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(searchQuery: String): Boolean {
-                    navigateToSearchResult(searchQuery)
-                    return false
-                }
-
-                override fun onQueryTextChange(queryText: String): Boolean {
-                    return false
-                }
-            })
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -98,13 +65,5 @@ class TvInfoFragment : Fragment() {
                 tvInfoFirstAirDate.text = tvInfo?.firstAirDate
                 tvInfoOverview.text = tvInfo?.overview
             })
-    }
-
-    private fun navigateToSearchResult(searchQuery: String) {
-        val action =
-            TvInfoFragmentDirections.actionTvInfoFragmentToSearchResultFragment(
-                searchQuery
-            )
-        findNavController().navigate(action)
     }
 }

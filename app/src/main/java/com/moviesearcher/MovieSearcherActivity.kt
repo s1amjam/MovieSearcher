@@ -1,8 +1,11 @@
 package com.moviesearcher
 
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -25,6 +28,8 @@ class MovieSearcherActivity : AppCompatActivity() {
     private lateinit var loginButton: MenuItem
     private lateinit var logoutButton: MenuItem
     private lateinit var myListsButton: MenuItem
+    private lateinit var encryptedSharedPrefs: SharedPreferences
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +41,9 @@ class MovieSearcherActivity : AppCompatActivity() {
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        sessionId = EncryptedSharedPrefs.sharedPrefs(applicationContext)
+        val progressBar = findViewById<ProgressBar>(R.id.progress_bar_activity_movie_searcher)
+        encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(applicationContext)
+        sessionId = encryptedSharedPrefs
             .getString("sessionId", "").toString()
 
         navigationView.setupWithNavController(navController)
@@ -74,54 +81,53 @@ class MovieSearcherActivity : AppCompatActivity() {
                     )
 
                     supportFragmentManager.setFragmentResultListener(
-                        "sessionIdKey",
+                        "accountResponse",
                         this
                     ) { _, bundle ->
-                        val result = bundle.getString("sessionId")
-                        var includeAdult: Boolean
-                        var id: Int?
-                        lateinit var avatar: String
-                        lateinit var username: String
-                        lateinit var name: String
+                        val sessionId = bundle.getString("sessionId")
+                        var avatar = bundle.getString("avatar")
+                        var id = bundle.getString("id")
+                        var username = bundle.getString("username")
+                        var includeAdult = bundle.getString("includeAdult")
+                        var name = bundle.getString("name")
 
-                        if (result != null || result != "") {
-                            this.sessionId = result.toString()
+                        if (sessionId != null || sessionId != "") {
+                            this.sessionId = sessionId.toString()
+                            avatar = avatar.toString()
+                            id = id.toString()
+                            username = username.toString()
+                            includeAdult = includeAdult.toString()
+                            name = name.toString()
+
                             loginButton.isVisible = false
                             logoutButton.isVisible = true
                             myListsButton.isVisible = true
-
-                            navigationView.invalidate()
-                            drawerLayout.close()
-
-                            Api.getAccount(sessionId)
-                                .observe(this, { accountResponse ->
-                                    username = accountResponse.username.toString()
-                                    id = accountResponse.id
-                                    name = accountResponse.name.toString()
-                                    includeAdult = accountResponse.includeAdult!!
-                                    avatar = accountResponse.avatar.toString()
-                                    Log.d(TAG, username)
-                                    with(
-                                        EncryptedSharedPrefs.sharedPrefs(applicationContext).edit()
-                                    ) {
-                                        putString("sessionId", sessionId)
-                                        putString("avatar", avatar)
-                                        putString("id", id.toString())
-                                        putString("username", username)
-                                        putString("includeAdult", includeAdult.toString())
-                                        putString("name", name)
-                                        apply()
-                                    }
-                                })
                         }
+
+                        with(
+                            encryptedSharedPrefs.edit()
+                        ) {
+                            putString("sessionId", sessionId)
+                            putString("avatar", avatar)
+                            putString("id", id.toString())
+                            putString("username", username)
+                            putString("includeAdult", includeAdult.toString())
+                            putString("name", name)
+                            apply()
+                        }
+
+                        navigationView.invalidate()
+                        drawerLayout.close()
                     }
                     true
                 }
                 R.id.logout_button -> {
+                    progressBar.visibility = VISIBLE
+
                     Api.deleteSession(SessionId(sessionId)).observe(this,
                         { response ->
                             if (response.success == true) {
-                                with(EncryptedSharedPrefs.sharedPrefs(applicationContext).edit()) {
+                                with(encryptedSharedPrefs.edit()) {
                                     remove("sessionId")
                                     remove("avatar")
                                     remove("id")
@@ -135,6 +141,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                                     myListsButton.isVisible = false
 
                                     navigationView.invalidate()
+                                    progressBar.visibility = GONE
                                     drawerLayout.close()
                                 }
                             }

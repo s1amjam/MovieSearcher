@@ -24,6 +24,13 @@
             android:layout_height="match_parent"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar_activity_movie_searcher"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
