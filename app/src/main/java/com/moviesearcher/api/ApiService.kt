@@ -6,6 +6,8 @@ import com.moviesearcher.api.entity.auth.CreateTokenResponse
 import com.moviesearcher.api.entity.auth.DeleteSessionResponse
 import com.moviesearcher.api.entity.auth.RequestToken
 import com.moviesearcher.api.entity.auth.SessionId
+import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
+import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.search.SearchResponse
@@ -97,4 +99,16 @@ interface ApiService {
         @Query("session_id") sessionId: String?,
         @Query("page") page: Int = 1
     ): Call<ListResponse>
+
+    @GET("account/{account_id}/favorite/movies")
+    fun getFavoriteMovies(
+        @Path("account_id") accountId: Int?,
+        @Query("session_id") sessionId: String?
+    ): Call<FavoriteMovieResponse>
+
+    @GET("account/{account_id}/favorite/tv")
+    fun getFavoriteTvs(
+        @Path("account_id") accountId: Int?,
+        @Query("session_id") sessionId: String?
+    ): Call<FavoriteTvResponse>
 }

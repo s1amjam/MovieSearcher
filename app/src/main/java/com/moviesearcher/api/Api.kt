@@ -7,6 +7,8 @@ import com.moviesearcher.api.entity.auth.CreateTokenResponse
 import com.moviesearcher.api.entity.auth.DeleteSessionResponse
 import com.moviesearcher.api.entity.auth.RequestToken
 import com.moviesearcher.api.entity.auth.SessionId
+import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
+import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.search.SearchResponse
@@ -22,7 +24,6 @@ object Api {
 
     fun getTrending(mediaType: String, timeWindow: String): MutableLiveData<TrendingResponse> {
         val responseLiveData: MutableLiveData<TrendingResponse> = MutableLiveData()
-
         val resp = ApiService.create().trending(mediaType, timeWindow)
 
         resp.enqueue(object : Callback<TrendingResponse> {
@@ -46,7 +47,6 @@ object Api {
 
     fun getMovieInfo(movieId: Int): MutableLiveData<MovieInfoResponse> {
         val responseLiveData: MutableLiveData<MovieInfoResponse> = MutableLiveData()
-
         val resp = ApiService.create().movieInfo(movieId)
 
         resp.enqueue(object : Callback<MovieInfoResponse> {
@@ -70,7 +70,6 @@ object Api {
 
     fun getTvInfo(tvId: Int): MutableLiveData<TvInfoResponse> {
         val responseLiveData: MutableLiveData<TvInfoResponse> = MutableLiveData()
-
         val resp = ApiService.create().tvInfo(tvId)
 
         resp.enqueue(object : Callback<TvInfoResponse> {
@@ -94,7 +93,6 @@ object Api {
 
     fun search(query: String): MutableLiveData<SearchResponse> {
         val responseLiveData: MutableLiveData<SearchResponse> = MutableLiveData()
-
         val resp = ApiService.create().search(query)
 
         resp.enqueue(object : Callback<SearchResponse> {
@@ -187,7 +185,6 @@ object Api {
 
     fun getAccount(sessionId: String): MutableLiveData<AccountResponse> {
         val responseLiveData: MutableLiveData<AccountResponse> = MutableLiveData()
-
         val resp = ApiService.create().getAccount(sessionId)
 
         resp.enqueue(object : Callback<AccountResponse> {
@@ -211,7 +208,6 @@ object Api {
 
     fun getLists(accountId: Int?, sessionId: String?, page: Int): MutableLiveData<ListResponse> {
         val responseLiveData: MutableLiveData<ListResponse> = MutableLiveData()
-
         val resp = ApiService.create().getCreatedLists(accountId, sessionId, page)
 
         resp.enqueue(object : Callback<ListResponse> {
@@ -224,6 +220,58 @@ object Api {
 
             override fun onFailure(
                 call: Call<ListResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun getFavoriteMovies(
+        accountId: Int?,
+        sessionId: String?
+    ): MutableLiveData<FavoriteMovieResponse> {
+        val responseLiveData: MutableLiveData<FavoriteMovieResponse> = MutableLiveData()
+        val resp = ApiService.create().getFavoriteMovies(accountId, sessionId)
+
+        resp.enqueue(object : Callback<FavoriteMovieResponse> {
+            override fun onResponse(
+                call: Call<FavoriteMovieResponse>,
+                response: Response<FavoriteMovieResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<FavoriteMovieResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun getFavoriteTvs(
+        accountId: Int?,
+        sessionId: String?
+    ): MutableLiveData<FavoriteTvResponse> {
+        val responseLiveData: MutableLiveData<FavoriteTvResponse> = MutableLiveData()
+        val resp = ApiService.create().getFavoriteTvs(accountId, sessionId)
+
+        resp.enqueue(object : Callback<FavoriteTvResponse> {
+            override fun onResponse(
+                call: Call<FavoriteTvResponse>,
+                response: Response<FavoriteTvResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<FavoriteTvResponse>,
                 t: Throwable
             ) {
 

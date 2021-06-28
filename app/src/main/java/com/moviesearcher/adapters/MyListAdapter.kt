@@ -31,7 +31,7 @@ class MyListAdapter(
                 .load(Constants.IMAGE_URL + myListResultItem.posterPath)
                 .into(myListItemPoster)
 
-            cardView.id = myListResultItem.id!!
+            cardView.id = myListResultItem.id?.toInt()!!
             myListItemName.text = myListResultItem.name
         }
     }

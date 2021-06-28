@@ -79,4 +79,22 @@
             android:name="list_id"
             app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/fragment_favorite_movies"
+        android:name="com.moviesearcher.FavoriteMoviesFragment"
+        android:label="fragment_favorite_movies"
+        tools:layout="@layout/fragment_favorite_movies" >
+        <action
+            android:id="@+id/action_fragment_favorite_movies_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_favorite_tvs"
+        android:name="com.moviesearcher.FavoriteTvsFragment"
+        android:label="fragment_favorite_tvs"
+        tools:layout="@layout/fragment_favorite_tvs" >
+        <action
+            android:id="@+id/action_fragment_favorite_tvs_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
+    </fragment>
 </navigation>

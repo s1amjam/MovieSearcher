@@ -103,8 +103,8 @@ class AuthorizationDialogFragment : DialogFragment() {
                                         "accountResponse",
                                         bundleOf(
                                             "sessionId" to sessionId.value,
-                                            "includeAdult" to includeAdult,
-                                            "id" to id,
+                                            "includeAdult" to includeAdult.toString(),
+                                            "id" to id.toString(),
                                             "avatar" to avatar,
                                             "username" to username,
                                             "name" to name,

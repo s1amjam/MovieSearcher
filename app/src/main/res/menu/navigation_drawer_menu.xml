@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/my_lists_fragment"
-        android:title="@string/my_lists_button" />
+        android:id="@+id/menu_item_favorites"
+        android:title="@string/menu_item_favorites">
+        <menu>
+            <item
+                android:id="@+id/menu_item_favorite_movies"
+                android:title="@string/menu_item_favorite_movies" />
+            <item
+                android:id="@+id/menu_item_favorite_tvs"
+                android:title="@string/menu_item_favorites_tvs" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/menu_item_my_lists"
+        android:title="@string/my_lists_menu_item" />
     <item
         android:id="@+id/login_button"
         android:title="@string/login_button" />
