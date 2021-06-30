@@ -2,17 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_item_favorites"
-        android:title="@string/menu_item_favorites">
-        <menu>
-            <item
-                android:id="@+id/menu_item_favorite_movies"
-                android:title="@string/menu_item_favorite_movies" />
-            <item
-                android:id="@+id/menu_item_favorite_tvs"
-                android:title="@string/menu_item_favorites_tvs" />
-        </menu>
-    </item>
-
+        android:title="@string/menu_item_favorites" />
     <item
         android:id="@+id/menu_item_my_lists"
         android:title="@string/my_lists_menu_item" />

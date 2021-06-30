@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
-import com.moviesearcher.FavoriteTvsFragmentDirections
+import com.moviesearcher.FavoritesFragmentDirections
 import com.moviesearcher.R
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
 import com.moviesearcher.api.entity.favorites.ResultFavoriteTv
@@ -51,7 +51,7 @@ class FavoriteTvsAdapter(
             val tvId = it.id
 
             navController.navigate(
-                FavoriteTvsFragmentDirections.actionFragmentFavoriteTvsToTvInfoFragment(
+                FavoritesFragmentDirections.actionFragmentFavoritesToTvInfoFragment(
                     tvId
                 )
             )

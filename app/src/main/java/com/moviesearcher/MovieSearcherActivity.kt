@@ -30,9 +30,7 @@ class MovieSearcherActivity : AppCompatActivity() {
     private lateinit var logoutButton: MenuItem
     private lateinit var myListsMenuItem: MenuItem
     private lateinit var encryptedSharedPrefs: SharedPreferences
-    private lateinit var favoriteMoviesMenuItem: MenuItem
-    private lateinit var favoriteTvsMenuItem: MenuItem
-    private lateinit var favoritesMenuGroup: MenuItem
+    private lateinit var favoritesMenuItem: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +45,7 @@ class MovieSearcherActivity : AppCompatActivity() {
         val progressBar = findViewById<ProgressBar>(R.id.progress_bar_activity_movie_searcher)
 
         encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(applicationContext)
-        sessionId = encryptedSharedPrefs
-            .getString("sessionId", "").toString()
+        sessionId = encryptedSharedPrefs.getString("sessionId", "").toString()
 
         navigationView.setupWithNavController(navController)
         setSupportActionBar(toolbar)
@@ -58,9 +55,7 @@ class MovieSearcherActivity : AppCompatActivity() {
         loginButton = menu.findItem(R.id.login_button)
         logoutButton = menu.findItem(R.id.logout_button)
         myListsMenuItem = menu.findItem(R.id.menu_item_my_lists)
-        favoriteMoviesMenuItem = menu.findItem(R.id.menu_item_favorite_movies)
-        favoriteTvsMenuItem = menu.findItem(R.id.menu_item_favorite_tvs)
-        favoritesMenuGroup = menu.findItem(R.id.menu_item_favorites)
+        favoritesMenuItem = menu.findItem(R.id.menu_item_favorites)
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -70,8 +65,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                 R.id.search_result_fragment,
                 R.id.my_lists_fragment,
                 R.id.my_list_fragment,
-                R.id.fragment_favorite_movies,
-                R.id.fragment_favorite_tvs,
+                R.id.fragment_favorites
             ), drawerLayout
         )
 
@@ -81,7 +75,7 @@ class MovieSearcherActivity : AppCompatActivity() {
         loginButton.isVisible = isSessionIdEmpty
         logoutButton.isVisible = !isSessionIdEmpty
         myListsMenuItem.isVisible = !isSessionIdEmpty
-        favoritesMenuGroup.isVisible = !isSessionIdEmpty
+        favoritesMenuItem.isVisible = !isSessionIdEmpty
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -107,7 +101,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                             loginButton.isVisible = false
                             logoutButton.isVisible = true
                             myListsMenuItem.isVisible = true
-                            favoritesMenuGroup.isVisible = true
+                            favoritesMenuItem.isVisible = true
 
                             with(
                                 encryptedSharedPrefs.edit()
@@ -145,7 +139,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                                     loginButton.isVisible = true
                                     logoutButton.isVisible = false
                                     myListsMenuItem.isVisible = false
-                                    favoritesMenuGroup.isVisible = false
+                                    favoritesMenuItem.isVisible = false
 
                                     navigationView.invalidate()
                                     progressBar.visibility = GONE
@@ -161,15 +155,9 @@ class MovieSearcherActivity : AppCompatActivity() {
 
                     true
                 }
-                R.id.menu_item_favorite_movies -> {
+                R.id.menu_item_favorites -> {
                     drawerLayout.close()
-                    navController.navigate(R.id.fragment_favorite_movies)
-
-                    true
-                }
-                R.id.menu_item_favorite_tvs -> {
-                    drawerLayout.close()
-                    navController.navigate(R.id.fragment_favorite_tvs)
+                    navController.navigate(R.id.fragment_favorites)
 
                     true
                 }
