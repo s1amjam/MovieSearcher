@@ -31,6 +31,7 @@ class MovieSearcherActivity : AppCompatActivity() {
     private lateinit var myListsMenuItem: MenuItem
     private lateinit var encryptedSharedPrefs: SharedPreferences
     private lateinit var favoritesMenuItem: MenuItem
+    private lateinit var ratingsMenuItem: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +57,7 @@ class MovieSearcherActivity : AppCompatActivity() {
         logoutButton = menu.findItem(R.id.logout_button)
         myListsMenuItem = menu.findItem(R.id.menu_item_my_lists)
         favoritesMenuItem = menu.findItem(R.id.menu_item_favorites)
+        ratingsMenuItem = menu.findItem(R.id.menu_item_ratings)
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -63,9 +65,10 @@ class MovieSearcherActivity : AppCompatActivity() {
                 R.id.movie_searcher_fragment,
                 R.id.tv_info_fragment,
                 R.id.search_result_fragment,
-                R.id.my_lists_fragment,
-                R.id.my_list_fragment,
-                R.id.fragment_favorites
+                R.id.fragment_my_lists,
+                R.id.fragment_my_list,
+                R.id.fragment_favorites,
+                R.id.fragment_rated
             ), drawerLayout
         )
 
@@ -76,6 +79,7 @@ class MovieSearcherActivity : AppCompatActivity() {
         logoutButton.isVisible = !isSessionIdEmpty
         myListsMenuItem.isVisible = !isSessionIdEmpty
         favoritesMenuItem.isVisible = !isSessionIdEmpty
+        ratingsMenuItem.isVisible = !isSessionIdEmpty
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -102,6 +106,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                             logoutButton.isVisible = true
                             myListsMenuItem.isVisible = true
                             favoritesMenuItem.isVisible = true
+                            ratingsMenuItem.isVisible = true
 
                             with(
                                 encryptedSharedPrefs.edit()
@@ -140,6 +145,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                                     logoutButton.isVisible = false
                                     myListsMenuItem.isVisible = false
                                     favoritesMenuItem.isVisible = false
+                                    ratingsMenuItem.isVisible = false
 
                                     navigationView.invalidate()
                                     progressBar.visibility = GONE
@@ -151,13 +157,19 @@ class MovieSearcherActivity : AppCompatActivity() {
                 }
                 R.id.menu_item_my_lists -> {
                     drawerLayout.close()
-                    navController.navigate(R.id.my_lists_fragment)
+                    navController.navigate(R.id.fragment_my_lists)
 
                     true
                 }
                 R.id.menu_item_favorites -> {
                     drawerLayout.close()
                     navController.navigate(R.id.fragment_favorites)
+
+                    true
+                }
+                R.id.menu_item_ratings -> {
+                    drawerLayout.close()
+                    navController.navigate(R.id.fragment_rated)
 
                     true
                 }

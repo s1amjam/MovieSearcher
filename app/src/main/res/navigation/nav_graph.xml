@@ -62,16 +62,16 @@
             app:destination="@id/tv_info_fragment" />
     </fragment>
     <fragment
-        android:id="@+id/my_lists_fragment"
+        android:id="@+id/fragment_my_lists"
         android:name="com.moviesearcher.MyListsFragment"
         android:label="fragment_my_lists"
         tools:layout="@layout/fragment_my_lists">
         <action
             android:id="@+id/action_my_lists_fragment_to_myListFragment"
-            app:destination="@id/my_list_fragment" />
+            app:destination="@id/fragment_my_list" />
     </fragment>
     <fragment
-        android:id="@+id/my_list_fragment"
+        android:id="@+id/fragment_my_list"
         android:name="com.moviesearcher.MyListFragment"
         android:label="fragment_my_list"
         tools:layout="@layout/fragment_my_list" >
@@ -90,5 +90,17 @@
         <action
             android:id="@+id/action_fragment_favorites_to_tv_info_fragment"
             app:destination="@id/tv_info_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_rated"
+        android:name="com.moviesearcher.RatedFragment"
+        android:label="fragment_ratings"
+        tools:layout="@layout/fragment_rated" >
+        <action
+            android:id="@+id/action_rated_fragment_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
+        <action
+            android:id="@+id/action_rated_fragment_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
     </fragment>
 </navigation>

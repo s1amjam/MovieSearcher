@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">MovieSearcher</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="movie_button">Movie</string>
     <string name="tv_button">Tv</string>
     <string name="search_field">Search</string>
     <string name="login_button">Log In</string>
     <string name="logout_button">Log Out</string>
-    <string name="my_lists_menu_item">My Lists</string>
-    <string name="menu_item_favorites">Favorites</string>
-    <string name="menu_item_favorite_movies">Movies</string>
-    <string name="menu_item_favorite_tvs">Tv\'s</string>
+    <string name="my_lists">My Lists</string>
+    <string name="favorites">Favorites</string>
+    <string name="movies">Movies</string>
+    <string name="tvs">Tv\'s</string>
+    <string name="tv_episodes">Tv Episodes</string>
+    <string name="ratings">My Ratings</string>
 </resources>

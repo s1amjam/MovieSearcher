@@ -10,6 +10,9 @@ import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
+import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
+import com.moviesearcher.api.entity.rated.tvepisode.RatedTvEpisodesResponse
+import com.moviesearcher.api.entity.rated.tv.RatedTvsResponse
 import com.moviesearcher.api.entity.search.SearchResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
 import com.moviesearcher.api.entity.tvinfo.TvInfoResponse
@@ -111,4 +114,22 @@ interface ApiService {
         @Path("account_id") accountId: Int?,
         @Query("session_id") sessionId: String?
     ): Call<FavoriteTvResponse>
+
+    @GET("account/{account_id}/rated/movies")
+    fun getRatedMovies(
+        @Path("account_id") accountId: Int?,
+        @Query("session_id") sessionId: String?
+    ): Call<RatedMoviesResponse>
+
+    @GET("account/{account_id}/rated/tv")
+    fun getRatedTvs(
+        @Path("account_id") accountId: Int?,
+        @Query("session_id") sessionId: String?
+    ): Call<RatedTvsResponse>
+
+    @GET("account/{account_id}/rated/tv/episodes")
+    fun getRatedTvEpisodes(
+        @Path("account_id") accountId: Int?,
+        @Query("session_id") sessionId: String?
+    ): Call<RatedTvEpisodesResponse>
 }
