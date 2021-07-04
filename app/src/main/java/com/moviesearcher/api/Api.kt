@@ -1,6 +1,7 @@
 package com.moviesearcher.api
 
 import androidx.lifecycle.MutableLiveData
+import com.moviesearcher.api.entity.MediaId
 import com.moviesearcher.api.entity.account.AccountResponse
 import com.moviesearcher.api.entity.auth.CreateSessionResponse
 import com.moviesearcher.api.entity.auth.CreateTokenResponse
@@ -10,6 +11,8 @@ import com.moviesearcher.api.entity.auth.SessionId
 import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
 import com.moviesearcher.api.entity.list.ListResponse
+import com.moviesearcher.api.entity.list.ListsResponse
+import com.moviesearcher.api.entity.list.add.AddToListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
 import com.moviesearcher.api.entity.rated.tv.RatedTvsResponse
@@ -211,20 +214,20 @@ object Api {
         return responseLiveData
     }
 
-    fun getLists(accountId: Int?, sessionId: String?, page: Int): MutableLiveData<ListResponse> {
-        val responseLiveData: MutableLiveData<ListResponse> = MutableLiveData()
+    fun getLists(accountId: Int?, sessionId: String?, page: Int): MutableLiveData<ListsResponse> {
+        val responseLiveData: MutableLiveData<ListsResponse> = MutableLiveData()
         val resp = ApiService.create().getCreatedLists(accountId, sessionId, page)
 
-        resp.enqueue(object : Callback<ListResponse> {
+        resp.enqueue(object : Callback<ListsResponse> {
             override fun onResponse(
-                call: Call<ListResponse>,
-                response: Response<ListResponse>
+                call: Call<ListsResponse>,
+                response: Response<ListsResponse>
             ) {
                 responseLiveData.value = response.body()
             }
 
             override fun onFailure(
-                call: Call<ListResponse>,
+                call: Call<ListsResponse>,
                 t: Throwable
             ) {
 
@@ -407,6 +410,52 @@ object Api {
 
             override fun onFailure(
                 call: Call<TvWatchlistResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun addToList(listId: Int, mediaId: MediaId, sessionId: String): MutableLiveData<AddToListResponse> {
+        val responseLiveData: MutableLiveData<AddToListResponse> = MutableLiveData()
+        val resp = ApiService.create().addToList(listId, sessionId, mediaId)
+
+        resp.enqueue(object : Callback<AddToListResponse> {
+            override fun onResponse(
+                call: Call<AddToListResponse>,
+                response: Response<AddToListResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<AddToListResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun getListInfo(listId: Int): MutableLiveData<ListResponse> {
+        val responseLiveData: MutableLiveData<ListResponse> = MutableLiveData()
+        val resp = ApiService.create().getListInfo(listId)
+
+        resp.enqueue(object : Callback<ListResponse> {
+            override fun onResponse(
+                call: Call<ListResponse>,
+                response: Response<ListResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<ListResponse>,
                 t: Throwable
             ) {
 

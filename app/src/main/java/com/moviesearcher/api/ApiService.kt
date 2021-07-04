@@ -1,5 +1,6 @@
 package com.moviesearcher.api
 
+import com.moviesearcher.api.entity.MediaId
 import com.moviesearcher.api.entity.account.AccountResponse
 import com.moviesearcher.api.entity.auth.CreateSessionResponse
 import com.moviesearcher.api.entity.auth.CreateTokenResponse
@@ -9,6 +10,8 @@ import com.moviesearcher.api.entity.auth.SessionId
 import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
 import com.moviesearcher.api.entity.list.ListResponse
+import com.moviesearcher.api.entity.list.ListsResponse
+import com.moviesearcher.api.entity.list.add.AddToListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
 import com.moviesearcher.api.entity.rated.tv.RatedTvsResponse
@@ -30,6 +33,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.HTTP
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -103,7 +107,7 @@ interface ApiService {
         @Path("account_id") accountId: Int?,
         @Query("session_id") sessionId: String?,
         @Query("page") page: Int = 1
-    ): Call<ListResponse>
+    ): Call<ListsResponse>
 
     @GET("account/{account_id}/favorite/movies")
     fun getFavoriteMovies(
@@ -146,4 +150,17 @@ interface ApiService {
         @Path("account_id") accountId: Int?,
         @Query("session_id") sessionId: String?
     ): Call<TvWatchlistResponse>
+
+    @POST("list/{list_id}/add_item")
+    @Headers("Content-Type: application/json;charset=utf-8")
+    fun addToList(
+        @Path("list_id") listId: Int,
+        @Query("session_id") sessionId: String?,
+        @Body mediaId: MediaId
+    ): Call<AddToListResponse>
+
+    @GET("list/{list_id}")
+    fun getListInfo(
+        @Path("list_id") listId: Int
+    ): Call<ListResponse>
 }

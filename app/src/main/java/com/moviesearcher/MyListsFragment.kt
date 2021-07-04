@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.adapters.MyListAdapter
+import com.moviesearcher.adapters.MyListsAdapter
 import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.viewmodel.MyListsViewModel
 
@@ -25,7 +25,7 @@ class MyListsFragment : BaseFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_my_lists, container, false)
 
-        myListsRecyclerView = view.findViewById(R.id.fragment_my_list_recycler_view)
+        myListsRecyclerView = view.findViewById(R.id.fragment_my_lists_recycler_view)
         myListsRecyclerView.layoutManager = LinearLayoutManager(context)
         myListsViewModel = ViewModelProvider(this).get(MyListsViewModel::class.java)
 
@@ -44,7 +44,7 @@ class MyListsFragment : BaseFragment() {
         myListsViewModel.myListsItemLiveData.observe(
             viewLifecycleOwner,
             { myListItems ->
-                myListsRecyclerView.adapter = MyListAdapter(myListItems, findNavController())
+                myListsRecyclerView.adapter = MyListsAdapter(myListItems, findNavController())
             })
     }
 }
