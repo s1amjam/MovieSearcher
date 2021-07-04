@@ -8,10 +8,10 @@ import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
-import com.moviesearcher.MyListsFragmentDirections
+import com.moviesearcher.MyListFragmentDirections
 import com.moviesearcher.R
+import com.moviesearcher.api.entity.list.Item
 import com.moviesearcher.api.entity.list.ListResponse
-import com.moviesearcher.api.entity.list.Result
 import com.moviesearcher.utils.Constants
 import com.squareup.picasso.Picasso
 
@@ -26,13 +26,14 @@ class MyListAdapter(
         private val cardView: MaterialCardView =
             view.findViewById(R.id.material_card_view_my_list_item)
 
-        fun bind(myListResultItem: Result) {
+        fun bind(myListResultItem: Item) {
             Picasso.get()
                 .load(Constants.IMAGE_URL + myListResultItem.posterPath)
                 .into(myListItemPoster)
 
-            cardView.id = myListResultItem.id?.toInt()!!
-            myListItemName.text = myListResultItem.name
+            cardView.tag = myListResultItem.mediaType
+            cardView.id = myListResultItem.id!!.toInt()
+            myListItemName.text = myListResultItem.title
         }
     }
 
@@ -42,25 +43,33 @@ class MyListAdapter(
     ): MyListViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.fragment_my_list_item, parent, false)
-        val cardView: MaterialCardView =
-            view.findViewById(R.id.material_card_view_my_list_item)
+        val cardView: MaterialCardView = view.findViewById(R.id.material_card_view_my_list_item)
 
         cardView.setOnClickListener {
-            val listId = it.id
+            val mediaId = it.id
+            val mediaType = it.tag
 
-            navController.navigate(
-                MyListsFragmentDirections.actionMyListsFragmentToMyListFragment(
-                    listId
+            if (mediaType == "movie") {
+                navController.navigate(
+                    MyListFragmentDirections.actionFragmentMyListToMovieInfoFragment(
+                        mediaId
+                    )
                 )
-            )
+            } else {
+                navController.navigate(
+                    MyListFragmentDirections.actionFragmentMyListToTvInfoFragment(
+                        mediaId
+                    )
+                )
+            }
         }
 
         return MyListViewHolder(view)
     }
 
-    override fun getItemCount(): Int = listItems.results?.size!!
+    override fun getItemCount(): Int = listItems.items?.size!!
     override fun onBindViewHolder(holder: MyListViewHolder, position: Int) {
-        val listItem = listItems.results?.get(position)
+        val listItem = listItems.items?.get(position)
         holder.bind(listItem!!)
     }
 }
