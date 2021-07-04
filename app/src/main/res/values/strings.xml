@@ -11,4 +11,5 @@
     <string name="tvs">Tv\'s</string>
     <string name="tv_episodes">Tv Episodes</string>
     <string name="ratings">My Ratings</string>
+    <string name="watchlists">My Watchlists</string>
 </resources>

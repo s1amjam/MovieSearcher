@@ -16,7 +16,7 @@ import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.viewmodel.FavoriteMoviesViewModel
 import com.moviesearcher.viewmodel.FavoriteTvsViewModel
 
-private const val TAG = "FavoriteMoviesFragment"
+private const val TAG = "FavoritesFragment"
 
 class FavoritesFragment : Fragment() {
     private lateinit var favoriteMoviesRecyclerView: RecyclerView

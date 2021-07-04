@@ -18,7 +18,7 @@ import com.moviesearcher.viewmodel.RatedMoviesViewModel
 import com.moviesearcher.viewmodel.RatedTvEpisodesViewModel
 import com.moviesearcher.viewmodel.RatedTvsViewModel
 
-private const val TAG = "FavoriteMoviesFragment"
+private const val TAG = "RatedFragment"
 
 class RatedFragment : Fragment() {
     private lateinit var ratedMoviesRecyclerView: RecyclerView
@@ -28,7 +28,6 @@ class RatedFragment : Fragment() {
     private lateinit var ratedMoviesButton: Button
     private lateinit var ratedTvsButton: Button
     private lateinit var ratedTvEpisodesButton: Button
-
 
     override fun onCreateView(
         inflater: LayoutInflater,

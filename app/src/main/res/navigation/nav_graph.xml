@@ -103,4 +103,15 @@
             android:id="@+id/action_rated_fragment_to_movie_info_fragment"
             app:destination="@id/movie_info_fragment" />
     </fragment>
+    <fragment
+        android:id="@+id/fragment_watchlist"
+        android:name="com.moviesearcher.WatchlistFragment"
+        android:label="WatchlistFragment" >
+        <action
+            android:id="@+id/action_watchlistFragment_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
+        <action
+            android:id="@+id/action_watchlistFragment_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
+    </fragment>
 </navigation>

@@ -11,11 +11,13 @@ import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
-import com.moviesearcher.api.entity.rated.tvepisode.RatedTvEpisodesResponse
 import com.moviesearcher.api.entity.rated.tv.RatedTvsResponse
+import com.moviesearcher.api.entity.rated.tvepisode.RatedTvEpisodesResponse
 import com.moviesearcher.api.entity.search.SearchResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
 import com.moviesearcher.api.entity.tvinfo.TvInfoResponse
+import com.moviesearcher.api.entity.watchlist.movie.MovieWatchlistResponse
+import com.moviesearcher.api.entity.watchlist.tv.TvWatchlistResponse
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.utils.Constants.ACCESS_TOKEN
 import okhttp3.Interceptor
@@ -132,4 +134,16 @@ interface ApiService {
         @Path("account_id") accountId: Int?,
         @Query("session_id") sessionId: String?
     ): Call<RatedTvEpisodesResponse>
+
+    @GET("account/{account_id}/watchlist/movies")
+    fun getMovieWatchlist(
+        @Path("account_id") accountId: Int?,
+        @Query("session_id") sessionId: String?
+    ): Call<MovieWatchlistResponse>
+
+    @GET("account/{account_id}/watchlist/tv")
+    fun getTvWatchlist(
+        @Path("account_id") accountId: Int?,
+        @Query("session_id") sessionId: String?
+    ): Call<TvWatchlistResponse>
 }

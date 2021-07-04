@@ -32,6 +32,7 @@ class MovieSearcherActivity : AppCompatActivity() {
     private lateinit var encryptedSharedPrefs: SharedPreferences
     private lateinit var favoritesMenuItem: MenuItem
     private lateinit var ratingsMenuItem: MenuItem
+    private lateinit var watchlistMenuItem: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +59,7 @@ class MovieSearcherActivity : AppCompatActivity() {
         myListsMenuItem = menu.findItem(R.id.menu_item_my_lists)
         favoritesMenuItem = menu.findItem(R.id.menu_item_favorites)
         ratingsMenuItem = menu.findItem(R.id.menu_item_ratings)
+        watchlistMenuItem = menu.findItem(R.id.menu_item_watchlists)
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -68,18 +70,21 @@ class MovieSearcherActivity : AppCompatActivity() {
                 R.id.fragment_my_lists,
                 R.id.fragment_my_list,
                 R.id.fragment_favorites,
-                R.id.fragment_rated
+                R.id.fragment_rated,
+                R.id.fragment_watchlist
             ), drawerLayout
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        //TODO: remove to method
         val isSessionIdEmpty = sessionId == ""
         loginButton.isVisible = isSessionIdEmpty
         logoutButton.isVisible = !isSessionIdEmpty
         myListsMenuItem.isVisible = !isSessionIdEmpty
         favoritesMenuItem.isVisible = !isSessionIdEmpty
         ratingsMenuItem.isVisible = !isSessionIdEmpty
+        watchlistMenuItem.isVisible = !isSessionIdEmpty
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -107,6 +112,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                             myListsMenuItem.isVisible = true
                             favoritesMenuItem.isVisible = true
                             ratingsMenuItem.isVisible = true
+                            watchlistMenuItem.isVisible = true
 
                             with(
                                 encryptedSharedPrefs.edit()
@@ -146,6 +152,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                                     myListsMenuItem.isVisible = false
                                     favoritesMenuItem.isVisible = false
                                     ratingsMenuItem.isVisible = false
+                                    watchlistMenuItem.isVisible = false
 
                                     navigationView.invalidate()
                                     progressBar.visibility = GONE
@@ -170,6 +177,12 @@ class MovieSearcherActivity : AppCompatActivity() {
                 R.id.menu_item_ratings -> {
                     drawerLayout.close()
                     navController.navigate(R.id.fragment_rated)
+
+                    true
+                }
+                R.id.menu_item_watchlists -> {
+                    drawerLayout.close()
+                    navController.navigate(R.id.fragment_watchlist)
 
                     true
                 }
