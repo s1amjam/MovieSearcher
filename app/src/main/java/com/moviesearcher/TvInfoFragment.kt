@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -25,6 +26,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var tvInfoFirstAirDate: TextView
     private lateinit var tvInfoOverview: TextView
     private lateinit var tvInfoConstraintLayout: ConstraintLayout
+    private lateinit var menuButtonAddToList: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,12 +43,7 @@ class TvInfoFragment : BaseFragment() {
         tvInfoTagline = view.findViewById(R.id.tv_info_tagline)
         tvInfoFirstAirDate = view.findViewById(R.id.tv_info_first_air_date)
         tvInfoOverview = view.findViewById(R.id.tv_info_overview)
-
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        menuButtonAddToList = view.findViewById(R.id.menu_button_add_tv_to_list)
 
         tvInfoViewModel.tvInfoLiveData.observe(
             viewLifecycleOwner,
@@ -55,8 +52,7 @@ class TvInfoFragment : BaseFragment() {
                     .load(Constants.IMAGE_URL + tvInfo?.posterPath)
                     .into(tvInfoPosterImageView)
                 tvInfoName.text = tvInfo?.name
-                tvInfoGenres.text =
-                    tvInfo?.genres?.joinToString { genre -> genre.name!! }
+                tvInfoGenres.text = tvInfo?.genres?.joinToString { genre -> genre.name!! }
                 tvInfoProductionCountries.text =
                     tvInfo?.productionCountries?.joinToString { productionCountry ->
                         productionCountry.name!!
@@ -65,5 +61,11 @@ class TvInfoFragment : BaseFragment() {
                 tvInfoFirstAirDate.text = tvInfo?.firstAirDate
                 tvInfoOverview.text = tvInfo?.overview
             })
+
+        menuButtonAddToList.setOnClickListener {
+            showMenu(it, R.menu.list_popup_menu)
+        }
+
+        return view
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -26,6 +27,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var movieInfoReleaseDate: TextView
     private lateinit var movieInfoOverview: TextView
     private lateinit var movieInfoConstraintLayout: ConstraintLayout
+    private lateinit var menuButtonAddToList: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,12 +44,7 @@ class MovieInfoFragment : BaseFragment() {
         movieInfoTagline = view.findViewById(R.id.movie_info_tagline)
         movieInfoReleaseDate = view.findViewById(R.id.movie_info_release_date)
         movieInfoOverview = view.findViewById(R.id.movie_info_overview)
-
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        menuButtonAddToList = view.findViewById(R.id.menu_button_add_movie_to_list)
 
         val movieId = args.movieId
         movieInfoViewModel.getMovieInfoById(movieId)
@@ -70,5 +67,11 @@ class MovieInfoFragment : BaseFragment() {
                 movieInfoReleaseDate.text = movieInfo?.releaseDate
                 movieInfoOverview.text = movieInfo?.overview
             })
+
+        menuButtonAddToList.setOnClickListener {
+            showMenu(it, R.menu.list_popup_menu)
+        }
+
+        return view
     }
 }

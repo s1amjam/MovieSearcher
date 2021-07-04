@@ -36,7 +36,7 @@ class MyListsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
-        val accountId: Int = encryptedSharedPrefs.getString("id", null)!!.toInt()
+        val accountId: Int = encryptedSharedPrefs.getString("accountId", null)!!.toInt()
         val sessionId: String = encryptedSharedPrefs.getString("sessionId", null)!!
 
         myListsViewModel.getLists(accountId, sessionId, 1)

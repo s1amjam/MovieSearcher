@@ -49,7 +49,7 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
-        val accountId: Int = encryptedSharedPrefs.getString("id", null)!!.toInt()
+        val accountId: Int = encryptedSharedPrefs.getString("accountId", null)!!.toInt()
         val sessionId: String = encryptedSharedPrefs.getString("sessionId", null)!!
 
         favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId)

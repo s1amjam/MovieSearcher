@@ -29,7 +29,7 @@ class AuthorizationDialogFragment : DialogFragment() {
     private lateinit var name: String
     private lateinit var avatar: String
 
-    private var id: Int? = null
+    private var accountId: Int? = null
     private var includeAdult = false
 
 
@@ -94,7 +94,7 @@ class AuthorizationDialogFragment : DialogFragment() {
                             Api.getAccount(sessionId.value.toString())
                                 .observe(requireActivity(), { accountResponse ->
                                     username = accountResponse.username.toString()
-                                    id = accountResponse.id
+                                    accountId = accountResponse.id
                                     name = accountResponse.name.toString()
                                     includeAdult = accountResponse.includeAdult!!
                                     avatar = accountResponse.avatar.toString()
@@ -104,7 +104,7 @@ class AuthorizationDialogFragment : DialogFragment() {
                                         bundleOf(
                                             "sessionId" to sessionId.value,
                                             "includeAdult" to includeAdult.toString(),
-                                            "id" to id.toString(),
+                                            "accountId" to accountId.toString(),
                                             "avatar" to avatar,
                                             "username" to username,
                                             "name" to name,

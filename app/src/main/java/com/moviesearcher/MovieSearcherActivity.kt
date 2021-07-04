@@ -99,7 +99,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                     ) { _, bundle ->
                         val sessionId = bundle.getString("sessionId")
                         val avatar = bundle.getString("avatar")
-                        val id = bundle.getString("id")
+                        val accountId = bundle.getString("accountId")
                         val username = bundle.getString("username")
                         val includeAdult = bundle.getString("includeAdult")
                         val name = bundle.getString("name")
@@ -119,7 +119,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                             ) {
                                 putString("sessionId", sessionId)
                                 putString("avatar", avatar)
-                                putString("id", id.toString())
+                                putString("accountId", accountId.toString())
                                 putString("username", username)
                                 putString("includeAdult", includeAdult.toString())
                                 putString("name", name)
