@@ -31,11 +31,12 @@ open class BaseFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    fun showMenu(v: View, @MenuRes menuRes: Int) {
+    fun showAddToListMenu(v: View, @MenuRes menuRes: Int) {
         myListsViewModel = ViewModelProvider(this).get(MyListsViewModel::class.java)
 
         val movieId = requireArguments().getInt("movie_id")
         val tvId = requireArguments().getInt("tv_id")
+        val mediaId = if (movieId == 0) tvId else movieId
 
         encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
         sessionId = encryptedSharedPrefs.getString("sessionId", "").toString()
@@ -51,13 +52,23 @@ open class BaseFragment : Fragment() {
             { myListItems ->
                 myListItems.results?.forEach { it ->
                     popup.menu.add(Menu.NONE, it.id!!.toInt(), Menu.NONE, it.name)
-                        .setOnMenuItemClickListener {
-                            val mediaId = if (movieId == 0) tvId else movieId
+                    val menuItem = popup.menu.findItem(it.id.toInt())
 
-                            Api.addToList(it.itemId, MediaId(mediaId), sessionId)
+                    myListsViewModel.checkItemStatus(it.id.toInt(), mediaId)
 
-                            true
-                        }
+                    myListsViewModel.checkItemLiveData.observe(viewLifecycleOwner,
+                        { checkedItem ->
+                            if (checkedItem.itemPresent == true) {
+                                menuItem.isEnabled = false
+                                menuItem.title = menuItem.title.toString() + " (already added)"
+                            } else {
+                                menuItem.setOnMenuItemClickListener {
+                                    Api.addToList(it.itemId, MediaId(mediaId), sessionId)
+
+                                    true
+                                }
+                            }
+                        })
                 }
                 popup.show()
             })
@@ -67,7 +78,6 @@ open class BaseFragment : Fragment() {
                 R.id.menu_item_create_new_list -> {
 
                 }
-
             }
             true
         }

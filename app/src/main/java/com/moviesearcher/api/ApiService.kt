@@ -9,6 +9,7 @@ import com.moviesearcher.api.entity.auth.RequestToken
 import com.moviesearcher.api.entity.auth.SessionId
 import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
+import com.moviesearcher.api.entity.list.CheckItemStatusResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.list.ListsResponse
 import com.moviesearcher.api.entity.list.add.AddToListResponse
@@ -163,4 +164,10 @@ interface ApiService {
     fun getListInfo(
         @Path("list_id") listId: Int
     ): Call<ListResponse>
+
+    @GET("list/{list_id}/item_status")
+    fun checkItemStatus(
+        @Path("list_id") listId: Int,
+        @Query("movie_id") movieId: Int
+    ): Call<CheckItemStatusResponse>
 }

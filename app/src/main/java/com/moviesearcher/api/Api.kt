@@ -10,6 +10,7 @@ import com.moviesearcher.api.entity.auth.RequestToken
 import com.moviesearcher.api.entity.auth.SessionId
 import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
+import com.moviesearcher.api.entity.list.CheckItemStatusResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.list.ListsResponse
 import com.moviesearcher.api.entity.list.add.AddToListResponse
@@ -456,6 +457,29 @@ object Api {
 
             override fun onFailure(
                 call: Call<ListResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun checkItemStatus(listId: Int, movieId: Int): MutableLiveData<CheckItemStatusResponse> {
+        val responseLiveData: MutableLiveData<CheckItemStatusResponse> = MutableLiveData()
+        val resp = ApiService.create().checkItemStatus(listId, movieId)
+
+        resp.enqueue(object : Callback<CheckItemStatusResponse> {
+            override fun onResponse(
+                call: Call<CheckItemStatusResponse>,
+                response: Response<CheckItemStatusResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<CheckItemStatusResponse>,
                 t: Throwable
             ) {
 

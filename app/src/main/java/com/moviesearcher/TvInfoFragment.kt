@@ -63,7 +63,7 @@ class TvInfoFragment : BaseFragment() {
             })
 
         menuButtonAddToList.setOnClickListener {
-            showMenu(it, R.menu.list_popup_menu)
+            showAddToListMenu(it, R.menu.list_popup_menu)
         }
 
         return view
