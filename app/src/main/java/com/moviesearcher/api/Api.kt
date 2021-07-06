@@ -11,6 +11,8 @@ import com.moviesearcher.api.entity.auth.SessionId
 import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
 import com.moviesearcher.api.entity.list.CheckItemStatusResponse
+import com.moviesearcher.api.entity.list.CreateNewList
+import com.moviesearcher.api.entity.list.CreateNewListResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.list.ListsResponse
 import com.moviesearcher.api.entity.list.add.AddToListResponse
@@ -420,7 +422,11 @@ object Api {
         return responseLiveData
     }
 
-    fun addToList(listId: Int, mediaId: MediaId, sessionId: String): MutableLiveData<AddToListResponse> {
+    fun addToList(
+        listId: Int,
+        mediaId: MediaId,
+        sessionId: String
+    ): MutableLiveData<AddToListResponse> {
         val responseLiveData: MutableLiveData<AddToListResponse> = MutableLiveData()
         val resp = ApiService.create().addToList(listId, sessionId, mediaId)
 
@@ -480,6 +486,32 @@ object Api {
 
             override fun onFailure(
                 call: Call<CheckItemStatusResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun createNewList(
+        sessionId: String,
+        createNewList: CreateNewList
+    ): MutableLiveData<CreateNewListResponse> {
+        val responseLiveData: MutableLiveData<CreateNewListResponse> = MutableLiveData()
+        val resp = ApiService.create().createNewList(sessionId, createNewList)
+
+        resp.enqueue(object : Callback<CreateNewListResponse> {
+            override fun onResponse(
+                call: Call<CreateNewListResponse>,
+                response: Response<CreateNewListResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<CreateNewListResponse>,
                 t: Throwable
             ) {
 

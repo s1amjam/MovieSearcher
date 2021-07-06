@@ -133,7 +133,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                     true
                 }
                 R.id.logout_button -> {
-                    progressBar.visibility = VISIBLE
+                    progressBar.visibility = VISIBLE //TODO: to method
 
                     Api.deleteSession(SessionId(sessionId)).observe(this,
                         { response ->

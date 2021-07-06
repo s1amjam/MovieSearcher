@@ -10,6 +10,8 @@ import com.moviesearcher.api.entity.auth.SessionId
 import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
 import com.moviesearcher.api.entity.list.CheckItemStatusResponse
+import com.moviesearcher.api.entity.list.CreateNewList
+import com.moviesearcher.api.entity.list.CreateNewListResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.list.ListsResponse
 import com.moviesearcher.api.entity.list.add.AddToListResponse
@@ -170,4 +172,11 @@ interface ApiService {
         @Path("list_id") listId: Int,
         @Query("movie_id") movieId: Int
     ): Call<CheckItemStatusResponse>
+
+    @POST("list")
+    @Headers("Content-Type: application/json;charset=utf-8")
+    fun createNewList(
+        @Query("session_id") sessionId: String?,
+        @Body createNewList: CreateNewList
+    ): Call<CreateNewListResponse>
 }

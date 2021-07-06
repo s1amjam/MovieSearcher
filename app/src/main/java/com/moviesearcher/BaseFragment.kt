@@ -31,6 +31,11 @@ open class BaseFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
+    private fun showCreateNewListDialog() {
+        val dialog = CreateNewListDialog()
+        dialog.show(childFragmentManager, "CreateNewListDialogFragment")
+    }
+
     fun showAddToListMenu(v: View, @MenuRes menuRes: Int) {
         myListsViewModel = ViewModelProvider(this).get(MyListsViewModel::class.java)
 
@@ -47,6 +52,15 @@ open class BaseFragment : Fragment() {
         val popup = PopupMenu(requireContext(), v)
         popup.menuInflater.inflate(menuRes, popup.menu)
 
+        popup.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_item_create_new_list -> {
+                    showCreateNewListDialog()
+                }
+            }
+            true
+        }
+
         myListsViewModel.myListsItemLiveData.observe(
             viewLifecycleOwner,
             { myListItems ->
@@ -60,7 +74,7 @@ open class BaseFragment : Fragment() {
                         { checkedItem ->
                             if (checkedItem.itemPresent == true) {
                                 menuItem.isEnabled = false
-                                menuItem.title = menuItem.title.toString() + " (already added)"
+                                menuItem.title = menuItem.title.toString() + " (added)"
                             } else {
                                 menuItem.setOnMenuItemClickListener {
                                     Api.addToList(it.itemId, MediaId(mediaId), sessionId)
@@ -72,15 +86,6 @@ open class BaseFragment : Fragment() {
                 }
                 popup.show()
             })
-
-        popup.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.menu_item_create_new_list -> {
-
-                }
-            }
-            true
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
