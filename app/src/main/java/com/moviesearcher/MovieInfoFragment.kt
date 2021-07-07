@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.viewmodel.MovieInfoViewModel
@@ -46,8 +47,12 @@ class MovieInfoFragment : BaseFragment() {
         movieInfoOverview = view.findViewById(R.id.movie_info_overview)
         menuButtonAddToList = view.findViewById(R.id.menu_button_add_movie_to_list)
 
+        menuButtonAddToList.isVisible = sessionId != ""
+
         val movieId = args.movieId
         movieInfoViewModel.getMovieInfoById(movieId)
+
+        val lists = getLists()
 
         movieInfoViewModel.movieInfoLiveData.observe(
             viewLifecycleOwner,
@@ -69,7 +74,7 @@ class MovieInfoFragment : BaseFragment() {
             })
 
         menuButtonAddToList.setOnClickListener {
-            showAddToListMenu(it, R.menu.list_popup_menu)
+            showAddToListMenu(it, R.menu.list_popup_menu, lists)
         }
 
         return view

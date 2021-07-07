@@ -5,20 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.adapters.MovieWatchlistAdapter
 import com.moviesearcher.adapters.TvWatchlistAdapter
-import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.viewmodel.MovieWatchlistViewModel
 import com.moviesearcher.viewmodel.TvWatchlistViewModel
 
 private const val TAG = "WatchlistFragment"
 
-class WatchlistFragment : Fragment() {
+class WatchlistFragment : BaseFragment() {
     private lateinit var movieWatchlistRecyclerView: RecyclerView
     private lateinit var movieWatchlistViewModel: MovieWatchlistViewModel
     private lateinit var tvWatchlistViewModel: TvWatchlistViewModel
@@ -47,10 +45,6 @@ class WatchlistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
-        val accountId: Int = encryptedSharedPrefs.getString("accountId", null)!!.toInt()
-        val sessionId: String = encryptedSharedPrefs.getString("sessionId", null)!!
 
         movieWatchlistViewModel.getMovieWatchlist(accountId, sessionId)
 

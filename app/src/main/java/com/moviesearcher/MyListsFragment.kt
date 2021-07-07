@@ -9,7 +9,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.adapters.MyListsAdapter
-import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.viewmodel.MyListsViewModel
 
 private const val TAG = "MyListsFragment"
@@ -34,10 +33,6 @@ class MyListsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
-        val accountId: Int = encryptedSharedPrefs.getString("accountId", null)!!.toInt()
-        val sessionId: String = encryptedSharedPrefs.getString("sessionId", null)!!
 
         myListsViewModel.getLists(accountId, sessionId, 1)
 

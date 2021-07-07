@@ -157,6 +157,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                                     navigationView.invalidate()
                                     progressBar.visibility = GONE
                                     drawerLayout.close()
+                                    navController.navigate(R.id.movie_searcher_fragment)
                                 }
                             }
                         })

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,14 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.adapters.RatedMoviesAdapter
 import com.moviesearcher.adapters.RatedTvEpisodesAdapter
 import com.moviesearcher.adapters.RatedTvsAdapter
-import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.viewmodel.RatedMoviesViewModel
 import com.moviesearcher.viewmodel.RatedTvEpisodesViewModel
 import com.moviesearcher.viewmodel.RatedTvsViewModel
 
 private const val TAG = "RatedFragment"
 
-class RatedFragment : Fragment() {
+class RatedFragment : BaseFragment() {
     private lateinit var ratedMoviesRecyclerView: RecyclerView
     private lateinit var ratedMoviesViewModel: RatedMoviesViewModel
     private lateinit var ratedTvEpisodesViewModel: RatedTvEpisodesViewModel
@@ -54,10 +52,6 @@ class RatedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
-        val accountId: Int = encryptedSharedPrefs.getString("accountId", null)!!.toInt()
-        val sessionId: String = encryptedSharedPrefs.getString("sessionId", null)!!
 
         ratedMoviesViewModel.getRatedMovies(accountId, sessionId)
 

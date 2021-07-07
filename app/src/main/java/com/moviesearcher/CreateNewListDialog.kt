@@ -4,8 +4,8 @@ import android.app.Dialog
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.list.CreateNewList
@@ -29,24 +29,23 @@ class CreateNewListDialog : DialogFragment() {
             buttonCreate.isEnabled = false
         }
 
+        name.doAfterTextChanged { text ->
+            buttonCreate.isEnabled = text.toString() != ""
+        }
+
         buttonCreate.setOnClickListener {
             val sessionId = EncryptedSharedPrefs.sharedPrefs(requireContext())
                 .getString("sessionId", "").toString()
 
-            if (name.text.toString() == "") {
-                Toast.makeText(requireContext(), "Name can't be empty", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                Api.createNewList(
-                    sessionId,
-                    CreateNewList(name.text.toString(), description.text.toString(), "en")
-                ).observe(
-                    this, {
-                        if (it.success == true) {
-                            dialog.dismiss()
-                        }
-                    })
-            }
+            Api.createNewList(
+                sessionId,
+                CreateNewList(name.text.toString(), description.text.toString(), "en")
+            ).observe(
+                this, {
+                    if (it.success == true) {
+                        dialog.dismiss()
+                    }
+                })
         }
 
         buttonCancel.setOnClickListener { dialog.cancel() }

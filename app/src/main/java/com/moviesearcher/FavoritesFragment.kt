@@ -5,20 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.adapters.FavoriteMoviesAdapter
 import com.moviesearcher.adapters.FavoriteTvsAdapter
-import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.viewmodel.FavoriteMoviesViewModel
 import com.moviesearcher.viewmodel.FavoriteTvsViewModel
 
 private const val TAG = "FavoritesFragment"
 
-class FavoritesFragment : Fragment() {
+class FavoritesFragment : BaseFragment() {
     private lateinit var favoriteMoviesRecyclerView: RecyclerView
     private lateinit var favoriteMoviesViewModel: FavoriteMoviesViewModel
     private lateinit var favoriteMoviesButton: Button
@@ -47,10 +45,6 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
-        val accountId: Int = encryptedSharedPrefs.getString("accountId", null)!!.toInt()
-        val sessionId: String = encryptedSharedPrefs.getString("sessionId", null)!!
 
         favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId)
 

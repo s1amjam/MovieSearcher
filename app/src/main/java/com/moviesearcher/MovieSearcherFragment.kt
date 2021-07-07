@@ -58,12 +58,6 @@ class MovieSearcherFragment : BaseFragment() {
                 })
         }
 
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         progressBar.visibility = VISIBLE
 
         movieViewModel.movieItemLiveData.observe(
@@ -80,5 +74,7 @@ class MovieSearcherFragment : BaseFragment() {
                 true
             )
         )
+
+        return view
     }
 }

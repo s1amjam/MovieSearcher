@@ -14,14 +14,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.MediaId
+import com.moviesearcher.api.entity.list.Result
 import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.viewmodel.MyListsViewModel
 
 private const val TAG = "BaseFragment"
 
 open class BaseFragment : Fragment() {
-    private lateinit var sessionId: String
-    private var accountId: Int? = null
+    lateinit var sessionId: String
+    var accountId: Int = 0
     private lateinit var encryptedSharedPrefs: SharedPreferences
     private lateinit var myListsViewModel: MyListsViewModel
 
@@ -29,6 +30,10 @@ open class BaseFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
+        myListsViewModel = ViewModelProvider(this).get(MyListsViewModel::class.java)
+        encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
+        sessionId = encryptedSharedPrefs.getString("sessionId", "").toString()
+        accountId = encryptedSharedPrefs.getString("accountId", "")!!.toInt()
     }
 
     private fun showCreateNewListDialog() {
@@ -36,18 +41,28 @@ open class BaseFragment : Fragment() {
         dialog.show(childFragmentManager, "CreateNewListDialogFragment")
     }
 
-    fun showAddToListMenu(v: View, @MenuRes menuRes: Int) {
-        myListsViewModel = ViewModelProvider(this).get(MyListsViewModel::class.java)
+    fun getLists(): MutableList<Result> {
+        val resultList = mutableListOf<Result>()
 
+        if (sessionId != "") {
+            myListsViewModel.getLists(accountId, sessionId, 1)
+
+            myListsViewModel.myListsItemLiveData.observe(
+                viewLifecycleOwner,
+                { myListItems ->
+                    myListItems.results?.forEach { it ->
+                        resultList.add(it)
+                    }
+                })
+        }
+
+        return resultList
+    }
+
+    fun showAddToListMenu(v: View, @MenuRes menuRes: Int, resultList: MutableList<Result>) {
         val movieId = requireArguments().getInt("movie_id")
         val tvId = requireArguments().getInt("tv_id")
         val mediaId = if (movieId == 0) tvId else movieId
-
-        encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
-        sessionId = encryptedSharedPrefs.getString("sessionId", "").toString()
-        accountId = encryptedSharedPrefs.getString("accountId", "")?.toInt()
-
-        myListsViewModel.getLists(accountId!!, sessionId, 1)
 
         val popup = PopupMenu(requireContext(), v)
         popup.menuInflater.inflate(menuRes, popup.menu)
@@ -61,31 +76,27 @@ open class BaseFragment : Fragment() {
             true
         }
 
-        myListsViewModel.myListsItemLiveData.observe(
-            viewLifecycleOwner,
-            { myListItems ->
-                myListItems.results?.forEach { it ->
-                    popup.menu.add(Menu.NONE, it.id!!.toInt(), Menu.NONE, it.name)
-                    val menuItem = popup.menu.findItem(it.id.toInt())
+        resultList.forEach { it ->
+            popup.menu.add(Menu.NONE, it.id!!.toInt(), Menu.NONE, it.name)
+            val menuItem = popup.menu.findItem(it.id.toInt())
 
-                    myListsViewModel.checkItemStatus(it.id.toInt(), mediaId)
+            myListsViewModel.checkItemStatus(it.id.toInt(), mediaId)
 
-                    myListsViewModel.checkItemLiveData.observe(viewLifecycleOwner,
-                        { checkedItem ->
-                            if (checkedItem.itemPresent == true) {
-                                menuItem.isEnabled = false
-                                menuItem.title = menuItem.title.toString() + " (added)"
-                            } else {
-                                menuItem.setOnMenuItemClickListener {
-                                    Api.addToList(it.itemId, MediaId(mediaId), sessionId)
+            myListsViewModel.checkItemLiveData.observe(viewLifecycleOwner,
+                { checkedItem ->
+                    if (checkedItem.itemPresent == true) {
+                        menuItem.isEnabled = false
+                        menuItem.title = menuItem.title.toString() + " (added)"
+                    } else {
+                        menuItem.setOnMenuItemClickListener {
+                            Api.addToList(it.itemId, MediaId(mediaId), sessionId)
 
-                                    true
-                                }
-                            }
-                        })
-                }
-                popup.show()
-            })
+                            true
+                        }
+                    }
+                })
+        }
+        popup.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
