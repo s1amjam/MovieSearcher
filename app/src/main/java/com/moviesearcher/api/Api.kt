@@ -15,6 +15,7 @@ import com.moviesearcher.api.entity.list.CreateNewList
 import com.moviesearcher.api.entity.list.CreateNewListResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.list.ListsResponse
+import com.moviesearcher.api.entity.list.RemoveFromListResponse
 import com.moviesearcher.api.entity.list.add.AddToListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
@@ -512,6 +513,33 @@ object Api {
 
             override fun onFailure(
                 call: Call<CreateNewListResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun removeFromList(
+        listId: Int,
+        sessionId: String,
+        mediaId: MediaId
+    ): MutableLiveData<RemoveFromListResponse> {
+        val responseLiveData: MutableLiveData<RemoveFromListResponse> = MutableLiveData()
+        val resp = ApiService.create().removeFromList(listId, sessionId, mediaId)
+
+        resp.enqueue(object : Callback<RemoveFromListResponse> {
+            override fun onResponse(
+                call: Call<RemoveFromListResponse>,
+                response: Response<RemoveFromListResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<RemoveFromListResponse>,
                 t: Throwable
             ) {
 

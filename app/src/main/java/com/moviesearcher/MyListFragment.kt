@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -15,7 +14,7 @@ import com.moviesearcher.viewmodel.MyListViewModel
 
 private const val TAG = "FavoritesFragment"
 
-class MyListFragment : Fragment() {
+class MyListFragment : BaseFragment() {
     private val args by navArgs<MyListFragmentArgs>()
     private lateinit var myListRecyclerView: RecyclerView
     private lateinit var myListViewModel: MyListViewModel
@@ -38,7 +37,12 @@ class MyListFragment : Fragment() {
         myListViewModel.myListItemLiveData.observe(
             viewLifecycleOwner,
             { myListItems ->
-                myListRecyclerView.adapter = MyListAdapter(myListItems, findNavController())
+                myListRecyclerView.adapter = MyListAdapter(
+                    myListItems,
+                    findNavController(),
+                    args.listId,
+                    sessionId
+                )
             })
 
         return view

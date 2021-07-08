@@ -16,7 +16,7 @@ data class ListResponse(
     @SerializedName("item_count")
     val itemCount: Int?,
     @SerializedName("items")
-    val items: List<Item>?,
+    val items: MutableList<Item>?,
     @SerializedName("name")
     val name: String?,
     @SerializedName("poster_path")

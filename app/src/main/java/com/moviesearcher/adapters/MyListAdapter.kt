@@ -3,13 +3,17 @@ package com.moviesearcher.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.moviesearcher.MyListFragmentDirections
 import com.moviesearcher.R
+import com.moviesearcher.api.Api
+import com.moviesearcher.api.entity.MediaId
 import com.moviesearcher.api.entity.list.Item
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.utils.Constants
@@ -17,8 +21,12 @@ import com.squareup.picasso.Picasso
 
 class MyListAdapter(
     private val listItems: ListResponse,
-    private val navController: NavController
+    private val navController: NavController,
+    private val listId: Int,
+    private val sessionId: String
 ) : RecyclerView.Adapter<MyListAdapter.MyListViewHolder>() {
+    private var adapterPos: Int = 0
+    private var itemPos: Int = 0
 
     class MyListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val myListItemPoster: ImageView = view.findViewById(R.id.image_view_my_list_item)
@@ -44,6 +52,8 @@ class MyListAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.fragment_my_list_item, parent, false)
         val cardView: MaterialCardView = view.findViewById(R.id.material_card_view_my_list_item)
+        val imageButtonRemoveFromList: ImageButton =
+            view.findViewById(R.id.image_button_remove_from_list)
 
         cardView.setOnClickListener {
             val mediaId = it.id
@@ -64,11 +74,26 @@ class MyListAdapter(
             }
         }
 
+        imageButtonRemoveFromList.setOnClickListener {
+            val removeFromListResponse =
+                Api.removeFromList(listId, sessionId, MediaId(cardView.id))
+
+            removeFromListResponse.observe(view.findViewTreeLifecycleOwner()!!, {
+                if (it.statusMessage == "The item/record was deleted successfully.") {
+                    listItems.items!!.removeAt(this.itemPos)
+                    this.notifyItemRemoved(adapterPos)
+                }
+            })
+        }
+
         return MyListViewHolder(view)
     }
 
     override fun getItemCount(): Int = listItems.items?.size!!
     override fun onBindViewHolder(holder: MyListViewHolder, position: Int) {
+        adapterPos = holder.adapterPosition
+        itemPos = position
+
         val listItem = listItems.items?.get(position)
         holder.bind(listItem!!)
     }

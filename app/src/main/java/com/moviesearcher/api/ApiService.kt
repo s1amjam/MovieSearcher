@@ -14,6 +14,7 @@ import com.moviesearcher.api.entity.list.CreateNewList
 import com.moviesearcher.api.entity.list.CreateNewListResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.list.ListsResponse
+import com.moviesearcher.api.entity.list.RemoveFromListResponse
 import com.moviesearcher.api.entity.list.add.AddToListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
@@ -179,4 +180,12 @@ interface ApiService {
         @Query("session_id") sessionId: String?,
         @Body createNewList: CreateNewList
     ): Call<CreateNewListResponse>
+
+    @POST("list/{list_id}/remove_item")
+    @Headers("Content-Type: application/json;charset=utf-8")
+    fun removeFromList(
+        @Path("list_id") listId: Int,
+        @Query("session_id") sessionId: String?,
+        @Body mediaId: MediaId
+    ): Call<RemoveFromListResponse>
 }
