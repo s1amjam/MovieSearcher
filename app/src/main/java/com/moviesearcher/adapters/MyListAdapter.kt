@@ -25,8 +25,8 @@ class MyListAdapter(
     private val listId: Int,
     private val sessionId: String
 ) : RecyclerView.Adapter<MyListAdapter.MyListViewHolder>() {
-    private var adapterPos: Int = 0
-    private var itemPos: Int = 0
+    private var adapterPos: Int = -1
+    private var itemPos: Int = -1
 
     class MyListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val myListItemPoster: ImageView = view.findViewById(R.id.image_view_my_list_item)
@@ -75,8 +75,7 @@ class MyListAdapter(
         }
 
         imageButtonRemoveFromList.setOnClickListener {
-            val removeFromListResponse =
-                Api.removeFromList(listId, sessionId, MediaId(cardView.id))
+            val removeFromListResponse = Api.removeFromList(listId, sessionId, MediaId(cardView.id))
 
             removeFromListResponse.observe(view.findViewTreeLifecycleOwner()!!, {
                 if (it.statusMessage == "The item/record was deleted successfully.") {

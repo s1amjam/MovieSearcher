@@ -14,7 +14,7 @@ import com.moviesearcher.api.entity.list.CreateNewList
 import com.moviesearcher.api.entity.list.CreateNewListResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.list.ListsResponse
-import com.moviesearcher.api.entity.list.RemoveFromListResponse
+import com.moviesearcher.api.entity.list.ModifyListResponse
 import com.moviesearcher.api.entity.list.add.AddToListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
@@ -35,6 +35,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.HTTP
 import retrofit2.http.Headers
@@ -187,5 +188,11 @@ interface ApiService {
         @Path("list_id") listId: Int,
         @Query("session_id") sessionId: String?,
         @Body mediaId: MediaId
-    ): Call<RemoveFromListResponse>
+    ): Call<ModifyListResponse>
+
+    @DELETE("list/{list_id}")
+    fun deleteList(
+        @Path("list_id") listId: Int,
+        @Query("session_id") sessionId: String
+    ): Call<ModifyListResponse>
 }

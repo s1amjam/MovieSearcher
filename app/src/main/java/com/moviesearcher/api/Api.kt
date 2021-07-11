@@ -15,7 +15,7 @@ import com.moviesearcher.api.entity.list.CreateNewList
 import com.moviesearcher.api.entity.list.CreateNewListResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.list.ListsResponse
-import com.moviesearcher.api.entity.list.RemoveFromListResponse
+import com.moviesearcher.api.entity.list.ModifyListResponse
 import com.moviesearcher.api.entity.list.add.AddToListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
@@ -526,20 +526,46 @@ object Api {
         listId: Int,
         sessionId: String,
         mediaId: MediaId
-    ): MutableLiveData<RemoveFromListResponse> {
-        val responseLiveData: MutableLiveData<RemoveFromListResponse> = MutableLiveData()
+    ): MutableLiveData<ModifyListResponse> {
+        val responseLiveData: MutableLiveData<ModifyListResponse> = MutableLiveData()
         val resp = ApiService.create().removeFromList(listId, sessionId, mediaId)
 
-        resp.enqueue(object : Callback<RemoveFromListResponse> {
+        resp.enqueue(object : Callback<ModifyListResponse> {
             override fun onResponse(
-                call: Call<RemoveFromListResponse>,
-                response: Response<RemoveFromListResponse>
+                call: Call<ModifyListResponse>,
+                response: Response<ModifyListResponse>
             ) {
                 responseLiveData.value = response.body()
             }
 
             override fun onFailure(
-                call: Call<RemoveFromListResponse>,
+                call: Call<ModifyListResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun deleteList(
+        listId: Int,
+        sessionId: String
+    ): MutableLiveData<ModifyListResponse> {
+        val responseLiveData: MutableLiveData<ModifyListResponse> = MutableLiveData()
+        val resp = ApiService.create().deleteList(listId, sessionId)
+
+        resp.enqueue(object : Callback<ModifyListResponse> {
+            override fun onResponse(
+                call: Call<ModifyListResponse>,
+                response: Response<ModifyListResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<ModifyListResponse>,
                 t: Throwable
             ) {
 

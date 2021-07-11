@@ -39,7 +39,8 @@ class MyListsFragment : BaseFragment() {
         myListsViewModel.myListsItemLiveData.observe(
             viewLifecycleOwner,
             { myListItems ->
-                myListsRecyclerView.adapter = MyListsAdapter(myListItems, findNavController())
+                myListsRecyclerView.adapter =
+                    MyListsAdapter(myListItems, findNavController(), sessionId)
             })
     }
 }
