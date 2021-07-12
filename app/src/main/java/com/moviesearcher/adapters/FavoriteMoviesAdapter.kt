@@ -52,7 +52,7 @@ class FavoriteMoviesAdapter(
 
             navController.navigate(
                 FavoritesFragmentDirections.actionFragmentFavoritesToMovieInfoFragment(
-                    movieId
+                    movieId.toLong()
                 )
             )
         }

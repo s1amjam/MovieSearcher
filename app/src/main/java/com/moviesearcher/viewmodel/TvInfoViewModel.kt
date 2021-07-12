@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.tvinfo.TvInfoResponse
 
-class TvInfoViewModel(tvId: Int) {
+class TvInfoViewModel(tvId: Long) {
     val tvInfoLiveData: LiveData<TvInfoResponse>
 
     init {

@@ -48,7 +48,7 @@ class RatedTvsAdapter(
             view.findViewById(R.id.material_card_view_rated_tv_item)
 
         cardView.setOnClickListener {
-            val tvId = it.id
+            val tvId = it.id.toLong()
 
             navController.navigate(
                 RatedFragmentDirections.actionRatedFragmentToTvInfoFragment(

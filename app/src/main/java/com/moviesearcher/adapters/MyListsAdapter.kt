@@ -31,8 +31,6 @@ class MyListsAdapter(
     class MyListsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val myListItemPoster: ImageView = view.findViewById(R.id.image_view_my_lists_item)
         private val myListItemName: TextView = view.findViewById(R.id.text_view_my_lists_item_name)
-        private val cardView: MaterialCardView =
-            view.findViewById(R.id.material_card_view_my_lists_item)
         var listId: Int = -1
 
         fun bind(myListResultItem: Result) {
@@ -61,7 +59,7 @@ class MyListsAdapter(
             )
         }
 
-        //TODO: for now its bugged
+        //TODO: for now its bugged on API provider side
         // https://trello.com/c/slruAstb/75-return-a-proper-response-when-lists-are-deleted
         imageButtonDeleteList.setOnClickListener {
             AlertDialog.Builder(view.context)

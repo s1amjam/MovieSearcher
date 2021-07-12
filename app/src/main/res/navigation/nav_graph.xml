@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_movie_info">
         <argument
             android:name="movie_id"
-            app:argType="integer" />
+            app:argType="long" />
         <action
             android:id="@+id/action_movie_info_fragment_to_search_result_fragment"
             app:destination="@id/search_result_fragment" />
@@ -42,7 +42,7 @@
         android:label="TvInfoFragment">
         <argument
             android:name="tv_id"
-            app:argType="integer" />
+            app:argType="long" />
         <action
             android:id="@+id/action_tv_info_fragment_to_search_result_fragment"
             app:destination="@id/search_result_fragment" />

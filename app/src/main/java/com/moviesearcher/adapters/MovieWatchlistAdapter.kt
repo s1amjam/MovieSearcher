@@ -48,7 +48,7 @@ class MovieWatchlistAdapter(
             view.findViewById(R.id.material_card_view_movie_watchlist_item)
 
         cardView.setOnClickListener {
-            val movieId = it.id
+            val movieId = it.id.toLong()
 
             navController.navigate(
                 WatchlistFragmentDirections.actionWatchlistFragmentToMovieInfoFragment(

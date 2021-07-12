@@ -13,7 +13,7 @@ import com.google.android.material.card.MaterialCardView
 import com.moviesearcher.MyListFragmentDirections
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
-import com.moviesearcher.api.entity.MediaId
+import com.moviesearcher.api.entity.common.MediaId
 import com.moviesearcher.api.entity.list.Item
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.utils.Constants
@@ -56,7 +56,7 @@ class MyListAdapter(
             view.findViewById(R.id.image_button_remove_from_list)
 
         cardView.setOnClickListener {
-            val mediaId = it.id
+            val mediaId = it.id.toLong()
             val mediaType = it.tag
 
             if (mediaType == "movie") {
@@ -75,7 +75,8 @@ class MyListAdapter(
         }
 
         imageButtonRemoveFromList.setOnClickListener {
-            val removeFromListResponse = Api.removeFromList(listId, sessionId, MediaId(cardView.id))
+            val removeFromListResponse =
+                Api.removeFromList(listId, sessionId, MediaId(cardView.id.toLong()))
 
             removeFromListResponse.observe(view.findViewTreeLifecycleOwner()!!, {
                 if (it.statusMessage == "The item/record was deleted successfully.") {

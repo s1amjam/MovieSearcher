@@ -52,7 +52,7 @@ class FavoriteTvsAdapter(
 
             navController.navigate(
                 FavoritesFragmentDirections.actionFragmentFavoritesToTvInfoFragment(
-                    tvId
+                    tvId.toLong()
                 )
             )
         }

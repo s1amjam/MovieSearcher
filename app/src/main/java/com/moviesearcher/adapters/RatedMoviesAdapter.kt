@@ -48,7 +48,7 @@ class RatedMoviesAdapter(
             view.findViewById(R.id.material_card_view_rated_movie_item)
 
         cardView.setOnClickListener {
-            val movieId = it.id
+            val movieId = it.id.toLong()
 
             navController.navigate(
                 RatedFragmentDirections.actionRatedFragmentToMovieInfoFragment(

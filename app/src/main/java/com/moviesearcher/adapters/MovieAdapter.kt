@@ -42,7 +42,7 @@ class MovieAdapter(
         posterImageView = view.findViewById(R.id.poster_image_view)
 
         posterImageView.setOnClickListener {
-            val movieId = it.id
+            val movieId = it.id.toLong()
 
             //Only 'Movie' has a 'title', 'Tv series' has a 'name'
             if (it.tag != null) {

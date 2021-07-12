@@ -1,20 +1,21 @@
 package com.moviesearcher.api
 
-import com.moviesearcher.api.entity.MediaId
 import com.moviesearcher.api.entity.account.AccountResponse
 import com.moviesearcher.api.entity.auth.CreateSessionResponse
 import com.moviesearcher.api.entity.auth.CreateTokenResponse
 import com.moviesearcher.api.entity.auth.DeleteSessionResponse
 import com.moviesearcher.api.entity.auth.RequestToken
 import com.moviesearcher.api.entity.auth.SessionId
+import com.moviesearcher.api.entity.common.MediaId
+import com.moviesearcher.api.entity.common.ResponseWithCodeAndMessage
 import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
+import com.moviesearcher.api.entity.favorites.MarkAsFavoriteRequest
 import com.moviesearcher.api.entity.list.CheckItemStatusResponse
 import com.moviesearcher.api.entity.list.CreateNewList
 import com.moviesearcher.api.entity.list.CreateNewListResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.list.ListsResponse
-import com.moviesearcher.api.entity.list.ModifyListResponse
 import com.moviesearcher.api.entity.list.add.AddToListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
@@ -83,10 +84,10 @@ interface ApiService {
     ): Call<TrendingResponse>
 
     @GET("movie/{movie_id}")
-    fun movieInfo(@Path("movie_id") movieId: Int): Call<MovieInfoResponse>
+    fun movieInfo(@Path("movie_id") movieId: Long): Call<MovieInfoResponse>
 
     @GET("tv/{tv_id}")
-    fun tvInfo(@Path("tv_id") tvId: Int): Call<TvInfoResponse>
+    fun tvInfo(@Path("tv_id") tvId: Long): Call<TvInfoResponse>
 
     @GET("search/multi")
     fun search(
@@ -172,7 +173,7 @@ interface ApiService {
     @GET("list/{list_id}/item_status")
     fun checkItemStatus(
         @Path("list_id") listId: Int,
-        @Query("movie_id") movieId: Int
+        @Query("movie_id") movieId: Long
     ): Call<CheckItemStatusResponse>
 
     @POST("list")
@@ -188,11 +189,19 @@ interface ApiService {
         @Path("list_id") listId: Int,
         @Query("session_id") sessionId: String?,
         @Body mediaId: MediaId
-    ): Call<ModifyListResponse>
+    ): Call<ResponseWithCodeAndMessage>
 
     @DELETE("list/{list_id}")
     fun deleteList(
         @Path("list_id") listId: Int,
         @Query("session_id") sessionId: String
-    ): Call<ModifyListResponse>
+    ): Call<ResponseWithCodeAndMessage>
+
+    @POST("account/{account_id}/favorite")
+    @Headers("Content-Type: application/json;charset=utf-8")
+    fun markAsFavorite(
+        @Path("account_id") accountId: Int,
+        @Query("session_id") sessionId: String?,
+        @Body markAsFavorite: MarkAsFavoriteRequest
+    ): Call<ResponseWithCodeAndMessage>
 }

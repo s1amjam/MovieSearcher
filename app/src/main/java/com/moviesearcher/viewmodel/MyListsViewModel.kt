@@ -14,7 +14,7 @@ class MyListsViewModel : ViewModel() {
         myListsItemLiveData = Api.getLists(accountId, sessionId, page)
     }
 
-    fun checkItemStatus(listId: Int, movieId: Int) {
+    fun checkItemStatus(listId: Int, movieId: Long) {
         checkItemLiveData = Api.checkItemStatus(listId, movieId)
     }
 }

@@ -50,7 +50,7 @@ class SearchAdapter(
         val searchItemPoster: ImageView = view.findViewById(R.id.search_item_fragment_imageview)
 
         searchItemPoster.setOnClickListener {
-            val movieId = it.id
+            val movieId = it.id.toLong()
 
             //Only 'Movie' has a 'title', 'Tv series' has a 'name'
             if (it.tag == "movie") {

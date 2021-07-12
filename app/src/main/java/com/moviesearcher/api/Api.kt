@@ -1,21 +1,22 @@
 package com.moviesearcher.api
 
 import androidx.lifecycle.MutableLiveData
-import com.moviesearcher.api.entity.MediaId
 import com.moviesearcher.api.entity.account.AccountResponse
 import com.moviesearcher.api.entity.auth.CreateSessionResponse
 import com.moviesearcher.api.entity.auth.CreateTokenResponse
 import com.moviesearcher.api.entity.auth.DeleteSessionResponse
 import com.moviesearcher.api.entity.auth.RequestToken
 import com.moviesearcher.api.entity.auth.SessionId
+import com.moviesearcher.api.entity.common.MediaId
+import com.moviesearcher.api.entity.common.ResponseWithCodeAndMessage
 import com.moviesearcher.api.entity.favorites.FavoriteMovieResponse
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
+import com.moviesearcher.api.entity.favorites.MarkAsFavoriteRequest
 import com.moviesearcher.api.entity.list.CheckItemStatusResponse
 import com.moviesearcher.api.entity.list.CreateNewList
 import com.moviesearcher.api.entity.list.CreateNewListResponse
 import com.moviesearcher.api.entity.list.ListResponse
 import com.moviesearcher.api.entity.list.ListsResponse
-import com.moviesearcher.api.entity.list.ModifyListResponse
 import com.moviesearcher.api.entity.list.add.AddToListResponse
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
@@ -57,7 +58,7 @@ object Api {
         return responseLiveData
     }
 
-    fun getMovieInfo(movieId: Int): MutableLiveData<MovieInfoResponse> {
+    fun getMovieInfo(movieId: Long): MutableLiveData<MovieInfoResponse> {
         val responseLiveData: MutableLiveData<MovieInfoResponse> = MutableLiveData()
         val resp = ApiService.create().movieInfo(movieId)
 
@@ -80,7 +81,7 @@ object Api {
         return responseLiveData
     }
 
-    fun getTvInfo(tvId: Int): MutableLiveData<TvInfoResponse> {
+    fun getTvInfo(tvId: Long): MutableLiveData<TvInfoResponse> {
         val responseLiveData: MutableLiveData<TvInfoResponse> = MutableLiveData()
         val resp = ApiService.create().tvInfo(tvId)
 
@@ -473,7 +474,7 @@ object Api {
         return responseLiveData
     }
 
-    fun checkItemStatus(listId: Int, movieId: Int): MutableLiveData<CheckItemStatusResponse> {
+    fun checkItemStatus(listId: Int, movieId: Long): MutableLiveData<CheckItemStatusResponse> {
         val responseLiveData: MutableLiveData<CheckItemStatusResponse> = MutableLiveData()
         val resp = ApiService.create().checkItemStatus(listId, movieId)
 
@@ -526,20 +527,20 @@ object Api {
         listId: Int,
         sessionId: String,
         mediaId: MediaId
-    ): MutableLiveData<ModifyListResponse> {
-        val responseLiveData: MutableLiveData<ModifyListResponse> = MutableLiveData()
+    ): MutableLiveData<ResponseWithCodeAndMessage> {
+        val responseLiveData: MutableLiveData<ResponseWithCodeAndMessage> = MutableLiveData()
         val resp = ApiService.create().removeFromList(listId, sessionId, mediaId)
 
-        resp.enqueue(object : Callback<ModifyListResponse> {
+        resp.enqueue(object : Callback<ResponseWithCodeAndMessage> {
             override fun onResponse(
-                call: Call<ModifyListResponse>,
-                response: Response<ModifyListResponse>
+                call: Call<ResponseWithCodeAndMessage>,
+                response: Response<ResponseWithCodeAndMessage>
             ) {
                 responseLiveData.value = response.body()
             }
 
             override fun onFailure(
-                call: Call<ModifyListResponse>,
+                call: Call<ResponseWithCodeAndMessage>,
                 t: Throwable
             ) {
 
@@ -552,20 +553,47 @@ object Api {
     fun deleteList(
         listId: Int,
         sessionId: String
-    ): MutableLiveData<ModifyListResponse> {
-        val responseLiveData: MutableLiveData<ModifyListResponse> = MutableLiveData()
+    ): MutableLiveData<ResponseWithCodeAndMessage> {
+        val responseLiveData: MutableLiveData<ResponseWithCodeAndMessage> = MutableLiveData()
         val resp = ApiService.create().deleteList(listId, sessionId)
 
-        resp.enqueue(object : Callback<ModifyListResponse> {
+        resp.enqueue(object : Callback<ResponseWithCodeAndMessage> {
             override fun onResponse(
-                call: Call<ModifyListResponse>,
-                response: Response<ModifyListResponse>
+                call: Call<ResponseWithCodeAndMessage>,
+                response: Response<ResponseWithCodeAndMessage>
             ) {
                 responseLiveData.value = response.body()
             }
 
             override fun onFailure(
-                call: Call<ModifyListResponse>,
+                call: Call<ResponseWithCodeAndMessage>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun markAsFavorite(
+        accountId: Int,
+        sessionId: String,
+        markAsFavorite: MarkAsFavoriteRequest
+    ): MutableLiveData<ResponseWithCodeAndMessage> {
+        val responseLiveData: MutableLiveData<ResponseWithCodeAndMessage> = MutableLiveData()
+        val resp = ApiService.create().markAsFavorite(accountId, sessionId, markAsFavorite)
+
+        resp.enqueue(object : Callback<ResponseWithCodeAndMessage> {
+            override fun onResponse(
+                call: Call<ResponseWithCodeAndMessage>,
+                response: Response<ResponseWithCodeAndMessage>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<ResponseWithCodeAndMessage>,
                 t: Throwable
             ) {
 

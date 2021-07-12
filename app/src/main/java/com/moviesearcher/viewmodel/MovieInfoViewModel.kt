@@ -8,7 +8,7 @@ import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 class MovieInfoViewModel : ViewModel() {
     lateinit var movieInfoLiveData: LiveData<MovieInfoResponse>
 
-    fun getMovieInfoById(movieId: Int) {
+    fun getMovieInfoById(movieId: Long) {
         val movieInfoResponse = Api.getMovieInfo(movieId)
         this.movieInfoLiveData = movieInfoResponse
     }

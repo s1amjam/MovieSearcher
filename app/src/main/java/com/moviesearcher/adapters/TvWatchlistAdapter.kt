@@ -48,7 +48,7 @@ class TvWatchlistAdapter(
             view.findViewById(R.id.material_card_view_tv_watchlist_item)
 
         cardView.setOnClickListener {
-            val tvId = it.id
+            val tvId = it.id.toLong()
 
             navController.navigate(
                 WatchlistFragmentDirections.actionWatchlistFragmentToTvInfoFragment(
