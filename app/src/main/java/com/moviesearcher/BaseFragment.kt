@@ -17,6 +17,7 @@ import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.common.MediaId
 import com.moviesearcher.api.entity.favorites.MarkAsFavoriteRequest
 import com.moviesearcher.api.entity.list.Result
+import com.moviesearcher.api.entity.watchlist.WatchlistRequest
 import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.viewmodel.MyListsViewModel
 
@@ -28,6 +29,7 @@ open class BaseFragment : Fragment() {
     private lateinit var encryptedSharedPrefs: SharedPreferences
     private lateinit var myListsViewModel: MyListsViewModel
     private var isFavorite = true
+    private var isWatchlist = true
     private lateinit var mediaInfo: MutableMap<String, Long>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -188,6 +190,53 @@ open class BaseFragment : Fragment() {
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
                 isFavorite = true
                 checkFavorites(button)
+            }
+        })
+    }
+
+    fun checkWatchlist(button: Button) {
+        mediaInfo = getMediaInfo()
+        val mediaId = mediaInfo.values.first()
+        val mediaKey = mediaInfo.keys.first()
+        val moviesWatchlist = Api.getMovieWatchlist(accountId, sessionId)
+        val tvsWatchlist = Api.getTvWatchlist(accountId, sessionId)
+
+        if (mediaKey == "movie") {
+            moviesWatchlist.observe(viewLifecycleOwner, { favoriteItem ->
+                button.text = "Add to Watchlist"
+                favoriteItem.results!!.forEach {
+                    if (it.id == mediaId) {
+                        isWatchlist = false
+                        button.text = "Remove From Watchlist"
+                    }
+                }
+            })
+        } else {
+            tvsWatchlist.observe(viewLifecycleOwner, { favoriteItem ->
+                button.text = "Add to Watchlist"
+                favoriteItem.results!!.forEach {
+                    if (it.id == mediaId) {
+                        isWatchlist = false
+                        button.text = "Remove From Watchlist"
+                    }
+                }
+            })
+        }
+    }
+
+    fun watchlist(button: Button) {
+        mediaInfo = getMediaInfo()
+
+        val markAsFavorite = Api.watchlist(
+            accountId,
+            sessionId,
+            WatchlistRequest(isWatchlist, mediaInfo.values.first(), mediaInfo.keys.first())
+        )
+
+        markAsFavorite.observe(viewLifecycleOwner, {
+            if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
+                isWatchlist = true
+                checkWatchlist(button)
             }
         })
     }

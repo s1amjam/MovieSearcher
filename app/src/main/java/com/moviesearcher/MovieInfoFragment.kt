@@ -30,6 +30,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var movieInfoConstraintLayout: ConstraintLayout
     private lateinit var menuButtonAddToList: Button
     private lateinit var buttonMarkMovieAsFavorite: Button
+    private lateinit var buttonWatchlist: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,6 +49,7 @@ class MovieInfoFragment : BaseFragment() {
         movieInfoOverview = view.findViewById(R.id.movie_info_overview)
         menuButtonAddToList = view.findViewById(R.id.menu_button_add_movie_to_list)
         buttonMarkMovieAsFavorite = view.findViewById(R.id.button_mark_movie_as_favorite)
+        buttonWatchlist = view.findViewById(R.id.button_watchlist)
 
         menuButtonAddToList.isVisible = sessionId != ""
 
@@ -84,6 +86,12 @@ class MovieInfoFragment : BaseFragment() {
 
         buttonMarkMovieAsFavorite.setOnClickListener {
             markAsFavorite(buttonMarkMovieAsFavorite)
+        }
+
+        checkWatchlist(buttonWatchlist)
+
+        buttonWatchlist.setOnClickListener {
+            watchlist(buttonWatchlist)
         }
 
         return view

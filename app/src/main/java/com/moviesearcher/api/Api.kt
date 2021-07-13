@@ -25,6 +25,7 @@ import com.moviesearcher.api.entity.rated.tvepisode.RatedTvEpisodesResponse
 import com.moviesearcher.api.entity.search.SearchResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
 import com.moviesearcher.api.entity.tvinfo.TvInfoResponse
+import com.moviesearcher.api.entity.watchlist.WatchlistRequest
 import com.moviesearcher.api.entity.watchlist.movie.MovieWatchlistResponse
 import com.moviesearcher.api.entity.watchlist.tv.TvWatchlistResponse
 import retrofit2.Call
@@ -583,6 +584,33 @@ object Api {
     ): MutableLiveData<ResponseWithCodeAndMessage> {
         val responseLiveData: MutableLiveData<ResponseWithCodeAndMessage> = MutableLiveData()
         val resp = ApiService.create().markAsFavorite(accountId, sessionId, markAsFavorite)
+
+        resp.enqueue(object : Callback<ResponseWithCodeAndMessage> {
+            override fun onResponse(
+                call: Call<ResponseWithCodeAndMessage>,
+                response: Response<ResponseWithCodeAndMessage>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<ResponseWithCodeAndMessage>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun watchlist(
+        accountId: Int,
+        sessionId: String,
+        watchlist: WatchlistRequest
+    ): MutableLiveData<ResponseWithCodeAndMessage> {
+        val responseLiveData: MutableLiveData<ResponseWithCodeAndMessage> = MutableLiveData()
+        val resp = ApiService.create().watchlist(accountId, sessionId, watchlist)
 
         resp.enqueue(object : Callback<ResponseWithCodeAndMessage> {
             override fun onResponse(

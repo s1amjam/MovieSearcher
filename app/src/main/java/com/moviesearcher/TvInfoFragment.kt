@@ -29,6 +29,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var tvInfoConstraintLayout: ConstraintLayout
     private lateinit var menuButtonAddToList: Button
     private lateinit var buttonMarkTvAsFavorite: Button
+    private lateinit var buttonWatchlist: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +48,7 @@ class TvInfoFragment : BaseFragment() {
         tvInfoOverview = view.findViewById(R.id.tv_info_overview)
         menuButtonAddToList = view.findViewById(R.id.menu_button_add_tv_to_list)
         buttonMarkTvAsFavorite = view.findViewById(R.id.button_mark_tv_as_favorite)
+        buttonWatchlist = view.findViewById(R.id.button_watchlist)
 
         menuButtonAddToList.isVisible = sessionId != ""
 
@@ -77,6 +79,12 @@ class TvInfoFragment : BaseFragment() {
 
         buttonMarkTvAsFavorite.setOnClickListener {
             markAsFavorite(buttonMarkTvAsFavorite)
+        }
+
+        checkWatchlist(buttonWatchlist)
+
+        buttonWatchlist.setOnClickListener {
+            watchlist(buttonWatchlist)
         }
 
         return view

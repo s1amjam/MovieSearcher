@@ -24,6 +24,7 @@ import com.moviesearcher.api.entity.rated.tvepisode.RatedTvEpisodesResponse
 import com.moviesearcher.api.entity.search.SearchResponse
 import com.moviesearcher.api.entity.trending.TrendingResponse
 import com.moviesearcher.api.entity.tvinfo.TvInfoResponse
+import com.moviesearcher.api.entity.watchlist.WatchlistRequest
 import com.moviesearcher.api.entity.watchlist.movie.MovieWatchlistResponse
 import com.moviesearcher.api.entity.watchlist.tv.TvWatchlistResponse
 import com.moviesearcher.utils.Constants
@@ -203,5 +204,13 @@ interface ApiService {
         @Path("account_id") accountId: Int,
         @Query("session_id") sessionId: String?,
         @Body markAsFavorite: MarkAsFavoriteRequest
+    ): Call<ResponseWithCodeAndMessage>
+
+    @POST("account/{account_id}/watchlist")
+    @Headers("Content-Type: application/json;charset=utf-8")
+    fun watchlist(
+        @Path("account_id") accountId: Int,
+        @Query("session_id") sessionId: String?,
+        @Body watchlist: WatchlistRequest
     ): Call<ResponseWithCodeAndMessage>
 }
