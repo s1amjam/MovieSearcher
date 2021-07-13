@@ -18,7 +18,6 @@ import com.moviesearcher.viewmodel.TvViewModel
 
 private const val TAG = "MovieSearcherFragment"
 
-//TODO: loading indicator
 class MovieSearcherFragment : BaseFragment() {
     private lateinit var movieRecyclerView: RecyclerView
     private lateinit var movieViewModel: MovieViewModel

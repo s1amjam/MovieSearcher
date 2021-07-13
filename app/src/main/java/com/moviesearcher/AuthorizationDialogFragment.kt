@@ -32,7 +32,6 @@ class AuthorizationDialogFragment : DialogFragment() {
     private var accountId: Int? = null
     private var includeAdult = false
 
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext())
             .setView(R.layout.fragment_authorization_dialog)

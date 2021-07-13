@@ -28,6 +28,7 @@ open class BaseFragment : Fragment() {
     private lateinit var encryptedSharedPrefs: SharedPreferences
     private lateinit var myListsViewModel: MyListsViewModel
     private var isFavorite = true
+    private lateinit var mediaInfo: MutableMap<String, Long>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,23 +92,23 @@ open class BaseFragment : Fragment() {
         return resultList
     }
 
-    private fun movieOrTv(): MutableMap<String, Long> {
+    private fun getMediaInfo(): MutableMap<String, Long> {
         val movieId = requireArguments().getLong("movie_id")
         val tvId = requireArguments().getLong("tv_id")
         val emptyMediaId: Long = 0
-        val mediaMap: MutableMap<String, Long> = mutableMapOf()
+        val mediaInfo: MutableMap<String, Long> = mutableMapOf()
 
         if (movieId == emptyMediaId) {
-            mediaMap["tv"] = tvId
+            mediaInfo["tv"] = tvId
         } else {
-            mediaMap["movie"] = movieId
+            mediaInfo["movie"] = movieId
         }
 
-        return mediaMap
+        return mediaInfo
     }
 
     fun showAddToListMenu(v: View, @MenuRes menuRes: Int, resultList: MutableList<Result>) {
-        val mediaId = movieOrTv()
+        val mediaId = getMediaInfo().values.first()
 
         val popup = PopupMenu(requireContext(), v)
         popup.menuInflater.inflate(menuRes, popup.menu)
@@ -125,7 +126,7 @@ open class BaseFragment : Fragment() {
             popup.menu.add(Menu.NONE, it.id!!.toInt(), Menu.NONE, it.name)
             val menuItem = popup.menu.findItem(it.id.toInt())
 
-            myListsViewModel.checkItemStatus(it.id.toInt(), mediaId.values.first())
+            myListsViewModel.checkItemStatus(it.id.toInt(), mediaId)
 
             myListsViewModel.checkItemLiveData.observe(viewLifecycleOwner,
                 { checkedItem ->
@@ -134,7 +135,7 @@ open class BaseFragment : Fragment() {
                         menuItem.title = menuItem.title.toString() + " (added)"
                     } else {
                         menuItem.setOnMenuItemClickListener {
-                            Api.addToList(it.itemId, MediaId(mediaId.values.first()), sessionId)
+                            Api.addToList(it.itemId, MediaId(mediaId), sessionId)
 
                             true
                         }
@@ -145,27 +146,27 @@ open class BaseFragment : Fragment() {
     }
 
     fun checkFavorites(button: Button) {
-        val mediaId = movieOrTv()
+        mediaInfo = getMediaInfo()
+        val mediaId = mediaInfo.values.first()
+        val mediaKey = mediaInfo.keys.first()
+        val favoriteMovies = Api.getFavoriteMovies(accountId, sessionId)
+        val favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
 
-        if (mediaId.keys.first() == "movie") {
-            val favorites = Api.getFavoriteMovies(accountId, sessionId)
-
-            favorites.observe(viewLifecycleOwner, { favorite ->
+        if (mediaKey == "movie") {
+            favoriteMovies.observe(viewLifecycleOwner, { favoriteItem ->
                 button.text = "Mark As Favorite"
-                favorite.results!!.forEach {
-                    if (it.id == mediaId.values.first()) {
+                favoriteItem.results!!.forEach {
+                    if (it.id == mediaId) {
                         isFavorite = false
                         button.text = "Remove From Favorite"
                     }
                 }
             })
         } else {
-            val favorites = Api.getFavoriteTvs(accountId, sessionId)
-
-            favorites.observe(viewLifecycleOwner, { favorite ->
+            favoriteTvs.observe(viewLifecycleOwner, { favoriteItem ->
                 button.text = "Mark As Favorite"
-                favorite.results!!.forEach {
-                    if (it.id == mediaId.values.first()) {
+                favoriteItem.results!!.forEach {
+                    if (it.id == mediaId) {
                         isFavorite = false
                         button.text = "Remove From Favorite"
                     }
@@ -175,12 +176,12 @@ open class BaseFragment : Fragment() {
     }
 
     fun markAsFavorite(button: Button) {
-        val mediaId = movieOrTv()
+        mediaInfo = getMediaInfo()
 
         val markAsFavorite = Api.markAsFavorite(
             accountId,
             sessionId,
-            MarkAsFavoriteRequest(isFavorite, mediaId.values.first(), mediaId.keys.first())
+            MarkAsFavoriteRequest(isFavorite, mediaInfo.values.first(), mediaInfo.keys.first())
         )
 
         markAsFavorite.observe(viewLifecycleOwner, {
