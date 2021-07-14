@@ -6,9 +6,11 @@ import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.favorites.FavoriteTvResponse
 
 class FavoriteTvsViewModel : ViewModel() {
-    lateinit var favoriteTvsItemLiveData: LiveData<FavoriteTvResponse>
+    lateinit var favoriteTvs: LiveData<FavoriteTvResponse>
 
-    fun getFavoriteTvs(accountId: Int, sessionId: String) {
-        favoriteTvsItemLiveData = Api.getFavoriteTvs(accountId, sessionId)
+    fun getFavoriteTvs(accountId: Int, sessionId: String): LiveData<FavoriteTvResponse> {
+        favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
+
+        return favoriteTvs
     }
 }

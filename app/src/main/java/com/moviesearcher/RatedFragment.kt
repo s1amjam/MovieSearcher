@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,9 +20,9 @@ private const val TAG = "RatedFragment"
 
 class RatedFragment : BaseFragment() {
     private lateinit var ratedMoviesRecyclerView: RecyclerView
-    private lateinit var ratedMoviesViewModel: RatedMoviesViewModel
-    private lateinit var ratedTvEpisodesViewModel: RatedTvEpisodesViewModel
-    private lateinit var ratedTvsViewModel: RatedTvsViewModel
+    private val ratedMovies: RatedMoviesViewModel by viewModels()
+    private val ratedTvEpisodes: RatedTvEpisodesViewModel by viewModels()
+    private val ratedTvs: RatedTvsViewModel by viewModels()
     private lateinit var ratedMoviesButton: Button
     private lateinit var ratedTvsButton: Button
     private lateinit var ratedTvEpisodesButton: Button
@@ -32,17 +32,10 @@ class RatedFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(
-            R.layout.fragment_rated, container, false
-        )
+        val view = inflater.inflate(R.layout.fragment_rated, container, false)
 
         ratedMoviesRecyclerView = view.findViewById(R.id.fragment_rated_recycler_view)
         ratedMoviesRecyclerView.layoutManager = LinearLayoutManager(context)
-        ratedMoviesViewModel = ViewModelProvider(this)
-            .get(RatedMoviesViewModel::class.java)
-        ratedTvEpisodesViewModel = ViewModelProvider(this)
-            .get(RatedTvEpisodesViewModel::class.java)
-        ratedTvsViewModel = ViewModelProvider(this).get(RatedTvsViewModel::class.java)
         ratedMoviesButton = view.findViewById(R.id.button_rated_movies)
         ratedTvsButton = view.findViewById(R.id.button_rated_tvs)
         ratedTvEpisodesButton = view.findViewById(R.id.button_rated_tv_episodes)
@@ -53,9 +46,7 @@ class RatedFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        ratedMoviesViewModel.getRatedMovies(accountId, sessionId)
-
-        ratedMoviesViewModel.ratedMoviesItemLiveData.observe(
+        ratedMovies.getRatedMovies(accountId, sessionId).observe(
             viewLifecycleOwner,
             { ratedMovieItems ->
                 ratedMoviesRecyclerView.adapter =
@@ -63,9 +54,7 @@ class RatedFragment : BaseFragment() {
             })
 
         ratedMoviesButton.setOnClickListener {
-            ratedMoviesViewModel.getRatedMovies(accountId, sessionId)
-
-            ratedMoviesViewModel.ratedMoviesItemLiveData.observe(
+            ratedMovies.getRatedMovies(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { ratedMovieItems ->
                     ratedMoviesRecyclerView.adapter =
@@ -74,9 +63,7 @@ class RatedFragment : BaseFragment() {
         }
 
         ratedTvsButton.setOnClickListener {
-            ratedTvsViewModel.getRatedTvs(accountId, sessionId)
-
-            ratedTvsViewModel.ratedTvsItemLiveData.observe(
+            ratedTvs.getRatedTvs(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { ratedTvItems ->
                     ratedMoviesRecyclerView.adapter =
@@ -85,9 +72,7 @@ class RatedFragment : BaseFragment() {
         }
 
         ratedTvEpisodesButton.setOnClickListener {
-            ratedTvEpisodesViewModel.getRatedTvEpisodes(accountId, sessionId)
-
-            ratedTvEpisodesViewModel.ratedTvEpisodesItemLiveData.observe(
+            ratedTvEpisodes.getRatedTvEpisodes(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { ratedTvItems ->
                     ratedMoviesRecyclerView.adapter =

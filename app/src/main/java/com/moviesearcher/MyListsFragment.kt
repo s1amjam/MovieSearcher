@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +15,7 @@ private const val TAG = "MyListsFragment"
 
 class MyListsFragment : BaseFragment() {
     private lateinit var myListsRecyclerView: RecyclerView
-    private lateinit var myListsViewModel: MyListsViewModel
+    private val myListsViewModel: MyListsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,7 +26,6 @@ class MyListsFragment : BaseFragment() {
 
         myListsRecyclerView = view.findViewById(R.id.fragment_my_lists_recycler_view)
         myListsRecyclerView.layoutManager = LinearLayoutManager(context)
-        myListsViewModel = ViewModelProvider(this).get(MyListsViewModel::class.java)
 
         return view
     }
@@ -34,9 +33,7 @@ class MyListsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        myListsViewModel.getLists(accountId, sessionId, 1)
-
-        myListsViewModel.myListsItemLiveData.observe(
+        myListsViewModel.getLists(accountId, sessionId, 1).observe(
             viewLifecycleOwner,
             { myListItems ->
                 myListsRecyclerView.adapter =

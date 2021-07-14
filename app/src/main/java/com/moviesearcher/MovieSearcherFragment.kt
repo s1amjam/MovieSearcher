@@ -8,7 +8,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,8 +20,8 @@ private const val TAG = "MovieSearcherFragment"
 
 class MovieSearcherFragment : BaseFragment() {
     private lateinit var movieRecyclerView: RecyclerView
-    private lateinit var movieViewModel: MovieViewModel
-    private lateinit var tvViewModel: TvViewModel
+    private val movieViewModel: MovieViewModel by viewModels()
+    private val tvViewModel: TvViewModel by viewModels()
     private lateinit var trendingMovieButton: Button
     private lateinit var trendingTvButton: Button
     private lateinit var progressBar: ProgressBar
@@ -35,14 +35,11 @@ class MovieSearcherFragment : BaseFragment() {
         trendingMovieButton = view.findViewById(R.id.trending_movie_button)
         trendingTvButton = view.findViewById(R.id.trending_tv_button)
         movieRecyclerView.layoutManager = GridLayoutManager(context, 3)
-        movieViewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
         progressBar = view.findViewById(R.id.progress_bar_movie_searcher_fragment)
 
         //TODO: if we are going back from tv info, movies showing instead of tv
         trendingTvButton.setOnClickListener {
-            tvViewModel = ViewModelProvider(this).get(TvViewModel::class.java)
-
-            tvViewModel.tvItemLiveData.observe(
+            tvViewModel.tvs.observe(
                 viewLifecycleOwner,
                 { movieItems ->
                     movieRecyclerView.adapter = MovieAdapter(movieItems, findNavController())
@@ -50,7 +47,7 @@ class MovieSearcherFragment : BaseFragment() {
         }
 
         trendingMovieButton.setOnClickListener {
-            movieViewModel.movieItemLiveData.observe(
+            movieViewModel.trendingMovies.observe(
                 viewLifecycleOwner,
                 { movieItems ->
                     movieRecyclerView.adapter = MovieAdapter(movieItems, findNavController())
@@ -59,7 +56,7 @@ class MovieSearcherFragment : BaseFragment() {
 
         progressBar.visibility = VISIBLE
 
-        movieViewModel.movieItemLiveData.observe(
+        movieViewModel.trendingMovies.observe(
             viewLifecycleOwner,
             { movieItems ->
                 movieRecyclerView.adapter = MovieAdapter(movieItems, findNavController())

@@ -8,16 +8,18 @@ import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.search.SearchResponse
 
 class SearchViewModel : ViewModel() {
-    val searchItemLiveData: LiveData<SearchResponse>
+    private val searchItem: LiveData<SearchResponse>
     private var mutableQuery: MutableLiveData<String> = MutableLiveData()
 
     init {
-        searchItemLiveData = Transformations.switchMap(mutableQuery) { query ->
+        searchItem = Transformations.switchMap(mutableQuery) { query ->
             Api.search(query)
         }
     }
 
-    fun queryForSearch(query: String) {
+    fun queryForSearch(query: String): LiveData<SearchResponse> {
         mutableQuery.value = query
+
+        return searchItem
     }
 }

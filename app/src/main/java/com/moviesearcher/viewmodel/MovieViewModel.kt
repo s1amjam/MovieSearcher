@@ -6,9 +6,9 @@ import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.trending.TrendingResponse
 
 class MovieViewModel : ViewModel() {
-    val movieItemLiveData: LiveData<TrendingResponse>
+    val trendingMovies: LiveData<TrendingResponse>
 
     init {
-        movieItemLiveData = Api.getTrending("movie", "week")
+        trendingMovies = Api.getTrending("movie", "week")
     }
 }

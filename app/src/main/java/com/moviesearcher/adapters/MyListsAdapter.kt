@@ -31,15 +31,15 @@ class MyListsAdapter(
     class MyListsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val myListItemPoster: ImageView = view.findViewById(R.id.image_view_my_lists_item)
         private val myListItemName: TextView = view.findViewById(R.id.text_view_my_lists_item_name)
-        var listId: Int = -1
+        private val cardView: MaterialCardView = view.findViewById(R.id.material_card_view_my_lists_item)
 
         fun bind(myListResultItem: Result) {
             Picasso.get()
                 .load(Constants.IMAGE_URL + myListResultItem.posterPath)
                 .into(myListItemPoster)
 
-            listId = myListResultItem.id?.toInt()!!
             myListItemName.text = myListResultItem.name
+            cardView.id = myListResultItem.id!!.toInt()
         }
     }
 
@@ -49,8 +49,7 @@ class MyListsAdapter(
     ): MyListsViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.fragment_my_lists_item, parent, false)
-        val cardView: MaterialCardView =
-            view.findViewById(R.id.material_card_view_my_lists_item)
+        val cardView: MaterialCardView = view.findViewById(R.id.material_card_view_my_lists_item)
         val imageButtonDeleteList: ImageButton = view.findViewById(R.id.image_button_delete_list)
 
         cardView.setOnClickListener {
@@ -92,7 +91,6 @@ class MyListsAdapter(
     override fun onBindViewHolder(holder: MyListsViewHolder, position: Int) {
         adapterPos = holder.adapterPosition
         itemPos = position
-        listId = holder.listId
 
         val listItem = listItems.results?.get(position)
         holder.bind(listItem!!)

@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,10 +18,10 @@ private const val TAG = "FavoritesFragment"
 
 class FavoritesFragment : BaseFragment() {
     private lateinit var favoriteMoviesRecyclerView: RecyclerView
-    private lateinit var favoriteMoviesViewModel: FavoriteMoviesViewModel
+    private val favoriteMoviesViewModel: FavoriteMoviesViewModel by viewModels()
     private lateinit var favoriteMoviesButton: Button
     private lateinit var favoriteTvsButton: Button
-    private lateinit var favoriteTvsViewModel: FavoriteTvsViewModel
+    private val favoriteTvsViewModel: FavoriteTvsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,11 +34,8 @@ class FavoritesFragment : BaseFragment() {
 
         favoriteMoviesRecyclerView = view.findViewById(R.id.fragment_favorites_recycler_view)
         favoriteMoviesRecyclerView.layoutManager = LinearLayoutManager(context)
-        favoriteMoviesViewModel = ViewModelProvider(this)
-            .get(FavoriteMoviesViewModel::class.java)
         favoriteMoviesButton = view.findViewById(R.id.button_favorite_movies)
         favoriteTvsButton = view.findViewById(R.id.button_favorite_tvs)
-        favoriteTvsViewModel = ViewModelProvider(this).get(FavoriteTvsViewModel::class.java)
 
         return view
     }
@@ -46,9 +43,7 @@ class FavoritesFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId)
-
-        favoriteMoviesViewModel.favoriteMoviesItemLiveData.observe(
+        favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId).observe(
             viewLifecycleOwner,
             { favoriteMovieItems ->
                 favoriteMoviesRecyclerView.adapter =
@@ -56,9 +51,7 @@ class FavoritesFragment : BaseFragment() {
             })
 
         favoriteMoviesButton.setOnClickListener {
-            favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId)
-
-            favoriteMoviesViewModel.favoriteMoviesItemLiveData.observe(
+            favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { favoriteMovieItems ->
                     favoriteMoviesRecyclerView.adapter =
@@ -67,9 +60,7 @@ class FavoritesFragment : BaseFragment() {
         }
 
         favoriteTvsButton.setOnClickListener {
-            favoriteTvsViewModel.getFavoriteTvs(accountId, sessionId)
-
-            favoriteTvsViewModel.favoriteTvsItemLiveData.observe(
+            favoriteTvsViewModel.getFavoriteTvs(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { favoriteTvItems ->
                     favoriteMoviesRecyclerView.adapter =

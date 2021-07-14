@@ -6,9 +6,11 @@ import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.rated.movie.RatedMoviesResponse
 
 class RatedMoviesViewModel : ViewModel() {
-    lateinit var ratedMoviesItemLiveData: LiveData<RatedMoviesResponse>
+    private lateinit var ratedMovies: LiveData<RatedMoviesResponse>
 
-    fun getRatedMovies(accountId: Int, sessionId: String) {
-        ratedMoviesItemLiveData = Api.getRatedMovies(accountId, sessionId)
+    fun getRatedMovies(accountId: Int, sessionId: String): LiveData<RatedMoviesResponse> {
+        ratedMovies = Api.getRatedMovies(accountId, sessionId)
+
+        return ratedMovies
     }
 }

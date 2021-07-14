@@ -9,16 +9,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.viewmodel.MovieInfoViewModel
+import com.moviesearcher.viewmodel.MyListsViewModel
 import com.squareup.picasso.Picasso
 
 private const val TAG = "MovieInfoFragment"
 
 class MovieInfoFragment : BaseFragment() {
     private val args by navArgs<MovieInfoFragmentArgs>()
-    private lateinit var movieInfoViewModel: MovieInfoViewModel
+    private val movieInfoViewModel: MovieInfoViewModel by viewModels()
     private lateinit var movieInfoPosterImageView: ImageView
     private lateinit var movieInfoTitle: TextView
     private lateinit var movieInfoGenres: TextView
@@ -31,6 +33,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var menuButtonAddToList: Button
     private lateinit var buttonMarkMovieAsFavorite: Button
     private lateinit var buttonWatchlist: Button
+    private val myLists: MyListsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +41,6 @@ class MovieInfoFragment : BaseFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_movie_info, container, false)
         movieInfoConstraintLayout = view.findViewById(R.id.movie_info_constraint_layout)
-        movieInfoViewModel = MovieInfoViewModel()
         movieInfoPosterImageView = view.findViewById(R.id.movie_info_poster_image_view)
         movieInfoTitle = view.findViewById(R.id.movie_info_title)
         movieInfoGenres = view.findViewById(R.id.movie_info_genres)
@@ -54,12 +56,8 @@ class MovieInfoFragment : BaseFragment() {
         menuButtonAddToList.isVisible = sessionId != ""
 
         val movieId = args.movieId
-        movieInfoViewModel.getMovieInfoById(movieId)
 
-        val lists = getLists()
-
-
-        movieInfoViewModel.movieInfoLiveData.observe(
+        movieInfoViewModel.getMovieInfoById(movieId).observe(
             viewLifecycleOwner,
             { movieInfo ->
                 Picasso.get()
@@ -78,8 +76,10 @@ class MovieInfoFragment : BaseFragment() {
                 movieInfoOverview.text = movieInfo?.overview
             })
 
-        menuButtonAddToList.setOnClickListener {
-            showAddToListMenu(it, R.menu.list_popup_menu, lists)
+        menuButtonAddToList.setOnClickListener { v ->
+            myLists.getLists(accountId, sessionId, 1).observe(viewLifecycleOwner, {
+                showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
+            })
         }
 
         checkFavorites(buttonMarkMovieAsFavorite)

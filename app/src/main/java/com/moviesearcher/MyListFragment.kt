@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +17,7 @@ private const val TAG = "FavoritesFragment"
 class MyListFragment : BaseFragment() {
     private val args by navArgs<MyListFragmentArgs>()
     private lateinit var myListRecyclerView: RecyclerView
-    private lateinit var myListViewModel: MyListViewModel
+    private val myListViewModel: MyListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,11 +30,8 @@ class MyListFragment : BaseFragment() {
 
         myListRecyclerView = view.findViewById(R.id.fragment_my_list_recycler_view)
         myListRecyclerView.layoutManager = LinearLayoutManager(context)
-        myListViewModel = ViewModelProvider(this).get(MyListViewModel::class.java)
 
-        myListViewModel.getList(listId)
-
-        myListViewModel.myListItemLiveData.observe(
+        myListViewModel.getList(listId).observe(
             viewLifecycleOwner,
             { myListItems ->
                 myListRecyclerView.adapter = MyListAdapter(

@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +21,7 @@ private const val TAG = "SearchResultFragment"
 
 class SearchResultFragment : Fragment() {
     private lateinit var searchResultRecyclerView: RecyclerView
-    private lateinit var searchViewModel: SearchViewModel
+    private val searchViewModel: SearchViewModel by viewModels()
     private val args by navArgs<SearchResultFragmentArgs>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +61,6 @@ class SearchResultFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_search_result, container, false)
         searchResultRecyclerView = view.findViewById(R.id.search_result_recycler_view)
         searchResultRecyclerView.layoutManager = LinearLayoutManager(context)
-        searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
 
         return view
     }
@@ -70,9 +69,7 @@ class SearchResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val searchQuery = args.searchQuery
-        searchViewModel.queryForSearch(searchQuery)
-
-        searchViewModel.searchItemLiveData.observe(
+        searchViewModel.queryForSearch(searchQuery).observe(
             viewLifecycleOwner,
             { searchItems ->
                 searchResultRecyclerView.adapter = SearchAdapter(searchItems, findNavController())

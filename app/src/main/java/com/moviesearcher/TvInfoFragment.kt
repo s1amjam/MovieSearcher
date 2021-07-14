@@ -9,8 +9,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.moviesearcher.utils.Constants
+import com.moviesearcher.viewmodel.MyListsViewModel
 import com.moviesearcher.viewmodel.TvInfoViewModel
 import com.squareup.picasso.Picasso
 
@@ -18,7 +20,7 @@ private const val TAG = "TvInfoFragment"
 
 class TvInfoFragment : BaseFragment() {
     private val args by navArgs<TvInfoFragmentArgs>()
-    private lateinit var tvInfoViewModel: TvInfoViewModel
+    private val tvInfoViewModel: TvInfoViewModel by viewModels()
     private lateinit var tvInfoPosterImageView: ImageView
     private lateinit var tvInfoName: TextView
     private lateinit var tvInfoGenres: TextView
@@ -30,6 +32,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var menuButtonAddToList: Button
     private lateinit var buttonMarkTvAsFavorite: Button
     private lateinit var buttonWatchlist: Button
+    private val myLists: MyListsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +41,6 @@ class TvInfoFragment : BaseFragment() {
         val view = inflater.inflate(R.layout.fragment_tv_info, container, false)
         val tvId = args.tvId
         tvInfoConstraintLayout = view.findViewById(R.id.tv_info_constraint_layout)
-        tvInfoViewModel = TvInfoViewModel(tvId)
         tvInfoPosterImageView = view.findViewById(R.id.tv_info_poster_image_view)
         tvInfoName = view.findViewById(R.id.tv_info_name)
         tvInfoGenres = view.findViewById(R.id.tv_info_genres)
@@ -52,9 +54,7 @@ class TvInfoFragment : BaseFragment() {
 
         menuButtonAddToList.isVisible = sessionId != ""
 
-        val lists = getLists()
-
-        tvInfoViewModel.tvInfoLiveData.observe(
+        tvInfoViewModel.getTvInfo(tvId).observe(
             viewLifecycleOwner,
             { tvInfo ->
                 Picasso.get()
@@ -71,8 +71,10 @@ class TvInfoFragment : BaseFragment() {
                 tvInfoOverview.text = tvInfo?.overview
             })
 
-        menuButtonAddToList.setOnClickListener {
-            showAddToListMenu(it, R.menu.list_popup_menu, lists)
+        menuButtonAddToList.setOnClickListener { v ->
+            myLists.getLists(accountId, sessionId, 1).observe(viewLifecycleOwner, {
+                showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
+            })
         }
 
         checkFavorites(buttonMarkTvAsFavorite)

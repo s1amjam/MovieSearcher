@@ -11,7 +11,7 @@ import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.common.MediaId
@@ -27,7 +27,7 @@ open class BaseFragment : Fragment() {
     lateinit var sessionId: String
     var accountId: Int = 0
     private lateinit var encryptedSharedPrefs: SharedPreferences
-    private lateinit var myListsViewModel: MyListsViewModel
+    private val myListsViewModel: MyListsViewModel by viewModels()
     private var isFavorite = true
     private var isWatchlist = true
     private lateinit var mediaInfo: MutableMap<String, Long>
@@ -36,7 +36,6 @@ open class BaseFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
-        myListsViewModel = ViewModelProvider(this).get(MyListsViewModel::class.java)
         encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
         sessionId = encryptedSharedPrefs.getString("sessionId", "").toString()
         accountId = encryptedSharedPrefs.getString("accountId", "")!!.toInt()
@@ -76,24 +75,6 @@ open class BaseFragment : Fragment() {
         dialog.show(childFragmentManager, "CreateNewListDialogFragment")
     }
 
-    fun getLists(): MutableList<Result> {
-        val resultList = mutableListOf<Result>()
-
-        if (sessionId != "") {
-            myListsViewModel.getLists(accountId, sessionId, 1)
-
-            myListsViewModel.myListsItemLiveData.observe(
-                viewLifecycleOwner,
-                { myListItems ->
-                    myListItems.results?.forEach { it ->
-                        resultList.add(it)
-                    }
-                })
-        }
-
-        return resultList
-    }
-
     private fun getMediaInfo(): MutableMap<String, Long> {
         val movieId = requireArguments().getLong("movie_id")
         val tvId = requireArguments().getLong("tv_id")
@@ -128,9 +109,7 @@ open class BaseFragment : Fragment() {
             popup.menu.add(Menu.NONE, it.id!!.toInt(), Menu.NONE, it.name)
             val menuItem = popup.menu.findItem(it.id.toInt())
 
-            myListsViewModel.checkItemStatus(it.id.toInt(), mediaId)
-
-            myListsViewModel.checkItemLiveData.observe(viewLifecycleOwner,
+            myListsViewModel.checkItemStatus(it.id.toInt(), mediaId).observe(viewLifecycleOwner,
                 { checkedItem ->
                     if (checkedItem.itemPresent == true) {
                         menuItem.isEnabled = false

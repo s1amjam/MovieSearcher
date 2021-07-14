@@ -6,10 +6,11 @@ import com.moviesearcher.api.Api
 import com.moviesearcher.api.entity.movieinfo.MovieInfoResponse
 
 class MovieInfoViewModel : ViewModel() {
-    lateinit var movieInfoLiveData: LiveData<MovieInfoResponse>
+    lateinit var movieInfo: LiveData<MovieInfoResponse>
 
-    fun getMovieInfoById(movieId: Long) {
-        val movieInfoResponse = Api.getMovieInfo(movieId)
-        this.movieInfoLiveData = movieInfoResponse
+    fun getMovieInfoById(movieId: Long): LiveData<MovieInfoResponse> {
+        movieInfo = Api.getMovieInfo(movieId)
+
+        return movieInfo
     }
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +19,7 @@ private const val TAG = "WatchlistFragment"
 
 class WatchlistFragment : BaseFragment() {
     private lateinit var movieWatchlistRecyclerView: RecyclerView
-    private lateinit var movieWatchlistViewModel: MovieWatchlistViewModel
+    private val movieWatchlistViewModel: MovieWatchlistViewModel by viewModels()
     private lateinit var tvWatchlistViewModel: TvWatchlistViewModel
     private lateinit var movieWatchlistButton: Button
     private lateinit var tvWatchlistButton: Button
@@ -34,8 +35,6 @@ class WatchlistFragment : BaseFragment() {
 
         movieWatchlistRecyclerView = view.findViewById(R.id.fragment_watchlist_recycler_view)
         movieWatchlistRecyclerView.layoutManager = LinearLayoutManager(context)
-        movieWatchlistViewModel = ViewModelProvider(this)
-            .get(MovieWatchlistViewModel::class.java)
         tvWatchlistViewModel = ViewModelProvider(this).get(TvWatchlistViewModel::class.java)
         movieWatchlistButton = view.findViewById(R.id.button_watchlist_movies)
         tvWatchlistButton = view.findViewById(R.id.button_watchlist_tvs)
@@ -46,9 +45,7 @@ class WatchlistFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        movieWatchlistViewModel.getMovieWatchlist(accountId, sessionId)
-
-        movieWatchlistViewModel.movieWatchlistItemLiveData.observe(
+        movieWatchlistViewModel.getMovieWatchlist(accountId, sessionId).observe(
             viewLifecycleOwner,
             { movieWatchlistItem ->
                 movieWatchlistRecyclerView.adapter =
@@ -56,9 +53,7 @@ class WatchlistFragment : BaseFragment() {
             })
 
         movieWatchlistButton.setOnClickListener {
-            movieWatchlistViewModel.getMovieWatchlist(accountId, sessionId)
-
-            movieWatchlistViewModel.movieWatchlistItemLiveData.observe(
+            movieWatchlistViewModel.getMovieWatchlist(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { movieWatchlistItem ->
                     movieWatchlistRecyclerView.adapter =
@@ -67,9 +62,7 @@ class WatchlistFragment : BaseFragment() {
         }
 
         tvWatchlistButton.setOnClickListener {
-            tvWatchlistViewModel.getTvWatchlist(accountId, sessionId)
-
-            tvWatchlistViewModel.tvWatchlistItemLiveData.observe(
+            tvWatchlistViewModel.getTvWatchlist(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { tvWatchlistItem ->
                     movieWatchlistRecyclerView.adapter =
