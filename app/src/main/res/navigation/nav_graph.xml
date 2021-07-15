@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/movie_info_fragment"
-        android:name="com.moviesearcher.MovieInfoFragment"
+        android:name="com.moviesearcher.movie.MovieInfoFragment"
         android:label="fragment_movie_info"
         tools:layout="@layout/fragment_movie_info">
         <argument
@@ -38,7 +38,7 @@
         tools:layout="@layout/activity_movie_searcher" />
     <fragment
         android:id="@+id/tv_info_fragment"
-        android:name="com.moviesearcher.TvInfoFragment"
+        android:name="com.moviesearcher.tv.TvInfoFragment"
         android:label="TvInfoFragment">
         <argument
             android:name="tv_id"
@@ -49,7 +49,7 @@
     </fragment>
     <fragment
         android:id="@+id/search_result_fragment"
-        android:name="com.moviesearcher.SearchResultFragment"
+        android:name="com.moviesearcher.search.SearchResultFragment"
         android:label="SearchResultFragment">
         <argument
             android:name="searchQuery"
@@ -63,7 +63,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_my_lists"
-        android:name="com.moviesearcher.MyListsFragment"
+        android:name="com.moviesearcher.list.lists.MyListsFragment"
         android:label="fragment_my_lists"
         tools:layout="@layout/fragment_my_lists">
         <action
@@ -72,7 +72,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_my_list"
-        android:name="com.moviesearcher.MyListFragment"
+        android:name="com.moviesearcher.list.MyListFragment"
         android:label="fragment_my_list"
         tools:layout="@layout/fragment_my_list" >
         <argument
@@ -87,7 +87,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_favorites"
-        android:name="com.moviesearcher.FavoritesFragment"
+        android:name="com.moviesearcher.favorite.FavoritesFragment"
         android:label="fragment_favorites"
         tools:layout="@layout/fragment_favorites" >
         <action
@@ -99,7 +99,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_rated"
-        android:name="com.moviesearcher.RatedFragment"
+        android:name="com.moviesearcher.rated.RatedFragment"
         android:label="fragment_ratings"
         tools:layout="@layout/fragment_rated" >
         <action
@@ -111,7 +111,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_watchlist"
-        android:name="com.moviesearcher.WatchlistFragment"
+        android:name="com.moviesearcher.watchlist.WatchlistFragment"
         android:label="WatchlistFragment" >
         <action
             android:id="@+id/action_watchlistFragment_to_tv_info_fragment"

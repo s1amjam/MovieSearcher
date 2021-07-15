@@ -17,7 +17,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.moviesearcher.api.Api
-import com.moviesearcher.api.entity.auth.SessionId
+import com.moviesearcher.common.AuthorizationDialogFragment
+import com.moviesearcher.common.model.auth.SessionId
 import com.moviesearcher.utils.EncryptedSharedPrefs
 
 private const val TAG = "MovieSearcherActivity"
