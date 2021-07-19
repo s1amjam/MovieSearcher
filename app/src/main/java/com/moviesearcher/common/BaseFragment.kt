@@ -41,7 +41,7 @@ open class BaseFragment : Fragment() {
         setHasOptionsMenu(true)
         encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
         sessionId = encryptedSharedPrefs.getString("sessionId", "").toString()
-        accountId = encryptedSharedPrefs.getString("accountId", "")!!.toInt()
+        accountId = encryptedSharedPrefs.getInt("accountId", 0)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -131,32 +131,34 @@ open class BaseFragment : Fragment() {
     }
 
     fun checkFavorites(button: Button) {
-        mediaInfo = getMediaInfo()
-        val mediaId = mediaInfo.values.first()
-        val mediaKey = mediaInfo.keys.first()
-        val favoriteMovies = Api.getFavoriteMovies(accountId, sessionId)
-        val favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
+        if (sessionId.isNotEmpty()) {
+            mediaInfo = getMediaInfo()
+            val mediaId = mediaInfo.values.first()
+            val mediaKey = mediaInfo.keys.first()
+            val favoriteMovies = Api.getFavoriteMovies(accountId, sessionId)
+            val favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
 
-        if (mediaKey == "movie") {
-            favoriteMovies.observe(viewLifecycleOwner, { favoriteItem ->
-                button.text = "Mark As Favorite"
-                favoriteItem.results!!.forEach {
-                    if (it.id == mediaId) {
-                        isFavorite = false
-                        button.text = "Remove From Favorite"
+            if (mediaKey == "movie") {
+                favoriteMovies.observe(viewLifecycleOwner, { favoriteItem ->
+                    button.text = "Mark As Favorite"
+                    favoriteItem.results!!.forEach {
+                        if (it.id == mediaId) {
+                            isFavorite = false
+                            button.text = "Remove From Favorite"
+                        }
                     }
-                }
-            })
-        } else {
-            favoriteTvs.observe(viewLifecycleOwner, { favoriteItem ->
-                button.text = "Mark As Favorite"
-                favoriteItem.results!!.forEach {
-                    if (it.id == mediaId) {
-                        isFavorite = false
-                        button.text = "Remove From Favorite"
+                })
+            } else {
+                favoriteTvs.observe(viewLifecycleOwner, { favoriteItem ->
+                    button.text = "Mark As Favorite"
+                    favoriteItem.results!!.forEach {
+                        if (it.id == mediaId) {
+                            isFavorite = false
+                            button.text = "Remove From Favorite"
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     }
 
@@ -178,32 +180,34 @@ open class BaseFragment : Fragment() {
     }
 
     fun checkWatchlist(button: Button) {
-        mediaInfo = getMediaInfo()
-        val mediaId = mediaInfo.values.first()
-        val mediaKey = mediaInfo.keys.first()
-        val moviesWatchlist = Api.getMovieWatchlist(accountId, sessionId)
-        val tvsWatchlist = Api.getTvWatchlist(accountId, sessionId)
+        if (sessionId.isNotEmpty()) {
+            mediaInfo = getMediaInfo()
+            val mediaId = mediaInfo.values.first()
+            val mediaKey = mediaInfo.keys.first()
+            val moviesWatchlist = Api.getMovieWatchlist(accountId, sessionId)
+            val tvsWatchlist = Api.getTvWatchlist(accountId, sessionId)
 
-        if (mediaKey == "movie") {
-            moviesWatchlist.observe(viewLifecycleOwner, { favoriteItem ->
-                button.text = "Add to Watchlist"
-                favoriteItem.results!!.forEach {
-                    if (it.id == mediaId) {
-                        isWatchlist = false
-                        button.text = "Remove From Watchlist"
+            if (mediaKey == "movie") {
+                moviesWatchlist.observe(viewLifecycleOwner, { favoriteItem ->
+                    button.text = "Add to Watchlist"
+                    favoriteItem.results!!.forEach {
+                        if (it.id == mediaId) {
+                            isWatchlist = false
+                            button.text = "Remove From Watchlist"
+                        }
                     }
-                }
-            })
-        } else {
-            tvsWatchlist.observe(viewLifecycleOwner, { favoriteItem ->
-                button.text = "Add to Watchlist"
-                favoriteItem.results!!.forEach {
-                    if (it.id == mediaId) {
-                        isWatchlist = false
-                        button.text = "Remove From Watchlist"
+                })
+            } else {
+                tvsWatchlist.observe(viewLifecycleOwner, { favoriteItem ->
+                    button.text = "Add to Watchlist"
+                    favoriteItem.results!!.forEach {
+                        if (it.id == mediaId) {
+                            isWatchlist = false
+                            button.text = "Remove From Watchlist"
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     }
 

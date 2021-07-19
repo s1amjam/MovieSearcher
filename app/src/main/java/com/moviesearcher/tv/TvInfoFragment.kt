@@ -55,6 +55,8 @@ class TvInfoFragment : BaseFragment() {
         buttonWatchlist = view.findViewById(R.id.button_watchlist)
 
         menuButtonAddToList.isVisible = sessionId != ""
+        buttonMarkTvAsFavorite.isVisible = sessionId != ""
+        buttonWatchlist.isVisible = sessionId != ""
 
         tvInfoViewModel.getTvInfo(tvId).observe(
             viewLifecycleOwner,
