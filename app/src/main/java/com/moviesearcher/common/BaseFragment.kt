@@ -13,7 +13,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.moviesearcher.MovieSearcherFragmentDirections
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
@@ -21,6 +20,7 @@ import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.CreateNewListDialog
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.list.model.Result
+import com.moviesearcher.search.SearchResultFragmentDirections
 import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 
@@ -65,12 +65,8 @@ open class BaseFragment : Fragment() {
         }
     }
 
-    //TODO: different actions for different fragments
     private fun navigateToSearchResult(searchQuery: String) {
-        val action =
-            MovieSearcherFragmentDirections.actionMovieSearcherFragmentToSearchResultFragment(
-                searchQuery
-            )
+        val action = SearchResultFragmentDirections.actionGlobalSearchResultFragment(searchQuery)
         findNavController().navigate(action)
     }
 

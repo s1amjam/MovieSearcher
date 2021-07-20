@@ -74,7 +74,7 @@
         android:id="@+id/fragment_my_list"
         android:name="com.moviesearcher.list.MyListFragment"
         android:label="fragment_my_list"
-        tools:layout="@layout/fragment_my_list" >
+        tools:layout="@layout/fragment_my_list">
         <argument
             android:name="list_id"
             app:argType="integer" />
@@ -89,7 +89,7 @@
         android:id="@+id/fragment_favorites"
         android:name="com.moviesearcher.favorite.FavoritesFragment"
         android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" >
+        tools:layout="@layout/fragment_favorites">
         <action
             android:id="@+id/action_fragment_favorites_to_movie_info_fragment"
             app:destination="@id/movie_info_fragment" />
@@ -101,7 +101,7 @@
         android:id="@+id/fragment_rated"
         android:name="com.moviesearcher.rated.RatedFragment"
         android:label="fragment_ratings"
-        tools:layout="@layout/fragment_rated" >
+        tools:layout="@layout/fragment_rated">
         <action
             android:id="@+id/action_rated_fragment_to_tv_info_fragment"
             app:destination="@id/tv_info_fragment" />
@@ -112,7 +112,7 @@
     <fragment
         android:id="@+id/fragment_watchlist"
         android:name="com.moviesearcher.watchlist.WatchlistFragment"
-        android:label="WatchlistFragment" >
+        android:label="WatchlistFragment">
         <action
             android:id="@+id/action_watchlistFragment_to_tv_info_fragment"
             app:destination="@id/tv_info_fragment" />
@@ -120,4 +120,7 @@
             android:id="@+id/action_watchlistFragment_to_movie_info_fragment"
             app:destination="@id/movie_info_fragment" />
     </fragment>
+    <action
+        android:id="@+id/action_global_search_result_fragment"
+        app:destination="@id/search_result_fragment" />
 </navigation>
