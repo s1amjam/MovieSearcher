@@ -97,7 +97,6 @@ class MovieInfoFragment : BaseFragment() {
         buttonWatchlist.setOnClickListener {
             watchlist(buttonWatchlist)
         }
-
         return view
     }
 }

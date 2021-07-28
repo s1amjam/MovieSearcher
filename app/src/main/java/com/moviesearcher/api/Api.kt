@@ -9,21 +9,21 @@ import com.moviesearcher.common.model.auth.RequestToken
 import com.moviesearcher.common.model.auth.SessionId
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
+import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
-import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
+import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.list.model.CheckItemStatusResponse
 import com.moviesearcher.list.model.CreateNewList
 import com.moviesearcher.list.model.CreateNewListResponse
 import com.moviesearcher.list.model.ListResponse
-import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.list.model.add.AddToListResponse
 import com.moviesearcher.movie.model.MovieInfoResponse
+import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.rated.movie.model.RatedMoviesResponse
 import com.moviesearcher.rated.tv.model.RatedTvsResponse
 import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
 import com.moviesearcher.search.model.SearchResponse
-import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.tv.model.TvInfoResponse
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
@@ -35,7 +35,6 @@ import retrofit2.Response
 private const val TAG = "Api"
 
 object Api {
-
     fun getTrending(mediaType: String, timeWindow: String): MutableLiveData<TrendingResponse> {
         val responseLiveData: MutableLiveData<TrendingResponse> = MutableLiveData()
         val resp = ApiService.create().trending(mediaType, timeWindow)

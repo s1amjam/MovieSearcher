@@ -1,4 +1,4 @@
-package com.moviesearcher.tv.model
+package com.moviesearcher.movie.adapter
 
 import android.view.LayoutInflater
 import android.view.View

@@ -13,8 +13,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.movie.adapter.MovieAdapter
 import com.moviesearcher.movie.viewmodel.MovieViewModel
-import com.moviesearcher.tv.model.MovieAdapter
 import com.moviesearcher.tv.viewmodel.TvViewModel
 
 private const val TAG = "MovieSearcherFragment"
@@ -71,7 +71,6 @@ class MovieSearcherFragment : BaseFragment() {
                 true
             )
         )
-
         return view
     }
 }
