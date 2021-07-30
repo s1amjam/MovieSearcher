@@ -133,24 +133,26 @@ open class BaseFragment : Fragment() {
             val mediaKey = mediaInfo.keys.first()
             val favoriteMovies = Api.getFavoriteMovies(accountId, sessionId)
             val favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
+            val markAsFavoriteText = resources.getText(R.string.mark_as_favorite)
+            val removeFromFavoriteText = resources.getText(R.string.remove_from_favorite)
 
             if (mediaKey == "movie") {
                 favoriteMovies.observe(viewLifecycleOwner, { favoriteItem ->
-                    button.text = "Mark As Favorite"
+                    button.text = markAsFavoriteText
                     favoriteItem.results!!.forEach {
                         if (it.id == mediaId) {
                             isFavorite = false
-                            button.text = "Remove From Favorite"
+                            button.text = removeFromFavoriteText
                         }
                     }
                 })
             } else {
                 favoriteTvs.observe(viewLifecycleOwner, { favoriteItem ->
-                    button.text = "Mark As Favorite"
+                    button.text = markAsFavoriteText
                     favoriteItem.results!!.forEach {
                         if (it.id == mediaId) {
                             isFavorite = false
-                            button.text = "Remove From Favorite"
+                            button.text = removeFromFavoriteText
                         }
                     }
                 })
@@ -182,24 +184,26 @@ open class BaseFragment : Fragment() {
             val mediaKey = mediaInfo.keys.first()
             val moviesWatchlist = Api.getMovieWatchlist(accountId, sessionId)
             val tvsWatchlist = Api.getTvWatchlist(accountId, sessionId)
+            val addToWatchlistText = resources.getText(R.string.add_to_watchlist)
+            val removeFromWatchlistText = resources.getText(R.string.remove_from_watchlist)
 
             if (mediaKey == "movie") {
                 moviesWatchlist.observe(viewLifecycleOwner, { favoriteItem ->
-                    button.text = "Add to Watchlist"
+                    button.text = addToWatchlistText
                     favoriteItem.results!!.forEach {
                         if (it.id == mediaId) {
                             isWatchlist = false
-                            button.text = "Remove From Watchlist"
+                            button.text = removeFromWatchlistText
                         }
                     }
                 })
             } else {
                 tvsWatchlist.observe(viewLifecycleOwner, { favoriteItem ->
-                    button.text = "Add to Watchlist"
+                    button.text = addToWatchlistText
                     favoriteItem.results!!.forEach {
                         if (it.id == mediaId) {
                             isWatchlist = false
-                            button.text = "Remove From Watchlist"
+                            button.text = removeFromWatchlistText
                         }
                     }
                 })

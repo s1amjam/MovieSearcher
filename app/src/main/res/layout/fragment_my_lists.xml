@@ -5,7 +5,7 @@
     android:id="@+id/fragment_my_lists_constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MyListsFragment">
+    tools:context="list.lists.MyListsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_my_lists_recycler_view"
