@@ -32,5 +32,28 @@ class FavoritesTest : BaseTest() {
         removeTvFromFavorite()
         markTvAsFavorite()
     }
+
+    @Test
+    fun movieWatchlist() {
+        openNavDrawer()
+        toWatchlist()
+        toWatchlistedMovie()
+        removeMovieFromWatchlist()
+        checkAddMovieToWatchlistBtn()
+        addMovieToWatchlist()
+        checkRemoveMovieFromWatchlistBtn()
+    }
+
+    @Test
+    fun tvWatchlist() {
+        openNavDrawer()
+        toWatchlist()
+        switchToWatchlistedTvs()
+        toWatchlistedTv()
+        removeTvFromWatchlist()
+        checkAddTvToWatchlistBtn()
+        addTvToWatchlist()
+        checkRemoveTvFromWatchlistBtn()
+    }
 }
 
