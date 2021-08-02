@@ -50,8 +50,6 @@ class MyListAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.fragment_my_list_item, parent, false)
         val cardView: MaterialCardView = view.findViewById(R.id.material_card_view_my_list_item)
-        val imageButtonRemoveFromList: ImageButton =
-            view.findViewById(R.id.image_button_remove_from_list)
 
         cardView.setOnClickListener {
             val mediaId = it.id.toLong()
@@ -71,18 +69,6 @@ class MyListAdapter(
                 )
             }
         }
-
-//        imageButtonRemoveFromList.setOnClickListener {
-//            val removeFromListResponse =
-//                Api.removeFromList(listId, sessionId, MediaId(cardView.id.toLong()))
-//
-//            removeFromListResponse.observe(view.findViewTreeLifecycleOwner()!!, {
-//                if (it.statusMessage == "The item/record was deleted successfully.") {
-//                    listItems.items!!.removeAt(this.itemPos)
-//                    this.notifyItemRemoved(this.adapterPos)
-//                }
-//            })
-//        }
 
         return MyListViewHolder(view)
     }

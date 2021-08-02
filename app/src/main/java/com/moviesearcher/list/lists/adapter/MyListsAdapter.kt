@@ -24,8 +24,6 @@ class MyListsAdapter(
     private val navController: NavController,
     private val sessionId: String
 ) : RecyclerView.Adapter<MyListsAdapter.MyListsViewHolder>() {
-    private var adapterPos: Int = -1
-    private var itemPos: Int = -1
     private var listId: Int = -1
 
     class MyListsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -51,13 +49,20 @@ class MyListsAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.fragment_my_lists_item, parent, false)
         val cardView: MaterialCardView = view.findViewById(R.id.material_card_view_my_lists_item)
-        val imageButtonDeleteList: ImageButton = view.findViewById(R.id.image_button_delete_list)
 
         cardView.setOnClickListener {
             navController.navigate(
                 MyListsFragmentDirections.actionMyListsFragmentToMyListFragment(it.id)
             )
         }
+
+        return MyListsViewHolder(view)
+    }
+
+    override fun getItemCount(): Int = listItems.results?.size!!
+    override fun onBindViewHolder(holder: MyListsViewHolder, position: Int) {
+        val view = holder.itemView
+        val imageButtonDeleteList: ImageButton = view.findViewById(R.id.image_button_delete_list)
 
         //TODO: for now its bugged on API provider side
         // https://trello.com/c/slruAstb/75-return-a-proper-response-when-lists-are-deleted
@@ -71,8 +76,8 @@ class MyListsAdapter(
 
                     deleteListResponse.observe(view.findViewTreeLifecycleOwner()!!, {
                         if (it.statusMessage == "The item/record was deleted successfully.") {
-                            listItems.results!!.removeAt(this.itemPos)
-                            this.notifyItemRemoved(adapterPos)
+                            listItems.results!!.removeAt(holder.adapterPosition)
+                            this.notifyItemRemoved(holder.adapterPosition)
                             dialog.dismiss()
                         }
                     })
@@ -84,14 +89,6 @@ class MyListsAdapter(
                 }
                 .create().show()
         }
-
-        return MyListsViewHolder(view)
-    }
-
-    override fun getItemCount(): Int = listItems.results?.size!!
-    override fun onBindViewHolder(holder: MyListsViewHolder, position: Int) {
-        adapterPos = holder.adapterPosition
-        itemPos = position
 
         val listItem = listItems.results?.get(position)
         holder.bind(listItem!!)
