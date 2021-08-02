@@ -100,7 +100,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                     ) { _, bundle ->
                         val sessionId = bundle.getString("sessionId")
                         val avatar = bundle.getString("avatar")
-                        val accountId = bundle.getString("accountId")
+                        val accountId = bundle.getLong("accountId")
                         val username = bundle.getString("username")
                         val includeAdult = bundle.getString("includeAdult")
                         val name = bundle.getString("name")
@@ -115,12 +115,10 @@ class MovieSearcherActivity : AppCompatActivity() {
                             ratingsMenuItem.isVisible = true
                             watchlistMenuItem.isVisible = true
 
-                            with(
-                                encryptedSharedPrefs.edit()
-                            ) {
+                            with(encryptedSharedPrefs.edit()) {
                                 putString("sessionId", sessionId)
                                 putString("avatar", avatar)
-                                putString("accountId", accountId.toString())
+                                putLong("accountId", accountId)
                                 putString("username", username)
                                 putString("includeAdult", includeAdult.toString())
                                 putString("name", name)
@@ -140,13 +138,8 @@ class MovieSearcherActivity : AppCompatActivity() {
                         { response ->
                             if (response.success == true) {
                                 with(encryptedSharedPrefs.edit()) {
-                                    remove("sessionId")
-                                    remove("avatar")
-                                    remove("id")
-                                    remove("username")
-                                    remove("includeAdult")
-                                    remove("name")
-                                        .apply()
+                                    clear()
+                                    apply()
 
                                     loginButton.isVisible = true
                                     logoutButton.isVisible = false

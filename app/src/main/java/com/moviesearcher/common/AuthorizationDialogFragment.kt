@@ -15,9 +15,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.MutableLiveData
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
+import com.moviesearcher.common.model.account.Avatar
 import com.moviesearcher.common.model.auth.RequestToken
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.utils.Constants.SUCCESS_SESSION_URL
@@ -26,12 +26,6 @@ class AuthorizationDialogFragment : DialogFragment() {
     private lateinit var webView: WebView
     private lateinit var requestToken: String
     private lateinit var progressBar: ProgressBar
-    private lateinit var username: String
-    private lateinit var name: String
-    private lateinit var avatar: String
-
-    private var accountId: Int? = null
-    private var includeAdult = false
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext())
@@ -81,7 +75,12 @@ class AuthorizationDialogFragment : DialogFragment() {
 
             override fun onLoadResource(view: WebView?, url: String?) {
                 super.onLoadResource(view, url)
-                val sessionId: MutableLiveData<String> = MutableLiveData()
+                var sessionId: String?
+                var username: String?
+                var accountId: Long
+                var name: String?
+                var includeAdult: Boolean?
+                var avatar: Avatar?
 
                 if (url.equals(SUCCESS_SESSION_URL.format(requestToken))) {
                     progressBar.visibility = VISIBLE
@@ -89,31 +88,31 @@ class AuthorizationDialogFragment : DialogFragment() {
 
                     Api.createSession(RequestToken(requestToken))
                         .observe(requireActivity(), { response ->
-                            sessionId.value = response.sessionId
+                            sessionId = response.sessionId
 
-                            Api.getAccount(sessionId.value.toString())
+                            Api.getAccount(sessionId)
                                 .observe(requireActivity(), { accountResponse ->
-                                    username = accountResponse.username.toString()
-                                    accountId = accountResponse.id
-                                    name = accountResponse.name.toString()
+                                    username = accountResponse.username
+                                    accountId = accountResponse.id!!.toLong()
+                                    name = accountResponse.name
                                     includeAdult = accountResponse.includeAdult!!
-                                    avatar = accountResponse.avatar.toString()
+                                    avatar = accountResponse.avatar
 
                                     parentFragmentManager.setFragmentResult(
                                         "accountResponse",
                                         bundleOf(
-                                            "sessionId" to sessionId.value,
+                                            "sessionId" to sessionId,
                                             "includeAdult" to includeAdult.toString(),
-                                            "accountId" to accountId.toString(),
-                                            "avatar" to avatar,
+                                            "accountId" to accountId,
+                                            "avatar" to avatar?.gravatar?.hash,
                                             "username" to username,
                                             "name" to name,
                                         )
                                     )
-                                })
 
-                            progressBar.visibility = View.GONE
-                            dismiss()
+                                    progressBar.visibility = View.GONE
+                                    dismiss()
+                                })
                         })
                 }
             }

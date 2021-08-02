@@ -196,9 +196,9 @@ object Api {
         return responseLiveData
     }
 
-    fun getAccount(sessionId: String): MutableLiveData<AccountResponse> {
+    fun getAccount(sessionId: String?): MutableLiveData<AccountResponse> {
         val responseLiveData: MutableLiveData<AccountResponse> = MutableLiveData()
-        val resp = ApiService.create().getAccount(sessionId)
+        val resp = ApiService.create().getAccount(sessionId!!)
 
         resp.enqueue(object : Callback<AccountResponse> {
             override fun onResponse(
@@ -219,7 +219,7 @@ object Api {
         return responseLiveData
     }
 
-    fun getLists(accountId: Int?, sessionId: String?, page: Int): MutableLiveData<ListsResponse> {
+    fun getLists(accountId: Long?, sessionId: String?, page: Int): MutableLiveData<ListsResponse> {
         val responseLiveData: MutableLiveData<ListsResponse> = MutableLiveData()
         val resp = ApiService.create().getCreatedLists(accountId, sessionId, page)
 
@@ -243,7 +243,7 @@ object Api {
     }
 
     fun getFavoriteMovies(
-        accountId: Int?,
+        accountId: Long?,
         sessionId: String?
     ): MutableLiveData<FavoriteMovieResponse> {
         val responseLiveData: MutableLiveData<FavoriteMovieResponse> = MutableLiveData()
@@ -269,7 +269,7 @@ object Api {
     }
 
     fun getFavoriteTvs(
-        accountId: Int?,
+        accountId: Long?,
         sessionId: String?
     ): MutableLiveData<FavoriteTvResponse> {
         val responseLiveData: MutableLiveData<FavoriteTvResponse> = MutableLiveData()
@@ -295,7 +295,7 @@ object Api {
     }
 
     fun getRatedMovies(
-        accountId: Int?,
+        accountId: Long?,
         sessionId: String?
     ): MutableLiveData<RatedMoviesResponse> {
         val responseLiveData: MutableLiveData<RatedMoviesResponse> = MutableLiveData()
@@ -321,7 +321,7 @@ object Api {
     }
 
     fun getRatedTvs(
-        accountId: Int?,
+        accountId: Long?,
         sessionId: String?
     ): MutableLiveData<RatedTvsResponse> {
         val responseLiveData: MutableLiveData<RatedTvsResponse> = MutableLiveData()
@@ -347,7 +347,7 @@ object Api {
     }
 
     fun getRatedTvEpisodes(
-        accountId: Int?,
+        accountId: Long?,
         sessionId: String?
     ): MutableLiveData<RatedTvEpisodesResponse> {
         val responseLiveData: MutableLiveData<RatedTvEpisodesResponse> = MutableLiveData()
@@ -373,7 +373,7 @@ object Api {
     }
 
     fun getMovieWatchlist(
-        accountId: Int?,
+        accountId: Long?,
         sessionId: String?
     ): MutableLiveData<MovieWatchlistResponse> {
         val responseLiveData: MutableLiveData<MovieWatchlistResponse> = MutableLiveData()
@@ -399,7 +399,7 @@ object Api {
     }
 
     fun getTvWatchlist(
-        accountId: Int?,
+        accountId: Long?,
         sessionId: String?
     ): MutableLiveData<TvWatchlistResponse> {
         val responseLiveData: MutableLiveData<TvWatchlistResponse> = MutableLiveData()
@@ -577,7 +577,7 @@ object Api {
     }
 
     fun markAsFavorite(
-        accountId: Int,
+        accountId: Long,
         sessionId: String,
         markAsFavorite: MarkAsFavoriteRequest
     ): MutableLiveData<ResponseWithCodeAndMessage> {
@@ -604,7 +604,7 @@ object Api {
     }
 
     fun watchlist(
-        accountId: Int,
+        accountId: Long,
         sessionId: String,
         watchlist: WatchlistRequest
     ): MutableLiveData<ResponseWithCodeAndMessage> {

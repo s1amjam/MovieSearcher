@@ -8,7 +8,7 @@ import com.moviesearcher.rated.tv.model.RatedTvsResponse
 class RatedTvsViewModel : ViewModel() {
     private lateinit var ratedTvs: LiveData<RatedTvsResponse>
 
-    fun getRatedTvs(accountId: Int, sessionId: String): LiveData<RatedTvsResponse> {
+    fun getRatedTvs(accountId: Long, sessionId: String): LiveData<RatedTvsResponse> {
         ratedTvs = Api.getRatedTvs(accountId, sessionId)
 
         return ratedTvs

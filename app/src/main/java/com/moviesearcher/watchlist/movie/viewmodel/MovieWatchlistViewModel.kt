@@ -8,7 +8,7 @@ import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 class MovieWatchlistViewModel : ViewModel() {
     lateinit var movieWatchlist: LiveData<MovieWatchlistResponse>
 
-    fun getMovieWatchlist(accountId: Int, sessionId: String): LiveData<MovieWatchlistResponse> {
+    fun getMovieWatchlist(accountId: Long, sessionId: String): LiveData<MovieWatchlistResponse> {
         movieWatchlist = Api.getMovieWatchlist(accountId, sessionId)
 
         return movieWatchlist

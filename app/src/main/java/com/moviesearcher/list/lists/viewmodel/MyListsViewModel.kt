@@ -10,7 +10,7 @@ class MyListsViewModel : ViewModel() {
     lateinit var myLists: LiveData<ListsResponse>
     lateinit var checkedItem: LiveData<CheckItemStatusResponse>
 
-    fun getLists(accountId: Int, sessionId: String, page: Int): LiveData<ListsResponse> {
+    fun getLists(accountId: Long, sessionId: String, page: Int): LiveData<ListsResponse> {
         myLists = Api.getLists(accountId, sessionId, page)
 
         return myLists

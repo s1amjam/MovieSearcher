@@ -23,12 +23,13 @@ import com.moviesearcher.list.model.Result
 import com.moviesearcher.search.SearchResultFragmentDirections
 import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
+import kotlin.properties.Delegates
 
 private const val TAG = "BaseFragment"
 
 open class BaseFragment : Fragment() {
     lateinit var sessionId: String
-    var accountId: Int = 0
+    var accountId by Delegates.notNull<Long>()
     private lateinit var encryptedSharedPrefs: SharedPreferences
     private val myListsViewModel: MyListsViewModel by viewModels()
     private var isFavorite = true
@@ -41,7 +42,7 @@ open class BaseFragment : Fragment() {
         setHasOptionsMenu(true)
         encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
         sessionId = encryptedSharedPrefs.getString("sessionId", "").toString()
-        accountId = encryptedSharedPrefs.getInt("accountId", 0)
+        accountId = encryptedSharedPrefs.getLong("accountId", 0L)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

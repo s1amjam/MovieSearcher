@@ -24,11 +24,11 @@ import com.moviesearcher.rated.tv.model.RatedTvsResponse
 import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
 import com.moviesearcher.search.model.SearchResponse
 import com.moviesearcher.tv.model.TvInfoResponse
+import com.moviesearcher.utils.Constants
+import com.moviesearcher.utils.Constants.ACCESS_TOKEN
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
-import com.moviesearcher.utils.Constants
-import com.moviesearcher.utils.Constants.ACCESS_TOKEN
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -110,50 +110,50 @@ interface ApiService {
 
     @GET("account/{account_id}/lists")
     fun getCreatedLists(
-        @Path("account_id") accountId: Int?,
+        @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?,
         @Query("page") page: Int = 1
     ): Call<ListsResponse>
 
     @GET("account/{account_id}/favorite/movies")
     fun getFavoriteMovies(
-        @Path("account_id") accountId: Int?,
+        @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
     ): Call<FavoriteMovieResponse>
 
     @GET("account/{account_id}/favorite/tv")
     fun getFavoriteTvs(
-        @Path("account_id") accountId: Int?,
+        @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
     ): Call<FavoriteTvResponse>
 
     @GET("account/{account_id}/rated/movies")
     fun getRatedMovies(
-        @Path("account_id") accountId: Int?,
+        @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
     ): Call<RatedMoviesResponse>
 
     @GET("account/{account_id}/rated/tv")
     fun getRatedTvs(
-        @Path("account_id") accountId: Int?,
+        @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
     ): Call<RatedTvsResponse>
 
     @GET("account/{account_id}/rated/tv/episodes")
     fun getRatedTvEpisodes(
-        @Path("account_id") accountId: Int?,
+        @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
     ): Call<RatedTvEpisodesResponse>
 
     @GET("account/{account_id}/watchlist/movies")
     fun getMovieWatchlist(
-        @Path("account_id") accountId: Int?,
+        @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
     ): Call<MovieWatchlistResponse>
 
     @GET("account/{account_id}/watchlist/tv")
     fun getTvWatchlist(
-        @Path("account_id") accountId: Int?,
+        @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
     ): Call<TvWatchlistResponse>
 
@@ -200,7 +200,7 @@ interface ApiService {
     @POST("account/{account_id}/favorite")
     @Headers("Content-Type: application/json;charset=utf-8")
     fun markAsFavorite(
-        @Path("account_id") accountId: Int,
+        @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String?,
         @Body markAsFavorite: MarkAsFavoriteRequest
     ): Call<ResponseWithCodeAndMessage>
@@ -208,7 +208,7 @@ interface ApiService {
     @POST("account/{account_id}/watchlist")
     @Headers("Content-Type: application/json;charset=utf-8")
     fun watchlist(
-        @Path("account_id") accountId: Int,
+        @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String?,
         @Body watchlist: WatchlistRequest
     ): Call<ResponseWithCodeAndMessage>

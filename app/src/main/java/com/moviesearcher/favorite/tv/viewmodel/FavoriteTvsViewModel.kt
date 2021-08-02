@@ -8,7 +8,7 @@ import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 class FavoriteTvsViewModel : ViewModel() {
     lateinit var favoriteTvs: LiveData<FavoriteTvResponse>
 
-    fun getFavoriteTvs(accountId: Int, sessionId: String): LiveData<FavoriteTvResponse> {
+    fun getFavoriteTvs(accountId: Long, sessionId: String): LiveData<FavoriteTvResponse> {
         favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
 
         return favoriteTvs

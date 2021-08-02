@@ -6,9 +6,9 @@ import com.moviesearcher.api.Api
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
 
 class TvWatchlistViewModel : ViewModel() {
-    lateinit var tvWatchlist: LiveData<TvWatchlistResponse>
+    private lateinit var tvWatchlist: LiveData<TvWatchlistResponse>
 
-    fun getTvWatchlist(accountId: Int, sessionId: String): LiveData<TvWatchlistResponse> {
+    fun getTvWatchlist(accountId: Long, sessionId: String): LiveData<TvWatchlistResponse> {
         tvWatchlist = Api.getTvWatchlist(accountId, sessionId)
 
         return tvWatchlist
