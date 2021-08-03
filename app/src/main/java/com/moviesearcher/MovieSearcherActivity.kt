@@ -181,6 +181,12 @@ class MovieSearcherActivity : AppCompatActivity() {
 
                     true
                 }
+                R.id.menu_item_trending -> {
+                    drawerLayout.close()
+                    navController.navigate(R.id.movie_searcher_fragment)
+
+                    true
+                }
                 else -> super.onOptionsItemSelected(menuItem)
             }
         }

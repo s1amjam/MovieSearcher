@@ -5,13 +5,13 @@
     <string name="search_field">Search</string>
     <string name="login_button">Log In</string>
     <string name="logout_button">Log Out</string>
-    <string name="my_lists">My Lists</string>
+    <string name="my_lists">Lists</string>
     <string name="favorites">Favorites</string>
     <string name="movies">Movies</string>
     <string name="tvs">Tv\'s</string>
     <string name="tv_episodes">Tv Episodes</string>
-    <string name="ratings">My Ratings</string>
-    <string name="watchlists">My Watchlists</string>
+    <string name="ratings">Ratings</string>
+    <string name="watchlists">Watchlists</string>
     <string name="create_new_list">Create New List</string>
     <string name="add_to_list">Add To List</string>
     <string name="description">description</string>
@@ -22,6 +22,5 @@
     <string name="remove_from_favorite">Remove From Favorite</string>
     <string name="add_to_watchlist">Add To Watchlist</string>
     <string name="remove_from_watchlist">Remove From Watchlist</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="trending">Trending</string>
 </resources>
