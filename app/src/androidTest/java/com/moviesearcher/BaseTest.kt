@@ -93,8 +93,8 @@ open class BaseTest {
 //                    )//deny_authentication
 //                    .perform(webClick())
 //                ts()
-
-
+//
+//
 //                onWebView().withElement(
 //                    findElement(
 //                        Locator.ID,
@@ -674,5 +674,99 @@ open class BaseTest {
         )
         button2.check(matches(isDisplayed()))
         ts()
+    }
+
+    fun toLists() {
+        ts()
+        val navigationMenuItemView3 = onView(
+            allOf(
+                withId(R.id.menu_item_my_lists),
+                childAtPosition(
+                    allOf(
+                        withId(R.id.design_navigation_view),
+                        childAtPosition(
+                            withId(R.id.nav_view),
+                            0
+                        )
+                    ),
+                    2
+                ),
+                isDisplayed()
+            )
+        )
+        navigationMenuItemView3.perform(click())
+    }
+
+    fun toFirstList() {
+        ts()
+        val materialCardView = onView(
+            allOf(
+                childAtPosition(
+                    allOf(
+                        withId(R.id.my_lists_item_constraint_layout),
+                        childAtPosition(
+                            withId(R.id.fragment_my_lists_recycler_view),
+                            0
+                        )
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        materialCardView.perform(click())
+    }
+
+    fun toFirstMovieInList() {
+        ts()
+        val materialCardView2 = onView(
+            allOf(
+                childAtPosition(
+                    allOf(
+                        withId(R.id.my_list_item_constraint_layout),
+                        childAtPosition(
+                            withId(R.id.fragment_my_list_recycler_view),
+                            0
+                        )
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        materialCardView2.perform(click())
+    }
+
+    fun addToList() {
+        ts()
+        val materialButton = onView(
+            allOf(
+                withId(R.id.menu_button_add_movie_to_list), withText("Add To List"),
+                childAtPosition(
+                    allOf(
+                        withId(R.id.movie_info_constraint_layout),
+                        childAtPosition(
+                            withId(R.id.nav_host_container),
+                            0
+                        )
+                    ),
+                    8
+                ),
+                isDisplayed()
+            )
+        )
+        materialButton.perform(click())
+    }
+
+    fun checkAddToListButton() {
+        ts()
+        val textView = onView(
+            allOf(
+                withId(R.id.title), withText("Create New List"),
+                withParent(withParent(withId(R.id.content))),
+                isDisplayed()
+            )
+        )
+        textView.check(matches(withText("Create New List")))
     }
 }

@@ -55,5 +55,15 @@ class Tests : BaseTest() {
         addTvToWatchlist()
         checkRemoveTvFromWatchlistBtn()
     }
+
+    @Test
+    fun toMyLists() {
+        openNavDrawer()
+        toLists()
+        toFirstList()
+        toFirstMovieInList()
+        addToList()
+        checkAddToListButton()
+    }
 }
 
