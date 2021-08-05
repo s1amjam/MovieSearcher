@@ -1,34 +1,34 @@
 package com.moviesearcher.search.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.R
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
+import com.moviesearcher.databinding.FragmentSearchItemBinding
 import com.moviesearcher.search.SearchResultFragmentDirections
 import com.moviesearcher.search.model.Result
 import com.moviesearcher.search.model.SearchResponse
 import com.moviesearcher.utils.Constants
-import com.squareup.picasso.Picasso
 
 class SearchAdapter(
     private val searchItems: SearchResponse,
     private val navController: NavController
 ) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
+    lateinit var searchItemPoster: ImageView
 
-    class SearchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val searchItemPoster: ImageView =
-            view.findViewById(R.id.search_item_fragment_imageview)
-        private val searchItemTitle: TextView = view.findViewById(R.id.search_item_fragment_title)
+    inner class SearchViewHolder(binding: FragmentSearchItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        private val searchItemTitle: TextView = binding.searchItemFragmentTitle
 
         fun bind(searchResultItem: Result) {
-            Picasso.get()
+            Glide.with(this.itemView)
                 .load(Constants.IMAGE_URL + searchResultItem.posterPath)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .into(searchItemPoster)
-
             if (searchResultItem.title == null) {
                 searchItemTitle.text = searchResultItem.name
                 searchItemPoster.tag = "tv"
@@ -45,9 +45,12 @@ class SearchAdapter(
         parent: ViewGroup,
         viewType: Int
     ): SearchViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_search_item, parent, false)
-        val searchItemPoster: ImageView = view.findViewById(R.id.search_item_fragment_imageview)
+        val binding = FragmentSearchItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        searchItemPoster = binding.searchItemFragmentImageview
 
         searchItemPoster.setOnClickListener {
             val movieId = it.id.toLong()
@@ -68,7 +71,7 @@ class SearchAdapter(
             }
         }
 
-        return SearchViewHolder(view)
+        return SearchViewHolder(binding)
     }
 
     override fun getItemCount(): Int = searchItems.results?.size!!

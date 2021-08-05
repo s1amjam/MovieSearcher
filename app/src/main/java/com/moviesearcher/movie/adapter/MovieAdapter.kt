@@ -6,29 +6,29 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.moviesearcher.MovieSearcherFragmentDirections
-import com.moviesearcher.R
+import com.moviesearcher.databinding.PosterImageViewBinding
 import com.moviesearcher.movie.model.Result
 import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.utils.Constants
-import com.squareup.picasso.Picasso
 
 class MovieAdapter(
     private val movieItems: TrendingResponse,
     private val navController: NavController
 ) : RecyclerView.Adapter<MovieAdapter.MovieHolder>() {
-
     private lateinit var posterImageView: ImageView
 
-    class MovieHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val moviePoster: ImageView = view.findViewById(R.id.poster_image_view)
-
+    inner class MovieHolder(binding: PosterImageViewBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(movieItem: Result) {
-            Picasso.get()
+            Glide.with(this.itemView)
                 .load(Constants.IMAGE_URL + movieItem.posterPath)
-                .into(moviePoster)
-            moviePoster.id = movieItem.id!!
-            moviePoster.tag = movieItem.title
+                .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
+                .into(posterImageView)
+            posterImageView.id = movieItem.id!!
+            posterImageView.tag = movieItem.title
         }
     }
 
@@ -36,10 +36,12 @@ class MovieAdapter(
         parent: ViewGroup,
         viewType: Int
     ): MovieHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.poster_image_view, parent, false)
-
-        posterImageView = view.findViewById(R.id.poster_image_view)
+        val binding = PosterImageViewBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        posterImageView = binding.posterImageView
 
         posterImageView.setOnClickListener {
             val movieId = it.id.toLong()
@@ -58,7 +60,7 @@ class MovieAdapter(
             }
         }
 
-        return MovieHolder(view)
+        return MovieHolder(binding)
     }
 
     override fun getItemCount(): Int = movieItems.results?.size!!

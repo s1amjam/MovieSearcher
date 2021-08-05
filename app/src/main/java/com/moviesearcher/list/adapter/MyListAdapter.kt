@@ -1,7 +1,6 @@
 package com.moviesearcher.list.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -9,15 +8,17 @@ import android.widget.TextView
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.card.MaterialCardView
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
+import com.moviesearcher.databinding.FragmentMyListItemBinding
 import com.moviesearcher.list.MyListFragmentDirections
 import com.moviesearcher.list.model.Item
 import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.utils.Constants
-import com.squareup.picasso.Picasso
 
 class MyListAdapter(
     private val listItems: ListResponse,
@@ -25,18 +26,18 @@ class MyListAdapter(
     private val listId: Int,
     private val sessionId: String
 ) : RecyclerView.Adapter<MyListAdapter.MyListViewHolder>() {
+    lateinit var cardView: MaterialCardView
 
-    class MyListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val myListItemPoster: ImageView = view.findViewById(R.id.image_view_my_list_item)
-        private val myListItemName: TextView = view.findViewById(R.id.text_view_my_list_item_name)
-        private val cardView: MaterialCardView =
-            view.findViewById(R.id.material_card_view_my_list_item)
+    inner class MyListViewHolder(val binding: FragmentMyListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        private val myListItemPoster: ImageView = binding.imageViewMyListItem
+        private val myListItemName: TextView = binding.textViewMyListItemName
 
         fun bind(myListResultItem: Item) {
-            Picasso.get()
+            Glide.with(this.itemView)
                 .load(Constants.IMAGE_URL + myListResultItem.posterPath)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .into(myListItemPoster)
-
             cardView.tag = myListResultItem.mediaType
             cardView.id = myListResultItem.id!!.toInt()
             myListItemName.text = myListResultItem.title
@@ -47,9 +48,12 @@ class MyListAdapter(
         parent: ViewGroup,
         viewType: Int
     ): MyListViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_my_list_item, parent, false)
-        val cardView: MaterialCardView = view.findViewById(R.id.material_card_view_my_list_item)
+        val binding = FragmentMyListItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        cardView = binding.materialCardViewMyListItem
 
         cardView.setOnClickListener {
             val mediaId = it.id.toLong()
@@ -70,13 +74,11 @@ class MyListAdapter(
             }
         }
 
-        return MyListViewHolder(view)
+        return MyListViewHolder(binding)
     }
 
     override fun getItemCount(): Int = listItems.items?.size!!
     override fun onBindViewHolder(holder: MyListViewHolder, position: Int) {
-        val cardView: MaterialCardView =
-            holder.itemView.findViewById(R.id.material_card_view_my_list_item)
         val imageButtonRemoveFromList: ImageButton =
             holder.itemView.findViewById(R.id.image_button_remove_from_list)
 

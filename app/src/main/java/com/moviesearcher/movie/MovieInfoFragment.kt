@@ -11,13 +11,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.movie.viewmodel.MovieInfoViewModel
 import com.moviesearcher.utils.Constants
-import com.squareup.picasso.Picasso
 
 private const val TAG = "MovieInfoFragment"
 
@@ -71,8 +72,9 @@ class MovieInfoFragment : BaseFragment() {
         movieInfoViewModel.getMovieInfoById(movieId).observe(
             viewLifecycleOwner,
             { movieInfo ->
-                Picasso.get()
+                Glide.with(this)
                     .load(Constants.IMAGE_URL + movieInfo?.posterPath)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     .into(movieInfoPosterImageView)
                 movieInfoTitle.text = movieInfo?.title
                 movieInfoGenres.text =

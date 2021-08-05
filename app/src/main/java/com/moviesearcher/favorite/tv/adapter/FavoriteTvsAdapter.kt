@@ -1,38 +1,36 @@
 package com.moviesearcher.favorite.tv.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.card.MaterialCardView
-import com.moviesearcher.R
+import com.moviesearcher.databinding.FragmentFavoriteTvItemBinding
 import com.moviesearcher.favorite.FavoritesFragmentDirections
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.favorite.tv.model.ResultFavoriteTv
 import com.moviesearcher.utils.Constants
-import com.squareup.picasso.Picasso
 
 class FavoriteTvsAdapter(
     private val favoriteTvsItems: FavoriteTvResponse,
     private val navController: NavController
 ) : RecyclerView.Adapter<FavoriteTvsAdapter.FavoriteTvViewHolder>() {
+    lateinit var cardView: MaterialCardView
 
-    class FavoriteTvViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val favoriteTvsItemPoster: ImageView =
-            view.findViewById(R.id.image_view_favorite_tv_item)
-        private val favoriteTvsItemName: TextView =
-            view.findViewById(R.id.text_view_favorite_tv_item_name)
-        private val cardView: MaterialCardView =
-            view.findViewById(R.id.material_card_view_favorite_tv_item)
+    inner class FavoriteTvViewHolder(binding: FragmentFavoriteTvItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        private val favoriteTvsItemPoster: ImageView = binding.imageViewFavoriteTvItem
+        private val favoriteTvsItemName: TextView = binding.textViewFavoriteTvItemName
 
         fun bind(favoriteTvsResultItem: ResultFavoriteTv) {
-            Picasso.get()
+            Glide.with(this.itemView)
                 .load(Constants.IMAGE_URL + favoriteTvsResultItem.posterPath)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .into(favoriteTvsItemPoster)
-
             cardView.id = favoriteTvsResultItem.id?.toInt()!!
             favoriteTvsItemName.text = favoriteTvsResultItem.name
         }
@@ -42,10 +40,12 @@ class FavoriteTvsAdapter(
         parent: ViewGroup,
         viewType: Int
     ): FavoriteTvViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_favorite_tv_item, parent, false)
-        val cardView: MaterialCardView =
-            view.findViewById(R.id.material_card_view_favorite_tv_item)
+        val binding = FragmentFavoriteTvItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        cardView = binding.materialCardViewFavoriteTvItem
 
         cardView.setOnClickListener {
             val tvId = it.id
@@ -57,7 +57,7 @@ class FavoriteTvsAdapter(
             )
         }
 
-        return FavoriteTvViewHolder(view)
+        return FavoriteTvViewHolder(binding)
     }
 
     override fun getItemCount(): Int = favoriteTvsItems.results?.size!!

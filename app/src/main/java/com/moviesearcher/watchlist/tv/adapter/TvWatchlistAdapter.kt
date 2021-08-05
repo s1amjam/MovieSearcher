@@ -1,38 +1,36 @@
 package com.moviesearcher.watchlist.tv.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.card.MaterialCardView
-import com.moviesearcher.R
+import com.moviesearcher.databinding.FragmentTvWatchlistItemBinding
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.watchlist.WatchlistFragmentDirections
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResult
-import com.squareup.picasso.Picasso
 
 class TvWatchlistAdapter(
     private val tvWatchlistItems: TvWatchlistResponse,
     private val navController: NavController
 ) : RecyclerView.Adapter<TvWatchlistAdapter.TvWatchlistViewHolder>() {
+    lateinit var cardView: MaterialCardView
 
-    class TvWatchlistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val tvWatchlistItemPoster: ImageView =
-            view.findViewById(R.id.image_view_tv_watchlist_item)
-        private val tvWatchlistItemName: TextView =
-            view.findViewById(R.id.text_view_tv_watchlist_item_name)
-        private val cardView: MaterialCardView =
-            view.findViewById(R.id.material_card_view_tv_watchlist_item)
+    inner class TvWatchlistViewHolder(binding: FragmentTvWatchlistItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        private val tvWatchlistItemPoster: ImageView = binding.imageViewTvWatchlistItem
+        private val tvWatchlistItemName: TextView = binding.textViewTvWatchlistItemName
 
         fun bind(tvWatchlistResultItem: TvWatchlistResult) {
-            Picasso.get()
+            Glide.with(this.itemView)
                 .load(Constants.IMAGE_URL + tvWatchlistResultItem.posterPath)
+                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .into(tvWatchlistItemPoster)
-
             cardView.id = tvWatchlistResultItem.id?.toInt()!!
             tvWatchlistItemName.text = tvWatchlistResultItem.name
         }
@@ -42,10 +40,12 @@ class TvWatchlistAdapter(
         parent: ViewGroup,
         viewType: Int
     ): TvWatchlistViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_tv_watchlist_item, parent, false)
-        val cardView: MaterialCardView =
-            view.findViewById(R.id.material_card_view_tv_watchlist_item)
+        val binding = FragmentTvWatchlistItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        cardView = binding.materialCardViewTvWatchlistItem
 
         cardView.setOnClickListener {
             val tvId = it.id.toLong()
@@ -57,7 +57,7 @@ class TvWatchlistAdapter(
             )
         }
 
-        return TvWatchlistViewHolder(view)
+        return TvWatchlistViewHolder(binding)
     }
 
     override fun getItemCount(): Int = tvWatchlistItems.results?.size!!
