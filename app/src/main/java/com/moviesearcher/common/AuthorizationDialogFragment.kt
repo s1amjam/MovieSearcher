@@ -12,24 +12,26 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.account.Avatar
 import com.moviesearcher.common.model.auth.RequestToken
+import com.moviesearcher.databinding.FragmentAuthorizationDialogBinding
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.utils.Constants.SUCCESS_SESSION_URL
 
 class AuthorizationDialogFragment : DialogFragment() {
+    private var _binding: FragmentAuthorizationDialogBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var webView: WebView
     private lateinit var requestToken: String
     private lateinit var progressBar: ProgressBar
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext())
-            .setView(R.layout.fragment_authorization_dialog)
+            .setView(view)
             .create()
     }
 
@@ -38,11 +40,12 @@ class AuthorizationDialogFragment : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_authorization_dialog, container, false)
+    ): View {
+        _binding = FragmentAuthorizationDialogBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        progressBar = view.findViewById(R.id.progress_bar_authorization_dialog)
-        webView = view.findViewById(R.id.web_view_authorization_dialog)
+        progressBar = binding.progressBarAuthorizationDialog
+        webView = binding.webViewAuthorizationDialog
         webView.settings.javaScriptEnabled = true
 
         return view
@@ -55,9 +58,8 @@ class AuthorizationDialogFragment : DialogFragment() {
             { response ->
                 webView.loadUrl(Constants.AUTH_URL.format(response.requestToken))
                 requestToken = response.requestToken.toString()
-                val cl =
-                    view.findViewById<ConstraintLayout>(R.id.fragment_authorization_dialog_constraint_layout)
-                dialog?.window?.setContentView(cl)
+                val constraintLayout = binding.fragmentAuthorizationDialogConstraintLayout
+                dialog?.window?.setContentView(constraintLayout)
             })
 
         webView.webViewClient = object : WebViewClient() {
@@ -117,6 +119,11 @@ class AuthorizationDialogFragment : DialogFragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

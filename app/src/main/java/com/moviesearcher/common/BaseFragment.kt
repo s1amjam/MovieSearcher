@@ -212,16 +212,16 @@ open class BaseFragment : Fragment() {
         }
     }
 
-    fun watchlist(button: Button) {
+    fun addToWatchlist(button: Button) {
         mediaInfo = getMediaInfo()
 
-        val markAsFavorite = Api.watchlist(
+        val addToWatchlist = Api.watchlist(
             accountId,
             sessionId,
             WatchlistRequest(isWatchlist, mediaInfo.values.first(), mediaInfo.keys.first())
         )
 
-        markAsFavorite.observe(viewLifecycleOwner, {
+        addToWatchlist.observe(viewLifecycleOwner, {
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
                 isWatchlist = true
                 checkWatchlist(button)

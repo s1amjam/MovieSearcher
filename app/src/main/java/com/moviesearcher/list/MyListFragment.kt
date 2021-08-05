@@ -9,15 +9,19 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.databinding.FragmentMyListBinding
 import com.moviesearcher.list.adapter.MyListAdapter
 import com.moviesearcher.list.viewmodel.MyListViewModel
 
 private const val TAG = "FavoritesFragment"
 
 class MyListFragment : BaseFragment() {
+    private var _binding: FragmentMyListBinding? = null
+    private val binding get() = _binding!!
+
     private val args by navArgs<MyListFragmentArgs>()
+
     private lateinit var myListRecyclerView: RecyclerView
     private val myListViewModel: MyListViewModel by viewModels()
 
@@ -25,12 +29,12 @@ class MyListFragment : BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_my_list, container, false)
-
+    ): View {
+        _binding = FragmentMyListBinding.inflate(inflater, container, false)
+        val view = binding.root
         val listId = args.listId
 
-        myListRecyclerView = view.findViewById(R.id.fragment_my_list_recycler_view)
+        myListRecyclerView = binding.fragmentMyListRecyclerView
         myListRecyclerView.layoutManager = LinearLayoutManager(context)
 
         myListViewModel.getList(listId).observe(
@@ -45,5 +49,10 @@ class MyListFragment : BaseFragment() {
             })
 
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

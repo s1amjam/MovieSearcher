@@ -8,14 +8,17 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.databinding.FragmentMyListsBinding
 import com.moviesearcher.list.lists.adapter.MyListsAdapter
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 
 private const val TAG = "MyListsFragment"
 
 class MyListsFragment : BaseFragment() {
+    private var _binding: FragmentMyListsBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var myListsRecyclerView: RecyclerView
     private val myListsViewModel: MyListsViewModel by viewModels()
 
@@ -23,17 +26,12 @@ class MyListsFragment : BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_my_lists, container, false)
+    ): View {
+        _binding = FragmentMyListsBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        myListsRecyclerView = view.findViewById(R.id.fragment_my_lists_recycler_view)
+        myListsRecyclerView = binding.fragmentMyListsRecyclerView
         myListsRecyclerView.layoutManager = LinearLayoutManager(context)
-
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         myListsViewModel.getLists(accountId, sessionId, 1).observe(
             viewLifecycleOwner,
@@ -41,5 +39,12 @@ class MyListsFragment : BaseFragment() {
                 myListsRecyclerView.adapter =
                     MyListsAdapter(myListItems, findNavController(), sessionId)
             })
+
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

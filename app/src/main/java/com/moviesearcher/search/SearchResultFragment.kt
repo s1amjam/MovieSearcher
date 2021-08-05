@@ -15,12 +15,16 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.R
+import com.moviesearcher.databinding.FragmentSearchResultBinding
 import com.moviesearcher.search.adapter.SearchAdapter
 import com.moviesearcher.search.viewmodel.SearchViewModel
 
 private const val TAG = "SearchResultFragment"
 
 class SearchResultFragment : Fragment() {
+    private var _binding: FragmentSearchResultBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var searchResultRecyclerView: RecyclerView
     private val searchViewModel: SearchViewModel by viewModels()
     private val args by navArgs<SearchResultFragmentArgs>()
@@ -58,9 +62,11 @@ class SearchResultFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_search_result, container, false)
-        searchResultRecyclerView = view.findViewById(R.id.search_result_recycler_view)
+    ): View {
+        _binding = FragmentSearchResultBinding.inflate(inflater, container, false)
+        val view = binding.root
+
+        searchResultRecyclerView = binding.searchResultRecyclerView
         searchResultRecyclerView.layoutManager = LinearLayoutManager(context)
 
         return view
@@ -70,10 +76,16 @@ class SearchResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val searchQuery = args.searchQuery
+
         searchViewModel.queryForSearch(searchQuery).observe(
             viewLifecycleOwner,
             { searchItems ->
                 searchResultRecyclerView.adapter = SearchAdapter(searchItems, findNavController())
             })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.databinding.FragmentTvInfoBinding
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.tv.viewmodel.TvInfoViewModel
 import com.moviesearcher.utils.Constants
@@ -21,8 +22,13 @@ import com.squareup.picasso.Picasso
 private const val TAG = "TvInfoFragment"
 
 class TvInfoFragment : BaseFragment() {
+    private var _binding: FragmentTvInfoBinding? = null
+    private val binding get() = _binding!!
+
     private val args by navArgs<TvInfoFragmentArgs>()
     private val tvInfoViewModel: TvInfoViewModel by viewModels()
+    private val myLists: MyListsViewModel by viewModels()
+
     private lateinit var tvInfoPosterImageView: ImageView
     private lateinit var tvInfoName: TextView
     private lateinit var tvInfoGenres: TextView
@@ -34,25 +40,26 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var menuButtonAddToList: Button
     private lateinit var buttonMarkTvAsFavorite: Button
     private lateinit var buttonWatchlist: Button
-    private val myLists: MyListsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_tv_info, container, false)
+    ): View {
+        _binding = FragmentTvInfoBinding.inflate(inflater, container, false)
+        val view = binding.root
         val tvId = args.tvId
-        tvInfoConstraintLayout = view.findViewById(R.id.tv_info_constraint_layout)
-        tvInfoPosterImageView = view.findViewById(R.id.tv_info_poster_image_view)
-        tvInfoName = view.findViewById(R.id.tv_info_name)
-        tvInfoGenres = view.findViewById(R.id.tv_info_genres)
-        tvInfoProductionCountries = view.findViewById(R.id.tv_info_production_countries)
-        tvInfoTagline = view.findViewById(R.id.tv_info_tagline)
-        tvInfoFirstAirDate = view.findViewById(R.id.tv_info_first_air_date)
-        tvInfoOverview = view.findViewById(R.id.tv_info_overview)
-        menuButtonAddToList = view.findViewById(R.id.menu_button_add_tv_to_list)
-        buttonMarkTvAsFavorite = view.findViewById(R.id.button_mark_tv_as_favorite)
-        buttonWatchlist = view.findViewById(R.id.button_watchlist)
+
+        tvInfoConstraintLayout = binding.tvInfoConstraintLayout
+        tvInfoPosterImageView = binding.tvInfoPosterImageView
+        tvInfoName = binding.tvInfoName
+        tvInfoGenres = binding.tvInfoGenres
+        tvInfoProductionCountries = binding.tvInfoProductionCountries
+        tvInfoTagline = binding.tvInfoTagline
+        tvInfoFirstAirDate = binding.tvInfoFirstAirDate
+        tvInfoOverview = binding.tvInfoOverview
+        menuButtonAddToList = binding.menuButtonAddTvToList
+        buttonMarkTvAsFavorite = binding.buttonMarkTvAsFavorite
+        buttonWatchlist = binding.buttonWatchlist
 
         menuButtonAddToList.isVisible = sessionId != ""
         buttonMarkTvAsFavorite.isVisible = sessionId != ""
@@ -90,9 +97,14 @@ class TvInfoFragment : BaseFragment() {
         checkWatchlist(buttonWatchlist)
 
         buttonWatchlist.setOnClickListener {
-            watchlist(buttonWatchlist)
+            addToWatchlist(buttonWatchlist)
         }
 
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

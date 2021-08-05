@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.databinding.FragmentMovieSearcherBinding
 import com.moviesearcher.movie.adapter.MovieAdapter
 import com.moviesearcher.movie.viewmodel.MovieViewModel
 import com.moviesearcher.tv.viewmodel.TvViewModel
@@ -20,9 +21,13 @@ import com.moviesearcher.tv.viewmodel.TvViewModel
 private const val TAG = "MovieSearcherFragment"
 
 class MovieSearcherFragment : BaseFragment() {
+    private var _binding: FragmentMovieSearcherBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var movieRecyclerView: RecyclerView
     private val movieViewModel: MovieViewModel by viewModels()
     private val tvViewModel: TvViewModel by viewModels()
+
     private lateinit var trendingMovieButton: Button
     private lateinit var trendingTvButton: Button
     private lateinit var progressBar: ProgressBar
@@ -30,13 +35,15 @@ class MovieSearcherFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_movie_searcher, container, false)
-        movieRecyclerView = view.findViewById(R.id.movie_recycler_view)
-        trendingMovieButton = view.findViewById(R.id.trending_movie_button)
-        trendingTvButton = view.findViewById(R.id.trending_tv_button)
+    ): View {
+        _binding = FragmentMovieSearcherBinding.inflate(inflater, container, false)
+        val view = binding.root
+
+        movieRecyclerView = binding.movieRecyclerView
+        trendingMovieButton = binding.trendingMovieButton
+        trendingTvButton = binding.trendingTvButton
         movieRecyclerView.layoutManager = GridLayoutManager(context, 3)
-        progressBar = view.findViewById(R.id.progress_bar_movie_searcher_fragment)
+        progressBar = binding.progressBarMovieSearcherFragment
 
         //TODO: if we are going back from tv info, movies showing instead of tv
         trendingTvButton.setOnClickListener {
@@ -72,5 +79,10 @@ class MovieSearcherFragment : BaseFragment() {
             )
         )
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

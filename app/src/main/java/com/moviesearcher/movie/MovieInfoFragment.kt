@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.movie.viewmodel.MovieInfoViewModel
 import com.moviesearcher.utils.Constants
@@ -21,8 +22,13 @@ import com.squareup.picasso.Picasso
 private const val TAG = "MovieInfoFragment"
 
 class MovieInfoFragment : BaseFragment() {
+    private var _binding: FragmentMovieInfoBinding? = null
+    private val binding get() = _binding!!
+
     private val args by navArgs<MovieInfoFragmentArgs>()
     private val movieInfoViewModel: MovieInfoViewModel by viewModels()
+    private val myLists: MyListsViewModel by viewModels()
+
     private lateinit var movieInfoPosterImageView: ImageView
     private lateinit var movieInfoTitle: TextView
     private lateinit var movieInfoGenres: TextView
@@ -35,31 +41,32 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var menuButtonAddToList: Button
     private lateinit var buttonMarkMovieAsFavorite: Button
     private lateinit var buttonWatchlist: Button
-    private val myLists: MyListsViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_movie_info, container, false)
-        movieInfoConstraintLayout = view.findViewById(R.id.movie_info_constraint_layout)
-        movieInfoPosterImageView = view.findViewById(R.id.movie_info_poster_image_view)
-        movieInfoTitle = view.findViewById(R.id.movie_info_title)
-        movieInfoGenres = view.findViewById(R.id.movie_info_genres)
-        movieInfoProductionCountries = view.findViewById(R.id.movie_info_production_countries)
-        movieInfoRuntime = view.findViewById(R.id.movie_info_runtime)
-        movieInfoTagline = view.findViewById(R.id.movie_info_tagline)
-        movieInfoReleaseDate = view.findViewById(R.id.movie_info_release_date)
-        movieInfoOverview = view.findViewById(R.id.movie_info_overview)
-        menuButtonAddToList = view.findViewById(R.id.menu_button_add_movie_to_list)
-        buttonMarkMovieAsFavorite = view.findViewById(R.id.button_mark_movie_as_favorite)
-        buttonWatchlist = view.findViewById(R.id.button_watchlist)
+    ): View {
+        _binding = FragmentMovieInfoBinding.inflate(inflater, container, false)
+        val view = binding.root
+        val movieId = args.movieId
+
+        movieInfoConstraintLayout = binding.movieInfoConstraintLayout
+        movieInfoPosterImageView = binding.movieInfoPosterImageView
+        movieInfoTitle = binding.movieInfoTitle
+        movieInfoGenres = binding.movieInfoGenres
+        movieInfoProductionCountries = binding.movieInfoProductionCountries
+        movieInfoRuntime = binding.movieInfoRuntime
+        movieInfoTagline = binding.movieInfoTagline
+        movieInfoReleaseDate = binding.movieInfoReleaseDate
+        movieInfoOverview = binding.movieInfoOverview
+        menuButtonAddToList = binding.menuButtonAddMovieToList
+        buttonMarkMovieAsFavorite = binding.buttonMarkMovieAsFavorite
+        buttonWatchlist = binding.buttonWatchlist
 
         menuButtonAddToList.isVisible = sessionId != ""
         buttonMarkMovieAsFavorite.isVisible = sessionId != ""
         buttonWatchlist.isVisible = sessionId != ""
-
-        val movieId = args.movieId
 
         movieInfoViewModel.getMovieInfoById(movieId).observe(
             viewLifecycleOwner,
@@ -95,8 +102,13 @@ class MovieInfoFragment : BaseFragment() {
         checkWatchlist(buttonWatchlist)
 
         buttonWatchlist.setOnClickListener {
-            watchlist(buttonWatchlist)
+            addToWatchlist(buttonWatchlist)
         }
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

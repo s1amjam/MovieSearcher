@@ -9,8 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.databinding.FragmentFavoritesBinding
 import com.moviesearcher.favorite.movie.adapter.FavoriteMoviesAdapter
 import com.moviesearcher.favorite.movie.viewmodel.FavoriteMoviesViewModel
 import com.moviesearcher.favorite.tv.adapter.FavoriteTvsAdapter
@@ -19,31 +19,28 @@ import com.moviesearcher.favorite.tv.viewmodel.FavoriteTvsViewModel
 private const val TAG = "FavoritesFragment"
 
 class FavoritesFragment : BaseFragment() {
+    private var _binding: FragmentFavoritesBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var favoriteMoviesRecyclerView: RecyclerView
     private val favoriteMoviesViewModel: FavoriteMoviesViewModel by viewModels()
+    private val favoriteTvsViewModel: FavoriteTvsViewModel by viewModels()
+
     private lateinit var favoriteMoviesButton: Button
     private lateinit var favoriteTvsButton: Button
-    private val favoriteTvsViewModel: FavoriteTvsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(
-            R.layout.fragment_favorites, container, false
-        )
+    ): View {
+        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        favoriteMoviesRecyclerView = view.findViewById(R.id.fragment_favorites_recycler_view)
+        favoriteMoviesRecyclerView = binding.fragmentFavoritesRecyclerView
         favoriteMoviesRecyclerView.layoutManager = LinearLayoutManager(context)
-        favoriteMoviesButton = view.findViewById(R.id.button_favorite_movies)
-        favoriteTvsButton = view.findViewById(R.id.button_favorite_tvs)
-
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        favoriteMoviesButton = binding.buttonFavoriteMovies
+        favoriteTvsButton = binding.buttonFavoriteTvs
 
         favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId).observe(
             viewLifecycleOwner,
@@ -69,5 +66,12 @@ class FavoritesFragment : BaseFragment() {
                         FavoriteTvsAdapter(favoriteTvItems, findNavController())
                 })
         }
+
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

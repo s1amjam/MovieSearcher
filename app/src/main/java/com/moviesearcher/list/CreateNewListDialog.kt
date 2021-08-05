@@ -1,36 +1,43 @@
 package com.moviesearcher.list
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
-import com.moviesearcher.R
 import com.moviesearcher.api.Api
+import com.moviesearcher.databinding.DialogCreateNewListBinding
 import com.moviesearcher.list.model.CreateNewList
 import com.moviesearcher.utils.EncryptedSharedPrefs
 
 class CreateNewListDialog : DialogFragment() {
+    private var _binding: DialogCreateNewListBinding? = null
+    private val binding get() = _binding!!
+
+    @SuppressLint("UseGetLayoutInflater")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = AlertDialog.Builder(requireContext())
             .create()
 
-        val view = layoutInflater.inflate(R.layout.dialog_create_new_list, null)
+        _binding = DialogCreateNewListBinding.inflate(LayoutInflater.from(context))
+        val view = binding.root
 
-        val name: EditText = view.findViewById(R.id.edit_text_list_name)
-        val description: EditText = view.findViewById(R.id.edit_text_list_description)
-        val buttonCreate: Button = view.findViewById(R.id.button_create_new_list)
-        val buttonCancel: Button = view.findViewById(R.id.button_cancel_create_new_list)
+        val listName: EditText = binding.editTextListName
+        val listDescription: EditText = binding.editTextListDescription
+        val buttonCreate: Button = binding.buttonCreateNewList
+        val buttonCancel: Button = binding.buttonCancelCreateNewList
 
         dialog.setView(view)
 
-        if (name.text.toString() == "") {
+        if (listName.text.toString() == "") {
             buttonCreate.isEnabled = false
         }
 
-        name.doAfterTextChanged { text ->
+        listName.doAfterTextChanged { text ->
             buttonCreate.isEnabled = text.toString() != ""
         }
 
@@ -40,7 +47,7 @@ class CreateNewListDialog : DialogFragment() {
 
             Api.createNewList(
                 sessionId,
-                CreateNewList(name.text.toString(), description.text.toString(), "en")
+                CreateNewList(listName.text.toString(), listDescription.text.toString(), "en")
             ).observe(
                 this, {
                     if (it.success == true) {
@@ -52,5 +59,10 @@ class CreateNewListDialog : DialogFragment() {
         buttonCancel.setOnClickListener { dialog.cancel() }
 
         return dialog
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

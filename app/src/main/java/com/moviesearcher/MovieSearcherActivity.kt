@@ -5,47 +5,48 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.navigation.NavigationView
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.AuthorizationDialogFragment
 import com.moviesearcher.common.model.auth.SessionId
+import com.moviesearcher.databinding.ActivityMovieSearcherBinding
 import com.moviesearcher.utils.EncryptedSharedPrefs
 
 private const val TAG = "MovieSearcherActivity"
 
 //TODO: remove everything to a separate class?
 class MovieSearcherActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMovieSearcherBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var sessionId: String
+    private lateinit var encryptedSharedPrefs: SharedPreferences
+
     private lateinit var loginButton: MenuItem
     private lateinit var logoutButton: MenuItem
     private lateinit var myListsMenuItem: MenuItem
-    private lateinit var encryptedSharedPrefs: SharedPreferences
     private lateinit var favoritesMenuItem: MenuItem
     private lateinit var ratingsMenuItem: MenuItem
     private lateinit var watchlistMenuItem: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_movie_searcher)
+        binding = ActivityMovieSearcherBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_container) as NavHostFragment
         val navController = navHostFragment.navController
-        val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
-        val navigationView = findViewById<NavigationView>(R.id.nav_view)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        val progressBar = findViewById<ProgressBar>(R.id.progress_bar_activity_movie_searcher)
+        val drawerLayout = binding.drawerLayout
+        val navigationView = binding.navView
+        val toolbar = binding.toolbar
+        val progressBar = binding.progressBarActivityMovieSearcher
 
         encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(applicationContext)
         sessionId = encryptedSharedPrefs.getString("sessionId", "").toString()

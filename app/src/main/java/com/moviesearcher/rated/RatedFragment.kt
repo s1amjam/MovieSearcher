@@ -9,8 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.databinding.FragmentRatedBinding
 import com.moviesearcher.rated.movie.adapter.RatedMoviesAdapter
 import com.moviesearcher.rated.movie.viewmodel.RatedMoviesViewModel
 import com.moviesearcher.rated.tv.adapter.RatedTvsAdapter
@@ -21,10 +21,14 @@ import com.moviesearcher.rated.tvepisode.viewmodel.RatedTvEpisodesViewModel
 private const val TAG = "RatedFragment"
 
 class RatedFragment : BaseFragment() {
+    private var _binding: FragmentRatedBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var ratedMoviesRecyclerView: RecyclerView
     private val ratedMovies: RatedMoviesViewModel by viewModels()
     private val ratedTvEpisodes: RatedTvEpisodesViewModel by viewModels()
     private val ratedTvs: RatedTvsViewModel by viewModels()
+
     private lateinit var ratedMoviesButton: Button
     private lateinit var ratedTvsButton: Button
     private lateinit var ratedTvEpisodesButton: Button
@@ -33,20 +37,15 @@ class RatedFragment : BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_rated, container, false)
+    ): View {
+        _binding = FragmentRatedBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        ratedMoviesRecyclerView = view.findViewById(R.id.fragment_rated_recycler_view)
+        ratedMoviesRecyclerView = binding.fragmentRatedRecyclerView
         ratedMoviesRecyclerView.layoutManager = LinearLayoutManager(context)
-        ratedMoviesButton = view.findViewById(R.id.button_rated_movies)
-        ratedTvsButton = view.findViewById(R.id.button_rated_tvs)
-        ratedTvEpisodesButton = view.findViewById(R.id.button_rated_tv_episodes)
-
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        ratedMoviesButton = binding.buttonRatedMovies
+        ratedTvsButton = binding.buttonRatedTvs
+        ratedTvEpisodesButton = binding.buttonRatedTvEpisodes
 
         ratedMovies.getRatedMovies(accountId, sessionId).observe(
             viewLifecycleOwner,
@@ -81,5 +80,12 @@ class RatedFragment : BaseFragment() {
                         RatedTvEpisodesAdapter(ratedTvItems, findNavController())
                 })
         }
+
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
