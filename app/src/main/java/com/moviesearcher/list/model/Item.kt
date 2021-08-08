@@ -32,5 +32,13 @@ data class Item(
     @SerializedName("vote_average")
     val voteAverage: Double?,
     @SerializedName("vote_count")
-    val voteCount: Int?
+    val voteCount: Int?,
+    @SerializedName("first_air_date")
+    val firstAirDate: String?,
+    @SerializedName("name")
+    val name: String?,
+    @SerializedName("origin_country")
+    val originCountry: List<String>?,
+    @SerializedName("original_name")
+    val originalName: String?
 )

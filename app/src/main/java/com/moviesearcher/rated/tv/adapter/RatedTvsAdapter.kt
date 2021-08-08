@@ -64,4 +64,12 @@ class RatedTvsAdapter(
         val ratedTvItem = ratedTvItems.results?.get(position)
         holder.bind(ratedTvItem!!)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }

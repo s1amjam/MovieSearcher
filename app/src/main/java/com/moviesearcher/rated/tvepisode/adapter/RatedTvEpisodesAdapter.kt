@@ -55,4 +55,12 @@ class RatedTvEpisodesAdapter(
         val ratedTvEpisodeItem = ratedTvEpisodeItems.results?.get(position)
         holder.bind(ratedTvEpisodeItem!!)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }

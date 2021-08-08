@@ -97,4 +97,12 @@ class MyListsAdapter(
         val listItem = listItems.results?.get(position)
         holder.bind(listItem!!)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }

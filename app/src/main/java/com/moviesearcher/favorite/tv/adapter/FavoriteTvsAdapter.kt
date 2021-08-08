@@ -65,4 +65,12 @@ class FavoriteTvsAdapter(
         val favoriteTvsItem = favoriteTvsItems.results?.get(position)
         holder.bind(favoriteTvsItem!!)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }

@@ -65,4 +65,12 @@ class MovieWatchlistAdapter(
         val movieWatchlistItem = movieWatchlistItems.results?.get(position)
         holder.bind(movieWatchlistItem!!)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }

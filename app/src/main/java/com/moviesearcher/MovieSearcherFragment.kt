@@ -3,14 +3,12 @@ package com.moviesearcher
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
@@ -24,10 +22,13 @@ class MovieSearcherFragment : BaseFragment() {
     private var _binding: FragmentMovieSearcherBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var movieRecyclerView: RecyclerView
     private val movieViewModel: MovieViewModel by viewModels()
     private val tvViewModel: TvViewModel by viewModels()
+    private lateinit var navController: NavController
+    private var spanCount: Int = 3
+    lateinit var movieAdapter: MovieAdapter
 
+    private lateinit var recyclerView: RecyclerView
     private lateinit var trendingMovieButton: Button
     private lateinit var trendingTvButton: Button
     private lateinit var progressBar: ProgressBar
@@ -37,20 +38,24 @@ class MovieSearcherFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMovieSearcherBinding.inflate(inflater, container, false)
-        val view = binding.root
+        return binding.root
+    }
 
-        movieRecyclerView = binding.movieRecyclerView
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        navController = findNavController()
         trendingMovieButton = binding.trendingMovieButton
         trendingTvButton = binding.trendingTvButton
-        movieRecyclerView.layoutManager = GridLayoutManager(context, 3)
         progressBar = binding.progressBarMovieSearcherFragment
+        recyclerView = binding.movieRecyclerView
 
-        //TODO: if we are going back from tv info, movies showing instead of tv
         trendingTvButton.setOnClickListener {
             tvViewModel.tvs.observe(
                 viewLifecycleOwner,
-                { movieItems ->
-                    movieRecyclerView.adapter = MovieAdapter(movieItems, findNavController())
+                { tvItems ->
+                    movieAdapter = MovieAdapter(tvItems, navController)
+                    setupUi(movieAdapter, recyclerView, spanCount)
                 })
         }
 
@@ -58,31 +63,50 @@ class MovieSearcherFragment : BaseFragment() {
             movieViewModel.trendingMovies.observe(
                 viewLifecycleOwner,
                 { movieItems ->
-                    movieRecyclerView.adapter = MovieAdapter(movieItems, findNavController())
+                    movieAdapter = MovieAdapter(movieItems, navController)
+                    setupUi(movieAdapter, recyclerView, spanCount)
                 })
         }
-
-        progressBar.visibility = VISIBLE
 
         movieViewModel.trendingMovies.observe(
             viewLifecycleOwner,
             { movieItems ->
-                movieRecyclerView.adapter = MovieAdapter(movieItems, findNavController())
-                progressBar.visibility = GONE
+                movieAdapter = MovieAdapter(movieItems, navController)
+                setupUi(movieAdapter, recyclerView, spanCount)
             })
-
-        movieRecyclerView.addItemDecoration(
-            MovieAdapter.GridSpacingItemDecoration(
-                3,
-                5,
-                true
-            )
-        )
-        return view
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding?.movieRecyclerView?.adapter = null
         _binding = null
+    }
+
+    override fun setupUi(
+        _adapter: RecyclerView.Adapter<*>,
+        recyclerView: RecyclerView,
+        spanCount: Int
+    ) {
+        progressBar.visibility = View.VISIBLE
+        super.setupUi(_adapter, recyclerView, spanCount)
+        progressBar.visibility = View.GONE
+    }
+
+    override fun setupRecyclerView(
+        _adapter: RecyclerView.Adapter<*>,
+        recyclerView: RecyclerView,
+        spanCount: Int
+    ) {
+        super.setupRecyclerView(_adapter, recyclerView, spanCount)
+
+        binding.movieRecyclerView.apply {
+            addItemDecoration(
+                MovieAdapter.GridSpacingItemDecoration(
+                    3,
+                    3,
+                    true
+                )
+            )
+        }
     }
 }

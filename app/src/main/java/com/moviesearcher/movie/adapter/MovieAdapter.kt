@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
@@ -19,11 +20,12 @@ class MovieAdapter(
     private val navController: NavController
 ) : RecyclerView.Adapter<MovieAdapter.MovieHolder>() {
     private lateinit var posterImageView: ImageView
+    private lateinit var binding: PosterImageViewBinding
 
     inner class MovieHolder(binding: PosterImageViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(movieItem: Result) {
-            Glide.with(this.itemView)
+            Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + movieItem.posterPath)
                 .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
                 .into(posterImageView)
@@ -36,17 +38,31 @@ class MovieAdapter(
         parent: ViewGroup,
         viewType: Int
     ): MovieHolder {
-        val binding = PosterImageViewBinding.inflate(
+        binding = PosterImageViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
+
+        return MovieHolder(binding)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    override fun getItemCount(): Int = movieItems.results?.size!!
+    override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         posterImageView = binding.posterImageView
 
         posterImageView.setOnClickListener {
             val movieId = it.id.toLong()
 
-            //Only 'Movie' has a 'title', 'Tv series' has a 'name'
+            //Only 'Movie' has a 'title', 'Tv series' has a 'name', so binding title to tag
             if (it.tag != null) {
                 navController.navigate(
                     MovieSearcherFragmentDirections
@@ -59,14 +75,25 @@ class MovieAdapter(
                 )
             }
         }
-
-        return MovieHolder(binding)
-    }
-
-    override fun getItemCount(): Int = movieItems.results?.size!!
-    override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         val movieItem = movieItems.results?.get(position)
         holder.bind(movieItem!!)
+    }
+
+    private val ITEM_COMPARATOR = object :
+        DiffUtil.ItemCallback<TrendingResponse>() {
+        override fun areItemsTheSame(
+            oldItem: TrendingResponse, newItem:
+            TrendingResponse
+        ): Boolean {
+            return oldItem.results == newItem.results
+        }
+
+        override fun areContentsTheSame(
+            oldItem: TrendingResponse, newItem:
+            TrendingResponse
+        ): Boolean {
+            return oldItem == newItem
+        }
     }
 
     class GridSpacingItemDecoration(

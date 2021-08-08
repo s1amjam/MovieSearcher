@@ -20,7 +20,6 @@ import com.moviesearcher.utils.EncryptedSharedPrefs
 
 private const val TAG = "MovieSearcherActivity"
 
-//TODO: remove everything to a separate class?
 class MovieSearcherActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMovieSearcherBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -79,7 +78,6 @@ class MovieSearcherActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        //TODO: remove to method
         val isSessionIdEmpty = sessionId == ""
         loginButton.isVisible = isSessionIdEmpty
         logoutButton.isVisible = !isSessionIdEmpty
@@ -133,7 +131,7 @@ class MovieSearcherActivity : AppCompatActivity() {
                     true
                 }
                 R.id.logout_button -> {
-                    progressBar.visibility = VISIBLE //TODO: to method
+                    progressBar.visibility = VISIBLE
 
                     Api.deleteSession(SessionId(sessionId)).observe(this,
                         { response ->

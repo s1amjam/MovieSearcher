@@ -65,4 +65,12 @@ class RatedMoviesAdapter(
         val ratedMovieItem = ratedMovieItems.results?.get(position)
         holder.bind(ratedMovieItem!!)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }

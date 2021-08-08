@@ -13,7 +13,6 @@ import org.hamcrest.Matchers
 import org.junit.Test
 import org.junit.runner.RunWith
 
-//TODO: rework all Thread.sleep's
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 class MovieSearcherActivityTest : BaseTest() {

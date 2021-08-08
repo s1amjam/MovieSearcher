@@ -65,4 +65,12 @@ class FavoriteMoviesAdapter(
         val favoriteMovieItem = favoriteMovieItems.results?.get(position)
         holder.bind(favoriteMovieItem!!)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }

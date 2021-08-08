@@ -13,6 +13,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
@@ -227,5 +229,25 @@ open class BaseFragment : Fragment() {
                 checkWatchlist(button)
             }
         })
+    }
+
+    open fun setupUi(
+        _adapter: RecyclerView.Adapter<*>,
+        recyclerView: RecyclerView,
+        spanCount: Int
+    ) {
+        setupRecyclerView(_adapter, recyclerView, spanCount)
+    }
+
+    open fun setupRecyclerView(
+        _adapter: RecyclerView.Adapter<*>,
+        recyclerView: RecyclerView,
+        spanCount: Int
+    ) {
+        recyclerView.apply {
+            adapter = _adapter
+            layoutManager = GridLayoutManager(requireContext(), spanCount)
+            setHasFixedSize(true)
+        }
     }
 }

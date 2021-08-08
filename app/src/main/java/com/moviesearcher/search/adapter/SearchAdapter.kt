@@ -79,4 +79,12 @@ class SearchAdapter(
         val searchItem = searchItems.results?.get(position)
         holder.bind(searchItem!!)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }

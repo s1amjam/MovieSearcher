@@ -40,7 +40,11 @@ class MyListAdapter(
                 .into(myListItemPoster)
             cardView.tag = myListResultItem.mediaType
             cardView.id = myListResultItem.id!!.toInt()
-            myListItemName.text = myListResultItem.title
+            if (myListResultItem.title == null) {
+                myListItemName.text = myListResultItem.name
+            } else {
+                myListItemName.text = myListResultItem.title
+            }
         }
     }
 
@@ -96,5 +100,13 @@ class MyListAdapter(
 
         val listItem = listItems.items?.get(position)
         holder.bind(listItem!!)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 }

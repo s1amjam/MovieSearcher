@@ -65,4 +65,12 @@ class TvWatchlistAdapter(
         val tvWatchlistItem = tvWatchlistItems.results?.get(position)
         holder.bind(tvWatchlistItem!!)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }
