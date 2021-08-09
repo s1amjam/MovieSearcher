@@ -50,28 +50,31 @@ class MovieSearcherFragment : BaseFragment() {
         progressBar = binding.progressBarMovieSearcherFragment
         recyclerView = binding.movieRecyclerView
 
+        setupTrendingMoviesUi()
+
         trendingTvButton.setOnClickListener {
-            tvViewModel.tvs.observe(
-                viewLifecycleOwner,
-                { tvItems ->
-                    movieAdapter = MovieAdapter(tvItems, navController)
-                    setupUi(movieAdapter, recyclerView, spanCount)
-                })
+            setupTrendingTvsUi()
         }
 
         trendingMovieButton.setOnClickListener {
-            movieViewModel.trendingMovies.observe(
-                viewLifecycleOwner,
-                { movieItems ->
-                    movieAdapter = MovieAdapter(movieItems, navController)
-                    setupUi(movieAdapter, recyclerView, spanCount)
-                })
+            setupTrendingMoviesUi()
         }
+    }
 
+    private fun setupTrendingMoviesUi() {
         movieViewModel.trendingMovies.observe(
             viewLifecycleOwner,
             { movieItems ->
                 movieAdapter = MovieAdapter(movieItems, navController)
+                setupUi(movieAdapter, recyclerView, spanCount)
+            })
+    }
+
+    private fun setupTrendingTvsUi() {
+        tvViewModel.trendingTvs.observe(
+            viewLifecycleOwner,
+            { tvItems ->
+                movieAdapter = MovieAdapter(tvItems, navController)
                 setupUi(movieAdapter, recyclerView, spanCount)
             })
     }
@@ -87,18 +90,6 @@ class MovieSearcherFragment : BaseFragment() {
         recyclerView: RecyclerView,
         spanCount: Int
     ) {
-        progressBar.visibility = View.VISIBLE
-        super.setupUi(_adapter, recyclerView, spanCount)
-        progressBar.visibility = View.GONE
-    }
-
-    override fun setupRecyclerView(
-        _adapter: RecyclerView.Adapter<*>,
-        recyclerView: RecyclerView,
-        spanCount: Int
-    ) {
-        super.setupRecyclerView(_adapter, recyclerView, spanCount)
-
         binding.movieRecyclerView.apply {
             addItemDecoration(
                 MovieAdapter.GridSpacingItemDecoration(
@@ -108,5 +99,9 @@ class MovieSearcherFragment : BaseFragment() {
                 )
             )
         }
+
+        progressBar.visibility = View.VISIBLE
+        super.setupUi(_adapter, recyclerView, spanCount)
+        progressBar.visibility = View.GONE
     }
 }

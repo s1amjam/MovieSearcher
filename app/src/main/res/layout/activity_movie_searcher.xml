@@ -15,7 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="wrap_content"
             android:layout_height="?attr/actionBarSize"
-            app:menu="@menu/navigation_drawer_menu"/>
+            app:menu="@menu/navigation_drawer_menu_with_login"/>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_container"
