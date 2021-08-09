@@ -169,7 +169,7 @@ class MovieSearcherActivity : AppCompatActivity() {
     }
 
     private fun inflateMenuWithAuthorization() {
-        if (isLoggedIn != "") {
+        if (isLoggedIn.isNotBlank()) {
             navigationView.inflateMenu(R.menu.navigation_drawer_menu_with_login)
         } else {
             navigationView.inflateMenu(R.menu.navigation_drawer_menu_with_logout)

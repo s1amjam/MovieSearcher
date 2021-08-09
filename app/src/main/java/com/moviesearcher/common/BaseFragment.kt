@@ -32,10 +32,13 @@ private const val TAG = "BaseFragment"
 open class BaseFragment : Fragment() {
     lateinit var sessionId: String
     var accountId by Delegates.notNull<Long>()
+
     private lateinit var encryptedSharedPrefs: SharedPreferences
+
     private val myListsViewModel: MyListsViewModel by viewModels()
-    private var isFavorite = true
-    private var isWatchlist = true
+
+    private var isFavorite = false
+    private var isWatchlist = false
     private lateinit var mediaInfo: MutableMap<String, Long>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,8 +98,8 @@ open class BaseFragment : Fragment() {
 
     fun showAddToListMenu(v: View, @MenuRes menuRes: Int, resultList: MutableList<Result>) {
         val mediaId = getMediaInfo().values.first()
-
         val popup = PopupMenu(requireContext(), v)
+
         popup.menuInflater.inflate(menuRes, popup.menu)
 
         popup.setOnMenuItemClickListener {
@@ -113,8 +116,8 @@ open class BaseFragment : Fragment() {
             val menuItem = popup.menu.findItem(it.id.toInt())
 
             myListsViewModel.checkItemStatus(it.id.toInt(), mediaId).observe(viewLifecycleOwner,
-                { checkedItem ->
-                    if (checkedItem.itemPresent == true) {
+                { item ->
+                    if (item.itemPresent == true) {
                         menuItem.isEnabled = false
                         menuItem.title = menuItem.title.toString() + " (added)"
                     } else {
@@ -130,7 +133,7 @@ open class BaseFragment : Fragment() {
     }
 
     fun checkFavorites(button: Button) {
-        if (sessionId.isNotEmpty()) {
+        if (sessionId.isNotBlank()) {
             mediaInfo = getMediaInfo()
             val mediaId = mediaInfo.values.first()
             val mediaKey = mediaInfo.keys.first()
@@ -181,7 +184,7 @@ open class BaseFragment : Fragment() {
     }
 
     fun checkWatchlist(button: Button) {
-        if (sessionId.isNotEmpty()) {
+        if (sessionId.isNotBlank()) {
             mediaInfo = getMediaInfo()
             val mediaId = mediaInfo.values.first()
             val mediaKey = mediaInfo.keys.first()
@@ -191,9 +194,9 @@ open class BaseFragment : Fragment() {
             val removeFromWatchlistText = resources.getText(R.string.remove_from_watchlist)
 
             if (mediaKey == "movie") {
-                moviesWatchlist.observe(viewLifecycleOwner, { favoriteItem ->
+                moviesWatchlist.observe(viewLifecycleOwner, { item ->
                     button.text = addToWatchlistText
-                    favoriteItem.results!!.forEach {
+                    item.results!!.forEach {
                         if (it.id == mediaId) {
                             isWatchlist = false
                             button.text = removeFromWatchlistText
@@ -201,9 +204,9 @@ open class BaseFragment : Fragment() {
                     }
                 })
             } else {
-                tvsWatchlist.observe(viewLifecycleOwner, { favoriteItem ->
+                tvsWatchlist.observe(viewLifecycleOwner, { item ->
                     button.text = addToWatchlistText
-                    favoriteItem.results!!.forEach {
+                    item.results!!.forEach {
                         if (it.id == mediaId) {
                             isWatchlist = false
                             button.text = removeFromWatchlistText
