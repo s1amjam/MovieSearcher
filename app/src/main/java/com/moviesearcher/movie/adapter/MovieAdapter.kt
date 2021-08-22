@@ -79,23 +79,6 @@ class MovieAdapter(
         holder.bind(movieItem!!)
     }
 
-    private val ITEM_COMPARATOR = object :
-        DiffUtil.ItemCallback<TrendingResponse>() {
-        override fun areItemsTheSame(
-            oldItem: TrendingResponse, newItem:
-            TrendingResponse
-        ): Boolean {
-            return oldItem.results == newItem.results
-        }
-
-        override fun areContentsTheSame(
-            oldItem: TrendingResponse, newItem:
-            TrendingResponse
-        ): Boolean {
-            return oldItem == newItem
-        }
-    }
-
     class GridSpacingItemDecoration(
         private val spanCount: Int,
         private val spacing: Int,
@@ -124,5 +107,22 @@ class MovieAdapter(
                 }
             }
         }
+    }
+}
+
+private val ITEM_COMPARATOR = object :
+    DiffUtil.ItemCallback<TrendingResponse>() {
+    override fun areItemsTheSame(
+        oldItem: TrendingResponse, newItem:
+        TrendingResponse
+    ): Boolean {
+        return oldItem.results == newItem.results
+    }
+
+    override fun areContentsTheSame(
+        oldItem: TrendingResponse, newItem:
+        TrendingResponse
+    ): Boolean {
+        return oldItem == newItem
     }
 }

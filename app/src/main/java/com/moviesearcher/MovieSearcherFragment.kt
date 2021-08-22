@@ -25,7 +25,6 @@ class MovieSearcherFragment : BaseFragment() {
     private val movieViewModel: MovieViewModel by viewModels()
     private val tvViewModel: TvViewModel by viewModels()
     private lateinit var navController: NavController
-    private var spanCount: Int = 3
     lateinit var movieAdapter: MovieAdapter
 
     private lateinit var recyclerView: RecyclerView
@@ -66,7 +65,7 @@ class MovieSearcherFragment : BaseFragment() {
             viewLifecycleOwner,
             { movieItems ->
                 movieAdapter = MovieAdapter(movieItems, navController)
-                setupUi(movieAdapter, recyclerView, spanCount)
+                setupUi(movieAdapter, recyclerView)
             })
     }
 
@@ -75,7 +74,7 @@ class MovieSearcherFragment : BaseFragment() {
             viewLifecycleOwner,
             { tvItems ->
                 movieAdapter = MovieAdapter(tvItems, navController)
-                setupUi(movieAdapter, recyclerView, spanCount)
+                setupUi(movieAdapter, recyclerView)
             })
     }
 
@@ -87,21 +86,20 @@ class MovieSearcherFragment : BaseFragment() {
 
     override fun setupUi(
         _adapter: RecyclerView.Adapter<*>,
-        recyclerView: RecyclerView,
-        spanCount: Int
+        recyclerView: RecyclerView
     ) {
         binding.movieRecyclerView.apply {
             addItemDecoration(
                 MovieAdapter.GridSpacingItemDecoration(
-                    3,
-                    3,
+                    100,
+                    10,
                     true
                 )
             )
         }
 
         progressBar.visibility = View.VISIBLE
-        super.setupUi(_adapter, recyclerView, spanCount)
+        super.setupUi(_adapter, recyclerView)
         progressBar.visibility = View.GONE
     }
 }
