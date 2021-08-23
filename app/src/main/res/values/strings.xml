@@ -23,4 +23,5 @@
     <string name="add_to_watchlist">Add To Watchlist</string>
     <string name="remove_from_watchlist">Remove From Watchlist</string>
     <string name="trending">Trending</string>
+    <string name="featured_today">Featured Today</string>
 </resources>

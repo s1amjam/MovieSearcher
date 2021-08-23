@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ProgressBar
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -13,8 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
 import com.moviesearcher.movie.adapter.MovieAdapter
-import com.moviesearcher.movie.viewmodel.MovieViewModel
-import com.moviesearcher.tv.viewmodel.TvViewModel
+import com.moviesearcher.movie.viewmodel.TrendingViewModel
 
 private const val TAG = "MovieSearcherFragment"
 
@@ -22,14 +20,12 @@ class MovieSearcherFragment : BaseFragment() {
     private var _binding: FragmentMovieSearcherBinding? = null
     private val binding get() = _binding!!
 
-    private val movieViewModel: MovieViewModel by viewModels()
-    private val tvViewModel: TvViewModel by viewModels()
+    private val trendingViewModel: TrendingViewModel by viewModels()
     private lateinit var navController: NavController
-    lateinit var movieAdapter: MovieAdapter
+    private lateinit var movieAdapter: MovieAdapter
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var trendingMovieButton: Button
-    private lateinit var trendingTvButton: Button
+    private lateinit var movieRecyclerView: RecyclerView
+    private lateinit var tvRecyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
@@ -44,43 +40,36 @@ class MovieSearcherFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
-        trendingMovieButton = binding.trendingMovieButton
-        trendingTvButton = binding.trendingTvButton
         progressBar = binding.progressBarMovieSearcherFragment
-        recyclerView = binding.movieRecyclerView
+        movieRecyclerView = binding.movieRecyclerView
+        tvRecyclerView = binding.tvRecyclerView
 
         setupTrendingMoviesUi()
-
-        trendingTvButton.setOnClickListener {
-            setupTrendingTvsUi()
-        }
-
-        trendingMovieButton.setOnClickListener {
-            setupTrendingMoviesUi()
-        }
+        setupTrendingTvsUi()
     }
 
     private fun setupTrendingMoviesUi() {
-        movieViewModel.trendingMovies.observe(
+        trendingViewModel.trendingMovies.observe(
             viewLifecycleOwner,
             { movieItems ->
                 movieAdapter = MovieAdapter(movieItems, navController)
-                setupUi(movieAdapter, recyclerView)
+                setupUi(movieAdapter, movieRecyclerView)
             })
     }
 
     private fun setupTrendingTvsUi() {
-        tvViewModel.trendingTvs.observe(
+        trendingViewModel.trendingTvs.observe(
             viewLifecycleOwner,
             { tvItems ->
                 movieAdapter = MovieAdapter(tvItems, navController)
-                setupUi(movieAdapter, recyclerView)
+                setupUi(movieAdapter, tvRecyclerView)
             })
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding?.movieRecyclerView?.adapter = null
+        _binding?.tvRecyclerView?.adapter = null
         _binding = null
     }
 
@@ -88,7 +77,7 @@ class MovieSearcherFragment : BaseFragment() {
         _adapter: RecyclerView.Adapter<*>,
         recyclerView: RecyclerView
     ) {
-        binding.movieRecyclerView.apply {
+        recyclerView.apply {
             addItemDecoration(
                 MovieAdapter.GridSpacingItemDecoration(
                     100,
