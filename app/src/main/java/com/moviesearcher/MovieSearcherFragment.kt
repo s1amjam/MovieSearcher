@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
-import com.moviesearcher.movie.adapter.MovieAdapter
+import com.moviesearcher.movie.adapter.TrendingAdapter
 import com.moviesearcher.movie.viewmodel.TrendingViewModel
 
 private const val TAG = "MovieSearcherFragment"
@@ -22,7 +22,7 @@ class MovieSearcherFragment : BaseFragment() {
 
     private val trendingViewModel: TrendingViewModel by viewModels()
     private lateinit var navController: NavController
-    private lateinit var movieAdapter: MovieAdapter
+    private lateinit var trendingAdapter: TrendingAdapter
 
     private lateinit var movieRecyclerView: RecyclerView
     private lateinit var tvRecyclerView: RecyclerView
@@ -52,8 +52,8 @@ class MovieSearcherFragment : BaseFragment() {
         trendingViewModel.trendingMovies.observe(
             viewLifecycleOwner,
             { movieItems ->
-                movieAdapter = MovieAdapter(movieItems, navController)
-                setupUi(movieAdapter, movieRecyclerView)
+                trendingAdapter = TrendingAdapter(movieItems, navController)
+                setupUi(trendingAdapter, movieRecyclerView)
             })
     }
 
@@ -61,8 +61,8 @@ class MovieSearcherFragment : BaseFragment() {
         trendingViewModel.trendingTvs.observe(
             viewLifecycleOwner,
             { tvItems ->
-                movieAdapter = MovieAdapter(tvItems, navController)
-                setupUi(movieAdapter, tvRecyclerView)
+                trendingAdapter = TrendingAdapter(tvItems, navController)
+                setupUi(trendingAdapter, tvRecyclerView)
             })
     }
 
@@ -79,7 +79,7 @@ class MovieSearcherFragment : BaseFragment() {
     ) {
         recyclerView.apply {
             addItemDecoration(
-                MovieAdapter.GridSpacingItemDecoration(
+                TrendingAdapter.GridSpacingItemDecoration(
                     100,
                     10,
                     true
@@ -90,5 +90,6 @@ class MovieSearcherFragment : BaseFragment() {
         progressBar.visibility = View.VISIBLE
         super.setupUi(_adapter, recyclerView)
         progressBar.visibility = View.GONE
+        view?.visibility = View.VISIBLE
     }
 }

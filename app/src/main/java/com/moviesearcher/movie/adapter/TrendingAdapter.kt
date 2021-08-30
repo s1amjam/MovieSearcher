@@ -6,31 +6,49 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.moviesearcher.MovieSearcherFragmentDirections
 import com.moviesearcher.databinding.PosterImageViewBinding
 import com.moviesearcher.movie.model.Result
 import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.utils.Constants
 
-class MovieAdapter(
+class TrendingAdapter(
     private val movieItems: TrendingResponse,
     private val navController: NavController
-) : RecyclerView.Adapter<MovieAdapter.MovieHolder>() {
+) : ListAdapter<Result, TrendingAdapter.MovieHolder>(ITEM_COMPARATOR) {
     private lateinit var posterImageView: ImageView
     private lateinit var binding: PosterImageViewBinding
 
     inner class MovieHolder(binding: PosterImageViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        private val rating = binding.textViewRating
+        private val title = binding.textViewTitle
+        private val releaseDate = binding.textViewReleaseDate
+
         fun bind(movieItem: Result) {
+            if (movieItem.title != null) {
+                title.text = movieItem.title
+            } else if (movieItem.name != null) {
+                title.text = movieItem.name
+            }
+
+            if (movieItem.releaseDate != null) {
+                releaseDate.text = movieItem.releaseDate.replace("-", ".")
+            } else if (movieItem.firstAirDate != null) {
+                releaseDate.text = movieItem.firstAirDate.replace("-", ".")
+            }
+
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + movieItem.posterPath)
-                .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
+                .centerCrop()
+                .override(400, 600)
                 .into(posterImageView)
             posterImageView.id = movieItem.id!!
             posterImageView.tag = movieItem.title
+            rating.text = movieItem.voteAverage.toString()
         }
     }
 
@@ -57,6 +75,7 @@ class MovieAdapter(
 
     override fun getItemCount(): Int = movieItems.results?.size!!
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
+        val imageButtonWatchlist = binding.imageButtonWatchlist
         posterImageView = binding.posterImageView
 
         posterImageView.setOnClickListener {
@@ -74,6 +93,10 @@ class MovieAdapter(
                         .actionMovieSearcherFragmentToTvInfoFragment(movieId)
                 )
             }
+        }
+
+        imageButtonWatchlist.setOnClickListener {
+
         }
         val movieItem = movieItems.results?.get(position)
         holder.bind(movieItem!!)
@@ -111,18 +134,12 @@ class MovieAdapter(
 }
 
 private val ITEM_COMPARATOR = object :
-    DiffUtil.ItemCallback<TrendingResponse>() {
-    override fun areItemsTheSame(
-        oldItem: TrendingResponse, newItem:
-        TrendingResponse
-    ): Boolean {
-        return oldItem.results == newItem.results
+    DiffUtil.ItemCallback<Result>() {
+    override fun areItemsTheSame(oldItem: Result, newItem: Result): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(
-        oldItem: TrendingResponse, newItem:
-        TrendingResponse
-    ): Boolean {
+    override fun areContentsTheSame(oldItem: Result, newItem: Result): Boolean {
         return oldItem == newItem
     }
 }

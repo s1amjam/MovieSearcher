@@ -101,10 +101,10 @@ class MovieInfoFragment : BaseFragment() {
             markAsFavorite(buttonMarkMovieAsFavorite)
         }
 
-        checkWatchlist(buttonWatchlist)
+        //checkWatchlist(buttonWatchlist)
 
         buttonWatchlist.setOnClickListener {
-            addToWatchlist(buttonWatchlist)
+            //addToWatchlist(buttonWatchlist)
         }
         return view
     }

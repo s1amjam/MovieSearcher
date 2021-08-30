@@ -7,6 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
@@ -183,33 +184,31 @@ open class BaseFragment : Fragment() {
         })
     }
 
-    fun checkWatchlist(button: Button) {
+    fun checkWatchlist(button: ImageButton) {
         if (sessionId.isNotBlank()) {
             mediaInfo = getMediaInfo()
             val mediaId = mediaInfo.values.first()
             val mediaKey = mediaInfo.keys.first()
             val moviesWatchlist = Api.getMovieWatchlist(accountId, sessionId)
             val tvsWatchlist = Api.getTvWatchlist(accountId, sessionId)
-            val addToWatchlistText = resources.getText(R.string.add_to_watchlist)
-            val removeFromWatchlistText = resources.getText(R.string.remove_from_watchlist)
 
             if (mediaKey == "movie") {
                 moviesWatchlist.observe(viewLifecycleOwner, { item ->
-                    button.text = addToWatchlistText
+                    button.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
                     item.results!!.forEach {
                         if (it.id == mediaId) {
                             isWatchlist = false
-                            button.text = removeFromWatchlistText
+                            button.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
                         }
                     }
                 })
             } else {
                 tvsWatchlist.observe(viewLifecycleOwner, { item ->
-                    button.text = addToWatchlistText
+                    button.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
                     item.results!!.forEach {
                         if (it.id == mediaId) {
                             isWatchlist = false
-                            button.text = removeFromWatchlistText
+                            button.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
                         }
                     }
                 })
@@ -217,7 +216,7 @@ open class BaseFragment : Fragment() {
         }
     }
 
-    fun addToWatchlist(button: Button) {
+    fun addToWatchlist(button: ImageButton) {
         mediaInfo = getMediaInfo()
 
         val addToWatchlist = Api.watchlist(

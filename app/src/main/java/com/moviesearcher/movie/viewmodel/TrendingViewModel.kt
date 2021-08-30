@@ -10,7 +10,7 @@ class TrendingViewModel : ViewModel() {
     val trendingTvs: LiveData<TrendingResponse>
 
     init {
-        trendingMovies = Api.getTrending("movie", "week")
-        trendingTvs = Api.getTrending("tv", "week")
+        trendingMovies = Api.getTrending("movie", "day")
+        trendingTvs = Api.getTrending("tv", "day")
     }
 }

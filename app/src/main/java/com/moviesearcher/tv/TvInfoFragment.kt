@@ -96,10 +96,10 @@ class TvInfoFragment : BaseFragment() {
             markAsFavorite(buttonMarkTvAsFavorite)
         }
 
-        checkWatchlist(buttonWatchlist)
+        //checkWatchlist(buttonWatchlist)
 
         buttonWatchlist.setOnClickListener {
-            addToWatchlist(buttonWatchlist)
+            //addToWatchlist(buttonWatchlist)
         }
 
         return view
