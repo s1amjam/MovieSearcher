@@ -13,6 +13,8 @@ import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
 import com.moviesearcher.movie.adapter.TrendingAdapter
 import com.moviesearcher.movie.viewmodel.TrendingViewModel
+import com.moviesearcher.watchlist.movie.viewmodel.MovieWatchlistViewModel
+import com.moviesearcher.watchlist.tv.viewmodel.TvWatchlistViewModel
 
 private const val TAG = "MovieSearcherFragment"
 
@@ -21,9 +23,11 @@ class MovieSearcherFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val trendingViewModel: TrendingViewModel by viewModels()
+    private val movieWatchlistViewModel: MovieWatchlistViewModel by viewModels()
+    private val tvWatchlistViewModel: TvWatchlistViewModel by viewModels()
+
     private lateinit var navController: NavController
     private lateinit var trendingAdapter: TrendingAdapter
-
     private lateinit var movieRecyclerView: RecyclerView
     private lateinit var tvRecyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
@@ -44,15 +48,32 @@ class MovieSearcherFragment : BaseFragment() {
         movieRecyclerView = binding.movieRecyclerView
         tvRecyclerView = binding.tvRecyclerView
 
+        getWatchlistIfLogged()
         setupTrendingMoviesUi()
         setupTrendingTvsUi()
+    }
+
+    private fun getWatchlistIfLogged() {
+        if (sessionId.isNotBlank()) {
+            movieWatchlistViewModel.getMovieWatchlist(accountId, sessionId)
+                .observe(viewLifecycleOwner, {})
+
+            tvWatchlistViewModel.getTvWatchlist(accountId, sessionId)
+                .observe(viewLifecycleOwner, {})
+        }
     }
 
     private fun setupTrendingMoviesUi() {
         trendingViewModel.trendingMovies.observe(
             viewLifecycleOwner,
             { movieItems ->
-                trendingAdapter = TrendingAdapter(movieItems, navController)
+                trendingAdapter = TrendingAdapter(
+                    movieItems,
+                    navController,
+                    accountId,
+                    sessionId,
+                    movieWatchlistViewModel.getMovieWatchlistIds()
+                )
                 setupUi(trendingAdapter, movieRecyclerView)
             })
     }
@@ -61,7 +82,14 @@ class MovieSearcherFragment : BaseFragment() {
         trendingViewModel.trendingTvs.observe(
             viewLifecycleOwner,
             { tvItems ->
-                trendingAdapter = TrendingAdapter(tvItems, navController)
+                trendingAdapter =
+                    TrendingAdapter(
+                        tvItems,
+                        navController,
+                        accountId,
+                        sessionId,
+                        tvWatchlistViewModel.getTvWatchlistIds()
+                    )
                 setupUi(trendingAdapter, tvRecyclerView)
             })
     }

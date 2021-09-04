@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.MovieSearcherFragmentDirections
+import com.moviesearcher.R
 import com.moviesearcher.databinding.PosterImageViewBinding
 import com.moviesearcher.movie.model.Result
 import com.moviesearcher.movie.model.TrendingResponse
@@ -17,7 +18,10 @@ import com.moviesearcher.utils.Constants
 
 class TrendingAdapter(
     private val movieItems: TrendingResponse,
-    private val navController: NavController
+    private val navController: NavController,
+    private val accountId: Long?,
+    private val sessionId: String?,
+    private val movieWatchlistIds: MutableList<Long>
 ) : ListAdapter<Result, TrendingAdapter.MovieHolder>(ITEM_COMPARATOR) {
     private lateinit var posterImageView: ImageView
     private lateinit var binding: PosterImageViewBinding
@@ -29,6 +33,10 @@ class TrendingAdapter(
         private val releaseDate = binding.textViewReleaseDate
 
         fun bind(movieItem: Result) {
+            if (movieWatchlistIds.contains(movieItem.id?.toLong())) {
+                binding.imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+            }
+
             if (movieItem.title != null) {
                 title.text = movieItem.title
             } else if (movieItem.name != null) {
@@ -98,6 +106,7 @@ class TrendingAdapter(
         imageButtonWatchlist.setOnClickListener {
 
         }
+
         val movieItem = movieItems.results?.get(position)
         holder.bind(movieItem!!)
     }
