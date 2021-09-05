@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.MovieSearcherFragmentDirections
 import com.moviesearcher.R
+import com.moviesearcher.api.Api
 import com.moviesearcher.databinding.PosterImageViewBinding
 import com.moviesearcher.movie.model.Result
 import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.utils.Constants
+import com.moviesearcher.watchlist.common.model.WatchlistRequest
 
 class TrendingAdapter(
     private val movieItems: TrendingResponse,
@@ -33,10 +35,6 @@ class TrendingAdapter(
         private val releaseDate = binding.textViewReleaseDate
 
         fun bind(movieItem: Result) {
-            if (movieWatchlistIds.contains(movieItem.id?.toLong())) {
-                binding.imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-            }
-
             if (movieItem.title != null) {
                 title.text = movieItem.title
             } else if (movieItem.name != null) {
@@ -86,6 +84,12 @@ class TrendingAdapter(
         val imageButtonWatchlist = binding.imageButtonWatchlist
         posterImageView = binding.posterImageView
 
+        if (movieWatchlistIds.contains(movieItems.results?.get(position)?.id?.toLong())) {
+            imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+        } else {
+            imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+        }
+
         posterImageView.setOnClickListener {
             val movieId = it.id.toLong()
 
@@ -104,7 +108,53 @@ class TrendingAdapter(
         }
 
         imageButtonWatchlist.setOnClickListener {
+            val movieItemId = movieItems.results?.get(position)?.id?.toLong()
 
+            if (sessionId?.isNotBlank() == true) {
+                if (posterImageView.tag != null) {
+                    if (movieWatchlistIds.contains(movieItemId)) {
+                        imageButtonWatchlist
+                            .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+
+                        Api.watchlist(
+                            accountId!!,
+                            sessionId,
+                            WatchlistRequest(false, movieItemId, "movie")
+                        )
+                        movieWatchlistIds.remove(movieItemId!!)
+                    } else {
+                        imageButtonWatchlist
+                            .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+
+                        Api.watchlist(
+                            accountId!!,
+                            sessionId,
+                            WatchlistRequest(true, movieItemId, "movie")
+                        )
+                        movieWatchlistIds.add(movieItemId!!)
+                    }
+                } else {
+                    if (movieWatchlistIds.contains(movieItemId)) {
+                        Api.watchlist(
+                            accountId!!,
+                            sessionId,
+                            WatchlistRequest(false, movieItemId, "tv")
+                        )
+                        imageButtonWatchlist
+                            .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                        movieWatchlistIds.remove(movieItemId!!)
+                    } else {
+                        Api.watchlist(
+                            accountId!!,
+                            sessionId,
+                            WatchlistRequest(true, movieItemId, "tv")
+                        )
+                        imageButtonWatchlist
+                            .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                        movieWatchlistIds.add(movieItemId!!)
+                    }
+                }
+            }
         }
 
         val movieItem = movieItems.results?.get(position)
