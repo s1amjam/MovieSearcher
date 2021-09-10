@@ -84,10 +84,12 @@ class TrendingAdapter(
         val imageButtonWatchlist = binding.imageButtonWatchlist
         posterImageView = binding.posterImageView
 
-        if (movieWatchlistIds.contains(movieItems.results?.get(position)?.id?.toLong())) {
-            imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-        } else {
-            imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+        if (sessionId?.isNotBlank() == true || sessionId != null) {
+            if (movieWatchlistIds.contains(movieItems.results?.get(position)?.id?.toLong())) {
+                imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+            } else {
+                imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+            }
         }
 
         posterImageView.setOnClickListener {
@@ -110,7 +112,7 @@ class TrendingAdapter(
         imageButtonWatchlist.setOnClickListener {
             val movieItemId = movieItems.results?.get(position)?.id?.toLong()
 
-            if (sessionId?.isNotBlank() == true) {
+            if (sessionId?.isNotBlank() == true || sessionId != null) {
                 if (posterImageView.tag != null) {
                     if (movieWatchlistIds.contains(movieItemId)) {
                         imageButtonWatchlist

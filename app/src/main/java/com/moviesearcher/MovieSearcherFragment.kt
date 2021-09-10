@@ -54,7 +54,7 @@ class MovieSearcherFragment : BaseFragment() {
     }
 
     private fun getWatchlistIfLogged() {
-        if (sessionId.isNotBlank()) {
+        if (sessionId.isNotBlank() || sessionId != null) {
             movieWatchlistViewModel.getMovieWatchlist(accountId, sessionId)
                 .observe(viewLifecycleOwner, {
                     setupTrendingMoviesUi()
@@ -119,6 +119,5 @@ class MovieSearcherFragment : BaseFragment() {
         progressBar.visibility = View.VISIBLE
         super.setupUi(_adapter, recyclerView)
         progressBar.visibility = View.GONE
-        view?.visibility = View.VISIBLE
     }
 }
