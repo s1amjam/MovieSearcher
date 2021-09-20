@@ -86,7 +86,6 @@ class AuthorizationDialogFragment : DialogFragment() {
 
                 if (url.equals(SUCCESS_SESSION_URL.format(requestToken))) {
                     progressBar.visibility = VISIBLE
-                    val parentFragmentManager = parentFragmentManager
 
                     Api.createSession(RequestToken(requestToken))
                         .observe(requireActivity(), { response ->

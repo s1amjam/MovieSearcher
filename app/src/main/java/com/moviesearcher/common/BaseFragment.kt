@@ -34,7 +34,7 @@ open class BaseFragment : Fragment() {
     lateinit var sessionId: String
     var accountId by Delegates.notNull<Long>()
 
-    private lateinit var encryptedSharedPrefs: SharedPreferences
+    lateinit var encryptedSharedPrefs: SharedPreferences
 
     private val myListsViewModel: MyListsViewModel by viewModels()
 

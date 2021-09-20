@@ -39,54 +39,6 @@ class MovieSearcherActivity : AppCompatActivity() {
 
         navigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-//                R.id.login_button -> {
-//                    AuthorizationDialogFragment().show(
-//                        supportFragmentManager, AuthorizationDialogFragment.TAG
-//                    )
-//
-//                    supportFragmentManager.setFragmentResultListener(
-//                        "accountResponse",
-//                        this
-//                    ) { _, bundle ->
-//                        val sessionId = bundle.getString("sessionId")
-//                        val avatar = bundle.getString("avatar")
-//                        val accountId = bundle.getLong("accountId")
-//                        val username = bundle.getString("username")
-//                        val includeAdult = bundle.getString("includeAdult")
-//                        val name = bundle.getString("name")
-//
-//                        if (sessionId != null || sessionId != "") {
-//                            this.sessionId = sessionId.toString()
-//
-//                            with(encryptedSharedPrefs.edit()) {
-//                                putString("sessionId", sessionId)
-//                                putString("avatar", avatar)
-//                                putLong("accountId", accountId)
-//                                putString("username", username)
-//                                putString("includeAdult", includeAdult.toString())
-//                                putString("name", name)
-//                                apply()
-//                            }
-//                            changeMenu()
-//                        }
-//                    }
-//                    true
-//                }
-//                R.id.logout_button -> {
-//                    //progressBar.visibility = VISIBLE
-//
-//                    Api.deleteSession(SessionId(sessionId)).observe(this,
-//                        { response ->
-//                            if (response.success == true) {
-//                                encryptedSharedPrefs.edit().clear().apply()
-//                                sessionId = ""
-//                                changeMenu()
-//                                //progressBar.visibility = View.GONE
-//                                navController.navigate(R.id.movie_searcher_fragment)
-//                            }
-//                        })
-//                    true
-//                }
 //                R.id.menu_item_my_lists -> {
 //                    navController.navigate(R.id.fragment_my_lists)
 //
@@ -108,10 +60,9 @@ class MovieSearcherActivity : AppCompatActivity() {
                     true
                 }
                 R.id.you -> {
-                    TODO()
-//                    navController.navigate(R.id.fragment_rated)
-//
-//                    true
+                    navController.navigate(R.id.you_fragment)
+
+                    true
                 }
                 else -> super.onOptionsItemSelected(menuItem)
             }
