@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -50,7 +49,7 @@ class MovieSearcherActivity : AppCompatActivity() {
 //                    true
 //                }
                 R.id.home -> {
-                    navController.navigate(R.id.movie_searcher_fragment)
+                    navController.navigate(R.id.home_fragment)
 
                     true
                 }
@@ -77,8 +76,6 @@ class MovieSearcherActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_container)
-
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

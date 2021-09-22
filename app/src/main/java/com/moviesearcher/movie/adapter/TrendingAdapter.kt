@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.moviesearcher.MovieSearcherFragmentDirections
+import com.moviesearcher.HomeFragmentDirections
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.databinding.PosterImageViewBinding
@@ -98,13 +98,13 @@ class TrendingAdapter(
             //Only 'Movie' has a 'title', 'Tv series' has a 'name', so binding title to tag
             if (it.tag != null) {
                 navController.navigate(
-                    MovieSearcherFragmentDirections
-                        .actionMovieSearcherFragmentToMovieInfoFragment(movieId)
+                    HomeFragmentDirections
+                        .actionHomeFragmentToMovieInfoFragment(movieId)
                 )
             } else {
                 navController.navigate(
-                    MovieSearcherFragmentDirections
-                        .actionMovieSearcherFragmentToTvInfoFragment(movieId)
+                    HomeFragmentDirections
+                        .actionHomeFragmentToTvInfoFragment(movieId)
                 )
             }
         }

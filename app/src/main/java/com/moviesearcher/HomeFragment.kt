@@ -19,7 +19,7 @@ import com.moviesearcher.watchlist.tv.viewmodel.TvWatchlistViewModel
 
 private const val TAG = "MovieSearcherFragment"
 
-class MovieSearcherFragment : BaseFragment() {
+class HomeFragment : BaseFragment() {
     private var _binding: FragmentMovieSearcherBinding? = null
     private val binding get() = _binding!!
 

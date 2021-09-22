@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/movie_searcher_fragment">
+    app:startDestination="@id/home_fragment">
 
     <fragment
         android:id="@+id/movie_info_fragment"
@@ -18,17 +18,17 @@
             app:destination="@id/search_result_fragment" />
     </fragment>
     <fragment
-        android:id="@+id/movie_searcher_fragment"
-        android:name="com.moviesearcher.MovieSearcherFragment"
-        android:label="MovieSearcherFragment">
+        android:id="@+id/home_fragment"
+        android:name="com.moviesearcher.HomeFragment"
+        android:label="HomeFragment">
         <action
-            android:id="@+id/action_movie_searcher_fragment_to_movie_info_fragment"
+            android:id="@+id/action_home_fragment_to_movie_info_fragment"
             app:destination="@id/movie_info_fragment" />
         <action
-            android:id="@+id/action_movie_searcher_fragment_to_tv_info_fragment"
+            android:id="@+id/action_home_fragment_to_tv_info_fragment"
             app:destination="@id/tv_info_fragment" />
         <action
-            android:id="@+id/action_movie_searcher_fragment_to_search_result_fragment"
+            android:id="@+id/action_home_fragment_to_search_result_fragment"
             app:destination="@id/search_result_fragment" />
     </fragment>
     <activity
