@@ -2,61 +2,26 @@ package com.moviesearcher.search
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.R
+import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentSearchResultBinding
 import com.moviesearcher.search.adapter.SearchAdapter
 import com.moviesearcher.search.viewmodel.SearchViewModel
 
 private const val TAG = "SearchResultFragment"
 
-class SearchResultFragment : Fragment() {
+class SearchResultFragment : BaseFragment() {
     private var _binding: FragmentSearchResultBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var searchResultRecyclerView: RecyclerView
     private val searchViewModel: SearchViewModel by viewModels()
-    private val args by navArgs<SearchResultFragmentArgs>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.fragment_movie_searcher_menu, menu)
-
-        val searchItem: MenuItem = menu.findItem(R.id.menu_item_search)
-        val searchView = searchItem.actionView as SearchView
-
-        searchView.apply {
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(searchQuery: String): Boolean {
-                    return false
-                }
-
-                override fun onQueryTextChange(queryText: String): Boolean {
-                    if (queryText != "") {
-                        searchViewModel.queryForSearch(queryText)
-                    }
-                    return true
-                }
-            })
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,8 +40,33 @@ class SearchResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val searchQuery = args.searchQuery
+        val searchView = binding.searchView
 
+        searchView.apply {
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(queryText: String): Boolean {
+                    if (queryText != "") {
+                        updateWithSearchResult(queryText)
+                    }
+                    return true
+                }
+
+                override fun onQueryTextSubmit(searchQuery: String): Boolean {
+                    return false
+                }
+            })
+        }
+
+        searchResultRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                hideKeyboard(view)
+            }
+        })
+    }
+
+    private fun updateWithSearchResult(searchQuery: String) {
         searchViewModel.queryForSearch(searchQuery).observe(
             viewLifecycleOwner,
             { searchItems ->

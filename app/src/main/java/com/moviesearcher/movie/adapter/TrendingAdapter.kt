@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.cardview.widget.CardView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -12,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.moviesearcher.HomeFragmentDirections
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
-import com.moviesearcher.databinding.PosterImageViewBinding
+import com.moviesearcher.databinding.TrendingItemViewBinding
 import com.moviesearcher.movie.model.Result
 import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.utils.Constants
@@ -25,10 +26,11 @@ class TrendingAdapter(
     private val sessionId: String?,
     private val movieWatchlistIds: MutableList<Long>
 ) : ListAdapter<Result, TrendingAdapter.MovieHolder>(ITEM_COMPARATOR) {
+    private lateinit var cardView: CardView
     private lateinit var posterImageView: ImageView
-    private lateinit var binding: PosterImageViewBinding
+    private lateinit var binding: TrendingItemViewBinding
 
-    inner class MovieHolder(binding: PosterImageViewBinding) :
+    inner class MovieHolder(binding: TrendingItemViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val rating = binding.textViewRating
         private val title = binding.textViewTitle
@@ -52,8 +54,9 @@ class TrendingAdapter(
                 .centerCrop()
                 .override(400, 600)
                 .into(posterImageView)
-            posterImageView.id = movieItem.id!!
-            posterImageView.tag = movieItem.title
+
+            cardView.id = movieItem.id!!
+            cardView.tag = movieItem.title
             rating.text = movieItem.voteAverage.toString()
         }
     }
@@ -62,7 +65,7 @@ class TrendingAdapter(
         parent: ViewGroup,
         viewType: Int
     ): MovieHolder {
-        binding = PosterImageViewBinding.inflate(
+        binding = TrendingItemViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -83,6 +86,7 @@ class TrendingAdapter(
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         val imageButtonWatchlist = binding.imageButtonWatchlist
         posterImageView = binding.posterImageView
+        cardView = binding.trendingCardView
 
         if (sessionId?.isNotBlank() == true || sessionId != null) {
             if (movieWatchlistIds.contains(movieItems.results?.get(position)?.id?.toLong())) {
@@ -92,7 +96,7 @@ class TrendingAdapter(
             }
         }
 
-        posterImageView.setOnClickListener {
+        cardView.setOnClickListener {
             val movieId = it.id.toLong()
 
             //Only 'Movie' has a 'title', 'Tv series' has a 'name', so binding title to tag
@@ -113,7 +117,7 @@ class TrendingAdapter(
             val movieItemId = movieItems.results?.get(position)?.id?.toLong()
 
             if (sessionId?.isNotBlank() == true || sessionId != null) {
-                if (posterImageView.tag != null) {
+                if (cardView.tag != null) {
                     if (movieWatchlistIds.contains(movieItemId)) {
                         imageButtonWatchlist
                             .setImageResource(R.drawable.ic_baseline_bookmark_add_60)

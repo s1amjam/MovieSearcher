@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.Target
 import com.moviesearcher.databinding.FragmentSearchItemBinding
 import com.moviesearcher.search.SearchResultFragmentDirections
 import com.moviesearcher.search.model.Result
@@ -18,26 +18,39 @@ class SearchAdapter(
     private val searchItems: SearchResponse,
     private val navController: NavController
 ) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
-    lateinit var searchItemPoster: ImageView
+    private lateinit var cardView: CardView
+    private lateinit var searchItemPoster: ImageView
 
     inner class SearchViewHolder(binding: FragmentSearchItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private val searchItemTitle: TextView = binding.searchItemFragmentTitle
+        private val title: TextView = binding.searchItemTitle
+        private val rating = binding.searchItemTextViewRating
+        private val releaseDate = binding.searchItemTextViewReleaseDate
 
         fun bind(searchResultItem: Result) {
             Glide.with(this.itemView)
                 .load(Constants.IMAGE_URL + searchResultItem.posterPath)
-                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                .centerCrop()
+                .override(400, 600)
                 .into(searchItemPoster)
+
             if (searchResultItem.title == null) {
-                searchItemTitle.text = searchResultItem.name
-                searchItemPoster.tag = "tv"
-                searchItemPoster.id = searchResultItem.id!!
+                title.text = searchResultItem.name
+                cardView.tag = "tv"
+                cardView.id = searchResultItem.id!!
             } else {
-                searchItemTitle.text = searchResultItem.title
-                searchItemPoster.tag = "movie"
-                searchItemPoster.id = searchResultItem.id!!
+                title.text = searchResultItem.title
+                cardView.tag = "movie"
+                cardView.id = searchResultItem.id!!
             }
+
+            if (searchResultItem.releaseDate != null) {
+                releaseDate.text = searchResultItem.releaseDate.replace("-", ".")
+            } else if (searchResultItem.firstAirDate != null) {
+                releaseDate.text = searchResultItem.firstAirDate.replace("-", ".")
+            }
+
+            rating.text = searchResultItem.voteAverage.toString()
         }
     }
 
@@ -51,8 +64,9 @@ class SearchAdapter(
             false
         )
         searchItemPoster = binding.searchItemFragmentImageview
+        cardView = binding.searchItemCardView
 
-        searchItemPoster.setOnClickListener {
+        cardView.setOnClickListener {
             val movieId = it.id.toLong()
 
             //Only 'Movie' has a 'title', 'Tv series' has a 'name'

@@ -1,19 +1,17 @@
 package com.moviesearcher.common
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.R
@@ -23,7 +21,6 @@ import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.CreateNewListDialog
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.list.model.Result
-import com.moviesearcher.search.SearchResultFragmentDirections
 import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import kotlin.properties.Delegates
@@ -49,32 +46,6 @@ open class BaseFragment : Fragment() {
         encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(requireContext())
         sessionId = encryptedSharedPrefs.getString("sessionId", "").toString()
         accountId = encryptedSharedPrefs.getLong("accountId", 0L)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.fragment_movie_searcher_menu, menu)
-
-        val searchItem: MenuItem = menu.findItem(R.id.menu_item_search)
-        val searchView = searchItem.actionView as SearchView
-
-        searchView.apply {
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(searchQuery: String): Boolean {
-                    navigateToSearchResult(searchQuery)
-                    return false
-                }
-
-                override fun onQueryTextChange(queryText: String): Boolean {
-                    return false
-                }
-            })
-        }
-    }
-
-    private fun navigateToSearchResult(searchQuery: String) {
-        val action = SearchResultFragmentDirections.actionGlobalSearchResultFragment(searchQuery)
-        findNavController().navigate(action)
     }
 
     private fun showCreateNewListDialog() {
@@ -249,5 +220,12 @@ open class BaseFragment : Fragment() {
             adapter = _adapter
             setHasFixedSize(true)
         }
+    }
+
+    fun hideKeyboard(view: View) {
+        val inputMethodService =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        inputMethodService.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
