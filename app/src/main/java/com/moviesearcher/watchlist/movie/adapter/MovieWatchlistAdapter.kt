@@ -3,67 +3,65 @@ package com.moviesearcher.watchlist.movie.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.Target
-import com.google.android.material.card.MaterialCardView
-import com.moviesearcher.databinding.FragmentMovieWatchlistItemBinding
+import com.moviesearcher.HomeFragmentDirections
+import com.moviesearcher.R
+import com.moviesearcher.api.Api
+import com.moviesearcher.databinding.TrendingItemViewBinding
 import com.moviesearcher.utils.Constants
-import com.moviesearcher.watchlist.WatchlistFragmentDirections
+import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.MovieWatchlistResult
 
 class MovieWatchlistAdapter(
-    private val movieWatchlistItems: MovieWatchlistResponse,
-    private val navController: NavController
-) : RecyclerView.Adapter<MovieWatchlistAdapter.MovieWatchlistViewHolder>() {
-    lateinit var cardView: MaterialCardView
+    private val movieItems: MovieWatchlistResponse,
+    private val navController: NavController,
+    private val accountId: Long?,
+    private val sessionId: String?,
+    private val movieWatchlistIds: MutableList<Long>
+) : ListAdapter<MovieWatchlistResult, MovieWatchlistAdapter.MovieHolder>(ITEM_COMPARATOR) {
+    private lateinit var cardView: CardView
+    private lateinit var posterImageView: ImageView
+    private lateinit var binding: TrendingItemViewBinding
 
-    inner class MovieWatchlistViewHolder(binding: FragmentMovieWatchlistItemBinding) :
+    inner class MovieHolder(binding: TrendingItemViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private val movieWatchlistItemPoster: ImageView = binding.imageViewMovieWatchlistItem
-        private val movieWatchlistItemName: TextView = binding.textViewMovieWatchlistItemName
+        private val rating = binding.textViewRating
+        private val title = binding.textViewTitle
+        private val releaseDate = binding.textViewReleaseDate
 
-        fun bind(movieWatchlistResultItem: MovieWatchlistResult) {
-            Glide.with(this.itemView)
-                .load(Constants.IMAGE_URL + movieWatchlistResultItem.posterPath)
-                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                .into(movieWatchlistItemPoster)
-            cardView.id = movieWatchlistResultItem.id?.toInt()!!
-            movieWatchlistItemName.text = movieWatchlistResultItem.title
+        fun bind(movieItem: MovieWatchlistResult) {
+            title.text = movieItem.title
+            releaseDate.text = movieItem.releaseDate?.replace("-", ".")
+
+            Glide.with(this.itemView.context)
+                .load(Constants.IMAGE_URL + movieItem.posterPath)
+                .centerCrop()
+                .override(400, 600)
+                .into(posterImageView)
+
+            cardView.id = movieItem.id!!.toInt()
+            cardView.tag = movieItem.title
+            rating.text = movieItem.voteAverage.toString()
         }
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): MovieWatchlistViewHolder {
-        val binding = FragmentMovieWatchlistItemBinding.inflate(
+    ): MovieHolder {
+        binding = TrendingItemViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        cardView = binding.materialCardViewMovieWatchlistItem
 
-        cardView.setOnClickListener {
-            val movieId = it.id.toLong()
-
-            navController.navigate(
-                WatchlistFragmentDirections.actionWatchlistFragmentToMovieInfoFragment(
-                    movieId
-                )
-            )
-        }
-
-        return MovieWatchlistViewHolder(binding)
-    }
-
-    override fun getItemCount(): Int = movieWatchlistItems.results?.size!!
-    override fun onBindViewHolder(holder: MovieWatchlistViewHolder, position: Int) {
-        val movieWatchlistItem = movieWatchlistItems.results?.get(position)
-        holder.bind(movieWatchlistItem!!)
+        return MovieHolder(binding)
     }
 
     override fun getItemId(position: Int): Long {
@@ -72,5 +70,77 @@ class MovieWatchlistAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return position
+    }
+
+    override fun getItemCount(): Int = movieItems.results?.size!!
+    override fun onBindViewHolder(holder: MovieHolder, position: Int) {
+        val imageButtonWatchlist = binding.imageButtonWatchlist
+        posterImageView = binding.posterImageView
+        cardView = binding.trendingCardView
+
+        if (sessionId?.isNotBlank() == true || sessionId != null) {
+            if (movieWatchlistIds.contains(movieItems.results?.get(position)?.id)) {
+                imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+            } else {
+                imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+            }
+        }
+
+        cardView.setOnClickListener {
+            val movieId = it.id.toLong()
+
+            navController.navigate(
+                HomeFragmentDirections
+                    .actionHomeFragmentToMovieInfoFragment(movieId)
+            )
+        }
+
+        imageButtonWatchlist.setOnClickListener {
+            val movieItemId = movieItems.results?.get(position)?.id
+
+            if (sessionId?.isNotBlank() == true || sessionId != null) {
+                if (movieWatchlistIds.contains(movieItemId)) {
+                    imageButtonWatchlist
+                        .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+
+                    Api.watchlist(
+                        accountId!!,
+                        sessionId,
+                        WatchlistRequest(false, movieItemId, "movie")
+                    )
+                    movieWatchlistIds.remove(movieItemId!!)
+                } else {
+                    imageButtonWatchlist
+                        .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+
+                    Api.watchlist(
+                        accountId!!,
+                        sessionId,
+                        WatchlistRequest(true, movieItemId, "movie")
+                    )
+                    movieWatchlistIds.add(movieItemId!!)
+                }
+            }
+        }
+
+        val movieItem = movieItems.results?.get(position)
+        holder.bind(movieItem!!)
+    }
+}
+
+private val ITEM_COMPARATOR = object :
+    DiffUtil.ItemCallback<MovieWatchlistResult>() {
+    override fun areItemsTheSame(
+        oldItem: MovieWatchlistResult,
+        newItem: MovieWatchlistResult
+    ): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(
+        oldItem: MovieWatchlistResult,
+        newItem: MovieWatchlistResult
+    ): Boolean {
+        return oldItem == newItem
     }
 }
