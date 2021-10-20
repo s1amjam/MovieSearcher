@@ -40,6 +40,8 @@ class MyListFragment : BaseFragment() {
         myListViewModel.getList(listId).observe(
             viewLifecycleOwner,
             { myListItems ->
+                binding.listTitleTextView.text = myListItems.name
+                
                 myListRecyclerView.adapter = MyListAdapter(
                     myListItems,
                     findNavController(),

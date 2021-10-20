@@ -3,15 +3,12 @@ package com.moviesearcher.list.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.Target
 import com.google.android.material.card.MaterialCardView
-import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.databinding.FragmentMyListItemBinding
@@ -26,25 +23,41 @@ class MyListAdapter(
     private val listId: Int,
     private val sessionId: String
 ) : RecyclerView.Adapter<MyListAdapter.MyListViewHolder>() {
-    lateinit var cardView: MaterialCardView
+    private lateinit var cardView: MaterialCardView
+    private lateinit var imageButtonRemoveFromList: ImageButton
 
     inner class MyListViewHolder(val binding: FragmentMyListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private val myListItemPoster: ImageView = binding.imageViewMyListItem
-        private val myListItemName: TextView = binding.textViewMyListItemName
 
-        fun bind(myListResultItem: Item) {
-            Glide.with(this.itemView)
-                .load(Constants.IMAGE_URL + myListResultItem.posterPath)
-                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                .into(myListItemPoster)
-            cardView.tag = myListResultItem.mediaType
-            cardView.id = myListResultItem.id!!.toInt()
-            if (myListResultItem.title == null) {
-                myListItemName.text = myListResultItem.name
-            } else {
-                myListItemName.text = myListResultItem.title
+        private val rating = binding.textViewRating
+        private val title = binding.textViewTitle
+        private val releaseDate = binding.textViewReleaseDate
+        private val posterImageView = binding.posterImageView
+        private val overview = binding.textViewDescription
+
+        fun bind(movieItem: Item) {
+            if (movieItem.title != null) {
+                title.text = movieItem.title
+            } else if (movieItem.name != null) {
+                title.text = movieItem.name
             }
+
+            if (movieItem.releaseDate != null) {
+                releaseDate.text = movieItem.releaseDate.replace("-", ".")
+            } else if (movieItem.firstAirDate != null) {
+                releaseDate.text = movieItem.firstAirDate.replace("-", ".")
+            }
+
+            Glide.with(this.itemView.context)
+                .load(Constants.IMAGE_URL + movieItem.posterPath)
+                .centerCrop()
+                .override(400, 600)
+                .into(posterImageView)
+
+            overview.text = movieItem.overview
+            rating.text = movieItem.voteAverage.toString()
+
+            cardView.tag = movieItem.title
         }
     }
 
@@ -57,45 +70,51 @@ class MyListAdapter(
             parent,
             false
         )
-        cardView = binding.materialCardViewMyListItem
-
-        cardView.setOnClickListener {
-            val mediaId = it.id.toLong()
-            val mediaType = it.tag
-
-            if (mediaType == "movie") {
-                navController.navigate(
-                    MyListFragmentDirections.actionFragmentMyListToMovieInfoFragment(
-                        mediaId
-                    )
-                )
-            } else {
-                navController.navigate(
-                    MyListFragmentDirections.actionFragmentMyListToTvInfoFragment(
-                        mediaId
-                    )
-                )
-            }
-        }
+        cardView = binding.listItemCardView
+        imageButtonRemoveFromList = binding.imageButtonRemoveFromList
 
         return MyListViewHolder(binding)
     }
 
     override fun getItemCount(): Int = listItems.items?.size!!
     override fun onBindViewHolder(holder: MyListViewHolder, position: Int) {
-        val imageButtonRemoveFromList: ImageButton =
-            holder.itemView.findViewById(R.id.image_button_remove_from_list)
-
         imageButtonRemoveFromList.setOnClickListener {
             val removeFromListResponse =
-                Api.removeFromList(listId, sessionId, MediaId(cardView.id.toLong()))
+                Api.removeFromList(
+                    listId,
+                    sessionId,
+                    MediaId(listItems.items?.get(position)?.id!!.toLong())
+                )
 
             removeFromListResponse.observe(holder.itemView.findViewTreeLifecycleOwner()!!, {
-                if (it.statusMessage == "The item/record was deleted successfully.") {
-                    listItems.items!!.removeAt(holder.adapterPosition)
-                    this.notifyItemRemoved(holder.adapterPosition)
+                if (it.success) {
+                    listItems.items.removeAt(position)
+                    notifyItemRemoved(position)
+                } else {
+                    Toast.makeText(
+                        holder.itemView.context,
+                        "Error while removing from list",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
+        }
+
+        cardView.setOnClickListener {
+            val movieId = it.id.toLong()
+
+            //Only 'Movie' has a 'title', 'Tv series' has a 'name', so binding title to tag
+            if (it.tag != null) {
+                navController.navigate(
+                    MyListFragmentDirections
+                        .actionFragmentMyListToMovieInfoFragment(movieId)
+                )
+            } else {
+                navController.navigate(
+                    MyListFragmentDirections
+                        .actionFragmentMyListToTvInfoFragment(movieId)
+                )
+            }
         }
 
         val listItem = listItems.items?.get(position)
