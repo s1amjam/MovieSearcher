@@ -2,7 +2,6 @@ package com.moviesearcher.search.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.navigation.NavController
@@ -19,20 +18,21 @@ class SearchAdapter(
     private val navController: NavController
 ) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
     private lateinit var cardView: CardView
-    private lateinit var searchItemPoster: ImageView
 
     inner class SearchViewHolder(binding: FragmentSearchItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private val title: TextView = binding.searchItemTitle
-        private val rating = binding.searchItemTextViewRating
-        private val releaseDate = binding.searchItemTextViewReleaseDate
+        private val title: TextView = binding.textViewTitle
+        private val rating = binding.textViewRating
+        private val releaseDate = binding.textViewReleaseDate
+        private val overview = binding.textViewDescription
+        private val poster = binding.posterImageView
 
         fun bind(searchResultItem: Result) {
             Glide.with(this.itemView)
                 .load(Constants.IMAGE_URL + searchResultItem.posterPath)
                 .centerCrop()
                 .override(400, 600)
-                .into(searchItemPoster)
+                .into(poster)
 
             if (searchResultItem.title == null) {
                 title.text = searchResultItem.name
@@ -51,6 +51,7 @@ class SearchAdapter(
             }
 
             rating.text = searchResultItem.voteAverage.toString()
+            overview.text = searchResultItem.overview
         }
     }
 
@@ -63,7 +64,7 @@ class SearchAdapter(
             parent,
             false
         )
-        searchItemPoster = binding.searchItemFragmentImageview
+
         cardView = binding.searchItemCardView
 
         cardView.setOnClickListener {
