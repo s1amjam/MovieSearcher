@@ -94,7 +94,7 @@ class FavoriteMovieAdapter(
 
                     val favoriteItemRemovedSnackbar = Snackbar.make(
                         holder.binding.root.rootView,
-                        "${movieToRemove.title} was removed from Favorites",
+                        "\"${movieToRemove.title}\" was removed from Favorites",
                         DURATION_5_SECONDS
                     )
 
@@ -116,6 +116,11 @@ class FavoriteMovieAdapter(
                                 if (addToFavorite.success) {
                                     favoriteMovieItems.results?.add(position, movieToRemove)
                                     notifyItemInserted(position)
+                                    Toast.makeText(
+                                        holder.itemView.context,
+                                        "\"${movieToRemove.title}\" added back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
                                     Toast.makeText(
                                         holder.itemView.context,

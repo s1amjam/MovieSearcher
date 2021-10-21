@@ -94,7 +94,7 @@ class FavoriteTvAdapter(
 
                     val favoriteItemRemovedSnackbar = Snackbar.make(
                         holder.binding.root.rootView,
-                        "${tvToRemove.name} was removed from Favorites",
+                        "\"${tvToRemove.name}\" was removed from Favorites",
                         DURATION_5_SECONDS
                     )
 
@@ -116,10 +116,15 @@ class FavoriteTvAdapter(
                                 if (addToFavorite.success) {
                                     favoriteTvItems.results?.add(position, tvToRemove)
                                     notifyItemInserted(position)
+                                    Toast.makeText(
+                                        holder.itemView.context,
+                                        "\"${tvToRemove.name}\" added back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
                                     Toast.makeText(
                                         holder.itemView.context,
-                                        "Error while adding movie back",
+                                        "Error while adding tv back",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }

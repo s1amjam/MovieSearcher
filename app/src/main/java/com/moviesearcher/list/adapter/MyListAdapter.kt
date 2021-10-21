@@ -1,5 +1,6 @@
 package com.moviesearcher.list.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -9,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.databinding.FragmentMyListItemBinding
@@ -77,19 +79,59 @@ class MyListAdapter(
     }
 
     override fun getItemCount(): Int = listItems.items?.size!!
+
+    @SuppressLint("WrongConstant")
     override fun onBindViewHolder(holder: MyListViewHolder, position: Int) {
         imageButtonRemoveFromList.setOnClickListener {
+            val movieToRemove = listItems.items?.get(position)
+
             val removeFromListResponse =
                 Api.removeFromList(
                     listId,
                     sessionId,
-                    MediaId(listItems.items?.get(position)?.id!!.toLong())
+                    MediaId(movieToRemove?.id!!.toLong())
                 )
 
-            removeFromListResponse.observe(holder.itemView.findViewTreeLifecycleOwner()!!, {
+            removeFromListResponse.observe(holder.binding.root.findViewTreeLifecycleOwner()!!, {
                 if (it.success) {
-                    listItems.items.removeAt(position)
+                    listItems.items?.removeAt(position)
                     notifyItemRemoved(position)
+
+                    val listItemRemovedSnackbar = Snackbar.make(
+                        holder.binding.root.rootView,
+                        "\"${movieToRemove.name ?: movieToRemove.title}\" was removed from Favorites",
+                        Constants.DURATION_5_SECONDS
+                    )
+
+                    listItemRemovedSnackbar.setAction("UNDO") { view ->
+                        val addToListResponse =
+                            Api.addToList(
+                                listId,
+                                MediaId(movieToRemove.id.toLong()),
+                                sessionId,
+                            )
+
+                        addToListResponse.observe(
+                            view.findViewTreeLifecycleOwner()!!,
+                            { addToFavorite ->
+                                if (addToFavorite.statusCode == 12) {
+                                    listItems.items?.add(position, movieToRemove)
+                                    notifyItemInserted(position)
+                                    Toast.makeText(
+                                        holder.itemView.context,
+                                        "\"${movieToRemove.name ?: movieToRemove.title}\" added back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        holder.itemView.context,
+                                        "Error while adding movie back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            })
+                    }
+                    listItemRemovedSnackbar.show()
                 } else {
                     Toast.makeText(
                         holder.itemView.context,
