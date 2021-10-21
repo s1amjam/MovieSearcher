@@ -23,7 +23,7 @@ class TvWatchlistAdapter(
     private val navController: NavController,
     private val accountId: Long?,
     private val sessionId: String?,
-    private val movieWatchlistIds: MutableList<Long>
+    private val tvWatchlistIds: MutableList<Long>
 ) : ListAdapter<TvWatchlistResult, TvWatchlistAdapter.MovieHolder>(ITEM_COMPARATOR) {
     private lateinit var cardView: CardView
     private lateinit var posterImageView: ImageView
@@ -79,7 +79,7 @@ class TvWatchlistAdapter(
         cardView = binding.trendingCardView
 
         if (sessionId?.isNotBlank() == true || sessionId != null) {
-            if (movieWatchlistIds.contains(tvItems.results?.get(position)?.id)) {
+            if (tvWatchlistIds.contains(tvItems.results?.get(position)?.id)) {
                 imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
             } else {
                 imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
@@ -96,29 +96,27 @@ class TvWatchlistAdapter(
         }
 
         imageButtonWatchlist.setOnClickListener {
-            val movieItemId = tvItems.results?.get(position)?.id?.toLong()
+            val tvItemId = tvItems.results?.get(position)?.id
 
             if (sessionId?.isNotBlank() == true || sessionId != null) {
-                if (cardView.tag != null) {
-                    if (movieWatchlistIds.contains(movieItemId)) {
-                        Api.watchlist(
-                            accountId!!,
-                            sessionId,
-                            WatchlistRequest(false, movieItemId, "tv")
-                        )
-                        imageButtonWatchlist
-                            .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
-                        movieWatchlistIds.remove(movieItemId!!)
-                    } else {
-                        Api.watchlist(
-                            accountId!!,
-                            sessionId,
-                            WatchlistRequest(true, movieItemId, "tv")
-                        )
-                        imageButtonWatchlist
-                            .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-                        movieWatchlistIds.add(movieItemId!!)
-                    }
+                if (tvWatchlistIds.contains(tvItemId)) {
+                    Api.watchlist(
+                        accountId!!,
+                        sessionId,
+                        WatchlistRequest(false, tvItemId, "tv")
+                    )
+                    imageButtonWatchlist
+                        .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                    tvWatchlistIds.remove(tvItemId!!)
+                } else {
+                    Api.watchlist(
+                        accountId!!,
+                        sessionId,
+                        WatchlistRequest(true, tvItemId, "tv")
+                    )
+                    imageButtonWatchlist
+                        .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                    tvWatchlistIds.add(tvItemId!!)
                 }
             }
         }

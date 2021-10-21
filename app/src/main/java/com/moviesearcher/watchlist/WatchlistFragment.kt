@@ -90,7 +90,7 @@ class WatchlistFragment : BaseFragment() {
             navController,
             accountId,
             sessionId,
-            movieWatchlistViewModel.getMovieWatchlistIds(),
+            tvWatchlistViewModel.getTvWatchlistIds(),
         )
     }
 
