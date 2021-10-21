@@ -1,38 +1,56 @@
-package com.moviesearcher.favorite.tv.adapter
+package com.moviesearcher.favorite.movie.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.ImageButton
+import android.widget.Toast
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.Target
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.snackbar.Snackbar
+import com.moviesearcher.api.Api
 import com.moviesearcher.databinding.FragmentFavoriteTvItemBinding
 import com.moviesearcher.favorite.FavoritesFragmentDirections
+import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.favorite.tv.model.ResultFavoriteTv
 import com.moviesearcher.utils.Constants
+import com.moviesearcher.utils.Constants.DURATION_5_SECONDS
 
-class FavoriteTvsAdapter(
-    private val favoriteTvsItems: FavoriteTvResponse,
-    private val navController: NavController
-) : RecyclerView.Adapter<FavoriteTvsAdapter.FavoriteTvViewHolder>() {
-    lateinit var cardView: MaterialCardView
+class FavoriteTvAdapter(
+    private val favoriteTvItems: FavoriteTvResponse,
+    private val navController: NavController,
+    private val sessionId: String,
+    private val accountId: Long,
+) : RecyclerView.Adapter<FavoriteTvAdapter.FavoriteTvViewHolder>() {
+    private lateinit var cardView: MaterialCardView
+    private lateinit var imageButtonRemoveFromFavorite: ImageButton
 
-    inner class FavoriteTvViewHolder(binding: FragmentFavoriteTvItemBinding) :
+    inner class FavoriteTvViewHolder(val binding: FragmentFavoriteTvItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private val favoriteTvsItemPoster: ImageView = binding.imageViewFavoriteTvItem
-        private val favoriteTvsItemName: TextView = binding.textViewFavoriteTvItemName
 
-        fun bind(favoriteTvsResultItem: ResultFavoriteTv) {
-            Glide.with(this.itemView)
-                .load(Constants.IMAGE_URL + favoriteTvsResultItem.posterPath)
-                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                .into(favoriteTvsItemPoster)
-            cardView.id = favoriteTvsResultItem.id?.toInt()!!
-            favoriteTvsItemName.text = favoriteTvsResultItem.name
+        private val rating = binding.textViewRating
+        private val title = binding.textViewTitle
+        private val releaseDate = binding.textViewReleaseDate
+        private val poster = binding.posterImageView
+        private val overview = binding.textViewDescription
+
+        fun bind(tvItem: ResultFavoriteTv) {
+            title.text = tvItem.name
+            releaseDate.text = tvItem.firstAirDate?.replace("-", ".")
+
+            Glide.with(this.itemView.context)
+                .load(Constants.IMAGE_URL + tvItem.posterPath)
+                .centerCrop()
+                .override(400, 600)
+                .into(poster)
+
+            overview.text = tvItem.overview
+            rating.text = tvItem.voteAverage.toString()
+            cardView.id = tvItem.id?.toInt()!!
         }
     }
 
@@ -45,25 +63,89 @@ class FavoriteTvsAdapter(
             parent,
             false
         )
-        cardView = binding.materialCardViewFavoriteTvItem
-
-        cardView.setOnClickListener {
-            val tvId = it.id
-
-            navController.navigate(
-                FavoritesFragmentDirections.actionFragmentFavoritesToTvInfoFragment(
-                    tvId.toLong()
-                )
-            )
-        }
+        cardView = binding.favoriteCardView
+        imageButtonRemoveFromFavorite = binding.imageButtonRemoveFromFavorite
 
         return FavoriteTvViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = favoriteTvsItems.results?.size!!
+    override fun getItemCount(): Int = favoriteTvItems.results?.size!!
+
+    @SuppressLint("WrongConstant")
     override fun onBindViewHolder(holder: FavoriteTvViewHolder, position: Int) {
-        val favoriteTvsItem = favoriteTvsItems.results?.get(position)
-        holder.bind(favoriteTvsItem!!)
+        imageButtonRemoveFromFavorite.setOnClickListener {
+            val tvToRemove = favoriteTvItems.results?.get(position)
+
+            val removeFromFavoriteResponse =
+                Api.markAsFavorite(
+                    accountId,
+                    sessionId,
+                    MarkAsFavoriteRequest(
+                        false,
+                        tvToRemove?.id!!.toLong(),
+                        "tv"
+                    ),
+                )
+
+            removeFromFavoriteResponse.observe(holder.binding.root.findViewTreeLifecycleOwner()!!, {
+                if (it.success) {
+                    favoriteTvItems.results?.removeAt(position)
+                    notifyItemRemoved(position)
+
+                    val favoriteItemRemovedSnackbar = Snackbar.make(
+                        holder.binding.root.rootView,
+                        "${tvToRemove.name} was removed from Favorites",
+                        DURATION_5_SECONDS
+                    )
+
+                    favoriteItemRemovedSnackbar.setAction("UNDO") { view ->
+                        val addToFavoriteResponse =
+                            Api.markAsFavorite(
+                                accountId,
+                                sessionId,
+                                MarkAsFavoriteRequest(
+                                    true,
+                                    tvToRemove.id.toLong(),
+                                    "tv"
+                                ),
+                            )
+
+                        addToFavoriteResponse.observe(
+                            view.findViewTreeLifecycleOwner()!!,
+                            { addToFavorite ->
+                                if (addToFavorite.success) {
+                                    favoriteTvItems.results?.add(position, tvToRemove)
+                                    notifyItemInserted(position)
+                                } else {
+                                    Toast.makeText(
+                                        holder.itemView.context,
+                                        "Error while adding movie back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            })
+                    }
+                    favoriteItemRemovedSnackbar.show()
+                } else {
+                    Toast.makeText(
+                        holder.itemView.context,
+                        "Error while removing from favorites",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+        }
+
+        cardView.setOnClickListener {
+            val tvId = it.id.toLong()
+
+            navController.navigate(
+                FavoritesFragmentDirections.actionFragmentFavoritesToTvInfoFragment(tvId)
+            )
+        }
+
+        val listItem = favoriteTvItems.results?.get(position)
+        holder.bind(listItem!!)
     }
 
     override fun getItemId(position: Int): Long {

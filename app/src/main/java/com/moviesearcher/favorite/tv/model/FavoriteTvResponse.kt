@@ -6,7 +6,7 @@ data class FavoriteTvResponse(
     @SerializedName("page")
     val page: Int?,
     @SerializedName("results")
-    val results: List<ResultFavoriteTv>?,
+    val results: MutableList<ResultFavoriteTv>?,
     @SerializedName("total_pages")
     val totalPages: Int?,
     @SerializedName("total_results")

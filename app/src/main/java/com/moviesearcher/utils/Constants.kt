@@ -6,6 +6,7 @@ object Constants {
     const val ACCESS_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4ZDNhZTA2NTQxMmNmNzUzNjg2MzE0MTY2MjhlNzNiMSIsInN1YiI6IjYxMDE5ODdiYTIxN2MwMDA1ZDVmYjNhYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.te943glac0IzRm-ahsIIZIgr-M85uNeRwJhkVWpFm1Q"
     const val AUTH_URL = "https://www.themoviedb.org/authenticate/%s"
     const val SUCCESS_SESSION_URL = "https://www.themoviedb.org/authenticate/%s/allow"
+    const val DURATION_5_SECONDS = 5000
 
     enum class MediaType(s: String) {
         ALL("all"), MOVIE("movie"), TV("tv"), PERSON("person")

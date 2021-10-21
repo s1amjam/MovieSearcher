@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentFavoritesBinding
-import com.moviesearcher.favorite.movie.adapter.FavoriteMoviesAdapter
+import com.moviesearcher.favorite.movie.adapter.FavoriteMovieAdapter
+import com.moviesearcher.favorite.movie.adapter.FavoriteTvAdapter
 import com.moviesearcher.favorite.movie.viewmodel.FavoriteMoviesViewModel
-import com.moviesearcher.favorite.tv.adapter.FavoriteTvsAdapter
 import com.moviesearcher.favorite.tv.viewmodel.FavoriteTvsViewModel
 
 private const val TAG = "FavoritesFragment"
@@ -46,7 +46,12 @@ class FavoritesFragment : BaseFragment() {
             viewLifecycleOwner,
             { favoriteMovieItems ->
                 favoriteMoviesRecyclerView.adapter =
-                    FavoriteMoviesAdapter(favoriteMovieItems, findNavController())
+                    FavoriteMovieAdapter(
+                        favoriteMovieItems,
+                        findNavController(),
+                        sessionId,
+                        accountId
+                    )
             })
 
         favoriteMoviesButton.setOnClickListener {
@@ -54,7 +59,12 @@ class FavoritesFragment : BaseFragment() {
                 viewLifecycleOwner,
                 { favoriteMovieItems ->
                     favoriteMoviesRecyclerView.adapter =
-                        FavoriteMoviesAdapter(favoriteMovieItems, findNavController())
+                        FavoriteMovieAdapter(
+                            favoriteMovieItems,
+                            findNavController(),
+                            sessionId,
+                            accountId
+                        )
                 })
         }
 
@@ -63,7 +73,11 @@ class FavoritesFragment : BaseFragment() {
                 viewLifecycleOwner,
                 { favoriteTvItems ->
                     favoriteMoviesRecyclerView.adapter =
-                        FavoriteTvsAdapter(favoriteTvItems, findNavController())
+                        FavoriteTvAdapter(
+                            favoriteTvItems, findNavController(),
+                            sessionId,
+                            accountId
+                        )
                 })
         }
 

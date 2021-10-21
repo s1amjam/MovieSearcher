@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context="list.lists.MyListsFragment">
 
+    <TextView
+        android:id="@+id/favorite_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/favorites"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_favorites_recycler_view"
         android:layout_width="0dp"
@@ -25,7 +35,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/movies"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/favorite_text_view" />
 
     <Button
         android:id="@+id/button_favorite_tvs"
@@ -35,4 +45,5 @@
         android:text="@string/tvs"
         app:layout_constraintStart_toEndOf="@+id/button_favorite_movies"
         app:layout_constraintTop_toTopOf="@+id/button_favorite_movies" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
