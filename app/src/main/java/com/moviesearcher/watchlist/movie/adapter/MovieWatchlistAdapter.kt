@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.moviesearcher.HomeFragmentDirections
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.databinding.TrendingItemViewBinding
 import com.moviesearcher.utils.Constants
+import com.moviesearcher.watchlist.WatchlistFragmentDirections
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.MovieWatchlistResult
@@ -38,16 +38,13 @@ class MovieWatchlistAdapter(
         fun bind(movieItem: MovieWatchlistResult) {
             title.text = movieItem.title
             releaseDate.text = movieItem.releaseDate?.replace("-", ".")
+            rating.text = movieItem.voteAverage.toString()
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + movieItem.posterPath)
                 .centerCrop()
                 .override(400, 600)
                 .into(posterImageView)
-
-            cardView.id = movieItem.id!!.toInt()
-            cardView.tag = movieItem.title
-            rating.text = movieItem.voteAverage.toString()
         }
     }
 
@@ -75,11 +72,12 @@ class MovieWatchlistAdapter(
     override fun getItemCount(): Int = movieItems.results?.size!!
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         val imageButtonWatchlist = binding.imageButtonWatchlist
+        val currentMovie = movieItems.results?.get(position)?.id
         posterImageView = binding.posterImageView
         cardView = binding.trendingCardView
 
         if (sessionId?.isNotBlank() == true || sessionId != null) {
-            if (movieWatchlistIds.contains(movieItems.results?.get(position)?.id)) {
+            if (movieWatchlistIds.contains(currentMovie)) {
                 imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
             } else {
                 imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
@@ -87,28 +85,23 @@ class MovieWatchlistAdapter(
         }
 
         cardView.setOnClickListener {
-            val movieId = it.id.toLong()
-
             navController.navigate(
-                HomeFragmentDirections
-                    .actionHomeFragmentToMovieInfoFragment(movieId)
+                WatchlistFragmentDirections.actionWatchlistFragmentToMovieInfoFragment(currentMovie!!)
             )
         }
 
         imageButtonWatchlist.setOnClickListener {
-            val movieItemId = movieItems.results?.get(position)?.id
-
             if (sessionId?.isNotBlank() == true || sessionId != null) {
-                if (movieWatchlistIds.contains(movieItemId)) {
+                if (movieWatchlistIds.contains(currentMovie)) {
                     imageButtonWatchlist
                         .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
 
                     Api.watchlist(
                         accountId!!,
                         sessionId,
-                        WatchlistRequest(false, movieItemId, "movie")
+                        WatchlistRequest(false, currentMovie, "movie")
                     )
-                    movieWatchlistIds.remove(movieItemId!!)
+                    movieWatchlistIds.remove(currentMovie!!)
                 } else {
                     imageButtonWatchlist
                         .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
@@ -116,9 +109,9 @@ class MovieWatchlistAdapter(
                     Api.watchlist(
                         accountId!!,
                         sessionId,
-                        WatchlistRequest(true, movieItemId, "movie")
+                        WatchlistRequest(true, currentMovie, "movie")
                     )
-                    movieWatchlistIds.add(movieItemId!!)
+                    movieWatchlistIds.add(currentMovie!!)
                 }
             }
         }

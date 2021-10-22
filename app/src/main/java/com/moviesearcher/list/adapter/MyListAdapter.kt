@@ -82,14 +82,14 @@ class MyListAdapter(
 
     @SuppressLint("WrongConstant")
     override fun onBindViewHolder(holder: MyListViewHolder, position: Int) {
-        imageButtonRemoveFromList.setOnClickListener {
-            val movieToRemove = listItems.items?.get(position)
+        val currentMovie = listItems.items?.get(position)
 
+        imageButtonRemoveFromList.setOnClickListener {
             val removeFromListResponse =
                 Api.removeFromList(
                     listId,
                     sessionId,
-                    MediaId(movieToRemove?.id!!.toLong())
+                    MediaId(currentMovie?.id!!.toLong())
                 )
 
             removeFromListResponse.observe(holder.binding.root.findViewTreeLifecycleOwner()!!, {
@@ -99,7 +99,7 @@ class MyListAdapter(
 
                     val listItemRemovedSnackbar = Snackbar.make(
                         holder.binding.root.rootView,
-                        "\"${movieToRemove.name ?: movieToRemove.title}\" was removed from Favorites",
+                        "\"${currentMovie.name ?: currentMovie.title}\" was removed from Favorites",
                         Constants.DURATION_5_SECONDS
                     )
 
@@ -107,7 +107,7 @@ class MyListAdapter(
                         val addToListResponse =
                             Api.addToList(
                                 listId,
-                                MediaId(movieToRemove.id.toLong()),
+                                MediaId(currentMovie.id.toLong()),
                                 sessionId,
                             )
 
@@ -115,11 +115,11 @@ class MyListAdapter(
                             view.findViewTreeLifecycleOwner()!!,
                             { addToFavorite ->
                                 if (addToFavorite.statusCode == 12) {
-                                    listItems.items?.add(position, movieToRemove)
+                                    listItems.items?.add(position, currentMovie)
                                     notifyItemInserted(position)
                                     Toast.makeText(
                                         holder.itemView.context,
-                                        "\"${movieToRemove.name ?: movieToRemove.title}\" added back",
+                                        "\"${currentMovie.name ?: currentMovie.title}\" added back",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 } else {
@@ -149,12 +149,12 @@ class MyListAdapter(
             if (it.tag != null) {
                 navController.navigate(
                     MyListFragmentDirections
-                        .actionFragmentMyListToMovieInfoFragment(movieId)
+                        .actionFragmentMyListToMovieInfoFragment(currentMovie?.id!!)
                 )
             } else {
                 navController.navigate(
                     MyListFragmentDirections
-                        .actionFragmentMyListToTvInfoFragment(movieId)
+                        .actionFragmentMyListToTvInfoFragment(currentMovie?.id!!)
                 )
             }
         }

@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.moviesearcher.HomeFragmentDirections
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.databinding.TrendingItemViewBinding
 import com.moviesearcher.utils.Constants
+import com.moviesearcher.watchlist.WatchlistFragmentDirections
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResult
@@ -38,16 +38,13 @@ class TvWatchlistAdapter(
         fun bind(tvItem: TvWatchlistResult) {
             title.text = tvItem.name
             releaseDate.text = tvItem.firstAirDate?.replace("-", ".")
+            rating.text = tvItem.voteAverage.toString()
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + tvItem.posterPath)
                 .centerCrop()
                 .override(400, 600)
                 .into(posterImageView)
-
-            cardView.id = tvItem.id!!.toInt()
-            cardView.tag = tvItem.name
-            rating.text = tvItem.voteAverage.toString()
         }
     }
 
@@ -75,11 +72,12 @@ class TvWatchlistAdapter(
     override fun getItemCount(): Int = tvItems.results?.size!!
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         val imageButtonWatchlist = binding.imageButtonWatchlist
+        val currentTv = tvItems.results?.get(position)?.id
         posterImageView = binding.posterImageView
         cardView = binding.trendingCardView
 
         if (sessionId?.isNotBlank() == true || sessionId != null) {
-            if (tvWatchlistIds.contains(tvItems.results?.get(position)?.id)) {
+            if (tvWatchlistIds.contains(currentTv)) {
                 imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
             } else {
                 imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
@@ -87,36 +85,31 @@ class TvWatchlistAdapter(
         }
 
         cardView.setOnClickListener {
-            val movieId = it.id.toLong()
-
             navController.navigate(
-                HomeFragmentDirections
-                    .actionHomeFragmentToTvInfoFragment(movieId)
+                WatchlistFragmentDirections.actionWatchlistFragmentToTvInfoFragment(currentTv!!)
             )
         }
 
         imageButtonWatchlist.setOnClickListener {
-            val tvItemId = tvItems.results?.get(position)?.id
-
             if (sessionId?.isNotBlank() == true || sessionId != null) {
-                if (tvWatchlistIds.contains(tvItemId)) {
+                if (tvWatchlistIds.contains(currentTv)) {
                     Api.watchlist(
                         accountId!!,
                         sessionId,
-                        WatchlistRequest(false, tvItemId, "tv")
+                        WatchlistRequest(false, currentTv, "tv")
                     )
                     imageButtonWatchlist
                         .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
-                    tvWatchlistIds.remove(tvItemId!!)
+                    tvWatchlistIds.remove(currentTv!!)
                 } else {
                     Api.watchlist(
                         accountId!!,
                         sessionId,
-                        WatchlistRequest(true, tvItemId, "tv")
+                        WatchlistRequest(true, currentTv, "tv")
                     )
                     imageButtonWatchlist
                         .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-                    tvWatchlistIds.add(tvItemId!!)
+                    tvWatchlistIds.add(currentTv!!)
                 }
             }
         }
