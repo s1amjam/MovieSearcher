@@ -20,6 +20,7 @@ import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.list.model.add.AddToListResponse
 import com.moviesearcher.movie.model.MovieInfoResponse
 import com.moviesearcher.movie.model.TrendingResponse
+import com.moviesearcher.movie.model.cast.MovieCastResponse
 import com.moviesearcher.rated.movie.model.RatedMoviesResponse
 import com.moviesearcher.rated.tv.model.RatedTvsResponse
 import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
@@ -621,6 +622,29 @@ object Api {
 
             override fun onFailure(
                 call: Call<ResponseWithCodeAndMessage>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun getMovieCast(movieId: Long): MutableLiveData<MovieCastResponse> {
+        val responseLiveData: MutableLiveData<MovieCastResponse> = MutableLiveData()
+        val resp = ApiService.create().movieCast(movieId)
+
+        resp.enqueue(object : Callback<MovieCastResponse> {
+            override fun onResponse(
+                call: Call<MovieCastResponse>,
+                response: Response<MovieCastResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<MovieCastResponse>,
                 t: Throwable
             ) {
 

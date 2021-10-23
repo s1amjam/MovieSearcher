@@ -27,4 +27,6 @@
     <string name="home">Home</string>
     <string name="you">You</string>
     <string name="undo">UNDO</string>
+    <string name="rate_this">Rate this</string>
+    <string name="cast">Cast</string>
 </resources>

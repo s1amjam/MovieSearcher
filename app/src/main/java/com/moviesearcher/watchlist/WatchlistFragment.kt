@@ -48,7 +48,8 @@ class WatchlistFragment : BaseFragment() {
 
         movieRecyclerView = binding.movieRecyclerView
         tvRecyclerView = binding.tvRecyclerView
-        movieRecyclerView.layoutManager = LinearLayoutManager(context)
+        movieRecyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         navController = findNavController()
         progressBar = binding.progressBarWatchlistFragment
 

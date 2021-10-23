@@ -429,7 +429,7 @@ open class BaseTest {
         ts()
         val textView = onView(
             allOf(
-                withId(R.id.movie_info_title),
+                withId(R.id.movie_title_text_view),
                 withParent(
                     allOf(
                         withId(R.id.movie_info_constraint_layout),
