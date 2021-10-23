@@ -15,33 +15,47 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_rated_movies" />
+        app:layout_constraintTop_toBottomOf="@+id/toggle_button_group" />
 
-    <Button
-        android:id="@+id/button_rated_movies"
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggle_button_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/movies"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:singleSelection="true">
 
-    <Button
-        android:id="@+id/button_rated_tvs"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/tvs"
-        app:layout_constraintStart_toEndOf="@+id/button_rated_movies"
-        app:layout_constraintTop_toTopOf="@+id/button_rated_movies" />
+        <Button
+            android:id="@+id/button_rated_movies"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/movies"
+            android:textColor="#2196F3"
+            app:strokeColor="#2196F3"
+            app:strokeWidth="1dp" />
 
-    <Button
-        android:id="@+id/button_rated_tv_episodes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/tv_episodes"
-        app:layout_constraintStart_toEndOf="@+id/button_rated_tvs"
-        app:layout_constraintTop_toTopOf="@+id/button_rated_tvs" />
+        <Button
+            android:id="@+id/button_rated_tvs"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tvs"
+            android:textColor="#2196F3"
+            app:strokeColor="#2196F3"
+            app:strokeWidth="1dp" />
+
+        <Button
+            android:id="@+id/button_rated_tv_episodes"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_episodes"
+            android:textColor="#2196F3"
+            app:strokeColor="#2196F3"
+            app:strokeWidth="1dp" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,25 +25,35 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_favorite_movies" />
+        app:layout_constraintTop_toBottomOf="@+id/toggle_button_group" />
 
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggle_button_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/favorite_text_view"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:singleSelection="true">
     <Button
         android:id="@+id/button_favorite_movies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:text="@string/movies"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/favorite_text_view" />
+        style="?attr/materialButtonOutlinedStyle"
+        app:strokeColor="#2196F3"
+        android:textColor="#2196F3"
+        app:strokeWidth="1dp" />
 
     <Button
         android:id="@+id/button_favorite_tvs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:text="@string/tvs"
-        app:layout_constraintStart_toEndOf="@+id/button_favorite_movies"
-        app:layout_constraintTop_toTopOf="@+id/button_favorite_movies" />
-
+        style="?attr/materialButtonOutlinedStyle"
+        app:strokeColor="#2196F3"
+        android:textColor="#2196F3"
+        app:strokeWidth="1dp" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>
