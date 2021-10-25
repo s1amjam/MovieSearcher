@@ -1,4 +1,4 @@
-package com.moviesearcher.favorite.movie.adapter
+package com.moviesearcher.favorite.tv.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

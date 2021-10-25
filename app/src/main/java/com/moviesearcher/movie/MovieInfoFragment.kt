@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,8 +21,10 @@ import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
+import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
 import com.moviesearcher.movie.viewmodel.MovieInfoViewModel
 import com.moviesearcher.movie.viewmodel.cast.MovieCastViewModel
+import com.moviesearcher.movie.viewmodel.recommendations.RecommendationsViewModel
 import com.moviesearcher.utils.Constants
 import java.util.concurrent.TimeUnit
 
@@ -34,9 +37,11 @@ class MovieInfoFragment : BaseFragment() {
     private val args by navArgs<MovieInfoFragmentArgs>()
     private val movieInfoViewModel: MovieInfoViewModel by viewModels()
     private val movieCastViewModel: MovieCastViewModel by viewModels()
+    private val recommendationsViewModel: RecommendationsViewModel by viewModels()
     private val myLists: MyListsViewModel by viewModels()
 
     private lateinit var movieInfoCastRecyclerView: RecyclerView
+    private lateinit var recommendationsRecyclerView: RecyclerView
     private lateinit var movieInfoPosterImageView: ImageView
     private lateinit var movieInfoTitle: TextView
     private lateinit var movieInfoGenres: TextView
@@ -51,6 +56,8 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var buttonMarkMovieAsFavorite: Button
     private lateinit var buttonWatchlist: Button
     private lateinit var rateButton: Button
+    private lateinit var director: TextView
+    private lateinit var writer: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,6 +76,9 @@ class MovieInfoFragment : BaseFragment() {
         movieInfoCastRecyclerView = binding.castRecyclerView
         movieInfoCastRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        recommendationsRecyclerView = binding.recommendationsRecyclerView
+        recommendationsRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         movieInfoConstraintLayout = binding.movieInfoConstraintLayout
         movieInfoPosterImageView = binding.movieInfoPosterImageView
         movieInfoTitle = binding.movieTitleTextView
@@ -83,6 +93,8 @@ class MovieInfoFragment : BaseFragment() {
         voteAverage = binding.textViewRating
         voteCount = binding.textViewVoteCount
         rateButton = binding.rateButtonView
+        director = binding.directorCastTextView
+        writer = binding.writerCastTextView
 
         menuButtonAddToList.isVisible = sessionId != ""
         buttonMarkMovieAsFavorite.isVisible = sessionId != ""
@@ -120,7 +132,23 @@ class MovieInfoFragment : BaseFragment() {
             movieInfoCastRecyclerView.adapter = MovieCastAdapter(
                 castItems
             )
+            director.text =
+                getString(R.string.director).format(
+                    castItems.crew?.find { it.job == "Director" }?.name
+                )
+            writer.text =
+                getString(R.string.writer).format(
+                    castItems.crew?.find { it.job == "Executive Producer" }?.name
+                )
         })
+
+        recommendationsViewModel.getRecommendationsByMovieId(movieId)
+            .observe(viewLifecycleOwner, { recommendationsItems ->
+                recommendationsRecyclerView.adapter = RecommendationsAdapter(
+                    recommendationsItems,
+                    findNavController()
+                )
+            })
 
         menuButtonAddToList.setOnClickListener { v ->
             myLists.getLists(accountId, sessionId, 1).observe(viewLifecycleOwner, {

@@ -2,6 +2,7 @@ package com.moviesearcher.api
 
 import androidx.lifecycle.MutableLiveData
 import com.moviesearcher.common.model.account.AccountResponse
+import com.moviesearcher.common.model.accountstates.AccountStatesResponse
 import com.moviesearcher.common.model.auth.CreateSessionResponse
 import com.moviesearcher.common.model.auth.CreateTokenResponse
 import com.moviesearcher.common.model.auth.DeleteSessionResponse
@@ -9,6 +10,8 @@ import com.moviesearcher.common.model.auth.RequestToken
 import com.moviesearcher.common.model.auth.SessionId
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
+import com.moviesearcher.common.model.images.ImagesResponse
+import com.moviesearcher.common.model.videos.VideosResponse
 import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
@@ -645,6 +648,98 @@ object Api {
 
             override fun onFailure(
                 call: Call<MovieCastResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun getRecommendations(movieId: Long): MutableLiveData<FavoriteMovieResponse> {
+        val responseLiveData: MutableLiveData<FavoriteMovieResponse> = MutableLiveData()
+        val resp = ApiService.create().recommendations(movieId)
+
+        resp.enqueue(object : Callback<FavoriteMovieResponse> {
+            override fun onResponse(
+                call: Call<FavoriteMovieResponse>,
+                response: Response<FavoriteMovieResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<FavoriteMovieResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun videos(movieId: Long): MutableLiveData<VideosResponse> {
+        val responseLiveData: MutableLiveData<VideosResponse> = MutableLiveData()
+        val resp = ApiService.create().videos(movieId)
+
+        resp.enqueue(object : Callback<VideosResponse> {
+            override fun onResponse(
+                call: Call<VideosResponse>,
+                response: Response<VideosResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<VideosResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun accountStates(movieId: Long): MutableLiveData<AccountStatesResponse> {
+        val responseLiveData: MutableLiveData<AccountStatesResponse> = MutableLiveData()
+        val resp = ApiService.create().accountStates(movieId)
+
+        resp.enqueue(object : Callback<AccountStatesResponse> {
+            override fun onResponse(
+                call: Call<AccountStatesResponse>,
+                response: Response<AccountStatesResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<AccountStatesResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun images(movieId: Long): MutableLiveData<ImagesResponse> {
+        val responseLiveData: MutableLiveData<ImagesResponse> = MutableLiveData()
+        val resp = ApiService.create().images(movieId)
+
+        resp.enqueue(object : Callback<ImagesResponse> {
+            override fun onResponse(
+                call: Call<ImagesResponse>,
+                response: Response<ImagesResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<ImagesResponse>,
                 t: Throwable
             ) {
 

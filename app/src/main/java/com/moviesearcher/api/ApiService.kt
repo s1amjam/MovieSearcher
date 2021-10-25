@@ -1,6 +1,7 @@
 package com.moviesearcher.api
 
 import com.moviesearcher.common.model.account.AccountResponse
+import com.moviesearcher.common.model.accountstates.AccountStatesResponse
 import com.moviesearcher.common.model.auth.CreateSessionResponse
 import com.moviesearcher.common.model.auth.CreateTokenResponse
 import com.moviesearcher.common.model.auth.DeleteSessionResponse
@@ -8,6 +9,8 @@ import com.moviesearcher.common.model.auth.RequestToken
 import com.moviesearcher.common.model.auth.SessionId
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
+import com.moviesearcher.common.model.images.ImagesResponse
+import com.moviesearcher.common.model.videos.VideosResponse
 import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
@@ -216,4 +219,16 @@ interface ApiService {
 
     @GET("movie/{movie_id}/credits")
     fun movieCast(@Path("movie_id") movieId: Long): Call<MovieCastResponse>
+
+    @GET("movie/{movie_id}/recommendations")
+    fun recommendations(@Path("movie_id") movieId: Long): Call<FavoriteMovieResponse>
+
+    @GET("movie/{movie_id}/videos")
+    fun videos(@Path("movie_id") movieId: Long): Call<VideosResponse>
+
+    @GET("movie/{movie_id}/account_states")
+    fun accountStates(@Path("movie_id") movieId: Long): Call<AccountStatesResponse>
+
+    @GET("movie/{movie_id}/images")
+    fun images(@Path("movie_id") movieId: Long): Call<ImagesResponse>
 }

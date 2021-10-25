@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_movie_info_fragment_to_search_result_fragment"
             app:destination="@id/search_result_fragment" />
+        <action
+            android:id="@+id/action_movie_info_fragment_self"
+            app:destination="@id/movie_info_fragment" />
     </fragment>
     <fragment
         android:id="@+id/home_fragment"
