@@ -5,9 +5,8 @@
     android:id="@+id/trending_card_view"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginEnd="2dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
     android:layout_marginBottom="16dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="5dp"
@@ -47,7 +46,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
-            android:singleLine="true"
+            android:maxLines="1"
             app:layout_constraintBottom_toTopOf="@+id/rating_image_view"
             app:layout_constraintStart_toStartOf="parent" />
 

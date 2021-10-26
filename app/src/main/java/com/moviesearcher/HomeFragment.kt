@@ -8,6 +8,7 @@ import android.widget.ProgressBar
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
@@ -46,7 +47,11 @@ class HomeFragment : BaseFragment() {
         navController = findNavController()
         progressBar = binding.progressBarMovieSearcherFragment
         movieRecyclerView = binding.movieRecyclerView
+        movieRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         tvRecyclerView = binding.tvRecyclerView
+        tvRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         getWatchlistIfLogged()
         setupTrendingMoviesUi()
@@ -106,16 +111,6 @@ class HomeFragment : BaseFragment() {
         _adapter: RecyclerView.Adapter<*>,
         recyclerView: RecyclerView
     ) {
-        recyclerView.apply {
-            addItemDecoration(
-                TrendingAdapter.GridSpacingItemDecoration(
-                    100,
-                    10,
-                    true
-                )
-            )
-        }
-
         progressBar.visibility = View.VISIBLE
         super.setupUi(_adapter, recyclerView)
         progressBar.visibility = View.GONE

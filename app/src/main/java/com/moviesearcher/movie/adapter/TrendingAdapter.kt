@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.moviesearcher.HomeFragmentDirections
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
-import com.moviesearcher.databinding.TrendingItemViewBinding
+import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.movie.model.Result
 import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.utils.Constants
@@ -28,9 +28,9 @@ class TrendingAdapter(
 ) : ListAdapter<Result, TrendingAdapter.MovieHolder>(ITEM_COMPARATOR) {
     private lateinit var cardView: CardView
     private lateinit var posterImageView: ImageView
-    private lateinit var binding: TrendingItemViewBinding
+    private lateinit var binding: MovieCardViewBinding
 
-    inner class MovieHolder(binding: TrendingItemViewBinding) :
+    inner class MovieHolder(binding: MovieCardViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val rating = binding.textViewRating
         private val title = binding.textViewTitle
@@ -65,7 +65,7 @@ class TrendingAdapter(
         parent: ViewGroup,
         viewType: Int
     ): MovieHolder {
-        binding = TrendingItemViewBinding.inflate(
+        binding = MovieCardViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

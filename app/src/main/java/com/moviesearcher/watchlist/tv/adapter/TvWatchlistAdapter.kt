@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
-import com.moviesearcher.databinding.TrendingItemViewBinding
+import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.watchlist.WatchlistFragmentDirections
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
@@ -27,9 +27,9 @@ class TvWatchlistAdapter(
 ) : ListAdapter<TvWatchlistResult, TvWatchlistAdapter.MovieHolder>(ITEM_COMPARATOR) {
     private lateinit var cardView: CardView
     private lateinit var posterImageView: ImageView
-    private lateinit var binding: TrendingItemViewBinding
+    private lateinit var binding: MovieCardViewBinding
 
-    inner class MovieHolder(binding: TrendingItemViewBinding) :
+    inner class MovieHolder(binding: MovieCardViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val rating = binding.textViewRating
         private val title = binding.textViewTitle
@@ -52,7 +52,7 @@ class TvWatchlistAdapter(
         parent: ViewGroup,
         viewType: Int
     ): MovieHolder {
-        binding = TrendingItemViewBinding.inflate(
+        binding = MovieCardViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

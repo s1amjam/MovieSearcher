@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_movie_info_fragment_self"
             app:destination="@id/movie_info_fragment" />
+        <action
+            android:id="@+id/action_movie_info_fragment_to_videoFragment"
+            app:destination="@id/videoFragment" />
     </fragment>
     <fragment
         android:id="@+id/home_fragment"
@@ -128,4 +131,13 @@
         android:name="com.moviesearcher.you.YouFragment"
         android:label="fragment_you"
         tools:layout="@layout/fragment_you" />
+    <fragment
+        android:id="@+id/videoFragment"
+        android:name="com.moviesearcher.common.VideoFragment"
+        android:label="fragment_video"
+        tools:layout="@layout/fragment_video">
+        <argument
+            android:name="video_key"
+            app:argType="string" />
+    </fragment>
 </navigation>

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -22,9 +23,11 @@ import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
 import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
+import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.movie.viewmodel.MovieInfoViewModel
 import com.moviesearcher.movie.viewmodel.cast.MovieCastViewModel
 import com.moviesearcher.movie.viewmodel.recommendations.RecommendationsViewModel
+import com.moviesearcher.movie.viewmodel.video.VideoViewModel
 import com.moviesearcher.utils.Constants
 import java.util.concurrent.TimeUnit
 
@@ -38,10 +41,12 @@ class MovieInfoFragment : BaseFragment() {
     private val movieInfoViewModel: MovieInfoViewModel by viewModels()
     private val movieCastViewModel: MovieCastViewModel by viewModels()
     private val recommendationsViewModel: RecommendationsViewModel by viewModels()
+    private val videoViewModel: VideoViewModel by viewModels()
     private val myLists: MyListsViewModel by viewModels()
 
     private lateinit var movieInfoCastRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
+    private lateinit var videoRecyclerView: RecyclerView
     private lateinit var movieInfoPosterImageView: ImageView
     private lateinit var movieInfoTitle: TextView
     private lateinit var movieInfoGenres: TextView
@@ -58,6 +63,10 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var rateButton: Button
     private lateinit var director: TextView
     private lateinit var writer: TextView
+    private lateinit var videoCardView: CardView
+    private lateinit var trailerPreview: ImageView
+    private lateinit var trailerName: TextView
+    private lateinit var trailerCardView: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,6 +88,9 @@ class MovieInfoFragment : BaseFragment() {
         recommendationsRecyclerView = binding.recommendationsRecyclerView
         recommendationsRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        videoRecyclerView = binding.videoRecyclerView
+        videoRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         movieInfoConstraintLayout = binding.movieInfoConstraintLayout
         movieInfoPosterImageView = binding.movieInfoPosterImageView
         movieInfoTitle = binding.movieTitleTextView
@@ -95,6 +107,10 @@ class MovieInfoFragment : BaseFragment() {
         rateButton = binding.rateButtonView
         director = binding.directorCastTextView
         writer = binding.writerCastTextView
+        videoCardView = binding.videoCardView
+        trailerPreview = binding.previewTrailerImageView
+        trailerName = binding.trailerNameTextView
+        trailerCardView = binding.trailerCardView
 
         menuButtonAddToList.isVisible = sessionId != ""
         buttonMarkMovieAsFavorite.isVisible = sessionId != ""
@@ -119,7 +135,7 @@ class MovieInfoFragment : BaseFragment() {
                 movieInfoTagline.text = movieInfo.tagline
                 movieInfoReleaseDate.text = movieInfo.releaseDate?.dropLast(6)
                 movieInfoOverview.text = movieInfo.overview
-                voteAverage.text = movieInfo.voteAverage.toString() + "/10"
+                voteAverage.text = getString(R.string.vote).format(movieInfo.voteAverage.toString())
                 voteCount.text = movieInfo.voteCount.toString()
 
                 movieInfoOverview.setOnClickListener {
@@ -149,6 +165,40 @@ class MovieInfoFragment : BaseFragment() {
                     findNavController()
                 )
             })
+
+        videoViewModel.getVideosByMovieId(movieId).observe(viewLifecycleOwner, { videoItems ->
+            if (videoItems.results != null) {
+                val officialTrailer = videoItems.results.find {
+                    it.official == true && it.type == "Trailer"
+                }
+                if (officialTrailer != null) {
+                    videoItems.results.remove(officialTrailer)
+
+                    Glide.with(requireContext())
+                        .load(Constants.YOUTUBE_PREVIEW_URL.format(officialTrailer.key))
+                        .centerCrop()
+                        .override(800, 600)
+                        .into(trailerPreview)
+
+                    trailerName.text = officialTrailer.name
+
+                    trailerCardView.setOnClickListener {
+                        findNavController().navigate(
+                            MovieInfoFragmentDirections.actionMovieInfoFragmentToVideoFragment(
+                                officialTrailer.key!!
+                            )
+                        )
+                    }
+                }
+
+                videoRecyclerView.adapter = VideoAdapter(
+                    videoItems,
+                    findNavController()
+                )
+            } else {
+                videoCardView.visibility = View.GONE
+            }
+        })
 
         menuButtonAddToList.setOnClickListener { v ->
             myLists.getLists(accountId, sessionId, 1).observe(viewLifecycleOwner, {

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.moviesearcher.databinding.TrendingItemViewBinding
+import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.movie.model.ResultFavoriteMovie
 import com.moviesearcher.movie.MovieInfoFragmentDirections
@@ -15,9 +15,9 @@ class RecommendationsAdapter(
     private val recommendationsItems: FavoriteMovieResponse,
     private val navController: NavController,
 ) : RecyclerView.Adapter<RecommendationsAdapter.RecommendationsHolder>() {
-    private lateinit var binding: TrendingItemViewBinding
+    private lateinit var binding: MovieCardViewBinding
 
-    inner class RecommendationsHolder(binding: TrendingItemViewBinding) :
+    inner class RecommendationsHolder(binding: MovieCardViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val rating = binding.textViewRating
         private val title = binding.textViewTitle
@@ -48,7 +48,7 @@ class RecommendationsAdapter(
         parent: ViewGroup,
         viewType: Int
     ): RecommendationsAdapter.RecommendationsHolder {
-        binding = TrendingItemViewBinding.inflate(
+        binding = MovieCardViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
