@@ -34,4 +34,8 @@
     <string name="more_like_this">More like this</string>
     <string name="videos">Videos</string>
     <string name="vote">%s/10</string>
+    <string name="photos">Photos</string>
+    <string name="movie_photos">Movie Photos</string>
+    <string name="see_all">SEE ALL</string>
+    <string name="title">%s photos</string>
 </resources>

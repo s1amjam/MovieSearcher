@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_movie_info_fragment_to_videoFragment"
             app:destination="@id/videoFragment" />
+        <action
+            android:id="@+id/action_movie_info_fragment_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
     </fragment>
     <fragment
         android:id="@+id/home_fragment"
@@ -139,5 +142,13 @@
         <argument
             android:name="video_key"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/imagesFragment"
+        android:name="com.moviesearcher.common.ImagesFragment"
+        android:label="ImagesFragment">
+        <argument
+            android:name="movie_id"
+            app:argType="long" />
     </fragment>
 </navigation>

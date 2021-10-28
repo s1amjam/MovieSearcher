@@ -57,7 +57,6 @@ class VideoAdapter(
 
     override fun getItemCount(): Int = videoItems.results?.size!!
     override fun onBindViewHolder(holder: VideoHolder, position: Int) {
-
         val videoItem = videoItems.results?.get(position)
         holder.bind(videoItem!!)
     }

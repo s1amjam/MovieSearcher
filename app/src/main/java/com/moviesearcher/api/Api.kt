@@ -742,7 +742,6 @@ object Api {
                 call: Call<ImagesResponse>,
                 t: Throwable
             ) {
-
             }
         }
         )

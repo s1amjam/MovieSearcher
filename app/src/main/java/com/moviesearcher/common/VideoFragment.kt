@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.moviesearcher.databinding.FragmentVideoBinding
 import com.moviesearcher.utils.Constants
 
@@ -16,6 +17,7 @@ class VideoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var webView: WebView
+    private val args by navArgs<VideoFragmentArgs>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,7 +31,7 @@ class VideoFragment : Fragment() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val movieKey = arguments?.get("video_key")
+        val movieKey = args.videoKey
 
         webView = binding.videoWebview
         webView.webViewClient = object : WebViewClient() {}

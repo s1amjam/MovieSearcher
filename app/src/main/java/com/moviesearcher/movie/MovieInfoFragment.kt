@@ -19,13 +19,16 @@ import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
+import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.movie.viewmodel.MovieInfoViewModel
 import com.moviesearcher.movie.viewmodel.cast.MovieCastViewModel
+import com.moviesearcher.movie.viewmodel.images.ImagesViewModel
 import com.moviesearcher.movie.viewmodel.recommendations.RecommendationsViewModel
 import com.moviesearcher.movie.viewmodel.video.VideoViewModel
 import com.moviesearcher.utils.Constants
@@ -43,10 +46,12 @@ class MovieInfoFragment : BaseFragment() {
     private val recommendationsViewModel: RecommendationsViewModel by viewModels()
     private val videoViewModel: VideoViewModel by viewModels()
     private val myLists: MyListsViewModel by viewModels()
+    private val imagesViewModel: ImagesViewModel by viewModels()
 
     private lateinit var movieInfoCastRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
     private lateinit var videoRecyclerView: RecyclerView
+    private lateinit var imagesRecyclerView: RecyclerView
     private lateinit var movieInfoPosterImageView: ImageView
     private lateinit var movieInfoTitle: TextView
     private lateinit var movieInfoGenres: TextView
@@ -60,6 +65,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var menuButtonAddToList: Button
     private lateinit var buttonMarkMovieAsFavorite: Button
     private lateinit var buttonWatchlist: Button
+    private lateinit var buttonSeeAllImages: Button
     private lateinit var rateButton: Button
     private lateinit var director: TextView
     private lateinit var writer: TextView
@@ -91,6 +97,9 @@ class MovieInfoFragment : BaseFragment() {
         videoRecyclerView = binding.videoRecyclerView
         videoRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        imagesRecyclerView = binding.imagesRecyclerView
+        imagesRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         movieInfoConstraintLayout = binding.movieInfoConstraintLayout
         movieInfoPosterImageView = binding.movieInfoPosterImageView
         movieInfoTitle = binding.movieTitleTextView
@@ -102,6 +111,7 @@ class MovieInfoFragment : BaseFragment() {
         menuButtonAddToList = binding.menuButtonAddMovieToList
         buttonMarkMovieAsFavorite = binding.buttonMarkMovieAsFavorite
         buttonWatchlist = binding.buttonWatchlist
+        buttonSeeAllImages = binding.buttonSeeAllImages
         voteAverage = binding.textViewRating
         voteCount = binding.textViewVoteCount
         rateButton = binding.rateButtonView
@@ -199,6 +209,31 @@ class MovieInfoFragment : BaseFragment() {
                 videoCardView.visibility = View.GONE
             }
         })
+
+        imagesViewModel.getImagesByMovieId(movieId)
+            .observe(viewLifecycleOwner, { imagesItems ->
+                var tenImages = imagesItems.backdrops
+
+                while (tenImages?.size!! > 10) {
+                    tenImages = tenImages.dropLast(1) as MutableList<Backdrop>?
+                }
+
+                imagesItems.apply {
+                    backdrops = tenImages
+                }
+
+                imagesRecyclerView.adapter = ImagesAdapter(
+                    imagesItems,
+                )
+            })
+
+        buttonSeeAllImages.setOnClickListener {
+            findNavController().navigate(
+                MovieInfoFragmentDirections.actionMovieInfoFragmentToImagesFragment(
+                    movieId
+                )
+            )
+        }
 
         menuButtonAddToList.setOnClickListener { v ->
             myLists.getLists(accountId, sessionId, 1).observe(viewLifecycleOwner, {

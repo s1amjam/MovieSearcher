@@ -1,7 +1,12 @@
 package com.moviesearcher.common.model.images
 
+import com.google.gson.annotations.SerializedName
+
 data class ImagesResponse(
-    val backdrops: List<Backdrop>?,
+    @SerializedName("backdrops")
+    var backdrops: MutableList<Backdrop>?,
+    @SerializedName("id")
     val id: Int?,
-    val posters: List<Poster>?
+    @SerializedName("posters")
+    var posters: MutableList<Poster>?
 )

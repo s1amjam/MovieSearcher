@@ -48,7 +48,6 @@ class MovieCastAdapter(
 
     override fun getItemCount(): Int = castItems.cast?.size!!
     override fun onBindViewHolder(holder: MovieCastHolder, position: Int) {
-
         val castItem = castItems.cast?.get(position)
         holder.bind(castItem!!)
     }
