@@ -38,4 +38,9 @@
     <string name="movie_photos">Movie Photos</string>
     <string name="see_all">SEE ALL</string>
     <string name="title">%s photos</string>
+    <string name="details">Details</string>
+    <string name="release_date">Release Date</string>
+    <string name="origin_country">Country Of Origin</string>
+    <string name="language_spoken">Language Spoken</string>
+    <string name="filming_locations">Filming Locations</string>
 </resources>

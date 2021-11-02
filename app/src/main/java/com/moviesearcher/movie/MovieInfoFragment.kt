@@ -16,6 +16,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
@@ -54,7 +56,6 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var imagesRecyclerView: RecyclerView
     private lateinit var movieInfoPosterImageView: ImageView
     private lateinit var movieInfoTitle: TextView
-    private lateinit var movieInfoGenres: TextView
     private lateinit var movieInfoRuntime: TextView
     private lateinit var movieInfoTagline: TextView
     private lateinit var movieInfoReleaseDate: TextView
@@ -73,6 +74,11 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var trailerPreview: ImageView
     private lateinit var trailerName: TextView
     private lateinit var trailerCardView: CardView
+    private lateinit var releaseDate: TextView
+    private lateinit var originCountry: TextView
+    private lateinit var languageSpoken: TextView
+    private lateinit var filmingLocations: TextView
+    private lateinit var genresChipGroup: ChipGroup
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -103,7 +109,7 @@ class MovieInfoFragment : BaseFragment() {
         movieInfoConstraintLayout = binding.movieInfoConstraintLayout
         movieInfoPosterImageView = binding.movieInfoPosterImageView
         movieInfoTitle = binding.movieTitleTextView
-        movieInfoGenres = binding.genresTextView
+        genresChipGroup = binding.chipGroupGenres
         movieInfoRuntime = binding.runtimeTextView
         movieInfoTagline = binding.taglineTextView
         movieInfoReleaseDate = binding.releaseDateTextView
@@ -121,6 +127,10 @@ class MovieInfoFragment : BaseFragment() {
         trailerPreview = binding.previewTrailerImageView
         trailerName = binding.trailerNameTextView
         trailerCardView = binding.trailerCardView
+        releaseDate = binding.textviewReleaseDateDetail
+        originCountry = binding.textviewOriginCountryDetail
+        languageSpoken = binding.textviewLanguageSpokenDetail
+        filmingLocations = binding.textviewFilmingLocationsDetail
 
         menuButtonAddToList.isVisible = sessionId != ""
         buttonMarkMovieAsFavorite.isVisible = sessionId != ""
@@ -131,6 +141,12 @@ class MovieInfoFragment : BaseFragment() {
             { movieInfo ->
                 val hours = TimeUnit.MINUTES.toHours(movieInfo?.runtime?.toLong()!!)
                 val minutes = movieInfo.runtime.toLong() - TimeUnit.HOURS.toMinutes(hours)
+                val languages = mutableListOf<String>()
+                val locations = mutableListOf<String>()
+                val genres = movieInfo.genres
+
+                movieInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
+                movieInfo.productionCountries?.forEach { locations.add(it.name!!) }
 
                 Glide.with(this)
                     .load(Constants.IMAGE_URL + movieInfo.posterPath)
@@ -138,8 +154,6 @@ class MovieInfoFragment : BaseFragment() {
                     .override(300, 500)
                     .into(movieInfoPosterImageView)
                 movieInfoTitle.text = movieInfo.title
-                movieInfoGenres.text =
-                    movieInfo.genres?.joinToString { genre -> genre.name!! }
                 movieInfoRuntime.text =
                     String.format("%02dh %02dm", hours, minutes).dropWhile { it == '0' }
                 movieInfoTagline.text = movieInfo.tagline
@@ -147,6 +161,22 @@ class MovieInfoFragment : BaseFragment() {
                 movieInfoOverview.text = movieInfo.overview
                 voteAverage.text = getString(R.string.vote).format(movieInfo.voteAverage.toString())
                 voteCount.text = movieInfo.voteCount.toString()
+                releaseDate.text = movieInfo.releaseDate?.replace("-", ".")
+                originCountry.text = movieInfo.productionCountries?.get(0)?.name
+                languageSpoken.text = languages.joinToString()
+                filmingLocations.text = locations.joinToString()
+
+                if (genres != null) {
+                    for (genre in genres) {
+                        val chip = this.layoutInflater.inflate(
+                            R.layout.item_chip_tags,
+                            null,
+                            false
+                        ) as Chip
+                        chip.text = genre.name
+                        genresChipGroup.addView(chip)
+                    }
+                }
 
                 movieInfoOverview.setOnClickListener {
                     MaterialAlertDialogBuilder(requireContext()).setMessage(movieInfo.overview)
