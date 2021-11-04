@@ -71,16 +71,16 @@ class MovieWatchlistAdapter(
 
     override fun getItemCount(): Int = movieItems.results?.size!!
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
-        val imageButtonWatchlist = binding.imageButtonWatchlist
+        val imageViewWatchlist = binding.imageViewWatchlist
         val currentMovie = movieItems.results?.get(position)?.id
         posterImageView = binding.posterImageView
         cardView = binding.trendingCardView
 
         if (sessionId?.isNotBlank() == true || sessionId != null) {
             if (movieWatchlistIds.contains(currentMovie)) {
-                imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
             } else {
-                imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
             }
         }
 
@@ -90,10 +90,10 @@ class MovieWatchlistAdapter(
             )
         }
 
-        imageButtonWatchlist.setOnClickListener {
+        imageViewWatchlist.setOnClickListener {
             if (sessionId?.isNotBlank() == true || sessionId != null) {
                 if (movieWatchlistIds.contains(currentMovie)) {
-                    imageButtonWatchlist
+                    imageViewWatchlist
                         .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
 
                     Api.watchlist(
@@ -103,7 +103,7 @@ class MovieWatchlistAdapter(
                     )
                     movieWatchlistIds.remove(currentMovie!!)
                 } else {
-                    imageButtonWatchlist
+                    imageViewWatchlist
                         .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
 
                     Api.watchlist(

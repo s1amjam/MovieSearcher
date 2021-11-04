@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.ImageButton
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
@@ -104,33 +103,33 @@ open class BaseFragment : Fragment() {
         popup.show()
     }
 
-    fun checkFavorites(button: Button) {
+    fun checkFavorites(button: ImageButton) {
         if (sessionId.isNotBlank()) {
             mediaInfo = getMediaInfo()
             val mediaId = mediaInfo.values.first()
             val mediaKey = mediaInfo.keys.first()
             val favoriteMovies = Api.getFavoriteMovies(accountId, sessionId)
             val favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
-            val markAsFavoriteText = resources.getText(R.string.mark_as_favorite)
-            val removeFromFavoriteText = resources.getText(R.string.remove_from_favorite)
+            val markAsFavoriteIcon = R.drawable.ic_round_star_outline_36
+            val removeFromFavoriteIcon = R.drawable.ic_round_star_filled_36
 
             if (mediaKey == "movie") {
                 favoriteMovies.observe(viewLifecycleOwner, { favoriteItem ->
-                    button.text = markAsFavoriteText
+                    button.setImageResource(markAsFavoriteIcon)
                     favoriteItem.results!!.forEach {
                         if (it.id == mediaId) {
                             isFavorite = false
-                            button.text = removeFromFavoriteText
+                            button.setImageResource(removeFromFavoriteIcon)
                         }
                     }
                 })
             } else {
                 favoriteTvs.observe(viewLifecycleOwner, { favoriteItem ->
-                    button.text = markAsFavoriteText
+                    button.setImageResource(markAsFavoriteIcon)
                     favoriteItem.results!!.forEach {
                         if (it.id == mediaId) {
                             isFavorite = false
-                            button.text = removeFromFavoriteText
+                            button.setImageResource(removeFromFavoriteIcon)
                         }
                     }
                 })
@@ -138,7 +137,7 @@ open class BaseFragment : Fragment() {
         }
     }
 
-    fun markAsFavorite(button: Button) {
+    fun markAsFavorite(button: ImageButton) {
         mediaInfo = getMediaInfo()
 
         val markAsFavorite = Api.markAsFavorite(

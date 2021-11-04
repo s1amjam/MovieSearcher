@@ -71,16 +71,16 @@ class TvWatchlistAdapter(
 
     override fun getItemCount(): Int = tvItems.results?.size!!
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
-        val imageButtonWatchlist = binding.imageButtonWatchlist
+        val imageViewWatchlist = binding.imageViewWatchlist
         val currentTv = tvItems.results?.get(position)?.id
         posterImageView = binding.posterImageView
         cardView = binding.trendingCardView
 
         if (sessionId?.isNotBlank() == true || sessionId != null) {
             if (tvWatchlistIds.contains(currentTv)) {
-                imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
             } else {
-                imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
             }
         }
 
@@ -90,7 +90,7 @@ class TvWatchlistAdapter(
             )
         }
 
-        imageButtonWatchlist.setOnClickListener {
+        imageViewWatchlist.setOnClickListener {
             if (sessionId?.isNotBlank() == true || sessionId != null) {
                 if (tvWatchlistIds.contains(currentTv)) {
                     Api.watchlist(
@@ -98,7 +98,7 @@ class TvWatchlistAdapter(
                         sessionId,
                         WatchlistRequest(false, currentTv, "tv")
                     )
-                    imageButtonWatchlist
+                    imageViewWatchlist
                         .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
                     tvWatchlistIds.remove(currentTv!!)
                 } else {
@@ -107,7 +107,7 @@ class TvWatchlistAdapter(
                         sessionId,
                         WatchlistRequest(true, currentTv, "tv")
                     )
-                    imageButtonWatchlist
+                    imageViewWatchlist
                         .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
                     tvWatchlistIds.add(currentTv!!)
                 }

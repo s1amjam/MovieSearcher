@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -63,9 +64,9 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var voteAverage: TextView
     private lateinit var voteCount: TextView
     private lateinit var movieInfoConstraintLayout: ConstraintLayout
-    private lateinit var menuButtonAddToList: Button
-    private lateinit var buttonMarkMovieAsFavorite: Button
-    private lateinit var buttonWatchlist: Button
+    private lateinit var menuButtonAddToList: ImageButton
+    private lateinit var buttonMarkMovieAsFavorite: ImageButton
+    private lateinit var buttonWatchlist: ImageButton
     private lateinit var buttonSeeAllImages: Button
     private lateinit var rateButton: Button
     private lateinit var director: TextView

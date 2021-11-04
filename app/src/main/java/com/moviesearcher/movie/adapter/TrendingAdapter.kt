@@ -84,15 +84,15 @@ class TrendingAdapter(
 
     override fun getItemCount(): Int = movieItems.results?.size!!
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
-        val imageButtonWatchlist = binding.imageButtonWatchlist
+        val imageViewWatchlist = binding.imageViewWatchlist
         posterImageView = binding.posterImageView
         cardView = binding.trendingCardView
 
         if (sessionId?.isNotBlank() == true || sessionId != null) {
             if (movieWatchlistIds.contains(movieItems.results?.get(position)?.id?.toLong())) {
-                imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
             } else {
-                imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
             }
         }
 
@@ -113,13 +113,13 @@ class TrendingAdapter(
             }
         }
 
-        imageButtonWatchlist.setOnClickListener {
+        imageViewWatchlist.setOnClickListener {
             val movieItemId = movieItems.results?.get(position)?.id?.toLong()
 
             if (sessionId?.isNotBlank() == true || sessionId != null) {
                 if (cardView.tag != null) {
                     if (movieWatchlistIds.contains(movieItemId)) {
-                        imageButtonWatchlist
+                        imageViewWatchlist
                             .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
 
                         Api.watchlist(
@@ -129,7 +129,7 @@ class TrendingAdapter(
                         )
                         movieWatchlistIds.remove(movieItemId!!)
                     } else {
-                        imageButtonWatchlist
+                        imageViewWatchlist
                             .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
 
                         Api.watchlist(
@@ -146,7 +146,7 @@ class TrendingAdapter(
                             sessionId,
                             WatchlistRequest(false, movieItemId, "tv")
                         )
-                        imageButtonWatchlist
+                        imageViewWatchlist
                             .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
                         movieWatchlistIds.remove(movieItemId!!)
                     } else {
@@ -155,7 +155,7 @@ class TrendingAdapter(
                             sessionId,
                             WatchlistRequest(true, movieItemId, "tv")
                         )
-                        imageButtonWatchlist
+                        imageViewWatchlist
                             .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
                         movieWatchlistIds.add(movieItemId!!)
                     }

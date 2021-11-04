@@ -90,11 +90,11 @@ class TvInfoFragment : BaseFragment() {
             })
         }
 
-        checkFavorites(buttonMarkTvAsFavorite)
+        //checkFavorites(buttonMarkTvAsFavorite)
 
-        buttonMarkTvAsFavorite.setOnClickListener {
-            markAsFavorite(buttonMarkTvAsFavorite)
-        }
+//        buttonMarkTvAsFavorite.setOnClickListener {
+//            markAsFavorite(buttonMarkTvAsFavorite)
+//        }
 
         //checkWatchlist(buttonWatchlist)
 
