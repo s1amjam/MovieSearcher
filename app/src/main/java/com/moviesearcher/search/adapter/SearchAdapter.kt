@@ -3,8 +3,9 @@ package com.moviesearcher.search.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.databinding.FragmentSearchItemBinding
@@ -17,8 +18,6 @@ class SearchAdapter(
     private val searchItems: SearchResponse,
     private val navController: NavController
 ) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
-    private lateinit var cardView: CardView
-
     inner class SearchViewHolder(binding: FragmentSearchItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val title: TextView = binding.textViewTitle
@@ -26,6 +25,7 @@ class SearchAdapter(
         private val releaseDate = binding.textViewReleaseDate
         private val overview = binding.textViewDescription
         private val poster = binding.posterImageView
+        private val cardView = binding.searchItemCardView
 
         fun bind(searchResultItem: Result) {
             Glide.with(this.itemView)
@@ -36,12 +36,8 @@ class SearchAdapter(
 
             if (searchResultItem.title == null) {
                 title.text = searchResultItem.name
-                cardView.tag = "tv"
-                cardView.id = searchResultItem.id!!
             } else {
                 title.text = searchResultItem.title
-                cardView.tag = "movie"
-                cardView.id = searchResultItem.id!!
             }
 
             if (searchResultItem.releaseDate != null) {
@@ -52,8 +48,43 @@ class SearchAdapter(
 
             rating.text = searchResultItem.voteAverage.toString()
             overview.text = searchResultItem.overview
+
+            cardView.setOnClickListener {
+                //Only 'Movie' has a 'title', 'Tv series' has a 'name'
+                if (searchResultItem.mediaType == "movie") {
+                    navController.navigate(
+                        SearchResultFragmentDirections.actionSearchResultFragmentToMovieInfoFragment(
+                            searchResultItem.id?.toLong()!!
+                        )
+                    )
+                } else {
+                    navController.navigate(
+                        SearchResultFragmentDirections.actionSearchResultFragmentToTvInfoFragment(
+                            searchResultItem.id?.toLong()!!
+                        )
+                    )
+                }
+            }
         }
     }
+
+    private val differCallback = object : DiffUtil.ItemCallback<Result>() {
+        override fun areItemsTheSame(
+            oldItem: Result,
+            newItem: Result
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: Result,
+            newItem: Result
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -65,41 +96,12 @@ class SearchAdapter(
             false
         )
 
-        cardView = binding.searchItemCardView
-
-        cardView.setOnClickListener {
-            val movieId = it.id.toLong()
-
-            //Only 'Movie' has a 'title', 'Tv series' has a 'name'
-            if (it.tag == "movie") {
-                navController.navigate(
-                    SearchResultFragmentDirections.actionSearchResultFragmentToMovieInfoFragment(
-                        movieId
-                    )
-                )
-            } else {
-                navController.navigate(
-                    SearchResultFragmentDirections.actionSearchResultFragmentToTvInfoFragment(
-                        movieId
-                    )
-                )
-            }
-        }
-
         return SearchViewHolder(binding)
     }
 
     override fun getItemCount(): Int = searchItems.results?.size!!
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
-        val searchItem = searchItems.results?.get(position)
-        holder.bind(searchItem!!)
-    }
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return position
+        val reply = differ.currentList[position]
+        holder.bind(reply)
     }
 }

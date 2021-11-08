@@ -32,7 +32,6 @@ class SearchResultFragment : BaseFragment() {
         val view = binding.root
 
         searchResultRecyclerView = binding.searchResultRecyclerView
-        searchResultRecyclerView.layoutManager = LinearLayoutManager(context)
 
         return view
     }
@@ -70,7 +69,13 @@ class SearchResultFragment : BaseFragment() {
         searchViewModel.queryForSearch(searchQuery).observe(
             viewLifecycleOwner,
             { searchItems ->
-                searchResultRecyclerView.adapter = SearchAdapter(searchItems, findNavController())
+                val searchAdapter = SearchAdapter(searchItems, findNavController())
+
+                searchResultRecyclerView.apply {
+                    adapter = searchAdapter
+                    layoutManager = LinearLayoutManager(context)
+                }
+                searchAdapter.differ.submitList(searchItems.results)
             })
     }
 

@@ -3,6 +3,8 @@ package com.moviesearcher.movie.adapter.cast
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.databinding.MovieCastItemBinding
@@ -33,6 +35,18 @@ class MovieCastAdapter(
         }
     }
 
+    private val differCallback = object : DiffUtil.ItemCallback<Cast>() {
+        override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -48,7 +62,7 @@ class MovieCastAdapter(
 
     override fun getItemCount(): Int = castItems.cast?.size!!
     override fun onBindViewHolder(holder: MovieCastHolder, position: Int) {
-        val castItem = castItems.cast?.get(position)
-        holder.bind(castItem!!)
+        val reply = differ.currentList[position]
+        holder.bind(reply)
     }
 }

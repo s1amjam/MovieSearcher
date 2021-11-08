@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
@@ -25,6 +27,7 @@ class RatedMoviesAdapter(
         RecyclerView.ViewHolder(binding.root) {
         private val ratedMovieItemPoster: ImageView = binding.imageViewRatedMovieItem
         private val ratedMovieItemName: TextView = binding.textViewRatedMovieItemName
+        private val cardView = binding.materialCardViewRatedMovieItem
 
         fun bind(ratedMovieResultItem: RatedMoviesResult) {
             Glide.with(this.itemView)
@@ -33,8 +36,34 @@ class RatedMoviesAdapter(
                 .into(ratedMovieItemPoster)
             cardView.id = ratedMovieResultItem.id?.toInt()!!
             ratedMovieItemName.text = ratedMovieResultItem.title
+
+            cardView.setOnClickListener {
+                navController.navigate(
+                    RatedFragmentDirections.actionRatedFragmentToMovieInfoFragment(
+                        ratedMovieResultItem.id
+                    )
+                )
+            }
         }
     }
+
+    private val differCallback = object : DiffUtil.ItemCallback<RatedMoviesResult>() {
+        override fun areItemsTheSame(
+            oldItem: RatedMoviesResult,
+            newItem: RatedMoviesResult
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: RatedMoviesResult,
+            newItem: RatedMoviesResult
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -45,32 +74,13 @@ class RatedMoviesAdapter(
             parent,
             false
         )
-        cardView = binding.materialCardViewRatedMovieItem
-
-        cardView.setOnClickListener {
-            val movieId = it.id.toLong()
-
-            navController.navigate(
-                RatedFragmentDirections.actionRatedFragmentToMovieInfoFragment(
-                    movieId
-                )
-            )
-        }
 
         return RatedMovieViewHolder(binding)
     }
 
     override fun getItemCount(): Int = ratedMovieItems.results?.size!!
     override fun onBindViewHolder(holder: RatedMovieViewHolder, position: Int) {
-        val ratedMovieItem = ratedMovieItems.results?.get(position)
-        holder.bind(ratedMovieItem!!)
-    }
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return position
+        val reply = differ.currentList[position]
+        holder.bind(reply)
     }
 }

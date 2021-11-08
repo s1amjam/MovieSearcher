@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
@@ -21,9 +23,11 @@ class RatedTvsAdapter(
 ) : RecyclerView.Adapter<RatedTvsAdapter.RatedTvViewHolder>() {
     lateinit var cardView: MaterialCardView
 
-    inner class RatedTvViewHolder(binding: FragmentRatedTvItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class RatedTvViewHolder(binding: FragmentRatedTvItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         private val ratedTvItemPoster: ImageView = binding.imageViewRatedTvItem
         private val ratedTvItemName: TextView = binding.textViewRatedTvItemName
+        private val cardView = binding.materialCardViewRatedTvItem
 
         fun bind(ratedTvResultItem: RatedTvsResult) {
             Glide.with(this.itemView)
@@ -32,8 +36,34 @@ class RatedTvsAdapter(
                 .into(ratedTvItemPoster)
             cardView.id = ratedTvResultItem.id?.toInt()!!
             ratedTvItemName.text = ratedTvResultItem.name
+
+            cardView.setOnClickListener {
+                navController.navigate(
+                    RatedFragmentDirections.actionRatedFragmentToTvInfoFragment(
+                        ratedTvResultItem.id
+                    )
+                )
+            }
         }
     }
+
+    private val differCallback = object : DiffUtil.ItemCallback<RatedTvsResult>() {
+        override fun areItemsTheSame(
+            oldItem: RatedTvsResult,
+            newItem: RatedTvsResult
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: RatedTvsResult,
+            newItem: RatedTvsResult
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -44,32 +74,13 @@ class RatedTvsAdapter(
             parent,
             false
         )
-        cardView = binding.materialCardViewRatedTvItem
-
-        cardView.setOnClickListener {
-            val tvId = it.id.toLong()
-
-            navController.navigate(
-                RatedFragmentDirections.actionRatedFragmentToTvInfoFragment(
-                    tvId
-                )
-            )
-        }
 
         return RatedTvViewHolder(binding)
     }
 
     override fun getItemCount(): Int = ratedTvItems.results?.size!!
     override fun onBindViewHolder(holder: RatedTvViewHolder, position: Int) {
-        val ratedTvItem = ratedTvItems.results?.get(position)
-        holder.bind(ratedTvItem!!)
-    }
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return position
+        val reply = differ.currentList[position]
+        holder.bind(reply)
     }
 }

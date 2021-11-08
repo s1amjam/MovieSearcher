@@ -44,6 +44,7 @@ class MovieInfoFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val args by navArgs<MovieInfoFragmentArgs>()
+
     private val movieInfoViewModel: MovieInfoViewModel by viewModels()
     private val movieCastViewModel: MovieCastViewModel by viewModels()
     private val recommendationsViewModel: RecommendationsViewModel by viewModels()
@@ -96,17 +97,10 @@ class MovieInfoFragment : BaseFragment() {
         val movieId = args.movieId
 
         movieInfoCastRecyclerView = binding.castRecyclerView
-        movieInfoCastRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recommendationsRecyclerView = binding.recommendationsRecyclerView
-        recommendationsRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         videoRecyclerView = binding.videoRecyclerView
-        videoRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         imagesRecyclerView = binding.imagesRecyclerView
-        imagesRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
         movieInfoConstraintLayout = binding.movieInfoConstraintLayout
         movieInfoPosterImageView = binding.movieInfoPosterImageView
         movieInfoTitle = binding.movieTitleTextView
@@ -186,9 +180,15 @@ class MovieInfoFragment : BaseFragment() {
             })
 
         movieCastViewModel.getMovieCastById(movieId).observe(viewLifecycleOwner, { castItems ->
-            movieInfoCastRecyclerView.adapter = MovieCastAdapter(
-                castItems
-            )
+            val movieCastAdapter = MovieCastAdapter(castItems)
+
+            movieInfoCastRecyclerView.apply {
+                adapter = movieCastAdapter
+                layoutManager =
+                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            }
+            movieCastAdapter.differ.submitList(castItems.cast)
+
             director.text =
                 getString(R.string.director).format(
                     castItems.crew?.find { it.job == "Director" }?.name
@@ -201,13 +201,25 @@ class MovieInfoFragment : BaseFragment() {
 
         recommendationsViewModel.getRecommendationsByMovieId(movieId)
             .observe(viewLifecycleOwner, { recommendationsItems ->
-                recommendationsRecyclerView.adapter = RecommendationsAdapter(
+                val recommendationsAdapter = RecommendationsAdapter(
                     recommendationsItems,
                     findNavController()
                 )
+
+                recommendationsRecyclerView.apply {
+                    adapter = recommendationsAdapter
+                    layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                }
+                recommendationsAdapter.differ.submitList(recommendationsItems.results)
             })
 
         videoViewModel.getVideosByMovieId(movieId).observe(viewLifecycleOwner, { videoItems ->
+            val videoAdapter = VideoAdapter(
+                videoItems,
+                findNavController()
+            )
+
             if (videoItems.results != null) {
                 val officialTrailer = videoItems.results.find {
                     it.official == true && it.type == "Trailer"
@@ -232,10 +244,12 @@ class MovieInfoFragment : BaseFragment() {
                     }
                 }
 
-                videoRecyclerView.adapter = VideoAdapter(
-                    videoItems,
-                    findNavController()
-                )
+                videoRecyclerView.apply {
+                    adapter = videoAdapter
+                    layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                }
+                videoAdapter.differ.submitList(videoItems.results)
             } else {
                 videoCardView.visibility = View.GONE
             }
@@ -243,6 +257,9 @@ class MovieInfoFragment : BaseFragment() {
 
         imagesViewModel.getImagesByMovieId(movieId)
             .observe(viewLifecycleOwner, { imagesItems ->
+                val imageAdapter = ImagesAdapter(
+                    imagesItems,
+                )
                 var tenImages = imagesItems.backdrops
 
                 while (tenImages?.size!! > 10) {
@@ -253,9 +270,12 @@ class MovieInfoFragment : BaseFragment() {
                     backdrops = tenImages
                 }
 
-                imagesRecyclerView.adapter = ImagesAdapter(
-                    imagesItems,
-                )
+                imagesRecyclerView.apply {
+                    adapter = imageAdapter
+                    layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                }
+                imageAdapter.differ.submitList(imagesItems.backdrops)
             })
 
         buttonSeeAllImages.setOnClickListener {

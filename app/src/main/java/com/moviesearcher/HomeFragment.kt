@@ -82,13 +82,16 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun createAdapter(movieItems: TrendingResponse): TrendingAdapter {
-        return TrendingAdapter(
+        val trendingAdapter = TrendingAdapter(
             movieItems,
             navController,
             accountId,
             sessionId,
             movieWatchlistViewModel.getMovieWatchlistIds()
         )
+        trendingAdapter.differ.submitList(movieItems.results)
+
+        return trendingAdapter
     }
 
     private fun setupTrendingTvsUi() {

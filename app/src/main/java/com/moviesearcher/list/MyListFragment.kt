@@ -35,19 +35,23 @@ class MyListFragment : BaseFragment() {
         val listId = args.listId
 
         myListRecyclerView = binding.fragmentMyListRecyclerView
-        myListRecyclerView.layoutManager = LinearLayoutManager(context)
 
         myListViewModel.getList(listId).observe(
             viewLifecycleOwner,
             { myListItems ->
-                binding.listTitleTextView.text = myListItems.name
-                
-                myListRecyclerView.adapter = MyListAdapter(
+                val myListAdapter = MyListAdapter(
                     myListItems,
                     findNavController(),
                     args.listId,
                     sessionId
                 )
+                binding.listTitleTextView.text = myListItems.name
+
+                myListRecyclerView.apply {
+                    adapter = myListAdapter
+                    layoutManager = LinearLayoutManager(context)
+                }
+                myListAdapter.differ.submitList(myListItems.items)
             })
 
         return view

@@ -3,6 +3,8 @@ package com.moviesearcher.movie.adapter.video
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.common.model.videos.Result
@@ -55,9 +57,27 @@ class VideoAdapter(
         return VideoHolder(binding)
     }
 
+    private val differCallback = object : DiffUtil.ItemCallback<Result>() {
+        override fun areItemsTheSame(
+            oldItem: Result,
+            newItem: Result
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: Result,
+            newItem: Result
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
+
     override fun getItemCount(): Int = videoItems.results?.size!!
     override fun onBindViewHolder(holder: VideoHolder, position: Int) {
-        val videoItem = videoItems.results?.get(position)
-        holder.bind(videoItem!!)
+        val reply = differ.currentList[position]
+        holder.bind(reply)
     }
 }

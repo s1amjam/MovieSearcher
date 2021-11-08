@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentFavoritesBinding
 import com.moviesearcher.favorite.movie.adapter.FavoriteMovieAdapter
+import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.movie.viewmodel.FavoriteMoviesViewModel
 import com.moviesearcher.favorite.tv.adapter.FavoriteTvAdapter
 import com.moviesearcher.favorite.tv.viewmodel.FavoriteTvsViewModel
@@ -38,33 +39,20 @@ class FavoritesFragment : BaseFragment() {
         val view = binding.root
 
         favoriteMoviesRecyclerView = binding.fragmentFavoritesRecyclerView
-        favoriteMoviesRecyclerView.layoutManager = LinearLayoutManager(context)
         favoriteMoviesButton = binding.buttonFavoriteMovies
         favoriteTvsButton = binding.buttonFavoriteTvs
 
         favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId).observe(
             viewLifecycleOwner,
             { favoriteMovieItems ->
-                favoriteMoviesRecyclerView.adapter =
-                    FavoriteMovieAdapter(
-                        favoriteMovieItems,
-                        findNavController(),
-                        sessionId,
-                        accountId
-                    )
+                setupFavoriteMovieUi(favoriteMovieItems)
             })
 
         favoriteMoviesButton.setOnClickListener {
             favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { favoriteMovieItems ->
-                    favoriteMoviesRecyclerView.adapter =
-                        FavoriteMovieAdapter(
-                            favoriteMovieItems,
-                            findNavController(),
-                            sessionId,
-                            accountId
-                        )
+                    setupFavoriteMovieUi(favoriteMovieItems)
                 })
         }
 
@@ -72,16 +60,36 @@ class FavoritesFragment : BaseFragment() {
             favoriteTvsViewModel.getFavoriteTvs(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { favoriteTvItems ->
-                    favoriteMoviesRecyclerView.adapter =
-                        FavoriteTvAdapter(
-                            favoriteTvItems, findNavController(),
-                            sessionId,
-                            accountId
-                        )
+                    val favoriteTvAdapter = FavoriteTvAdapter(
+                        favoriteTvItems, findNavController(),
+                        sessionId,
+                        accountId
+                    )
+
+                    favoriteMoviesRecyclerView.apply {
+                        adapter = favoriteTvAdapter
+                        layoutManager = LinearLayoutManager(context)
+                    }
+                    favoriteTvAdapter.differ.submitList(favoriteTvItems.results)
                 })
         }
 
         return view
+    }
+
+    private fun setupFavoriteMovieUi(favoriteMovieItems: FavoriteMovieResponse) {
+        val favoriteMovieAdapter = FavoriteMovieAdapter(
+            favoriteMovieItems,
+            findNavController(),
+            sessionId,
+            accountId
+        )
+
+        favoriteMoviesRecyclerView.apply {
+            adapter = favoriteMovieAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+        favoriteMovieAdapter.differ.submitList(favoriteMovieItems.results)
     }
 
     override fun onDestroyView() {

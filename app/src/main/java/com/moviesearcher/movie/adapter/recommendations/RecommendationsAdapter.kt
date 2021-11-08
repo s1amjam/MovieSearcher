@@ -3,6 +3,8 @@ package com.moviesearcher.movie.adapter.recommendations
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.databinding.MovieCardViewBinding
@@ -57,10 +59,27 @@ class RecommendationsAdapter(
         return RecommendationsHolder(binding)
     }
 
+    private val differCallback = object : DiffUtil.ItemCallback<ResultFavoriteMovie>() {
+        override fun areItemsTheSame(
+            oldItem: ResultFavoriteMovie,
+            newItem: ResultFavoriteMovie
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: ResultFavoriteMovie,
+            newItem: ResultFavoriteMovie
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
+
     override fun getItemCount(): Int = recommendationsItems.results?.size!!
     override fun onBindViewHolder(holder: RecommendationsHolder, position: Int) {
-
-        val recommendationsItem = recommendationsItems.results?.get(position)
-        holder.bind(recommendationsItem!!)
+        val reply = differ.currentList[position]
+        holder.bind(reply)
     }
 }

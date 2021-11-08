@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentWatchlistBinding
-import com.moviesearcher.movie.adapter.TrendingAdapter
 import com.moviesearcher.watchlist.movie.adapter.MovieWatchlistAdapter
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.movie.viewmodel.MovieWatchlistViewModel
@@ -74,41 +73,37 @@ class WatchlistFragment : BaseFragment() {
     private fun createMovieAdapter(
         movieItems: MovieWatchlistResponse
     ): MovieWatchlistAdapter {
-        return MovieWatchlistAdapter(
+        val movieWatchlistAdapter = MovieWatchlistAdapter(
             movieItems,
             navController,
             accountId,
             sessionId,
             movieWatchlistViewModel.getMovieWatchlistIds(),
         )
+        movieWatchlistAdapter.differ.submitList(movieItems.results)
+
+        return movieWatchlistAdapter
     }
 
     private fun createTvAdapter(
         tvItems: TvWatchlistResponse
     ): TvWatchlistAdapter {
-        return TvWatchlistAdapter(
+        val tvWatchlistAdapter = TvWatchlistAdapter(
             tvItems,
             navController,
             accountId,
             sessionId,
             tvWatchlistViewModel.getTvWatchlistIds(),
         )
+        tvWatchlistAdapter.differ.submitList(tvItems.results)
+
+        return tvWatchlistAdapter
     }
 
     override fun setupUi(
         _adapter: RecyclerView.Adapter<*>,
         recyclerView: RecyclerView
     ) {
-        recyclerView.apply {
-            addItemDecoration(
-                TrendingAdapter.GridSpacingItemDecoration(
-                    100,
-                    10,
-                    true
-                )
-            )
-        }
-
         progressBar.visibility = View.VISIBLE
         super.setupUi(_adapter, recyclerView)
         progressBar.visibility = View.GONE

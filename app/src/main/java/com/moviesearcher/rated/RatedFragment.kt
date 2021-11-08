@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentRatedBinding
 import com.moviesearcher.rated.movie.adapter.RatedMoviesAdapter
+import com.moviesearcher.rated.movie.model.RatedMoviesResponse
 import com.moviesearcher.rated.movie.viewmodel.RatedMoviesViewModel
 import com.moviesearcher.rated.tv.adapter.RatedTvsAdapter
 import com.moviesearcher.rated.tv.viewmodel.RatedTvsViewModel
@@ -42,7 +43,6 @@ class RatedFragment : BaseFragment() {
         val view = binding.root
 
         ratedMoviesRecyclerView = binding.fragmentRatedRecyclerView
-        ratedMoviesRecyclerView.layoutManager = LinearLayoutManager(context)
         ratedMoviesButton = binding.buttonRatedMovies
         ratedTvsButton = binding.buttonRatedTvs
         ratedTvEpisodesButton = binding.buttonRatedTvEpisodes
@@ -50,16 +50,14 @@ class RatedFragment : BaseFragment() {
         ratedMovies.getRatedMovies(accountId, sessionId).observe(
             viewLifecycleOwner,
             { ratedMovieItems ->
-                ratedMoviesRecyclerView.adapter =
-                    RatedMoviesAdapter(ratedMovieItems, findNavController())
+                setupRatedMoviesUi(ratedMovieItems)
             })
 
         ratedMoviesButton.setOnClickListener {
             ratedMovies.getRatedMovies(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { ratedMovieItems ->
-                    ratedMoviesRecyclerView.adapter =
-                        RatedMoviesAdapter(ratedMovieItems, findNavController())
+                    setupRatedMoviesUi(ratedMovieItems)
                 })
         }
 
@@ -67,8 +65,13 @@ class RatedFragment : BaseFragment() {
             ratedTvs.getRatedTvs(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { ratedTvItems ->
-                    ratedMoviesRecyclerView.adapter =
-                        RatedTvsAdapter(ratedTvItems, findNavController())
+                    val ratedMoviesAdapter = RatedTvsAdapter(ratedTvItems, findNavController())
+
+                    ratedMoviesRecyclerView.apply {
+                        adapter = ratedMoviesAdapter
+                        layoutManager = LinearLayoutManager(context)
+                    }
+                    ratedMoviesAdapter.differ.submitList(ratedTvItems.results)
                 })
         }
 
@@ -82,6 +85,16 @@ class RatedFragment : BaseFragment() {
         }
 
         return view
+    }
+
+    private fun setupRatedMoviesUi(ratedMovieItems: RatedMoviesResponse) {
+        val ratedMoviesAdapter = RatedMoviesAdapter(ratedMovieItems, findNavController())
+
+        ratedMoviesRecyclerView.apply {
+            adapter = ratedMoviesAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+        ratedMoviesAdapter.differ.submitList(ratedMovieItems.results)
     }
 
     override fun onDestroyView() {

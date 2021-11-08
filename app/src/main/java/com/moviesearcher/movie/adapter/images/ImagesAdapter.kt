@@ -2,6 +2,8 @@ package com.moviesearcher.movie.adapter.images
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.common.model.images.Backdrop
@@ -42,9 +44,27 @@ class ImagesAdapter(
         return ImagesHolder(binding)
     }
 
+    private val differCallback = object : DiffUtil.ItemCallback<Backdrop>() {
+        override fun areItemsTheSame(
+            oldItem: Backdrop,
+            newItem: Backdrop
+        ): Boolean {
+            return oldItem.filePath == newItem.filePath
+        }
+
+        override fun areContentsTheSame(
+            oldItem: Backdrop,
+            newItem: Backdrop
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
+
     override fun getItemCount(): Int = imagesItems.backdrops?.size!!
     override fun onBindViewHolder(holder: ImagesHolder, position: Int) {
-        val imageItem = imagesItems.backdrops?.get(position)
-        holder.bind(imageItem!!)
+        val reply = differ.currentList[position]
+        holder.bind(reply)
     }
 }

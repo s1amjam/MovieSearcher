@@ -1,15 +1,17 @@
 package com.moviesearcher.favorite.movie.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.api.Api
 import com.moviesearcher.databinding.FragmentFavoriteMovieItemBinding
@@ -18,7 +20,6 @@ import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.movie.model.ResultFavoriteMovie
 import com.moviesearcher.utils.Constants
-import com.moviesearcher.utils.Constants.DURATION_5_SECONDS
 
 class FavoriteMovieAdapter(
     private val favoriteMovieItems: FavoriteMovieResponse,
@@ -39,6 +40,8 @@ class FavoriteMovieAdapter(
         private val overview = binding.textViewDescription
 
         fun bind(movieItem: ResultFavoriteMovie) {
+            val currentItemPosition = favoriteMovieItems.results?.indexOf(movieItem)!!
+
             title.text = movieItem.title
             releaseDate.text = movieItem.releaseDate?.replace("-", ".")
 
@@ -51,8 +54,102 @@ class FavoriteMovieAdapter(
             overview.text = movieItem.overview
             rating.text = movieItem.voteAverage.toString()
             cardView.id = movieItem.id?.toInt()!!
+
+            imageButtonRemoveFromFavorite.setOnClickListener {
+                val removeFromFavoriteResponse =
+                    Api.markAsFavorite(
+                        accountId,
+                        sessionId,
+                        MarkAsFavoriteRequest(
+                            false,
+                            movieItem.id.toLong(),
+                            "movie"
+                        ),
+                    )
+
+                removeFromFavoriteResponse.observe(binding.root.findViewTreeLifecycleOwner()!!, {
+                    if (it.success) {
+                        favoriteMovieItems.results.remove(movieItem)
+                        notifyItemRemoved(currentItemPosition)
+
+                        val favoriteItemRemovedSnackbar = Snackbar.make(
+                            binding.root.rootView,
+                            "\"${movieItem.title}\" was removed from Favorites",
+                            BaseTransientBottomBar.LENGTH_LONG
+                        )
+
+                        favoriteItemRemovedSnackbar.setAction("UNDO") { view ->
+                            val addToFavoriteResponse =
+                                Api.markAsFavorite(
+                                    accountId,
+                                    sessionId,
+                                    MarkAsFavoriteRequest(
+                                        true,
+                                        movieItem.id.toLong(),
+                                        "movie"
+                                    ),
+                                )
+
+                            addToFavoriteResponse.observe(
+                                view.findViewTreeLifecycleOwner()!!,
+                                { addToFavorite ->
+                                    if (addToFavorite.success) {
+                                        favoriteMovieItems.results.add(
+                                            currentItemPosition,
+                                            movieItem
+                                        )
+                                        notifyItemInserted(currentItemPosition)
+                                        Toast.makeText(
+                                            itemView.context,
+                                            "\"${movieItem.title}\" added back",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            itemView.context,
+                                            "Error while adding movie back",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                })
+                        }
+                        favoriteItemRemovedSnackbar.show()
+                    } else {
+                        Toast.makeText(
+                            itemView.context,
+                            "Error while removing from favorites",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                })
+            }
+
+            cardView.setOnClickListener {
+                navController.navigate(
+                    FavoritesFragmentDirections
+                        .actionFragmentFavoritesToMovieInfoFragment(movieItem.id)
+                )
+            }
         }
     }
+
+    private val differCallback = object : DiffUtil.ItemCallback<ResultFavoriteMovie>() {
+        override fun areItemsTheSame(
+            oldItem: ResultFavoriteMovie,
+            newItem: ResultFavoriteMovie
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: ResultFavoriteMovie,
+            newItem: ResultFavoriteMovie
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -70,87 +167,9 @@ class FavoriteMovieAdapter(
     }
 
     override fun getItemCount(): Int = favoriteMovieItems.results?.size!!
-
-    @SuppressLint("WrongConstant")
     override fun onBindViewHolder(holder: FavoriteMovieViewHolder, position: Int) {
-        imageButtonRemoveFromFavorite.setOnClickListener {
-            val movieToRemove = favoriteMovieItems.results?.get(position)
-
-            val removeFromFavoriteResponse =
-                Api.markAsFavorite(
-                    accountId,
-                    sessionId,
-                    MarkAsFavoriteRequest(
-                        false,
-                        movieToRemove?.id!!.toLong(),
-                        "movie"
-                    ),
-                )
-
-            removeFromFavoriteResponse.observe(holder.binding.root.findViewTreeLifecycleOwner()!!, {
-                if (it.success) {
-                    favoriteMovieItems.results?.removeAt(position)
-                    notifyItemRemoved(position)
-
-                    val favoriteItemRemovedSnackbar = Snackbar.make(
-                        holder.binding.root.rootView,
-                        "\"${movieToRemove.title}\" was removed from Favorites",
-                        DURATION_5_SECONDS
-                    )
-
-                    favoriteItemRemovedSnackbar.setAction("UNDO") { view ->
-                        val addToFavoriteResponse =
-                            Api.markAsFavorite(
-                                accountId,
-                                sessionId,
-                                MarkAsFavoriteRequest(
-                                    true,
-                                    movieToRemove.id.toLong(),
-                                    "movie"
-                                ),
-                            )
-
-                        addToFavoriteResponse.observe(
-                            view.findViewTreeLifecycleOwner()!!,
-                            { addToFavorite ->
-                                if (addToFavorite.success) {
-                                    favoriteMovieItems.results?.add(position, movieToRemove)
-                                    notifyItemInserted(position)
-                                    Toast.makeText(
-                                        holder.itemView.context,
-                                        "\"${movieToRemove.title}\" added back",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    Toast.makeText(
-                                        holder.itemView.context,
-                                        "Error while adding movie back",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            })
-                    }
-                    favoriteItemRemovedSnackbar.show()
-                } else {
-                    Toast.makeText(
-                        holder.itemView.context,
-                        "Error while removing from favorites",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
-        }
-
-        cardView.setOnClickListener {
-            val movieId = it.id.toLong()
-
-            navController.navigate(
-                FavoritesFragmentDirections.actionFragmentFavoritesToMovieInfoFragment(movieId)
-            )
-        }
-
-        val listItem = favoriteMovieItems.results?.get(position)
-        holder.bind(listItem!!)
+        val reply = differ.currentList[position]
+        holder.bind(reply)
     }
 
     override fun getItemId(position: Int): Long {

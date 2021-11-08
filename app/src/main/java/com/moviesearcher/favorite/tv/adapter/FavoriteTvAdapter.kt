@@ -1,15 +1,17 @@
 package com.moviesearcher.favorite.tv.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.api.Api
 import com.moviesearcher.databinding.FragmentFavoriteTvItemBinding
@@ -18,7 +20,6 @@ import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.favorite.tv.model.ResultFavoriteTv
 import com.moviesearcher.utils.Constants
-import com.moviesearcher.utils.Constants.DURATION_5_SECONDS
 
 class FavoriteTvAdapter(
     private val favoriteTvItems: FavoriteTvResponse,
@@ -39,6 +40,8 @@ class FavoriteTvAdapter(
         private val overview = binding.textViewDescription
 
         fun bind(tvItem: ResultFavoriteTv) {
+            val currentItemPosition = favoriteTvItems.results?.indexOf(tvItem)!!
+
             title.text = tvItem.name
             releaseDate.text = tvItem.firstAirDate?.replace("-", ".")
 
@@ -51,8 +54,98 @@ class FavoriteTvAdapter(
             overview.text = tvItem.overview
             rating.text = tvItem.voteAverage.toString()
             cardView.id = tvItem.id?.toInt()!!
+
+            imageButtonRemoveFromFavorite.setOnClickListener {
+                val removeFromFavoriteResponse =
+                    Api.markAsFavorite(
+                        accountId,
+                        sessionId,
+                        MarkAsFavoriteRequest(
+                            false,
+                            tvItem.id.toLong(),
+                            "tv"
+                        ),
+                    )
+
+                removeFromFavoriteResponse.observe(binding.root.findViewTreeLifecycleOwner()!!, {
+                    if (it.success) {
+                        favoriteTvItems.results.remove(tvItem)
+                        notifyItemRemoved(currentItemPosition)
+
+                        val favoriteItemRemovedSnackbar = Snackbar.make(
+                            binding.root.rootView,
+                            "\"${tvItem.name}\" was removed from Favorites",
+                            BaseTransientBottomBar.LENGTH_LONG
+                        )
+
+                        favoriteItemRemovedSnackbar.setAction("UNDO") { view ->
+                            val addToFavoriteResponse =
+                                Api.markAsFavorite(
+                                    accountId,
+                                    sessionId,
+                                    MarkAsFavoriteRequest(
+                                        true,
+                                        tvItem.id.toLong(),
+                                        "tv"
+                                    ),
+                                )
+
+                            addToFavoriteResponse.observe(
+                                view.findViewTreeLifecycleOwner()!!,
+                                { addToFavorite ->
+                                    if (addToFavorite.success) {
+                                        favoriteTvItems.results.add(currentItemPosition, tvItem)
+                                        notifyItemInserted(currentItemPosition)
+                                        Toast.makeText(
+                                            itemView.context,
+                                            "\"${tvItem.name}\" added back",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            itemView.context,
+                                            "Error while adding tv back",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                })
+                        }
+                        favoriteItemRemovedSnackbar.show()
+                    } else {
+                        Toast.makeText(
+                            itemView.context,
+                            "Error while removing from favorites",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                })
+            }
+
+            cardView.setOnClickListener {
+                navController.navigate(
+                    FavoritesFragmentDirections.actionFragmentFavoritesToTvInfoFragment(tvItem.id)
+                )
+            }
         }
     }
+
+    private val differCallback = object : DiffUtil.ItemCallback<ResultFavoriteTv>() {
+        override fun areItemsTheSame(
+            oldItem: ResultFavoriteTv,
+            newItem: ResultFavoriteTv
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: ResultFavoriteTv,
+            newItem: ResultFavoriteTv
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -70,94 +163,8 @@ class FavoriteTvAdapter(
     }
 
     override fun getItemCount(): Int = favoriteTvItems.results?.size!!
-
-    @SuppressLint("WrongConstant")
     override fun onBindViewHolder(holder: FavoriteTvViewHolder, position: Int) {
-        imageButtonRemoveFromFavorite.setOnClickListener {
-            val tvToRemove = favoriteTvItems.results?.get(position)
-
-            val removeFromFavoriteResponse =
-                Api.markAsFavorite(
-                    accountId,
-                    sessionId,
-                    MarkAsFavoriteRequest(
-                        false,
-                        tvToRemove?.id!!.toLong(),
-                        "tv"
-                    ),
-                )
-
-            removeFromFavoriteResponse.observe(holder.binding.root.findViewTreeLifecycleOwner()!!, {
-                if (it.success) {
-                    favoriteTvItems.results?.removeAt(position)
-                    notifyItemRemoved(position)
-
-                    val favoriteItemRemovedSnackbar = Snackbar.make(
-                        holder.binding.root.rootView,
-                        "\"${tvToRemove.name}\" was removed from Favorites",
-                        DURATION_5_SECONDS
-                    )
-
-                    favoriteItemRemovedSnackbar.setAction("UNDO") { view ->
-                        val addToFavoriteResponse =
-                            Api.markAsFavorite(
-                                accountId,
-                                sessionId,
-                                MarkAsFavoriteRequest(
-                                    true,
-                                    tvToRemove.id.toLong(),
-                                    "tv"
-                                ),
-                            )
-
-                        addToFavoriteResponse.observe(
-                            view.findViewTreeLifecycleOwner()!!,
-                            { addToFavorite ->
-                                if (addToFavorite.success) {
-                                    favoriteTvItems.results?.add(position, tvToRemove)
-                                    notifyItemInserted(position)
-                                    Toast.makeText(
-                                        holder.itemView.context,
-                                        "\"${tvToRemove.name}\" added back",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    Toast.makeText(
-                                        holder.itemView.context,
-                                        "Error while adding tv back",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            })
-                    }
-                    favoriteItemRemovedSnackbar.show()
-                } else {
-                    Toast.makeText(
-                        holder.itemView.context,
-                        "Error while removing from favorites",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
-        }
-
-        cardView.setOnClickListener {
-            val tvId = it.id.toLong()
-
-            navController.navigate(
-                FavoritesFragmentDirections.actionFragmentFavoritesToTvInfoFragment(tvId)
-            )
-        }
-
-        val listItem = favoriteTvItems.results?.get(position)
-        holder.bind(listItem!!)
-    }
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return position
+        val reply = differ.currentList[position]
+        holder.bind(reply)
     }
 }
