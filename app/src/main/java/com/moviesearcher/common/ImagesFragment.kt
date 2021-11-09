@@ -34,15 +34,17 @@ class ImagesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val movieId = args.movieId
-
         imagesRecyclerView = binding.photosRecyclerView
-        imagesRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
         imagesViewModel.getImagesByMovieId(movieId)
             .observe(viewLifecycleOwner, { imagesItems ->
-                imagesRecyclerView.adapter = ImagesAdapter(
-                    imagesItems,
-                )
+                val imagesAdapter = ImagesAdapter(imagesItems)
+
+                imagesRecyclerView.apply {
+                    adapter = imagesAdapter
+                    layoutManager = GridLayoutManager(requireContext(), 2)
+                }
+                imagesAdapter.differ.submitList(imagesItems.backdrops)
             })
     }
 

@@ -9,6 +9,7 @@
 
     <TextView
         android:id="@+id/favorite_text_view"
+        style="@style/Widget.MovieSearcher.TextLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -31,29 +32,30 @@
         android:id="@+id/toggle_button_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/favorite_text_view"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/favorite_text_view"
         app:singleSelection="true">
-    <Button
-        android:id="@+id/button_favorite_movies"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/movies"
-        style="?attr/materialButtonOutlinedStyle"
-        app:strokeColor="#2196F3"
-        android:textColor="#2196F3"
-        app:strokeWidth="1dp" />
 
-    <Button
-        android:id="@+id/button_favorite_tvs"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/tvs"
-        style="?attr/materialButtonOutlinedStyle"
-        app:strokeColor="#2196F3"
-        android:textColor="#2196F3"
-        app:strokeWidth="1dp" />
+        <Button
+            android:id="@+id/button_favorite_movies"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/movies"
+            android:textColor="#2196F3"
+            app:strokeColor="#2196F3"
+            app:strokeWidth="1dp" />
+
+        <Button
+            android:id="@+id/button_favorite_tvs"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tvs"
+            android:textColor="#2196F3"
+            app:strokeColor="#2196F3"
+            app:strokeWidth="1dp" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>

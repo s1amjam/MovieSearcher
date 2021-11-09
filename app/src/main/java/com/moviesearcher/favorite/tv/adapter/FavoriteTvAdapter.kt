@@ -14,7 +14,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.api.Api
-import com.moviesearcher.databinding.FragmentFavoriteTvItemBinding
+import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.favorite.FavoritesFragmentDirections
 import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
@@ -30,7 +30,7 @@ class FavoriteTvAdapter(
     private lateinit var cardView: MaterialCardView
     private lateinit var imageButtonRemoveFromFavorite: ImageButton
 
-    inner class FavoriteTvViewHolder(val binding: FragmentFavoriteTvItemBinding) :
+    inner class FavoriteTvViewHolder(val binding: ExtendedCardViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         private val rating = binding.textViewRating
@@ -151,13 +151,13 @@ class FavoriteTvAdapter(
         parent: ViewGroup,
         viewType: Int
     ): FavoriteTvViewHolder {
-        val binding = FragmentFavoriteTvItemBinding.inflate(
+        val binding = ExtendedCardViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        cardView = binding.favoriteCardView
-        imageButtonRemoveFromFavorite = binding.imageButtonRemoveFromFavorite
+        cardView = binding.cardView
+        imageButtonRemoveFromFavorite = binding.imageButtonRemove
 
         return FavoriteTvViewHolder(binding)
     }

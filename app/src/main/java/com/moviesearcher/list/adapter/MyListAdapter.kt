@@ -15,7 +15,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
-import com.moviesearcher.databinding.FragmentMyListItemBinding
+import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.list.MyListFragmentDirections
 import com.moviesearcher.list.model.Item
 import com.moviesearcher.list.model.ListResponse
@@ -30,7 +30,7 @@ class MyListAdapter(
     private lateinit var cardView: MaterialCardView
     private lateinit var imageButtonRemoveFromList: ImageButton
 
-    inner class MyListViewHolder(val binding: FragmentMyListItemBinding) :
+    inner class MyListViewHolder(val binding: ExtendedCardViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         private val rating = binding.textViewRating
@@ -162,13 +162,13 @@ class MyListAdapter(
         parent: ViewGroup,
         viewType: Int
     ): MyListViewHolder {
-        val binding = FragmentMyListItemBinding.inflate(
+        val binding = ExtendedCardViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        cardView = binding.listItemCardView
-        imageButtonRemoveFromList = binding.imageButtonRemoveFromList
+        cardView = binding.cardView
+        imageButtonRemoveFromList = binding.imageButtonRemove
 
         return MyListViewHolder(binding)
     }

@@ -2,13 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/video_card_view"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="16dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="5dp"
+    style="@style/Widget.MovieSearcher.CardView.SmallCardView"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="parent">
@@ -27,6 +21,7 @@
 
         <TextView
             android:id="@+id/video_name_text_view"
+            style="@style/Widget.MovieSearcher.TextSmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

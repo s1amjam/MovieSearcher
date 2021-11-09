@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.moviesearcher.databinding.FragmentSearchItemBinding
+import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.search.SearchResultFragmentDirections
 import com.moviesearcher.search.model.Result
 import com.moviesearcher.search.model.SearchResponse
@@ -18,14 +18,14 @@ class SearchAdapter(
     private val searchItems: SearchResponse,
     private val navController: NavController
 ) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
-    inner class SearchViewHolder(binding: FragmentSearchItemBinding) :
+    inner class SearchViewHolder(binding: ExtendedCardViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val title: TextView = binding.textViewTitle
         private val rating = binding.textViewRating
         private val releaseDate = binding.textViewReleaseDate
         private val overview = binding.textViewDescription
         private val poster = binding.posterImageView
-        private val cardView = binding.searchItemCardView
+        private val cardView = binding.cardView
 
         fun bind(searchResultItem: Result) {
             Glide.with(this.itemView)
@@ -90,7 +90,7 @@ class SearchAdapter(
         parent: ViewGroup,
         viewType: Int
     ): SearchViewHolder {
-        val binding = FragmentSearchItemBinding.inflate(
+        val binding = ExtendedCardViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

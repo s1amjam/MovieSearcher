@@ -8,78 +8,74 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/watchlist_card_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardElevation="5dp"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp">
+        style="@style/Widget.MovieSearcher.CardView.LineCardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/watchlist_text_view"
+            style="@style/Widget.MovieSearcher.TextLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/watchlists"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="16dp"/>
+            android:text="@string/watchlists" />
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/lists_card_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardElevation="5dp"
-        app:layout_constraintTop_toBottomOf="@+id/watchlist_card_view"
-        tools:layout_editor_absoluteX="16dp">
+        style="@style/Widget.MovieSearcher.CardView.LineCardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/watchlist_card_view">
 
         <TextView
             android:id="@+id/lists_text_view"
+            style="@style/Widget.MovieSearcher.TextLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/my_lists"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="16dp" />
+            android:text="@string/my_lists" />
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/favorites_card_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardElevation="5dp"
-        app:layout_constraintTop_toBottomOf="@+id/lists_card_view"
-        tools:layout_editor_absoluteX="16dp">
+        style="@style/Widget.MovieSearcher.CardView.LineCardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lists_card_view">
 
         <TextView
             android:id="@+id/favorites_text_view"
+            style="@style/Widget.MovieSearcher.TextLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/favorites"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="16dp" />
+            android:text="@string/favorites" />
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/rated_card_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardElevation="5dp"
-        app:layout_constraintTop_toBottomOf="@+id/favorites_card_view"
-        tools:layout_editor_absoluteX="16dp">
+        style="@style/Widget.MovieSearcher.CardView.LineCardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/favorites_card_view">
 
         <TextView
             android:id="@+id/rated_text_view"
+            style="@style/Widget.MovieSearcher.TextLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ratings"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="16dp" />
+            android:text="@string/ratings" />
     </com.google.android.material.card.MaterialCardView>
 
     <Button

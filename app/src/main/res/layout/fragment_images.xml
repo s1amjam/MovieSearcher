@@ -8,6 +8,7 @@
 
     <TextView
         android:id="@+id/title_textView"
+        style="@style/Widget.MovieSearcher.TextLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -20,6 +21,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/title_textView"
         app:layout_constraintTop_toBottomOf="@+id/title_textView">
 
