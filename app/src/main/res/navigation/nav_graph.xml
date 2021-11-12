@@ -55,6 +55,15 @@
         <action
             android:id="@+id/action_tv_info_fragment_to_search_result_fragment"
             app:destination="@id/search_result_fragment" />
+        <action
+            android:id="@+id/action_tv_info_fragment_self"
+            app:destination="@id/tv_info_fragment" />
+        <action
+            android:id="@+id/action_tv_info_fragment_to_videoFragment"
+            app:destination="@id/videoFragment" />
+        <action
+            android:id="@+id/action_tv_info_fragment_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
     </fragment>
     <fragment
         android:id="@+id/search_result_fragment"
@@ -149,6 +158,13 @@
         android:label="ImagesFragment">
         <argument
             android:name="movie_id"
-            app:argType="long" />
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="tv_id"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

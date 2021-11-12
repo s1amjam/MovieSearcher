@@ -23,6 +23,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
+import com.moviesearcher.common.viewmodel.cast.CastViewModel
+import com.moviesearcher.common.viewmodel.images.ImagesViewModel
+import com.moviesearcher.common.viewmodel.recommendations.RecommendationsViewModel
+import com.moviesearcher.common.viewmodel.video.VideoViewModel
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
@@ -30,10 +34,6 @@ import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.movie.viewmodel.MovieInfoViewModel
-import com.moviesearcher.movie.viewmodel.cast.MovieCastViewModel
-import com.moviesearcher.movie.viewmodel.images.ImagesViewModel
-import com.moviesearcher.movie.viewmodel.recommendations.RecommendationsViewModel
-import com.moviesearcher.movie.viewmodel.video.VideoViewModel
 import com.moviesearcher.utils.Constants
 import java.util.concurrent.TimeUnit
 
@@ -46,7 +46,7 @@ class MovieInfoFragment : BaseFragment() {
     private val args by navArgs<MovieInfoFragmentArgs>()
 
     private val movieInfoViewModel: MovieInfoViewModel by viewModels()
-    private val movieCastViewModel: MovieCastViewModel by viewModels()
+    private val castViewModel: CastViewModel by viewModels()
     private val recommendationsViewModel: RecommendationsViewModel by viewModels()
     private val videoViewModel: VideoViewModel by viewModels()
     private val myLists: MyListsViewModel by viewModels()
@@ -179,7 +179,7 @@ class MovieInfoFragment : BaseFragment() {
                 }
             })
 
-        movieCastViewModel.getMovieCastById(movieId).observe(viewLifecycleOwner, { castItems ->
+        castViewModel.getMovieCastById(movieId).observe(viewLifecycleOwner, { castItems ->
             val movieCastAdapter = MovieCastAdapter(castItems)
 
             movieInfoCastRecyclerView.apply {
@@ -195,7 +195,7 @@ class MovieInfoFragment : BaseFragment() {
                 )
             writer.text =
                 getString(R.string.writer).format(
-                    castItems.crew?.find { it.job == "Executive Producer" }?.name
+                    castItems.crew?.find { it.job == "Writing" }?.name
                 )
         })
 
@@ -222,7 +222,13 @@ class MovieInfoFragment : BaseFragment() {
 
             if (videoItems.results != null) {
                 val officialTrailer = videoItems.results.find {
-                    it.official == true && it.type == "Trailer"
+                    it.name?.contains(
+                        "official trailer",
+                        true
+                    ) == true || it.name?.contains(
+                        "trailer",
+                        true
+                    ) == true
                 }
                 if (officialTrailer != null) {
                     videoItems.results.remove(officialTrailer)
@@ -279,11 +285,10 @@ class MovieInfoFragment : BaseFragment() {
             })
 
         buttonSeeAllImages.setOnClickListener {
-            findNavController().navigate(
-                MovieInfoFragmentDirections.actionMovieInfoFragmentToImagesFragment(
-                    movieId
-                )
-            )
+            val action = MovieInfoFragmentDirections.actionMovieInfoFragmentToImagesFragment()
+            action.movieId = movieId.toString()
+
+            findNavController().navigate(action)
         }
 
         menuButtonAddToList.setOnClickListener { v ->

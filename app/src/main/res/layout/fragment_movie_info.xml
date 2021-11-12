@@ -218,11 +218,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardview_cast"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="7dp"
+            style="@style/Widget.MovieSearcher.CardView.LargeCardView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/main_movie_info_card_view">
 
@@ -279,11 +275,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/recommendations_card_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="7dp"
+            style="@style/Widget.MovieSearcher.CardView.LargeCardView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardview_cast">
 
@@ -317,11 +309,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/video_card_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="7dp"
+            style="@style/Widget.MovieSearcher.CardView.LargeCardView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recommendations_card_view">
 
@@ -342,14 +330,8 @@
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/trailer_card_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/Widget.MovieSearcher.CardView.SmallCardView"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="16dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="5dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textview_video">
 
@@ -391,7 +373,6 @@
                     android:orientation="horizontal"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/trailer_card_view" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -399,12 +380,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/images_card_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="7dp"
+            style="@style/Widget.MovieSearcher.CardView.LargeCardView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/video_card_view">
 
@@ -449,12 +425,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/details_card_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="7dp"
+            style="@style/Widget.MovieSearcher.CardView.LargeCardView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/images_card_view">

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.databinding.FragmentImagesBinding
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
-import com.moviesearcher.movie.viewmodel.images.ImagesViewModel
+import com.moviesearcher.common.viewmodel.images.ImagesViewModel
 
 class ImagesFragment : Fragment() {
     private var _binding: FragmentImagesBinding? = null
@@ -33,19 +33,36 @@ class ImagesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val movieId = args.movieId
+        val movieId = args.movieId?.toLong()
+        val tvId = args.tvId?.toLong()
+
         imagesRecyclerView = binding.photosRecyclerView
 
-        imagesViewModel.getImagesByMovieId(movieId)
-            .observe(viewLifecycleOwner, { imagesItems ->
-                val imagesAdapter = ImagesAdapter(imagesItems)
+        if (movieId != null) {
+            imagesViewModel.getImagesByMovieId(movieId)
+                .observe(viewLifecycleOwner, { imagesItems ->
+                    val imagesAdapter = ImagesAdapter(imagesItems)
 
-                imagesRecyclerView.apply {
-                    adapter = imagesAdapter
-                    layoutManager = GridLayoutManager(requireContext(), 2)
-                }
-                imagesAdapter.differ.submitList(imagesItems.backdrops)
-            })
+                    imagesRecyclerView.apply {
+                        adapter = imagesAdapter
+                        layoutManager = GridLayoutManager(requireContext(), 2)
+                    }
+                    imagesAdapter.differ.submitList(imagesItems.backdrops)
+                })
+        } else {
+            if (tvId != null) {
+                imagesViewModel.getImagesByTvId(tvId)
+                    .observe(viewLifecycleOwner, { imagesItems ->
+                        val imagesAdapter = ImagesAdapter(imagesItems)
+
+                        imagesRecyclerView.apply {
+                            adapter = imagesAdapter
+                            layoutManager = GridLayoutManager(requireContext(), 2)
+                        }
+                        imagesAdapter.differ.submitList(imagesItems.backdrops)
+                    })
+            }
+        }
     }
 
     override fun onDestroyView() {

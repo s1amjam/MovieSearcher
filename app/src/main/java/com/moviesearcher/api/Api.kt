@@ -29,6 +29,7 @@ import com.moviesearcher.rated.tv.model.RatedTvsResponse
 import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
 import com.moviesearcher.search.model.SearchResponse
 import com.moviesearcher.tv.model.TvInfoResponse
+import com.moviesearcher.tv.model.cast.TvCastResponse
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
@@ -657,6 +658,29 @@ object Api {
         return responseLiveData
     }
 
+    fun getTvCast(tvId: Long): MutableLiveData<TvCastResponse> {
+        val responseLiveData: MutableLiveData<TvCastResponse> = MutableLiveData()
+        val resp = ApiService.create().tvCast(tvId)
+
+        resp.enqueue(object : Callback<TvCastResponse> {
+            override fun onResponse(
+                call: Call<TvCastResponse>,
+                response: Response<TvCastResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<TvCastResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
     fun getRecommendations(movieId: Long): MutableLiveData<FavoriteMovieResponse> {
         val responseLiveData: MutableLiveData<FavoriteMovieResponse> = MutableLiveData()
         val resp = ApiService.create().recommendations(movieId)
@@ -680,9 +704,55 @@ object Api {
         return responseLiveData
     }
 
+    fun getTvRecommendations(tvId: Long): MutableLiveData<FavoriteTvResponse> {
+        val responseLiveData: MutableLiveData<FavoriteTvResponse> = MutableLiveData()
+        val resp = ApiService.create().tvRecommendations(tvId)
+
+        resp.enqueue(object : Callback<FavoriteTvResponse> {
+            override fun onResponse(
+                call: Call<FavoriteTvResponse>,
+                response: Response<FavoriteTvResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<FavoriteTvResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
     fun videos(movieId: Long): MutableLiveData<VideosResponse> {
         val responseLiveData: MutableLiveData<VideosResponse> = MutableLiveData()
         val resp = ApiService.create().videos(movieId)
+
+        resp.enqueue(object : Callback<VideosResponse> {
+            override fun onResponse(
+                call: Call<VideosResponse>,
+                response: Response<VideosResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<VideosResponse>,
+                t: Throwable
+            ) {
+
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun tvVideos(tvId: Long): MutableLiveData<VideosResponse> {
+        val responseLiveData: MutableLiveData<VideosResponse> = MutableLiveData()
+        val resp = ApiService.create().tvVideos(tvId)
 
         resp.enqueue(object : Callback<VideosResponse> {
             override fun onResponse(
@@ -729,6 +799,28 @@ object Api {
     fun images(movieId: Long): MutableLiveData<ImagesResponse> {
         val responseLiveData: MutableLiveData<ImagesResponse> = MutableLiveData()
         val resp = ApiService.create().images(movieId)
+
+        resp.enqueue(object : Callback<ImagesResponse> {
+            override fun onResponse(
+                call: Call<ImagesResponse>,
+                response: Response<ImagesResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<ImagesResponse>,
+                t: Throwable
+            ) {
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun tvImages(tvId: Long): MutableLiveData<ImagesResponse> {
+        val responseLiveData: MutableLiveData<ImagesResponse> = MutableLiveData()
+        val resp = ApiService.create().tvImages(tvId)
 
         resp.enqueue(object : Callback<ImagesResponse> {
             override fun onResponse(

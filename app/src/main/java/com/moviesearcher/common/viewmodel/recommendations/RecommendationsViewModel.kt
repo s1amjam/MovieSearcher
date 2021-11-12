@@ -1,4 +1,4 @@
-package com.moviesearcher.movie.viewmodel.recommendations
+package com.moviesearcher.common.viewmodel.recommendations
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

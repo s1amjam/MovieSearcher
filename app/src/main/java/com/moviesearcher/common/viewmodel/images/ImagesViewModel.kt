@@ -1,4 +1,4 @@
-package com.moviesearcher.movie.viewmodel.images
+package com.moviesearcher.common.viewmodel.images
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

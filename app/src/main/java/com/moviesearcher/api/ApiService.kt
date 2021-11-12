@@ -28,6 +28,7 @@ import com.moviesearcher.rated.tv.model.RatedTvsResponse
 import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
 import com.moviesearcher.search.model.SearchResponse
 import com.moviesearcher.tv.model.TvInfoResponse
+import com.moviesearcher.tv.model.cast.TvCastResponse
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.utils.Constants.ACCESS_TOKEN
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
@@ -220,15 +221,27 @@ interface ApiService {
     @GET("movie/{movie_id}/credits")
     fun movieCast(@Path("movie_id") movieId: Long): Call<MovieCastResponse>
 
+    @GET("tv/{tv_id}/aggregate_credits")
+    fun tvCast(@Path("tv_id") tvId: Long): Call<TvCastResponse>
+
     @GET("movie/{movie_id}/recommendations")
     fun recommendations(@Path("movie_id") movieId: Long): Call<FavoriteMovieResponse>
 
+    @GET("tv/{tv_id}/recommendations")
+    fun tvRecommendations(@Path("tv_id") tvId: Long): Call<FavoriteTvResponse>
+
     @GET("movie/{movie_id}/videos")
     fun videos(@Path("movie_id") movieId: Long): Call<VideosResponse>
+
+    @GET("tv/{tv_id}/videos")
+    fun tvVideos(@Path("tv_id") tvId: Long): Call<VideosResponse>
 
     @GET("movie/{movie_id}/account_states")
     fun accountStates(@Path("movie_id") movieId: Long): Call<AccountStatesResponse>
 
     @GET("movie/{movie_id}/images")
     fun images(@Path("movie_id") movieId: Long): Call<ImagesResponse>
+
+    @GET("tv/{tv_id}/images")
+    fun tvImages(@Path("tv_id") tvId: Long): Call<ImagesResponse>
 }
