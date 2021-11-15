@@ -23,7 +23,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/main_constraint_layout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
@@ -33,6 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,14 +50,24 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_title_text_view" />
 
                 <TextView
-                    android:id="@+id/runtime_text_view"
+                    android:id="@+id/tv_series_text_view"
                     style="@style/Widget.MovieSearcher.TextSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    android:text="@string/tv_series"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tagline_text_view" />
+
+                <TextView
+                    android:id="@+id/runtime_text_view"
+                    style="@style/Widget.MovieSearcher.TextSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/tv_series_text_view"
+                    app:layout_constraintTop_toTopOf="@+id/tv_series_text_view" />
 
                 <TextView
                     android:id="@+id/release_date_text_view"
@@ -67,14 +78,33 @@
                     app:layout_constraintStart_toEndOf="@+id/runtime_text_view"
                     app:layout_constraintTop_toTopOf="@+id/runtime_text_view" />
 
+                <Button
+                    android:id="@+id/episode_guide_button"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/episode_guide"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/release_date_text_view" />
+
+                <TextView
+                    android:id="@+id/number_of_episodes_text_view"
+                    style="@style/Widget.MovieSearcher.TextSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/episode_guide_button"
+                    app:layout_constraintStart_toEndOf="@+id/episode_guide_button"
+                    app:layout_constraintTop_toTopOf="@+id/episode_guide_button" />
+
                 <ImageView
                     android:id="@+id/tv_info_poster_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/release_date_text_view" />
+                    app:layout_constraintTop_toBottomOf="@+id/episode_guide_button" />
 
                 <HorizontalScrollView
                     android:id="@+id/chip_horizontal_view"
@@ -121,8 +151,10 @@
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
                     android:src="@drawable/ic_outline_watch_later_36"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/menu_button_add_tv_to_list"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -149,25 +181,30 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/menu_button_add_tv_to_list"
                     app:layout_constraintTop_toTopOf="@+id/button_watchlist" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.divider.MaterialDivider
-                    android:id="@+id/divider_tv_info"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/button_mark_tv_as_favorite" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardview_rate"
+            style="@style/Widget.MovieSearcher.CardView.LargeCardView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/main_tv_info_card_view">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/rate_constraint_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/rating_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    app:layout_constraintBottom_toTopOf="@+id/text_view_vote_count"
                     app:layout_constraintEnd_toStartOf="@+id/rate_button_view"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/divider_tv_info"
+                    app:layout_constraintTop_toBottomOf="@+id/rate_button_view"
                     app:srcCompat="@drawable/ic_baseline_star_rate_24" />
 
                 <TextView
@@ -177,9 +214,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_view_vote_count"
                     app:layout_constraintEnd_toStartOf="@+id/rate_button_view"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/rating_image_view" />
+                    app:layout_constraintTop_toTopOf="@+id/text_view_vote_count" />
 
                 <TextView
                     android:id="@+id/text_view_vote_count"
@@ -187,32 +226,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/rating_image_view"
                     app:layout_constraintEnd_toEndOf="@+id/text_view_rating"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="@+id/text_view_rating"
-                    app:layout_constraintTop_toBottomOf="@+id/text_view_rating" />
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="@+id/main_constraint_layout"
-                    app:layout_constraintGuide_percent="0.5"
-                    app:layout_constraintTop_toTopOf="@+id/divider_tv_info" />
+                    app:layout_constraintTop_toTopOf="@+id/rating_image_view" />
 
                 <Button
                     android:id="@+id/rate_button_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
+                    android:drawableTint="@android:color/black"
                     android:text="@string/rate_this"
                     android:textColor="#2196F3"
                     app:icon="@drawable/ic_baseline_star_rate_24"
                     app:iconGravity="top"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_view_rating"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/rating_image_view"
-                    app:layout_constraintTop_toBottomOf="@id/divider_tv_info" />
+                    app:layout_constraintTop_toTopOf="@+id/text_view_rating" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -220,7 +255,7 @@
             android:id="@+id/cardview_cast"
             style="@style/Widget.MovieSearcher.CardView.LargeCardView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/main_tv_info_card_view">
+            app:layout_constraintTop_toBottomOf="@+id/cardview_rate">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
