@@ -43,4 +43,9 @@
     <string name="origin_country">Country Of Origin</string>
     <string name="language_spoken">Language Spoken</string>
     <string name="filming_locations">Filming Locations</string>
+    <string name="tv_series">Tv Series</string>
+    <string name="tv_series_finished_date_range">%s-%s</string>
+    <string name="tv_series_in_production_date_range">%s-</string>
+    <string name="episode_guide">EPISODE GUIDE</string>
+    <string name="count_of_episodes">%s episodes</string>
 </resources>

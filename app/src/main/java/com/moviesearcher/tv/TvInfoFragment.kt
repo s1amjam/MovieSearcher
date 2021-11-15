@@ -59,7 +59,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var tvInfoTitle: TextView
     private lateinit var tvInfoRuntime: TextView
     private lateinit var tvInfoTagline: TextView
-    private lateinit var tvInfoReleaseDate: TextView
+    private lateinit var releaseDate: TextView
     private lateinit var tvInfoOverview: TextView
     private lateinit var voteAverage: TextView
     private lateinit var voteCount: TextView
@@ -75,11 +75,12 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var trailerPreview: ImageView
     private lateinit var trailerName: TextView
     private lateinit var trailerCardView: CardView
-    private lateinit var releaseDate: TextView
+    private lateinit var releaseDateDetail: TextView
     private lateinit var originCountry: TextView
     private lateinit var languageSpoken: TextView
     private lateinit var filmingLocations: TextView
     private lateinit var genresChipGroup: ChipGroup
+    private lateinit var numberOfEpisodes: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -106,7 +107,7 @@ class TvInfoFragment : BaseFragment() {
         genresChipGroup = binding.chipGroupGenres
         tvInfoRuntime = binding.runtimeTextView
         tvInfoTagline = binding.taglineTextView
-        tvInfoReleaseDate = binding.releaseDateTextView
+        releaseDate = binding.releaseDateTextView
         tvInfoOverview = binding.overviewTextView
         menuButtonAddToList = binding.menuButtonAddTvToList
         buttonMarkTvAsFavorite = binding.buttonMarkTvAsFavorite
@@ -121,10 +122,11 @@ class TvInfoFragment : BaseFragment() {
         trailerPreview = binding.previewTrailerImageView
         trailerName = binding.trailerNameTextView
         trailerCardView = binding.trailerCardView
-        releaseDate = binding.textviewReleaseDateDetail
+        releaseDateDetail = binding.textviewReleaseDateDetail
         originCountry = binding.textviewOriginCountryDetail
         languageSpoken = binding.textviewLanguageSpokenDetail
         filmingLocations = binding.textviewFilmingLocationsDetail
+        numberOfEpisodes = binding.numberOfEpisodesTextView
 
         menuButtonAddToList.isVisible = sessionId != ""
         buttonMarkTvAsFavorite.isVisible = sessionId != ""
@@ -137,6 +139,7 @@ class TvInfoFragment : BaseFragment() {
                 val languages = mutableListOf<String>()
                 val locations = mutableListOf<String>()
                 val genres = tvInfo.genres
+                val lastAirDate: String
 
                 tvInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
                 tvInfo.productionCountries?.forEach { locations.add(it.name!!) }
@@ -146,17 +149,29 @@ class TvInfoFragment : BaseFragment() {
                     .centerCrop()
                     .override(300, 500)
                     .into(tvInfoPosterImageView)
-                tvInfoTitle.text = tvInfo.originalName
+                tvInfoTitle.text = tvInfo.name
                 tvInfoRuntime.text = String.format("%02dm", minutes).dropWhile { it == '0' }
                 tvInfoTagline.text = tvInfo.tagline
-                tvInfoReleaseDate.text = tvInfo.firstAirDate?.dropLast(6)
+                val firstAirDate: String = tvInfo.firstAirDate?.dropLast(6).toString()
+                if (tvInfo.inProduction == false && tvInfo.lastAirDate != null) {
+                    lastAirDate = tvInfo.lastAirDate.dropLast(6)
+                    releaseDate.text = getString(R.string.tv_series_finished_date_range).format(
+                        firstAirDate,
+                        lastAirDate
+                    )
+                } else {
+                    releaseDate.text =
+                        getString(R.string.tv_series_in_production_date_range).format(firstAirDate)
+                }
                 tvInfoOverview.text = tvInfo.overview
                 voteAverage.text = getString(R.string.vote).format(tvInfo.voteAverage.toString())
                 voteCount.text = tvInfo.voteCount.toString()
-                releaseDate.text = tvInfo.firstAirDate?.replace("-", ".")
+                releaseDateDetail.text = tvInfo.firstAirDate?.replace("-", ".")
                 originCountry.text = tvInfo.productionCountries?.get(0)?.name
                 languageSpoken.text = languages.joinToString()
                 filmingLocations.text = locations.joinToString()
+                numberOfEpisodes.text =
+                    getString(R.string.count_of_episodes).format(tvInfo.numberOfEpisodes.toString())
 
                 if (genres != null) {
                     for (genre in genres) {
