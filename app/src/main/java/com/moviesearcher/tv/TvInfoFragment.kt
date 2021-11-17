@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -81,6 +82,9 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var filmingLocations: TextView
     private lateinit var genresChipGroup: ChipGroup
     private lateinit var numberOfEpisodes: TextView
+    private lateinit var expandActivitiesButton: ImageButton
+    private lateinit var activitiesConstraintLayout: ConstraintLayout
+    private lateinit var mainCardView: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -127,6 +131,9 @@ class TvInfoFragment : BaseFragment() {
         languageSpoken = binding.textviewLanguageSpokenDetail
         filmingLocations = binding.textviewFilmingLocationsDetail
         numberOfEpisodes = binding.numberOfEpisodesTextView
+        expandActivitiesButton = binding.expandActivitiesButton
+        activitiesConstraintLayout = binding.activitiesConstraintLayout
+        mainCardView = binding.mainTvInfoCardView
 
         menuButtonAddToList.isVisible = sessionId != ""
         buttonMarkTvAsFavorite.isVisible = sessionId != ""
@@ -308,6 +315,17 @@ class TvInfoFragment : BaseFragment() {
             myLists.getLists(accountId, sessionId, 1).observe(viewLifecycleOwner, {
                 showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
             })
+        }
+
+        expandActivitiesButton.setOnClickListener {
+            if (activitiesConstraintLayout.visibility == View.GONE) {
+                TransitionManager.beginDelayedTransition(mainCardView)
+                expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_less_36)
+                activitiesConstraintLayout.visibility = View.VISIBLE
+            } else {
+                expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_more_36)
+                activitiesConstraintLayout.visibility = View.GONE
+            }
         }
 
         checkFavorites(buttonMarkTvAsFavorite)

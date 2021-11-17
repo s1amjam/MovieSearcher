@@ -24,7 +24,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/main_constraint_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp">
 
                 <TextView
                     android:id="@+id/movie_title_text_view"
@@ -33,6 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -117,58 +119,23 @@
                     app:layout_constraintStart_toEndOf="@+id/movie_info_poster_image_view"
                     app:layout_constraintTop_toBottomOf="@+id/chip_horizontal_view" />
 
-                <ImageButton
-                    android:id="@+id/button_watchlist"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/main_info_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_outline_watch_later_36"
-                    app:layout_constraintEnd_toStartOf="@+id/menu_button_add_movie_to_list"
-                    app:layout_constraintHorizontal_bias="0.5"
+                    app:dividerColor="@color/md_theme_light_tertiary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/movie_info_poster_image_view" />
 
-                <ImageButton
-                    android:id="@+id/menu_button_add_movie_to_list"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_list_36"
-                    app:layout_constraintEnd_toStartOf="@+id/button_mark_movie_as_favorite"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/button_watchlist"
-                    app:layout_constraintTop_toTopOf="@+id/button_watchlist" />
-
-                <ImageButton
-                    android:id="@+id/button_mark_movie_as_favorite"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_round_star_outline_36"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/menu_button_add_movie_to_list"
-                    app:layout_constraintTop_toTopOf="@+id/button_watchlist" />
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:id="@+id/divider_movie_info"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/button_mark_movie_as_favorite" />
-
                 <ImageView
                     android:id="@+id/rating_image_view"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintEnd_toStartOf="@+id/rate_button_view"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/divider_movie_info"
+                    app:layout_constraintTop_toBottomOf="@+id/main_info_divider"
                     app:srcCompat="@drawable/ic_baseline_star_rate_24" />
 
                 <TextView
@@ -176,8 +143,6 @@
                     style="@style/Widget.MovieSearcher.TextSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
                     app:layout_constraintEnd_toStartOf="@+id/rate_button_view"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rating_image_view" />
@@ -187,33 +152,80 @@
                     style="@style/Widget.MovieSearcher.TextSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/text_view_rating"
-                    app:layout_constraintStart_toStartOf="@+id/text_view_rating"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/rate_button_view"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/text_view_rating" />
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="@+id/main_constraint_layout"
-                    app:layout_constraintGuide_percent="0.5"
-                    app:layout_constraintTop_toTopOf="@+id/divider_movie_info" />
 
                 <Button
                     android:id="@+id/rate_button_view"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
+                    android:drawableTint="@android:color/black"
                     android:text="@string/rate_this"
                     android:textColor="#2196F3"
                     app:icon="@drawable/ic_baseline_star_rate_24"
                     app:iconGravity="top"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintEnd_toStartOf="@+id/expand_activities_button"
                     app:layout_constraintStart_toEndOf="@+id/rating_image_view"
-                    app:layout_constraintTop_toBottomOf="@id/divider_movie_info" />
+                    app:layout_constraintTop_toTopOf="@+id/rating_image_view" />
+
+                <ImageButton
+                    android:id="@+id/expand_activities_button"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_round_expand_more_36"
+                    app:layout_constraintBottom_toBottomOf="@+id/rate_button_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rate_button_view"
+                    app:layout_constraintTop_toTopOf="@+id/rate_button_view" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/activities_constraint_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_view_vote_count">
+
+                    <ImageButton
+                        android:id="@+id/button_watchlist"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/ic_outline_watch_later_36"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/menu_button_add_movie_to_list"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageButton
+                        android:id="@+id/menu_button_add_movie_to_list"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_baseline_list_36"
+                        app:layout_constraintEnd_toStartOf="@+id/button_mark_movie_as_favorite"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/button_watchlist"
+                        app:layout_constraintTop_toTopOf="@+id/button_watchlist" />
+
+                    <ImageButton
+                        android:id="@+id/button_mark_movie_as_favorite"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_round_star_outline_36"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/menu_button_add_movie_to_list"
+                        app:layout_constraintTop_toTopOf="@+id/button_watchlist" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
