@@ -3,17 +3,22 @@ package com.moviesearcher.tv.adapter.cast
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.cardview.widget.CardView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.databinding.MovieCastItemBinding
+import com.moviesearcher.movie.MovieInfoFragmentDirections
+import com.moviesearcher.tv.TvInfoFragmentDirections
 import com.moviesearcher.tv.model.cast.Cast
 import com.moviesearcher.tv.model.cast.TvCastResponse
 import com.moviesearcher.utils.Constants
 
 class TvCastAdapter(
     private val castItems: TvCastResponse,
+    private val navController: NavController
 ) : RecyclerView.Adapter<TvCastAdapter.TvCastHolder>() {
     private lateinit var binding: MovieCastItemBinding
 
@@ -23,6 +28,7 @@ class TvCastAdapter(
         private val characterName = binding.textViewCharacterName
         private val poster: ImageView = binding.posterImageView
         private val roles = mutableListOf<String>()
+        private val castCardView: CardView = binding.castCardView
 
         fun bind(castItem: Cast) {
             castItem.roles?.forEach { roles.add(it.character!!) }
@@ -35,6 +41,14 @@ class TvCastAdapter(
                 .centerCrop()
                 .override(400, 600)
                 .into(poster)
+
+            castCardView.setOnClickListener {
+                navController.navigate(
+                    TvInfoFragmentDirections.actionTvInfoFragmentToPersonInfoFragment(
+                        castItem.id?.toLong()!!
+                    )
+                )
+            }
         }
     }
 

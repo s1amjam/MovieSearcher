@@ -1,4 +1,4 @@
-package com.moviesearcher.movie.adapter.images
+package com.moviesearcher.actor.adapter.combinedcredits.images
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,20 +6,21 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.moviesearcher.common.model.images.Backdrop
-import com.moviesearcher.common.model.images.ImagesResponse
+import com.moviesearcher.actor.model.images.PersonImagesResponse
+import com.moviesearcher.actor.model.images.Profile
 import com.moviesearcher.databinding.ImagesItemBinding
 import com.moviesearcher.utils.Constants
 
-class ImagesAdapter(
-    private val imagesItems: ImagesResponse,
-) : RecyclerView.Adapter<ImagesAdapter.ImagesHolder>() {
+class PersonImagesAdapter(
+    private val imagesItems: PersonImagesResponse,
+) : RecyclerView.Adapter<PersonImagesAdapter.ImagesHolder>() {
     private lateinit var binding: ImagesItemBinding
 
-    inner class ImagesHolder(binding: ImagesItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ImagesHolder(binding: ImagesItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         private val image = binding.imageImageView
 
-        fun bind(imageItem: Backdrop) {
+        fun bind(imageItem: Profile) {
             val imageResp = imageItem.filePath
 
             Glide.with(this.itemView.context)
@@ -43,17 +44,17 @@ class ImagesAdapter(
         return ImagesHolder(binding)
     }
 
-    private val differCallback = object : DiffUtil.ItemCallback<Backdrop>() {
+    private val differCallback = object : DiffUtil.ItemCallback<Profile>() {
         override fun areItemsTheSame(
-            oldItem: Backdrop,
-            newItem: Backdrop
+            oldItem: Profile,
+            newItem: Profile
         ): Boolean {
             return oldItem.filePath == newItem.filePath
         }
 
         override fun areContentsTheSame(
-            oldItem: Backdrop,
-            newItem: Backdrop
+            oldItem: Profile,
+            newItem: Profile
         ): Boolean {
             return oldItem == newItem
         }
@@ -61,7 +62,7 @@ class ImagesAdapter(
 
     val differ = AsyncListDiffer(this, differCallback)
 
-    override fun getItemCount(): Int = imagesItems.backdrops?.size!!
+    override fun getItemCount(): Int = imagesItems.profiles?.size!!
     override fun onBindViewHolder(holder: ImagesHolder, position: Int) {
         val reply = differ.currentList[position]
         holder.bind(reply)

@@ -48,4 +48,7 @@
     <string name="tv_series_in_production_date_range">%s-</string>
     <string name="episode_guide">EPISODE GUIDE</string>
     <string name="count_of_episodes">%s episodes</string>
+    <string name="filmography">Filmography</string>
+    <string name="born">Born: %s</string>
+    <string name="died">Died: %s</string>
 </resources>

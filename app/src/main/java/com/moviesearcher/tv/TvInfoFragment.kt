@@ -199,7 +199,7 @@ class TvInfoFragment : BaseFragment() {
             })
 
         tvCastViewModel.getTvCastById(tvId).observe(viewLifecycleOwner, { castItems ->
-            val tvCastAdapter = TvCastAdapter(castItems)
+            val tvCastAdapter = TvCastAdapter(castItems, findNavController())
             val directors = mutableListOf<String>()
             val writers = mutableListOf<String>()
 

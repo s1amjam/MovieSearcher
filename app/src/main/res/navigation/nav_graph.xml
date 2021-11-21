@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_movie_info_fragment_to_imagesFragment"
             app:destination="@id/imagesFragment" />
+        <action
+            android:id="@+id/action_movie_info_fragment_to_personInfoFragment"
+            app:destination="@id/personInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/home_fragment"
@@ -64,6 +67,9 @@
         <action
             android:id="@+id/action_tv_info_fragment_to_imagesFragment"
             app:destination="@id/imagesFragment" />
+        <action
+            android:id="@+id/action_tv_info_fragment_to_personInfoFragment"
+            app:destination="@id/personInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/search_result_fragment"
@@ -162,9 +168,25 @@
             app:argType="string"
             app:nullable="true" />
         <argument
+            android:name="person_id"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
             android:name="tv_id"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/personInfoFragment"
+        android:name="com.moviesearcher.actor.PersonInfoFragment"
+        android:label="PersonInfoFragment">
+        <argument
+            android:name="person_id"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_personInfoFragment_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
     </fragment>
 </navigation>

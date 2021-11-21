@@ -9,9 +9,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.moviesearcher.actor.adapter.combinedcredits.images.PersonImagesAdapter
+import com.moviesearcher.actor.viewmodel.personimages.PersonImagesViewModel
+import com.moviesearcher.common.viewmodel.images.ImagesViewModel
 import com.moviesearcher.databinding.FragmentImagesBinding
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
-import com.moviesearcher.common.viewmodel.images.ImagesViewModel
 
 class ImagesFragment : Fragment() {
     private var _binding: FragmentImagesBinding? = null
@@ -19,6 +21,7 @@ class ImagesFragment : Fragment() {
 
     private val args by navArgs<ImagesFragmentArgs>()
     private val imagesViewModel: ImagesViewModel by viewModels()
+    private val personImagesViewModel: PersonImagesViewModel by viewModels()
     private lateinit var imagesRecyclerView: RecyclerView
 
     override fun onCreateView(
@@ -35,6 +38,7 @@ class ImagesFragment : Fragment() {
 
         val movieId = args.movieId?.toLong()
         val tvId = args.tvId?.toLong()
+        val personId = args.personId?.toLong()
 
         imagesRecyclerView = binding.photosRecyclerView
 
@@ -49,19 +53,28 @@ class ImagesFragment : Fragment() {
                     }
                     imagesAdapter.differ.submitList(imagesItems.backdrops)
                 })
-        } else {
-            if (tvId != null) {
-                imagesViewModel.getImagesByTvId(tvId)
-                    .observe(viewLifecycleOwner, { imagesItems ->
-                        val imagesAdapter = ImagesAdapter(imagesItems)
+        } else if (tvId != null) {
+            imagesViewModel.getImagesByTvId(tvId)
+                .observe(viewLifecycleOwner, { imagesItems ->
+                    val imagesAdapter = ImagesAdapter(imagesItems)
 
-                        imagesRecyclerView.apply {
-                            adapter = imagesAdapter
-                            layoutManager = GridLayoutManager(requireContext(), 2)
-                        }
-                        imagesAdapter.differ.submitList(imagesItems.backdrops)
-                    })
-            }
+                    imagesRecyclerView.apply {
+                        adapter = imagesAdapter
+                        layoutManager = GridLayoutManager(requireContext(), 2)
+                    }
+                    imagesAdapter.differ.submitList(imagesItems.backdrops)
+                })
+        } else {
+            personImagesViewModel.getImagesByPersonId(personId!!)
+                .observe(viewLifecycleOwner, { imagesItems ->
+                    val imagesAdapter = PersonImagesAdapter(imagesItems)
+
+                    imagesRecyclerView.apply {
+                        adapter = imagesAdapter
+                        layoutManager = GridLayoutManager(requireContext(), 2)
+                    }
+                    imagesAdapter.differ.submitList(imagesItems.profiles)
+                })
         }
     }
 

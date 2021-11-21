@@ -1,5 +1,8 @@
 package com.moviesearcher.api
 
+import com.moviesearcher.actor.model.combinedcredits.CombinedCreditsResponse
+import com.moviesearcher.actor.model.images.PersonImagesResponse
+import com.moviesearcher.actor.model.person.PersonResponse
 import com.moviesearcher.common.model.account.AccountResponse
 import com.moviesearcher.common.model.accountstates.AccountStatesResponse
 import com.moviesearcher.common.model.auth.CreateSessionResponse
@@ -244,4 +247,13 @@ interface ApiService {
 
     @GET("tv/{tv_id}/images")
     fun tvImages(@Path("tv_id") tvId: Long): Call<ImagesResponse>
+
+    @GET("person/{person_id}")
+    fun person(@Path("person_id") personId: Long): Call<PersonResponse>
+
+    @GET("person/{person_id}/combined_credits")
+    fun personCombinedCredits(@Path("person_id") personId: Long): Call<CombinedCreditsResponse>
+
+    @GET("person/{person_id}/images")
+    fun personImages(@Path("person_id") personId: Long): Call<PersonImagesResponse>
 }

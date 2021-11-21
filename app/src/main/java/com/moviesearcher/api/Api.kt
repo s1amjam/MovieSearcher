@@ -1,6 +1,9 @@
 package com.moviesearcher.api
 
 import androidx.lifecycle.MutableLiveData
+import com.moviesearcher.actor.model.combinedcredits.CombinedCreditsResponse
+import com.moviesearcher.actor.model.images.PersonImagesResponse
+import com.moviesearcher.actor.model.person.PersonResponse
 import com.moviesearcher.common.model.account.AccountResponse
 import com.moviesearcher.common.model.accountstates.AccountStatesResponse
 import com.moviesearcher.common.model.auth.CreateSessionResponse
@@ -832,6 +835,72 @@ object Api {
 
             override fun onFailure(
                 call: Call<ImagesResponse>,
+                t: Throwable
+            ) {
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun person(personId: Long): MutableLiveData<PersonResponse> {
+        val responseLiveData: MutableLiveData<PersonResponse> = MutableLiveData()
+        val resp = ApiService.create().person(personId)
+
+        resp.enqueue(object : Callback<PersonResponse> {
+            override fun onResponse(
+                call: Call<PersonResponse>,
+                response: Response<PersonResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<PersonResponse>,
+                t: Throwable
+            ) {
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun personImages(personId: Long): MutableLiveData<PersonImagesResponse> {
+        val responseLiveData: MutableLiveData<PersonImagesResponse> = MutableLiveData()
+        val resp = ApiService.create().personImages(personId)
+
+        resp.enqueue(object : Callback<PersonImagesResponse> {
+            override fun onResponse(
+                call: Call<PersonImagesResponse>,
+                response: Response<PersonImagesResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<PersonImagesResponse>,
+                t: Throwable
+            ) {
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun personCombinedCredits(personId: Long): MutableLiveData<CombinedCreditsResponse> {
+        val responseLiveData: MutableLiveData<CombinedCreditsResponse> = MutableLiveData()
+        val resp = ApiService.create().personCombinedCredits(personId)
+
+        resp.enqueue(object : Callback<CombinedCreditsResponse> {
+            override fun onResponse(
+                call: Call<CombinedCreditsResponse>,
+                response: Response<CombinedCreditsResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<CombinedCreditsResponse>,
                 t: Throwable
             ) {
             }

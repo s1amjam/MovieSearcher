@@ -187,7 +187,7 @@ class MovieInfoFragment : BaseFragment() {
             })
 
         castViewModel.getMovieCastById(movieId).observe(viewLifecycleOwner, { castItems ->
-            val movieCastAdapter = MovieCastAdapter(castItems)
+            val movieCastAdapter = MovieCastAdapter(castItems, findNavController())
 
             movieInfoCastRecyclerView.apply {
                 adapter = movieCastAdapter

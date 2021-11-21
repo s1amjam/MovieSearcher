@@ -3,17 +3,21 @@ package com.moviesearcher.movie.adapter.cast
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.cardview.widget.CardView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.databinding.MovieCastItemBinding
+import com.moviesearcher.movie.MovieInfoFragmentDirections
 import com.moviesearcher.movie.model.cast.Cast
 import com.moviesearcher.movie.model.cast.MovieCastResponse
 import com.moviesearcher.utils.Constants
 
 class MovieCastAdapter(
     private val castItems: MovieCastResponse,
+    private val navController: NavController,
 ) : RecyclerView.Adapter<MovieCastAdapter.MovieCastHolder>() {
     private lateinit var binding: MovieCastItemBinding
 
@@ -22,6 +26,7 @@ class MovieCastAdapter(
         private val name = binding.textViewName
         private val characterName = binding.textViewCharacterName
         private val poster: ImageView = binding.posterImageView
+        private val castCardView: CardView = binding.castCardView
 
         fun bind(castItem: Cast) {
             name.text = castItem.name
@@ -32,6 +37,14 @@ class MovieCastAdapter(
                 .centerCrop()
                 .override(400, 600)
                 .into(poster)
+
+            castCardView.setOnClickListener {
+                navController.navigate(
+                    MovieInfoFragmentDirections.actionMovieInfoFragmentToPersonInfoFragment(
+                        castItem.id?.toLong()!!
+                    )
+                )
+            }
         }
     }
 
