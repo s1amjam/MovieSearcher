@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -85,6 +86,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var expandActivitiesButton: ImageButton
     private lateinit var activitiesConstraintLayout: ConstraintLayout
     private lateinit var mainCardView: CardView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -106,6 +108,7 @@ class MovieInfoFragment : BaseFragment() {
         imagesRecyclerView = binding.imagesRecyclerView
 
         movieInfoConstraintLayout = binding.movieInfoConstraintLayout
+        movieInfoConstraintLayout.visibility = View.INVISIBLE
         movieInfoPosterImageView = binding.movieInfoPosterImageView
         movieInfoTitle = binding.movieTitleTextView
         genresChipGroup = binding.chipGroupGenres
@@ -133,6 +136,8 @@ class MovieInfoFragment : BaseFragment() {
         expandActivitiesButton = binding.expandActivitiesButton
         activitiesConstraintLayout = binding.activitiesConstraintLayout
         mainCardView = binding.mainMovieInfoCardView
+        progressBar = binding.progressBarMovieInfo
+        progressBar.visibility = View.VISIBLE
 
         menuButtonAddToList.isVisible = sessionId != ""
         buttonMarkMovieAsFavorite.isVisible = sessionId != ""
@@ -184,6 +189,9 @@ class MovieInfoFragment : BaseFragment() {
                     MaterialAlertDialogBuilder(requireContext()).setMessage(movieInfo.overview)
                         .show()
                 }
+
+                movieInfoConstraintLayout.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
             })
 
         castViewModel.getMovieCastById(movieId).observe(viewLifecycleOwner, { castItems ->

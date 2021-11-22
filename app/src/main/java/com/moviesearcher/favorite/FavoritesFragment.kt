@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +30,7 @@ class FavoritesFragment : BaseFragment() {
 
     private lateinit var favoriteMoviesButton: Button
     private lateinit var favoriteTvsButton: Button
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,27 +38,33 @@ class FavoritesFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
-        val view = binding.root
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         favoriteMoviesRecyclerView = binding.fragmentFavoritesRecyclerView
         favoriteMoviesButton = binding.buttonFavoriteMovies
         favoriteTvsButton = binding.buttonFavoriteTvs
+        progressBar = binding.progressBarFavorites
+        progressBar.visibility = View.VISIBLE
+        favoriteMoviesRecyclerView.visibility = View.INVISIBLE
 
-        favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId).observe(
-            viewLifecycleOwner,
-            { favoriteMovieItems ->
-                setupFavoriteMovieUi(favoriteMovieItems)
-            })
+        getFavoriteMovies()
 
         favoriteMoviesButton.setOnClickListener {
-            favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId).observe(
-                viewLifecycleOwner,
-                { favoriteMovieItems ->
-                    setupFavoriteMovieUi(favoriteMovieItems)
-                })
+            progressBar.visibility = View.VISIBLE
+            favoriteMoviesRecyclerView.visibility = View.INVISIBLE
+
+            getFavoriteMovies()
         }
 
         favoriteTvsButton.setOnClickListener {
+            progressBar.visibility = View.VISIBLE
+            favoriteMoviesRecyclerView.visibility = View.INVISIBLE
+
             favoriteTvsViewModel.getFavoriteTvs(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { favoriteTvItems ->
@@ -71,10 +79,22 @@ class FavoritesFragment : BaseFragment() {
                         layoutManager = LinearLayoutManager(context)
                     }
                     favoriteTvAdapter.differ.submitList(favoriteTvItems.results)
+
+                    progressBar.visibility = View.GONE
+                    favoriteMoviesRecyclerView.visibility = View.VISIBLE
                 })
         }
+    }
 
-        return view
+    private fun getFavoriteMovies() {
+        favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId).observe(
+            viewLifecycleOwner,
+            { favoriteMovieItems ->
+                setupFavoriteMovieUi(favoriteMovieItems)
+
+                progressBar.visibility = View.GONE
+                favoriteMoviesRecyclerView.visibility = View.VISIBLE
+            })
     }
 
     private fun setupFavoriteMovieUi(favoriteMovieItems: FavoriteMovieResponse) {

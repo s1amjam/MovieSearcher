@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -85,6 +86,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var expandActivitiesButton: ImageButton
     private lateinit var activitiesConstraintLayout: ConstraintLayout
     private lateinit var mainCardView: CardView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -106,6 +108,7 @@ class TvInfoFragment : BaseFragment() {
         imagesRecyclerView = binding.imagesRecyclerView
 
         tvInfoConstraintLayout = binding.tvInfoConstraintLayout
+        tvInfoConstraintLayout.visibility = View.INVISIBLE
         tvInfoPosterImageView = binding.tvInfoPosterImageView
         tvInfoTitle = binding.tvTitleTextView
         genresChipGroup = binding.chipGroupGenres
@@ -134,6 +137,8 @@ class TvInfoFragment : BaseFragment() {
         expandActivitiesButton = binding.expandActivitiesButton
         activitiesConstraintLayout = binding.activitiesConstraintLayout
         mainCardView = binding.mainTvInfoCardView
+        progressBar = binding.progressBarTvInfo
+        progressBar.visibility = View.VISIBLE
 
         menuButtonAddToList.isVisible = sessionId != ""
         buttonMarkTvAsFavorite.isVisible = sessionId != ""
@@ -196,6 +201,9 @@ class TvInfoFragment : BaseFragment() {
                     MaterialAlertDialogBuilder(requireContext()).setMessage(tvInfo.overview)
                         .show()
                 }
+
+                tvInfoConstraintLayout.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
             })
 
         tvCastViewModel.getTvCastById(tvId).observe(viewLifecycleOwner, { castItems ->

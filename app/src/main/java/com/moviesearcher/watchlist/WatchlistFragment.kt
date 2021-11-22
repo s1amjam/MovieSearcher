@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -32,6 +33,8 @@ class WatchlistFragment : BaseFragment() {
     private lateinit var movieRecyclerView: RecyclerView
     private lateinit var tvRecyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var movieCardView: CardView
+    private lateinit var tvCardView: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,12 +48,17 @@ class WatchlistFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        movieRecyclerView = binding.movieRecyclerView
+        movieCardView = binding.cardviewMoviesWatchlist
+        tvCardView = binding.cardviewTvsWatchlist
+        movieCardView.visibility = View.INVISIBLE
+        tvCardView.visibility = View.INVISIBLE
+            movieRecyclerView = binding.movieRecyclerView
         tvRecyclerView = binding.tvRecyclerView
         movieRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         navController = findNavController()
         progressBar = binding.progressBarWatchlistFragment
+        progressBar.visibility = View.VISIBLE
 
         setupWatchlistUi()
     }
@@ -66,6 +74,10 @@ class WatchlistFragment : BaseFragment() {
                         val tvAdapter = createTvAdapter(tvItems)
                         setupUi(movieAdapter, movieRecyclerView)
                         setupUi(tvAdapter, tvRecyclerView)
+
+                        progressBar.visibility = View.GONE
+                        movieCardView.visibility = View.VISIBLE
+                        tvCardView.visibility = View.VISIBLE
                     })
             })
     }
@@ -98,15 +110,6 @@ class WatchlistFragment : BaseFragment() {
         tvWatchlistAdapter.differ.submitList(tvItems.results)
 
         return tvWatchlistAdapter
-    }
-
-    override fun setupUi(
-        _adapter: RecyclerView.Adapter<*>,
-        recyclerView: RecyclerView
-    ) {
-        progressBar.visibility = View.VISIBLE
-        super.setupUi(_adapter, recyclerView)
-        progressBar.visibility = View.GONE
     }
 
     override fun onDestroyView() {

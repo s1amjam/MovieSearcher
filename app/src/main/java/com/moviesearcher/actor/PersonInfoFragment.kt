@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -50,6 +51,7 @@ class PersonInfoFragment : BaseFragment() {
     private lateinit var personInfoConstraintLayout: ConstraintLayout
     private lateinit var buttonSeeAllImages: Button
     private lateinit var mainCardView: CardView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,6 +79,10 @@ class PersonInfoFragment : BaseFragment() {
         buttonSeeAllImages = binding.buttonSeeAllImages
         mainCardView = binding.mainPersonInfoCardView
         personKnownFor = binding.knownForTextView
+        progressBar = binding.progressBarPerson
+
+        personInfoConstraintLayout.visibility = View.INVISIBLE
+        progressBar.visibility = View.VISIBLE
 
         personViewModel.getPersonById(personId).observe(
             viewLifecycleOwner,
@@ -139,6 +145,9 @@ class PersonInfoFragment : BaseFragment() {
                         LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 }
                 imageAdapter.differ.submitList(imagesItems.profiles)
+
+                progressBar.visibility = View.GONE
+                personInfoConstraintLayout.visibility = View.VISIBLE
             })
 
         buttonSeeAllImages.setOnClickListener {

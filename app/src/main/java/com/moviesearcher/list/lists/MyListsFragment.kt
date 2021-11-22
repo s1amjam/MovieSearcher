@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +21,8 @@ class MyListsFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private lateinit var myListsRecyclerView: RecyclerView
+    private lateinit var progressBar: ProgressBar
+
     private val myListsViewModel: MyListsViewModel by viewModels()
 
     override fun onCreateView(
@@ -28,19 +31,27 @@ class MyListsFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMyListsBinding.inflate(inflater, container, false)
-        val view = binding.root
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        progressBar = binding.progressBarLists
+        progressBar.visibility = View.VISIBLE
         myListsRecyclerView = binding.fragmentMyListsRecyclerView
         myListsRecyclerView.layoutManager = LinearLayoutManager(context)
+        myListsRecyclerView.visibility = View.INVISIBLE
 
         myListsViewModel.getLists(accountId, sessionId, 1).observe(
             viewLifecycleOwner,
             { myListItems ->
                 myListsRecyclerView.adapter =
                     MyListsAdapter(myListItems, findNavController(), sessionId)
+                progressBar.visibility = View.GONE
+                myListsRecyclerView.visibility = View.VISIBLE
             })
-
-        return view
     }
 
     override fun onDestroyView() {

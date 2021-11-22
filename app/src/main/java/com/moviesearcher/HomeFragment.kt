@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -32,6 +33,7 @@ class HomeFragment : BaseFragment() {
     private lateinit var movieRecyclerView: RecyclerView
     private lateinit var tvRecyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var mainLayout: ConstraintLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,8 +46,11 @@ class HomeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mainLayout = binding.movieConstraintLayout
+        mainLayout.visibility = View.INVISIBLE
         navController = findNavController()
         progressBar = binding.progressBarMovieSearcherFragment
+        progressBar.visibility = View.VISIBLE
         movieRecyclerView = binding.movieRecyclerView
         movieRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -100,6 +105,8 @@ class HomeFragment : BaseFragment() {
             { tvItems ->
                 val adapter = createAdapter(tvItems)
                 setupUi(adapter, tvRecyclerView)
+                progressBar.visibility = View.GONE
+                mainLayout.visibility = View.VISIBLE
             })
     }
 
@@ -108,14 +115,5 @@ class HomeFragment : BaseFragment() {
         _binding?.movieRecyclerView?.adapter = null
         _binding?.tvRecyclerView?.adapter = null
         _binding = null
-    }
-
-    override fun setupUi(
-        _adapter: RecyclerView.Adapter<*>,
-        recyclerView: RecyclerView
-    ) {
-        progressBar.visibility = View.VISIBLE
-        super.setupUi(_adapter, recyclerView)
-        progressBar.visibility = View.GONE
     }
 }
