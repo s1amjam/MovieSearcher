@@ -9,11 +9,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.actor.adapter.combinedcredits.images.PersonImagesAdapter
-import com.moviesearcher.actor.viewmodel.personimages.PersonImagesViewModel
 import com.moviesearcher.common.viewmodel.images.ImagesViewModel
 import com.moviesearcher.databinding.FragmentImagesBinding
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
+import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
+import com.moviesearcher.person.viewmodel.personimages.PersonImagesViewModel
 
 class ImagesFragment : Fragment() {
     private var _binding: FragmentImagesBinding? = null
@@ -42,39 +42,43 @@ class ImagesFragment : Fragment() {
 
         imagesRecyclerView = binding.photosRecyclerView
 
-        if (movieId != null) {
-            imagesViewModel.getImagesByMovieId(movieId)
-                .observe(viewLifecycleOwner, { imagesItems ->
-                    val imagesAdapter = ImagesAdapter(imagesItems)
+        when {
+            movieId != null -> {
+                imagesViewModel.getImagesByMovieId(movieId)
+                    .observe(viewLifecycleOwner, { imagesItems ->
+                        val imagesAdapter = ImagesAdapter(imagesItems)
 
-                    imagesRecyclerView.apply {
-                        adapter = imagesAdapter
-                        layoutManager = GridLayoutManager(requireContext(), 2)
-                    }
-                    imagesAdapter.differ.submitList(imagesItems.backdrops)
-                })
-        } else if (tvId != null) {
-            imagesViewModel.getImagesByTvId(tvId)
-                .observe(viewLifecycleOwner, { imagesItems ->
-                    val imagesAdapter = ImagesAdapter(imagesItems)
+                        imagesRecyclerView.apply {
+                            adapter = imagesAdapter
+                            layoutManager = GridLayoutManager(requireContext(), 2)
+                        }
+                        imagesAdapter.differ.submitList(imagesItems.backdrops)
+                    })
+            }
+            tvId != null -> {
+                imagesViewModel.getImagesByTvId(tvId)
+                    .observe(viewLifecycleOwner, { imagesItems ->
+                        val imagesAdapter = ImagesAdapter(imagesItems)
 
-                    imagesRecyclerView.apply {
-                        adapter = imagesAdapter
-                        layoutManager = GridLayoutManager(requireContext(), 2)
-                    }
-                    imagesAdapter.differ.submitList(imagesItems.backdrops)
-                })
-        } else {
-            personImagesViewModel.getImagesByPersonId(personId!!)
-                .observe(viewLifecycleOwner, { imagesItems ->
-                    val imagesAdapter = PersonImagesAdapter(imagesItems)
+                        imagesRecyclerView.apply {
+                            adapter = imagesAdapter
+                            layoutManager = GridLayoutManager(requireContext(), 2)
+                        }
+                        imagesAdapter.differ.submitList(imagesItems.backdrops)
+                    })
+            }
+            else -> {
+                personImagesViewModel.getImagesByPersonId(personId!!)
+                    .observe(viewLifecycleOwner, { imagesItems ->
+                        val imagesAdapter = PersonImagesAdapter(imagesItems)
 
-                    imagesRecyclerView.apply {
-                        adapter = imagesAdapter
-                        layoutManager = GridLayoutManager(requireContext(), 2)
-                    }
-                    imagesAdapter.differ.submitList(imagesItems.profiles)
-                })
+                        imagesRecyclerView.apply {
+                            adapter = imagesAdapter
+                            layoutManager = GridLayoutManager(requireContext(), 2)
+                        }
+                        imagesAdapter.differ.submitList(imagesItems.profiles)
+                    })
+            }
         }
     }
 

@@ -38,16 +38,6 @@ class MovieSearcherActivity : AppCompatActivity() {
 
         navigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-//                R.id.menu_item_my_lists -> {
-//                    navController.navigate(R.id.fragment_my_lists)
-//
-//                    true
-//                }
-//                R.id.menu_item_favorites -> {
-//                    navController.navigate(R.id.fragment_favorites)
-//
-//                    true
-//                }
                 R.id.home -> {
                     navController.navigate(R.id.home_fragment)
 

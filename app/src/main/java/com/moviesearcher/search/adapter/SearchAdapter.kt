@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.moviesearcher.R
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.search.SearchResultFragmentDirections
 import com.moviesearcher.search.model.Result
@@ -30,6 +31,7 @@ class SearchAdapter(
         fun bind(searchResultItem: Result) {
             Glide.with(this.itemView)
                 .load(Constants.IMAGE_URL + searchResultItem.posterPath)
+                .placeholder(R.drawable.ic_placeholder)
                 .centerCrop()
                 .override(400, 600)
                 .into(poster)

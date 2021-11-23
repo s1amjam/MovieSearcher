@@ -65,7 +65,7 @@
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
+                        android:paddingEnd="8dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textview_featured_movies" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -100,7 +100,7 @@
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
+                        android:paddingEnd="8dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textview_featured_tvs" />

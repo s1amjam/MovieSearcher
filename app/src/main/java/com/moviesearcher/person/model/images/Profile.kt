@@ -1,4 +1,4 @@
-package com.moviesearcher.actor.model.images
+package com.moviesearcher.person.model.images
 
 import com.google.gson.annotations.SerializedName
 

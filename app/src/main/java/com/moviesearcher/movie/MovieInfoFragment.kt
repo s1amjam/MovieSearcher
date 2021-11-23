@@ -35,6 +35,7 @@ import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
+import com.moviesearcher.movie.model.cast.Cast
 import com.moviesearcher.movie.viewmodel.MovieInfoViewModel
 import com.moviesearcher.utils.Constants
 import java.util.concurrent.TimeUnit
@@ -157,6 +158,7 @@ class MovieInfoFragment : BaseFragment() {
 
                 Glide.with(this)
                     .load(Constants.IMAGE_URL + movieInfo.posterPath)
+                    .placeholder(R.drawable.ic_placeholder)
                     .centerCrop()
                     .override(300, 500)
                     .into(movieInfoPosterImageView)
@@ -196,6 +198,15 @@ class MovieInfoFragment : BaseFragment() {
 
         castViewModel.getMovieCastById(movieId).observe(viewLifecycleOwner, { castItems ->
             val movieCastAdapter = MovieCastAdapter(castItems, findNavController())
+            var tenCast = castItems.cast
+
+            while (tenCast?.size!! > 10) {
+                tenCast = tenCast.dropLast(1) as MutableList<Cast>?
+            }
+
+            castItems.apply {
+                cast = tenCast
+            }
 
             movieInfoCastRecyclerView.apply {
                 adapter = movieCastAdapter
@@ -250,6 +261,7 @@ class MovieInfoFragment : BaseFragment() {
 
                     Glide.with(requireContext())
                         .load(Constants.YOUTUBE_PREVIEW_URL.format(officialTrailer.key))
+                        .placeholder(R.drawable.ic_placeholder)
                         .centerCrop()
                         .override(800, 600)
                         .into(trailerPreview)

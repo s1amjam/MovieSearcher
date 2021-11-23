@@ -180,7 +180,7 @@
     </fragment>
     <fragment
         android:id="@+id/personInfoFragment"
-        android:name="com.moviesearcher.actor.PersonInfoFragment"
+        android:name="com.moviesearcher.person.PersonInfoFragment"
         android:label="PersonInfoFragment">
         <argument
             android:name="person_id"
@@ -188,5 +188,11 @@
         <action
             android:id="@+id/action_personInfoFragment_to_imagesFragment"
             app:destination="@id/imagesFragment" />
+        <action
+            android:id="@+id/action_personInfoFragment_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
+        <action
+            android:id="@+id/action_personInfoFragment_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
     </fragment>
 </navigation>

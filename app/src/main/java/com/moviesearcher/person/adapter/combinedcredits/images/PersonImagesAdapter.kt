@@ -1,4 +1,4 @@
-package com.moviesearcher.actor.adapter.combinedcredits.images
+package com.moviesearcher.person.adapter.combinedcredits.images
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,9 +6,10 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.moviesearcher.actor.model.images.PersonImagesResponse
-import com.moviesearcher.actor.model.images.Profile
+import com.moviesearcher.R
 import com.moviesearcher.databinding.ImagesItemBinding
+import com.moviesearcher.person.model.images.PersonImagesResponse
+import com.moviesearcher.person.model.images.Profile
 import com.moviesearcher.utils.Constants
 
 class PersonImagesAdapter(
@@ -25,6 +26,7 @@ class PersonImagesAdapter(
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + imageResp)
+                .placeholder(R.drawable.ic_placeholder)
                 .centerCrop()
                 .override(400, 600)
                 .into(image)

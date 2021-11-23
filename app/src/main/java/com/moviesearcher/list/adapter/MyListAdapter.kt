@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.databinding.ExtendedCardViewBinding
@@ -56,6 +57,7 @@ class MyListAdapter(
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + movieItem.posterPath)
+                .placeholder(R.drawable.ic_placeholder)
                 .centerCrop()
                 .override(400, 600)
                 .into(posterImageView)

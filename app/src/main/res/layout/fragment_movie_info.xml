@@ -251,7 +251,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/main_movie_info_card_view">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -272,29 +272,32 @@
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        android:paddingEnd="8dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textview_cast" />
 
                     <TextView
                         android:id="@+id/director_cast_text_view"
                         style="@style/Widget.MovieSearcher.TextSmall"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
                         android:layout_marginBottom="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/cast_recycler_view" />
 
                     <TextView
                         android:id="@+id/writer_cast_text_view"
                         style="@style/Widget.MovieSearcher.TextSmall"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
                         android:layout_marginBottom="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/director_cast_text_view" />
 
@@ -329,7 +332,7 @@
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
+                        android:paddingEnd="8dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textview_more_like_this" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -400,7 +403,7 @@
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
+                        android:paddingEnd="8dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/trailer_card_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -413,7 +416,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/video_card_view">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -444,8 +447,7 @@
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        android:paddingEnd="8dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/button_see_all_images" />
                 </androidx.constraintlayout.widget.ConstraintLayout>

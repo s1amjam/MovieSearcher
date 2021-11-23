@@ -1,9 +1,9 @@
 package com.moviesearcher.api
 
 import androidx.lifecycle.MutableLiveData
-import com.moviesearcher.actor.model.combinedcredits.CombinedCreditsResponse
-import com.moviesearcher.actor.model.images.PersonImagesResponse
-import com.moviesearcher.actor.model.person.PersonResponse
+import com.moviesearcher.person.model.combinedcredits.CombinedCreditsResponse
+import com.moviesearcher.person.model.images.PersonImagesResponse
+import com.moviesearcher.person.model.person.PersonResponse
 import com.moviesearcher.common.model.account.AccountResponse
 import com.moviesearcher.common.model.accountstates.AccountStatesResponse
 import com.moviesearcher.common.model.auth.CreateSessionResponse

@@ -43,6 +43,7 @@ class TvWatchlistAdapter(
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + tvItem.posterPath)
+                .placeholder(R.drawable.ic_placeholder)
                 .centerCrop()
                 .override(400, 600)
                 .into(posterImageView)

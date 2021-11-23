@@ -1,4 +1,4 @@
-package com.moviesearcher.actor.model.person
+package com.moviesearcher.person.model.person
 
 data class PersonResponse(
     val adult: Boolean?,

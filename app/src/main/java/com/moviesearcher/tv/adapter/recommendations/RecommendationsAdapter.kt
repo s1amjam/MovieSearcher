@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.moviesearcher.R
 import com.moviesearcher.databinding.TvCardViewBinding
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.favorite.tv.model.ResultFavoriteTv
@@ -34,6 +35,7 @@ class TvRecommendationsAdapter(
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + recommendationsItem.posterPath)
+                .placeholder(R.drawable.ic_placeholder)
                 .centerCrop()
                 .override(400, 600)
                 .into(posterImageView)

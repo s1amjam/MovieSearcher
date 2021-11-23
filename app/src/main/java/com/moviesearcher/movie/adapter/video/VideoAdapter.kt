@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.moviesearcher.R
 import com.moviesearcher.common.model.videos.Result
 import com.moviesearcher.common.model.videos.VideosResponse
 import com.moviesearcher.databinding.VideoItemViewBinding
@@ -30,6 +31,7 @@ class VideoAdapter(
 
             Glide.with(this.itemView.context)
                 .load(Constants.YOUTUBE_PREVIEW_URL.format(videoItem.key))
+                .placeholder(R.drawable.ic_placeholder)
                 .centerCrop()
                 .override(480, 360)
                 .into(preview)

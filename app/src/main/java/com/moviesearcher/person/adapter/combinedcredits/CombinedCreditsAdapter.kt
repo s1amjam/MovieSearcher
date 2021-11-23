@@ -1,4 +1,4 @@
-package com.moviesearcher.actor.adapter.combinedcredits
+package com.moviesearcher.person.adapter.combinedcredits
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,10 +7,10 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.moviesearcher.HomeFragmentDirections
-import com.moviesearcher.actor.model.combinedcredits.Cast
-import com.moviesearcher.actor.model.combinedcredits.CombinedCreditsResponse
 import com.moviesearcher.databinding.MovieCardViewBinding
+import com.moviesearcher.person.PersonInfoFragmentDirections
+import com.moviesearcher.person.model.combinedcredits.Cast
+import com.moviesearcher.person.model.combinedcredits.CombinedCreditsResponse
 import com.moviesearcher.utils.Constants
 
 class CombinedCreditsAdapter(
@@ -58,13 +58,13 @@ class CombinedCreditsAdapter(
                 //Only 'Movie' has a 'title', 'Tv series' has a 'name', so binding title to tag
                 if (it.tag != null) {
                     navController.navigate(
-                        HomeFragmentDirections
-                            .actionHomeFragmentToMovieInfoFragment(movieId)
+                        PersonInfoFragmentDirections
+                            .actionPersonInfoFragmentToMovieInfoFragment(movieId)
                     )
                 } else {
                     navController.navigate(
-                        HomeFragmentDirections
-                            .actionHomeFragmentToTvInfoFragment(movieId)
+                        PersonInfoFragmentDirections
+                            .actionPersonInfoFragmentToTvInfoFragment(movieId)
                     )
                 }
             }

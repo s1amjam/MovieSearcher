@@ -1,8 +1,8 @@
-package com.moviesearcher.actor.viewmodel.personimages
+package com.moviesearcher.person.viewmodel.personimages
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.moviesearcher.actor.model.images.PersonImagesResponse
+import com.moviesearcher.person.model.images.PersonImagesResponse
 import com.moviesearcher.api.Api
 
 class PersonImagesViewModel : ViewModel() {

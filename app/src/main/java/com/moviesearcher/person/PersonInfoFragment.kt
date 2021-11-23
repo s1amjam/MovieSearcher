@@ -1,4 +1,4 @@
-package com.moviesearcher.actor
+package com.moviesearcher.person
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,14 +18,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
-import com.moviesearcher.actor.adapter.combinedcredits.CombinedCreditsAdapter
-import com.moviesearcher.actor.adapter.combinedcredits.images.PersonImagesAdapter
-import com.moviesearcher.actor.model.images.Profile
-import com.moviesearcher.actor.viewmodel.person.PersonViewModel
-import com.moviesearcher.actor.viewmodel.personCombinedCredits.PersonCombinedCreditsViewModel
-import com.moviesearcher.actor.viewmodel.personimages.PersonImagesViewModel
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentPersonInfoBinding
+import com.moviesearcher.person.adapter.combinedcredits.CombinedCreditsAdapter
+import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
+import com.moviesearcher.person.model.images.Profile
+import com.moviesearcher.person.viewmodel.person.PersonViewModel
+import com.moviesearcher.person.viewmodel.personCombinedCredits.PersonCombinedCreditsViewModel
+import com.moviesearcher.person.viewmodel.personimages.PersonImagesViewModel
 import com.moviesearcher.utils.Constants
 
 private const val TAG = "PersonInfoFragment"
@@ -89,6 +89,7 @@ class PersonInfoFragment : BaseFragment() {
             { personInfo ->
                 Glide.with(this)
                     .load(Constants.IMAGE_URL + personInfo.profile_path)
+                    .placeholder(R.drawable.ic_placeholder)
                     .centerCrop()
                     .override(300, 500)
                     .into(personPhotoImageView)
@@ -109,6 +110,7 @@ class PersonInfoFragment : BaseFragment() {
 
         personCombinedCreditsViewModel.getCombinedCreditsByPersonId(personId)
             .observe(viewLifecycleOwner, { combinedCreditsItems ->
+
                 val filmographyAdapter = CombinedCreditsAdapter(
                     combinedCreditsItems,
                     findNavController(),
@@ -129,10 +131,11 @@ class PersonInfoFragment : BaseFragment() {
                 val imageAdapter = PersonImagesAdapter(
                     imagesItems,
                 )
+
                 var tenImages = imagesItems.profiles
 
                 while (tenImages?.size!! > 10) {
-                    tenImages = tenImages.dropLast(1) as MutableList<Profile>?
+                    tenImages = tenImages.dropLast(1) as MutableList<Profile>
                 }
 
                 imagesItems.apply {
@@ -152,7 +155,7 @@ class PersonInfoFragment : BaseFragment() {
 
         buttonSeeAllImages.setOnClickListener {
             val action = PersonInfoFragmentDirections.actionPersonInfoFragmentToImagesFragment()
-            action.movieId = personId.toString()
+            action.personId = personId.toString()
 
             findNavController().navigate(action)
         }

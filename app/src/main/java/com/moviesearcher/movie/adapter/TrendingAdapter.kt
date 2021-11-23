@@ -48,6 +48,7 @@ class TrendingAdapter(
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + movieItem.posterPath)
+                .placeholder(R.drawable.ic_placeholder)
                 .centerCrop()
                 .override(400, 600)
                 .into(posterImageView)

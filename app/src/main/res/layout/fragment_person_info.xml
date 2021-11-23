@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="actor.PersonInfoFragment">
+    tools:context="person.PersonInfoFragment">
 
     <ProgressBar
         android:id="@+id/progress_bar_person"
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context="actor.PersonInfoFragment">
+        tools:context="person.PersonInfoFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/person_info_constraint_layout"
@@ -148,7 +148,7 @@
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
+                        android:paddingEnd="8dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/filmography_text_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -163,7 +163,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/filmography_card_view">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -194,8 +194,7 @@
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        android:paddingEnd="8dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/button_see_all_images" />
                 </androidx.constraintlayout.widget.ConstraintLayout>

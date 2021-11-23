@@ -1,4 +1,4 @@
-package com.moviesearcher.actor.model.images
+package com.moviesearcher.person.model.images
 
 data class PersonImagesResponse(
     val id: Int?,

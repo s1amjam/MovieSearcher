@@ -35,6 +35,7 @@ import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.tv.adapter.cast.TvCastAdapter
 import com.moviesearcher.tv.adapter.recommendations.TvRecommendationsAdapter
+import com.moviesearcher.tv.model.cast.Cast
 import com.moviesearcher.tv.viewmodel.TvInfoViewModel
 import com.moviesearcher.utils.Constants
 
@@ -158,6 +159,7 @@ class TvInfoFragment : BaseFragment() {
 
                 Glide.with(this)
                     .load(Constants.IMAGE_URL + tvInfo.posterPath)
+                    .placeholder(R.drawable.ic_placeholder)
                     .centerCrop()
                     .override(300, 500)
                     .into(tvInfoPosterImageView)
@@ -210,6 +212,15 @@ class TvInfoFragment : BaseFragment() {
             val tvCastAdapter = TvCastAdapter(castItems, findNavController())
             val directors = mutableListOf<String>()
             val writers = mutableListOf<String>()
+            var tenCast = castItems.cast
+
+            while (tenCast?.size!! > 10) {
+                tenCast = tenCast.dropLast(1) as MutableList<Cast>?
+            }
+
+            castItems.apply {
+                cast = tenCast
+            }
 
             tvInfoCastRecyclerView.apply {
                 adapter = tvCastAdapter
@@ -263,6 +274,7 @@ class TvInfoFragment : BaseFragment() {
 
                     Glide.with(requireContext())
                         .load(Constants.YOUTUBE_PREVIEW_URL.format(officialTrailer.key))
+                        .placeholder(R.drawable.ic_placeholder)
                         .centerCrop()
                         .override(800, 600)
                         .into(trailerPreview)

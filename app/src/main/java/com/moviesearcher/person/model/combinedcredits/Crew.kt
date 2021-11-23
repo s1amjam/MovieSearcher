@@ -1,8 +1,8 @@
-package com.moviesearcher.actor.model.combinedcredits
+package com.moviesearcher.person.model.combinedcredits
 
 import com.google.gson.annotations.SerializedName
 
-data class Cast(
+data class Crew(
     @SerializedName("adult")
     val adult: Boolean?,
     @SerializedName("backdrop_path")

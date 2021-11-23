@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.moviesearcher.R
 import com.moviesearcher.databinding.MovieCastItemBinding
 import com.moviesearcher.movie.MovieInfoFragmentDirections
 import com.moviesearcher.movie.model.cast.Cast
@@ -34,6 +35,7 @@ class MovieCastAdapter(
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + castItem.profile_path)
+                .placeholder(R.drawable.ic_placeholder)
                 .centerCrop()
                 .override(400, 600)
                 .into(poster)
