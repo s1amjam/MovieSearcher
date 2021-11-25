@@ -31,7 +31,7 @@ class RecommendationsAdapter(
         fun bind(recommendationsItem: ResultFavoriteMovie) {
             title.text = recommendationsItem.title
             releaseDate.text = recommendationsItem.releaseDate?.replace("-", ".")
-            rating.text = recommendationsItem.voteAverage.toString()
+            rating.text = recommendationsItem.getAverage()
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + recommendationsItem.posterPath)

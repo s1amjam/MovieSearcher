@@ -1,6 +1,7 @@
 package com.moviesearcher.favorite.tv.model
 
 import com.google.gson.annotations.SerializedName
+import java.math.RoundingMode
 
 data class ResultFavoriteTv(
     @SerializedName("backdrop_path")
@@ -29,4 +30,8 @@ data class ResultFavoriteTv(
     val voteAverage: Double?,
     @SerializedName("vote_count")
     val voteCount: Int?
-)
+) {
+    fun getAverage(): String {
+        return voteAverage?.toBigDecimal()?.setScale(1, RoundingMode.UP).toString()
+    }
+}

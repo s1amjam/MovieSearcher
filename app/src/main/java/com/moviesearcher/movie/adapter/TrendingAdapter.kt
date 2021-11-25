@@ -55,7 +55,7 @@ class TrendingAdapter(
 
             cardView.id = movieItem.id!!
             cardView.tag = movieItem.title
-            rating.text = movieItem.voteAverage.toString()
+            rating.text = movieItem.getAverage()
 
             if (sessionId?.isNotBlank() == true || sessionId != null) {
                 if (movieWatchlistIds.contains(movieItems.results?.get(position)?.id?.toLong())) {

@@ -31,7 +31,7 @@ class TvRecommendationsAdapter(
         fun bind(recommendationsItem: ResultFavoriteTv) {
             title.text = recommendationsItem.name
             releaseDate.text = recommendationsItem.firstAirDate?.replace("-", ".")
-            rating.text = recommendationsItem.voteAverage.toString()
+            rating.text = recommendationsItem.getAverage()
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + recommendationsItem.posterPath)

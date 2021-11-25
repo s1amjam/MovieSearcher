@@ -88,6 +88,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var activitiesConstraintLayout: ConstraintLayout
     private lateinit var mainCardView: CardView
     private lateinit var progressBar: ProgressBar
+    private lateinit var recommendationsCardView: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -138,6 +139,7 @@ class MovieInfoFragment : BaseFragment() {
         activitiesConstraintLayout = binding.activitiesConstraintLayout
         mainCardView = binding.mainMovieInfoCardView
         progressBar = binding.progressBarMovieInfo
+        recommendationsCardView = binding.recommendationsCardView
         progressBar.visibility = View.VISIBLE
 
         menuButtonAddToList.isVisible = sessionId != ""
@@ -227,17 +229,21 @@ class MovieInfoFragment : BaseFragment() {
 
         recommendationsViewModel.getRecommendationsByMovieId(movieId)
             .observe(viewLifecycleOwner, { recommendationsItems ->
-                val recommendationsAdapter = RecommendationsAdapter(
-                    recommendationsItems,
-                    findNavController()
-                )
+                if (recommendationsItems.totalResults == 0) {
+                    recommendationsCardView.visibility = View.GONE
+                } else {
+                    val recommendationsAdapter = RecommendationsAdapter(
+                        recommendationsItems,
+                        findNavController()
+                    )
 
-                recommendationsRecyclerView.apply {
-                    adapter = recommendationsAdapter
-                    layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                    recommendationsRecyclerView.apply {
+                        adapter = recommendationsAdapter
+                        layoutManager =
+                            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                    }
+                    recommendationsAdapter.differ.submitList(recommendationsItems.results)
                 }
-                recommendationsAdapter.differ.submitList(recommendationsItems.results)
             })
 
         videoViewModel.getVideosByMovieId(movieId).observe(viewLifecycleOwner, { videoItems ->

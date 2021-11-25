@@ -54,7 +54,7 @@ class FavoriteTvAdapter(
                 .into(poster)
 
             overview.text = tvItem.overview
-            rating.text = tvItem.voteAverage.toString()
+            rating.text = tvItem.getAverage()
             cardView.id = tvItem.id?.toInt()!!
 
             imageButtonRemoveFromFavorite.setOnClickListener {

@@ -88,6 +88,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var activitiesConstraintLayout: ConstraintLayout
     private lateinit var mainCardView: CardView
     private lateinit var progressBar: ProgressBar
+    private lateinit var recommendationsCardView: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -139,6 +140,7 @@ class TvInfoFragment : BaseFragment() {
         activitiesConstraintLayout = binding.activitiesConstraintLayout
         mainCardView = binding.mainTvInfoCardView
         progressBar = binding.progressBarTvInfo
+        recommendationsCardView = binding.recommendationsCardView
         progressBar.visibility = View.VISIBLE
 
         menuButtonAddToList.isVisible = sessionId != ""
@@ -240,17 +242,25 @@ class TvInfoFragment : BaseFragment() {
 
         recommendationsViewModel.getRecommendationsByTvId(tvId)
             .observe(viewLifecycleOwner, { recommendationsItems ->
-                val tvRecommendationsAdapter = TvRecommendationsAdapter(
-                    recommendationsItems,
-                    findNavController()
-                )
+                if (recommendationsItems.totalResults == 0) {
+                    recommendationsCardView.visibility = View.GONE
+                } else {
+                    val tvRecommendationsAdapter = TvRecommendationsAdapter(
+                        recommendationsItems,
+                        findNavController()
+                    )
 
-                recommendationsRecyclerView.apply {
-                    adapter = tvRecommendationsAdapter
-                    layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                    recommendationsRecyclerView.apply {
+                        adapter = tvRecommendationsAdapter
+                        layoutManager =
+                            LinearLayoutManager(
+                                requireContext(),
+                                LinearLayoutManager.HORIZONTAL,
+                                false
+                            )
+                    }
+                    tvRecommendationsAdapter.differ.submitList(recommendationsItems.results)
                 }
-                tvRecommendationsAdapter.differ.submitList(recommendationsItems.results)
             })
 
         videoViewModel.getVideosByTvId(tvId).observe(viewLifecycleOwner, { videoItems ->
