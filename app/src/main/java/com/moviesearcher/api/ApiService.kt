@@ -1,8 +1,5 @@
 package com.moviesearcher.api
 
-import com.moviesearcher.person.model.combinedcredits.CombinedCreditsResponse
-import com.moviesearcher.person.model.images.PersonImagesResponse
-import com.moviesearcher.person.model.person.PersonResponse
 import com.moviesearcher.common.model.account.AccountResponse
 import com.moviesearcher.common.model.accountstates.AccountStatesResponse
 import com.moviesearcher.common.model.auth.CreateSessionResponse
@@ -26,12 +23,18 @@ import com.moviesearcher.list.model.add.AddToListResponse
 import com.moviesearcher.movie.model.MovieInfoResponse
 import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.movie.model.cast.MovieCastResponse
+import com.moviesearcher.person.model.combinedcredits.CombinedCreditsResponse
+import com.moviesearcher.person.model.images.PersonImagesResponse
+import com.moviesearcher.person.model.person.PersonResponse
 import com.moviesearcher.rated.movie.model.RatedMoviesResponse
 import com.moviesearcher.rated.tv.model.RatedTvsResponse
 import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
 import com.moviesearcher.search.model.SearchResponse
+import com.moviesearcher.tv.episode.model.TvEpisodeResponse
+import com.moviesearcher.tv.episode.model.image.EpisodeImageResponse
 import com.moviesearcher.tv.model.TvInfoResponse
 import com.moviesearcher.tv.model.cast.TvCastResponse
+import com.moviesearcher.tv.seasons.model.TvSeasonResponse
 import com.moviesearcher.utils.Constants
 import com.moviesearcher.utils.Constants.ACCESS_TOKEN
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
@@ -256,4 +259,31 @@ interface ApiService {
 
     @GET("person/{person_id}/images")
     fun personImages(@Path("person_id") personId: Long): Call<PersonImagesResponse>
+
+    @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}")
+    fun getTvEpisode(
+        @Path("tv_id") tvId: Long,
+        @Path("season_number") seasonNumber: String,
+        @Path("episode_number") episodeNumber: Int,
+    ): Call<TvEpisodeResponse>
+
+    @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/images")
+    fun getTvEpisodeImages(
+        @Path("tv_id") tvId: Long,
+        @Path("season_number") seasonNumber: String,
+        @Path("episode_number") episodeNumber: Int,
+    ): Call<EpisodeImageResponse>
+
+    @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/videos")
+    fun getTvEpisodeVideos(
+        @Path("tv_id") tvId: Long,
+        @Path("season_number") seasonNumber: String,
+        @Path("episode_number") episodeNumber: Int,
+    ): Call<VideosResponse>
+
+    @GET("tv/{tv_id}/season/{season_number}")
+    fun getTvSeason(
+        @Path("tv_id") tvId: Long?,
+        @Path("season_number") seasonNumber: String?,
+    ): Call<TvSeasonResponse>
 }

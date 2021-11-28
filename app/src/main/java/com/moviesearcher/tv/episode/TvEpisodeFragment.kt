@@ -4,57 +4,267 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.android.material.chip.ChipGroup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
+import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.databinding.FragmentTvEpisodeBinding
+import com.moviesearcher.movie.adapter.video.VideoAdapter
+import com.moviesearcher.tv.episode.adapter.cast.TvEpisodeCastAdapter
+import com.moviesearcher.tv.episode.adapter.images.EpisodeImagesAdapter
+import com.moviesearcher.tv.episode.model.Crew
+import com.moviesearcher.tv.episode.model.image.Still
+import com.moviesearcher.tv.episode.viewmodel.EpisodeImagesViewModel
+import com.moviesearcher.tv.episode.viewmodel.EpisodeVideoViewModel
+import com.moviesearcher.tv.episode.viewmodel.TvEpisodeViewModel
+import com.moviesearcher.utils.Constants
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val TAG = "TvEpisodeFragment"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [TvEpisodeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class TvEpisodeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class TvEpisodeFragment : BaseFragment() {
+    private var _binding: FragmentTvEpisodeBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private val args by navArgs<TvEpisodeFragmentArgs>()
+
+    private val episodeViewModel: TvEpisodeViewModel by viewModels()
+    private val videoViewModel: EpisodeVideoViewModel by viewModels()
+    private val imagesViewModel: EpisodeImagesViewModel by viewModels()
+
+    private lateinit var tvInfoCastRecyclerView: RecyclerView
+    private lateinit var videoRecyclerView: RecyclerView
+    private lateinit var imagesRecyclerView: RecyclerView
+    private lateinit var tvInfoPosterImageView: ImageView
+    private lateinit var tvInfoTitle: TextView
+    private lateinit var tvInfoRuntime: TextView
+    private lateinit var tvInfoTagline: TextView
+    private lateinit var releaseDate: TextView
+    private lateinit var tvInfoOverview: TextView
+    private lateinit var voteAverage: TextView
+    private lateinit var voteCount: TextView
+    private lateinit var tvInfoConstraintLayout: ConstraintLayout
+    private lateinit var buttonSeeAllImages: Button
+    private lateinit var rateButton: Button
+    private lateinit var director: TextView
+    private lateinit var writer: TextView
+    private lateinit var videoCardView: CardView
+    private lateinit var trailerPreview: ImageView
+    private lateinit var trailerName: TextView
+    private lateinit var trailerCardView: CardView
+    private lateinit var releaseDateDetail: TextView
+    private lateinit var originCountry: TextView
+    private lateinit var languageSpoken: TextView
+    private lateinit var filmingLocations: TextView
+    private lateinit var genresChipGroup: ChipGroup
+    private lateinit var numberOfEpisodes: TextView
+    private lateinit var mainCardView: CardView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var episodeGuideButton: Button
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tv_episode, container, false)
+    ): View {
+        _binding = FragmentTvEpisodeBinding.inflate(inflater, container, false)
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TvEpisodeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TvEpisodeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val tvId = args.tvId
+        val seasonNumber = args.seasonNumber
+        val episodeNumber = args.episodeNumber
+
+        tvInfoCastRecyclerView = binding.castRecyclerView
+        videoRecyclerView = binding.videoRecyclerView
+        imagesRecyclerView = binding.imagesRecyclerView
+
+        tvInfoConstraintLayout = binding.tvInfoConstraintLayout
+        tvInfoPosterImageView = binding.tvInfoPosterImageView
+        tvInfoTitle = binding.tvTitleTextView
+        genresChipGroup = binding.chipGroupGenres
+        tvInfoRuntime = binding.runtimeTextView
+        tvInfoTagline = binding.taglineTextView
+        releaseDate = binding.releaseDateTextView
+        tvInfoOverview = binding.overviewTextView
+        buttonSeeAllImages = binding.buttonSeeAllImages
+        voteAverage = binding.textViewRating
+        voteCount = binding.textViewVoteCount
+        rateButton = binding.rateButtonView
+        director = binding.directorCastTextView
+        writer = binding.writerCastTextView
+        videoCardView = binding.videoCardView
+        trailerPreview = binding.previewTrailerImageView
+        trailerName = binding.trailerNameTextView
+        trailerCardView = binding.trailerCardView
+        releaseDateDetail = binding.textviewReleaseDateDetail
+        originCountry = binding.textviewOriginCountryDetail
+        languageSpoken = binding.textviewLanguageSpokenDetail
+        filmingLocations = binding.textviewFilmingLocationsDetail
+        numberOfEpisodes = binding.numberOfEpisodesTextView
+        mainCardView = binding.mainTvInfoCardView
+        progressBar = binding.progressBarTvInfo
+        episodeGuideButton = binding.episodeGuideButton
+
+        tvInfoConstraintLayout.visibility = View.INVISIBLE
+        progressBar.visibility = View.VISIBLE
+
+        episodeViewModel.getTvEpisode(tvId, seasonNumber, episodeNumber).observe(
+            viewLifecycleOwner,
+            { tvInfo ->
+                Glide.with(this)
+                    .load(Constants.IMAGE_URL + tvInfo.stillPath)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .centerCrop()
+                    .override(300, 500)
+                    .into(tvInfoPosterImageView)
+                tvInfoTitle.text = tvInfo.name
+                releaseDate.text =
+                    getString(R.string.tv_series_in_production_date_range).format(tvInfo.airDate)
+                tvInfoOverview.text = tvInfo.overview
+                voteAverage.text = getString(R.string.vote).format(tvInfo.voteAverage.toString())
+                voteCount.text = tvInfo.voteCount.toString()
+
+                tvInfoOverview.setOnClickListener {
+                    MaterialAlertDialogBuilder(requireContext()).setMessage(tvInfo.overview)
+                        .show()
                 }
-            }
+
+                tvInfoConstraintLayout.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
+
+                val tvCastAdapter = TvEpisodeCastAdapter(tvInfo, findNavController())
+                val directors = mutableListOf<String>()
+                val writers = mutableListOf<String>()
+                var tenCast = tvInfo.crew
+
+                while (tenCast?.size!! > 10) {
+                    tenCast = tenCast.dropLast(1) as MutableList<Crew>?
+                }
+
+                tvInfo.apply {
+                    crew = tenCast
+                }
+
+                tvInfoCastRecyclerView.apply {
+                    adapter = tvCastAdapter
+                    layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                }
+                tvCastAdapter.differ.submitList(tvInfo.crew)
+
+                tvInfo.crew?.filter { it.department == "Directing" }
+                    .also { it -> it?.forEach { directors.add(it.name!!) } }
+                tvInfo.crew?.filter { it.department == "Writing" }
+                    .also { it -> it?.forEach { writers.add(it.name!!) } }
+
+                director.text = getString(R.string.director).format(directors.joinToString())
+                writer.text = getString(R.string.writer).format(writers.joinToString())
+            })
+
+        videoViewModel.getTvEpisodeVideos(tvId, seasonNumber, episodeNumber)
+            .observe(viewLifecycleOwner, { videoItems ->
+                val videoAdapter = VideoAdapter(
+                    videoItems,
+                    findNavController()
+                )
+
+                if (videoItems.results != null) {
+                    val officialTrailer = videoItems.results.find {
+                        it.name?.contains(
+                            "official trailer",
+                            true
+                        ) == true || it.name?.contains(
+                            "trailer",
+                            true
+                        ) == true
+                    }
+                    if (officialTrailer != null) {
+                        videoItems.results.remove(officialTrailer)
+
+                        Glide.with(requireContext())
+                            .load(Constants.YOUTUBE_PREVIEW_URL.format(officialTrailer.key))
+                            .placeholder(R.drawable.ic_placeholder)
+                            .centerCrop()
+                            .override(800, 600)
+                            .into(trailerPreview)
+
+                        trailerName.text = officialTrailer.name
+
+                        trailerCardView.setOnClickListener {
+                            findNavController().navigate(
+                                TvEpisodeFragmentDirections.actionTvEpisodeFragmentToVideoFragment(
+                                    officialTrailer.key!!
+                                )
+                            )
+                        }
+                    }
+
+                    videoRecyclerView.apply {
+                        adapter = videoAdapter
+                        layoutManager =
+                            LinearLayoutManager(
+                                requireContext(),
+                                LinearLayoutManager.HORIZONTAL,
+                                false
+                            )
+                    }
+                    videoAdapter.differ.submitList(videoItems.results)
+                } else {
+                    videoCardView.visibility = View.GONE
+                }
+            })
+
+        imagesViewModel.getTvEpisodeImages(tvId, seasonNumber, episodeNumber)
+            .observe(viewLifecycleOwner, { imagesItems ->
+                val imageAdapter = EpisodeImagesAdapter(
+                    imagesItems,
+                )
+                var tenImages = imagesItems.stills
+
+                while (tenImages?.size!! > 10) {
+                    tenImages = tenImages.dropLast(1) as MutableList<Still>?
+                }
+
+                imagesItems.apply {
+                    stills = tenImages
+                }
+
+                imagesRecyclerView.apply {
+                    adapter = imageAdapter
+                    layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                }
+                imageAdapter.differ.submitList(imagesItems.stills)
+            })
+
+        buttonSeeAllImages.setOnClickListener {
+            val action =
+                TvEpisodeFragmentDirections.actionTvEpisodeFragmentToImagesFragment()
+            action.tvId = tvId.toString()
+
+            findNavController().navigate(action)
+        }
+
+        rateButton.setOnClickListener { TODO() }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

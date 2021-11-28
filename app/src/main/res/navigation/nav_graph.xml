@@ -70,6 +70,9 @@
         <action
             android:id="@+id/action_tv_info_fragment_to_personInfoFragment"
             app:destination="@id/personInfoFragment" />
+        <action
+            android:id="@+id/action_tv_info_fragment_to_tvSeasonsFragment"
+            app:destination="@id/tvSeasonsFragment" />
     </fragment>
     <fragment
         android:id="@+id/search_result_fragment"
@@ -194,5 +197,60 @@
         <action
             android:id="@+id/action_personInfoFragment_to_tv_info_fragment"
             app:destination="@id/tv_info_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tvSeasonsFragment"
+        android:name="com.moviesearcher.tv.seasons.TvSeasonsFragment"
+        android:label="TvSeasonsFragment">
+        <argument
+            android:name="tv_id"
+            app:argType="long" />
+        <argument
+            android:name="number_of_seasons"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_tvSeasonsFragment_to_tvEpisodeFragment"
+            app:destination="@id/tvEpisodeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tvSeasonsViewPagerFragment"
+        android:name="com.moviesearcher.tv.seasons.TvSeasonsViewPagerFragment"
+        android:label="TvSeasonsViewPagerFragment">
+        <action
+            android:id="@+id/action_tvSeasonsViewPagerFragment_to_tvEpisodeFragment"
+            app:destination="@id/tvEpisodeFragment" />
+        <argument
+            android:name="id"
+            app:argType="string" />
+        <argument
+            android:name="seasonNumber"
+            android:defaultValue="1"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/tvEpisodeFragment"
+        android:name="com.moviesearcher.tv.episode.TvEpisodeFragment"
+        android:label="TvEpisodeFragment">
+        <argument
+            android:name="tv_id"
+            app:argType="long" />
+        <argument
+            android:name="season_number"
+            app:argType="string" />
+        <argument
+            android:name="episode_number"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_tvEpisodeFragment_to_videoFragment"
+            app:destination="@id/videoFragment" />
+        <action
+            android:id="@+id/action_tvEpisodeFragment_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
+        <action
+            android:id="@+id/action_tvEpisodeFragment_to_tvSeasonsFragment"
+            app:destination="@id/tvSeasonsFragment" />
+        <action
+            android:id="@+id/action_tvEpisodeFragment_to_personInfoFragment"
+            app:destination="@id/personInfoFragment" />
     </fragment>
 </navigation>

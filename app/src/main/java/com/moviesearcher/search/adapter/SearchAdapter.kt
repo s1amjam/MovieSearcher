@@ -19,8 +19,10 @@ class SearchAdapter(
     private val searchItems: SearchResponse,
     private val navController: NavController
 ) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
+
     inner class SearchViewHolder(binding: ExtendedCardViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         private val title: TextView = binding.textViewTitle
         private val rating = binding.textViewRating
         private val releaseDate = binding.textViewReleaseDate

@@ -47,6 +47,8 @@ class TvInfoFragment : BaseFragment() {
 
     private val args by navArgs<TvInfoFragmentArgs>()
 
+    private var numberOfSeasons: Int = 0
+
     private val tvInfoViewModel: TvInfoViewModel by viewModels()
     private val tvCastViewModel: CastViewModel by viewModels()
     private val recommendationsViewModel: RecommendationsViewModel by viewModels()
@@ -89,6 +91,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var mainCardView: CardView
     private lateinit var progressBar: ProgressBar
     private lateinit var recommendationsCardView: CardView
+    private lateinit var episodeGuideButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -110,7 +113,6 @@ class TvInfoFragment : BaseFragment() {
         imagesRecyclerView = binding.imagesRecyclerView
 
         tvInfoConstraintLayout = binding.tvInfoConstraintLayout
-        tvInfoConstraintLayout.visibility = View.INVISIBLE
         tvInfoPosterImageView = binding.tvInfoPosterImageView
         tvInfoTitle = binding.tvTitleTextView
         genresChipGroup = binding.chipGroupGenres
@@ -141,6 +143,9 @@ class TvInfoFragment : BaseFragment() {
         mainCardView = binding.mainTvInfoCardView
         progressBar = binding.progressBarTvInfo
         recommendationsCardView = binding.recommendationsCardView
+        episodeGuideButton = binding.episodeGuideButton
+
+        tvInfoConstraintLayout.visibility = View.INVISIBLE
         progressBar.visibility = View.VISIBLE
 
         menuButtonAddToList.isVisible = sessionId != ""
@@ -155,6 +160,8 @@ class TvInfoFragment : BaseFragment() {
                 val locations = mutableListOf<String>()
                 val genres = tvInfo.genres
                 val lastAirDate: String
+
+                numberOfSeasons = tvInfo.numberOfSeasons!!
 
                 tvInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
                 tvInfo.productionCountries?.forEach { locations.add(it.name!!) }
@@ -356,6 +363,15 @@ class TvInfoFragment : BaseFragment() {
                 expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_more_36)
                 activitiesConstraintLayout.visibility = View.GONE
             }
+        }
+
+        episodeGuideButton.setOnClickListener {
+            findNavController().navigate(
+                TvInfoFragmentDirections.actionTvInfoFragmentToTvSeasonsFragment(
+                    tvId,
+                    numberOfSeasons
+                )
+            )
         }
 
         checkFavorites(buttonMarkTvAsFavorite)
