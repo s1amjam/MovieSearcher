@@ -44,7 +44,7 @@ class EpisodesAdapter(
 
             title.text = tvEpisodeItem.name
             tvEpisodeItem.airDate
-            rating.text = tvEpisodeItem.voteAverage.toString()
+            rating.text = tvEpisodeItem.getAverage()
             overview.text = tvEpisodeItem.overview
             releaseDate.text = tvEpisodeItem.airDate
 

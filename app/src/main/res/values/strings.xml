@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MovieSearcher</string>
+    <string name="app_name">Muvi</string>
     <string name="movie_button">Movie</string>
     <string name="tv_button">Tv</string>
     <string name="search_field">Search</string>

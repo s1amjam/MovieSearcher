@@ -187,7 +187,7 @@ class TvInfoFragment : BaseFragment() {
                         getString(R.string.tv_series_in_production_date_range).format(firstAirDate)
                 }
                 tvInfoOverview.text = tvInfo.overview
-                voteAverage.text = getString(R.string.vote).format(tvInfo.voteAverage.toString())
+                voteAverage.text = getString(R.string.vote).format(tvInfo.getAverage())
                 voteCount.text = tvInfo.voteCount.toString()
                 releaseDateDetail.text = tvInfo.firstAirDate?.replace("-", ".")
                 originCountry.text = tvInfo.productionCountries?.get(0)?.name

@@ -1,6 +1,7 @@
 package com.moviesearcher.tv.episode.model
 
 import com.google.gson.annotations.SerializedName
+import java.math.RoundingMode
 
 data class TvEpisodeResponse(
     @SerializedName("air_date")
@@ -27,4 +28,8 @@ data class TvEpisodeResponse(
     val voteAverage: Double?,
     @SerializedName("vote_count")
     val voteCount: Int?
-)
+) {
+    fun getAverage(): String {
+        return voteAverage?.toBigDecimal()?.setScale(1, RoundingMode.UP).toString()
+    }
+}

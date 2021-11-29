@@ -49,7 +49,6 @@ class TvEpisodeFragment : BaseFragment() {
     private lateinit var tvInfoPosterImageView: ImageView
     private lateinit var tvInfoTitle: TextView
     private lateinit var tvInfoRuntime: TextView
-    private lateinit var tvInfoTagline: TextView
     private lateinit var releaseDate: TextView
     private lateinit var tvInfoOverview: TextView
     private lateinit var voteAverage: TextView
@@ -63,10 +62,6 @@ class TvEpisodeFragment : BaseFragment() {
     private lateinit var trailerPreview: ImageView
     private lateinit var trailerName: TextView
     private lateinit var trailerCardView: CardView
-    private lateinit var releaseDateDetail: TextView
-    private lateinit var originCountry: TextView
-    private lateinit var languageSpoken: TextView
-    private lateinit var filmingLocations: TextView
     private lateinit var genresChipGroup: ChipGroup
     private lateinit var numberOfEpisodes: TextView
     private lateinit var mainCardView: CardView
@@ -98,7 +93,6 @@ class TvEpisodeFragment : BaseFragment() {
         tvInfoTitle = binding.tvTitleTextView
         genresChipGroup = binding.chipGroupGenres
         tvInfoRuntime = binding.runtimeTextView
-        tvInfoTagline = binding.taglineTextView
         releaseDate = binding.releaseDateTextView
         tvInfoOverview = binding.overviewTextView
         buttonSeeAllImages = binding.buttonSeeAllImages
@@ -111,10 +105,6 @@ class TvEpisodeFragment : BaseFragment() {
         trailerPreview = binding.previewTrailerImageView
         trailerName = binding.trailerNameTextView
         trailerCardView = binding.trailerCardView
-        releaseDateDetail = binding.textviewReleaseDateDetail
-        originCountry = binding.textviewOriginCountryDetail
-        languageSpoken = binding.textviewLanguageSpokenDetail
-        filmingLocations = binding.textviewFilmingLocationsDetail
         numberOfEpisodes = binding.numberOfEpisodesTextView
         mainCardView = binding.mainTvInfoCardView
         progressBar = binding.progressBarTvInfo
@@ -133,10 +123,9 @@ class TvEpisodeFragment : BaseFragment() {
                     .override(300, 500)
                     .into(tvInfoPosterImageView)
                 tvInfoTitle.text = tvInfo.name
-                releaseDate.text =
-                    getString(R.string.tv_series_in_production_date_range).format(tvInfo.airDate)
+                releaseDate.text = tvInfo.airDate?.replace("-", ".")
                 tvInfoOverview.text = tvInfo.overview
-                voteAverage.text = getString(R.string.vote).format(tvInfo.voteAverage.toString())
+                voteAverage.text = getString(R.string.vote).format(tvInfo.getAverage())
                 voteCount.text = tvInfo.voteCount.toString()
 
                 tvInfoOverview.setOnClickListener {
@@ -178,13 +167,15 @@ class TvEpisodeFragment : BaseFragment() {
 
         videoViewModel.getTvEpisodeVideos(tvId, seasonNumber, episodeNumber)
             .observe(viewLifecycleOwner, { videoItems ->
-                val videoAdapter = VideoAdapter(
-                    videoItems,
-                    findNavController()
-                )
+                if (videoItems.results?.isEmpty() == true) {
+                    videoCardView.visibility = View.GONE
+                } else {
+                    val videoAdapter = VideoAdapter(
+                        videoItems,
+                        findNavController()
+                    )
 
-                if (videoItems.results != null) {
-                    val officialTrailer = videoItems.results.find {
+                    val officialTrailer = videoItems.results?.find {
                         it.name?.contains(
                             "official trailer",
                             true
@@ -224,8 +215,6 @@ class TvEpisodeFragment : BaseFragment() {
                             )
                     }
                     videoAdapter.differ.submitList(videoItems.results)
-                } else {
-                    videoCardView.visibility = View.GONE
                 }
             })
 
