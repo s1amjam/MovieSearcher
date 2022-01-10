@@ -1014,4 +1014,54 @@ object Api {
         )
         return responseLiveData
     }
+
+    fun getMovieAccountStates(
+        movieId: Long,
+        sessionId: String
+    ): MutableLiveData<AccountStatesResponse> {
+        val responseLiveData: MutableLiveData<AccountStatesResponse> = MutableLiveData()
+        val resp = ApiService.create().getMovieAccountStates(movieId, sessionId)
+
+        resp.enqueue(object : Callback<AccountStatesResponse> {
+            override fun onResponse(
+                call: Call<AccountStatesResponse>,
+                response: Response<AccountStatesResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<AccountStatesResponse>,
+                t: Throwable
+            ) {
+            }
+        }
+        )
+        return responseLiveData
+    }
+
+    fun getTvAccountStates(
+        tvId: Long,
+        sessionId: String
+    ): MutableLiveData<AccountStatesResponse> {
+        val responseLiveData: MutableLiveData<AccountStatesResponse> = MutableLiveData()
+        val resp = ApiService.create().getTvAccountStates(tvId, sessionId)
+
+        resp.enqueue(object : Callback<AccountStatesResponse> {
+            override fun onResponse(
+                call: Call<AccountStatesResponse>,
+                response: Response<AccountStatesResponse>
+            ) {
+                responseLiveData.value = response.body()
+            }
+
+            override fun onFailure(
+                call: Call<AccountStatesResponse>,
+                t: Throwable
+            ) {
+            }
+        }
+        )
+        return responseLiveData
+    }
 }

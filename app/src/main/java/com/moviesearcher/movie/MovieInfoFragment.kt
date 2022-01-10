@@ -25,6 +25,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
+import com.moviesearcher.common.viewmodel.accountstates.AccountStatesViewModel
 import com.moviesearcher.common.viewmodel.cast.CastViewModel
 import com.moviesearcher.common.viewmodel.images.ImagesViewModel
 import com.moviesearcher.common.viewmodel.recommendations.RecommendationsViewModel
@@ -54,6 +55,7 @@ class MovieInfoFragment : BaseFragment() {
     private val videoViewModel: VideoViewModel by viewModels()
     private val myLists: MyListsViewModel by viewModels()
     private val imagesViewModel: ImagesViewModel by viewModels()
+    private val accountStatesViewModel: AccountStatesViewModel by viewModels()
 
     private lateinit var movieInfoCastRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -240,7 +242,11 @@ class MovieInfoFragment : BaseFragment() {
                     recommendationsRecyclerView.apply {
                         adapter = recommendationsAdapter
                         layoutManager =
-                            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                            LinearLayoutManager(
+                                requireContext(),
+                                LinearLayoutManager.HORIZONTAL,
+                                false
+                            )
                     }
                     recommendationsAdapter.differ.submitList(recommendationsItems.results)
                 }
@@ -317,6 +323,32 @@ class MovieInfoFragment : BaseFragment() {
                 imageAdapter.differ.submitList(imagesItems.backdrops)
             })
 
+        accountStatesViewModel.getMovieAccountStates(movieId, sessionId)
+            .observe(viewLifecycleOwner, { accountStates ->
+                val isWatchlist = accountStates.watchlist
+                val isFavorite = accountStates.favorite
+
+                if (isWatchlist == false) {
+                    buttonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+
+                    buttonWatchlist.setOnClickListener {
+                        addToWatchlist(buttonWatchlist, isWatchlist)
+                    }
+                } else {
+                    buttonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+
+                    buttonWatchlist.setOnClickListener {
+                        addToWatchlist(buttonWatchlist, isWatchlist!!)
+                    }
+                }
+
+                if (isFavorite == false) {
+                    buttonMarkMovieAsFavorite.setImageResource(R.drawable.ic_round_star_outline_36)
+                } else {
+                    buttonMarkMovieAsFavorite.setImageResource(R.drawable.ic_round_star_filled_36)
+                }
+            })
+
         buttonSeeAllImages.setOnClickListener {
             val action = MovieInfoFragmentDirections.actionMovieInfoFragmentToImagesFragment()
             action.movieId = movieId.toString()
@@ -339,18 +371,6 @@ class MovieInfoFragment : BaseFragment() {
                 expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_more_36)
                 activitiesConstraintLayout.visibility = View.GONE
             }
-        }
-
-        checkFavorites(buttonMarkMovieAsFavorite)
-
-        buttonMarkMovieAsFavorite.setOnClickListener {
-            markAsFavorite(buttonMarkMovieAsFavorite)
-        }
-
-        //checkWatchlist(buttonWatchlist)
-
-        buttonWatchlist.setOnClickListener {
-            //addToWatchlist(buttonWatchlist)
         }
 
         rateButton.setOnClickListener { TODO() }

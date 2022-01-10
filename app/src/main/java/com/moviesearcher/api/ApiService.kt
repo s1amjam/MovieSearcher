@@ -286,4 +286,16 @@ interface ApiService {
         @Path("tv_id") tvId: Long?,
         @Path("season_number") seasonNumber: String?,
     ): Call<TvSeasonResponse>
+
+    @GET("movie/{movie_id}/account_states")
+    fun getMovieAccountStates(
+        @Path("movie_id") movieId: Long,
+        @Query("session_id") sessionId: String
+    ): Call<AccountStatesResponse>
+
+    @GET("tv/{tv_id}/account_states")
+    fun getTvAccountStates(
+        @Path("tv_id") tvId: Long,
+        @Query("session_id") sessionId: String
+    ): Call<AccountStatesResponse>
 }

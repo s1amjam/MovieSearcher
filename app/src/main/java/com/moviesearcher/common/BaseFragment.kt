@@ -154,39 +154,7 @@ open class BaseFragment : Fragment() {
         })
     }
 
-    fun checkWatchlist(button: ImageButton) {
-        if (sessionId.isNotBlank()) {
-            mediaInfo = getMediaInfo()
-            val mediaId = mediaInfo.values.first()
-            val mediaKey = mediaInfo.keys.first()
-            val moviesWatchlist = Api.getMovieWatchlist(accountId, sessionId)
-            val tvsWatchlist = Api.getTvWatchlist(accountId, sessionId)
-
-            if (mediaKey == "movie") {
-                moviesWatchlist.observe(viewLifecycleOwner, { item ->
-                    button.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
-                    item.results!!.forEach {
-                        if (it.id == mediaId) {
-                            isWatchlist = false
-                            button.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-                        }
-                    }
-                })
-            } else {
-                tvsWatchlist.observe(viewLifecycleOwner, { item ->
-                    button.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
-                    item.results!!.forEach {
-                        if (it.id == mediaId) {
-                            isWatchlist = false
-                            button.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-                        }
-                    }
-                })
-            }
-        }
-    }
-
-    fun addToWatchlist(button: ImageButton) {
+    fun addToWatchlist(button: ImageButton, isWatchlist: Boolean) {
         mediaInfo = getMediaInfo()
 
         val addToWatchlist = Api.watchlist(
@@ -197,8 +165,9 @@ open class BaseFragment : Fragment() {
 
         addToWatchlist.observe(viewLifecycleOwner, {
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
-                isWatchlist = true
-                checkWatchlist(button)
+                button.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+            } else {
+                button.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
             }
         })
     }
