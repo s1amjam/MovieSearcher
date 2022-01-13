@@ -13,6 +13,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +31,7 @@ import com.moviesearcher.common.viewmodel.images.ImagesViewModel
 import com.moviesearcher.common.viewmodel.recommendations.RecommendationsViewModel
 import com.moviesearcher.common.viewmodel.video.VideoViewModel
 import com.moviesearcher.databinding.FragmentTvInfoBinding
+import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
@@ -92,6 +94,8 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var recommendationsCardView: CardView
     private lateinit var episodeGuideButton: Button
+
+    private lateinit var lists: LiveData<ListsResponse>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -216,6 +220,9 @@ class TvInfoFragment : BaseFragment() {
                 tvInfoConstraintLayout.visibility = View.VISIBLE
                 progressBar.visibility = View.GONE
             })
+
+        checkWatchlist(buttonWatchlist)
+        checkFavorites(buttonMarkTvAsFavorite)
 
         tvCastViewModel.getTvCastById(tvId).observe(viewLifecycleOwner, { castItems ->
             val tvCastAdapter = TvCastAdapter(castItems, findNavController())
@@ -348,8 +355,10 @@ class TvInfoFragment : BaseFragment() {
             findNavController().navigate(action)
         }
 
+        lists = myLists.getLists(accountId, sessionId, 1)
+
         menuButtonAddToList.setOnClickListener { v ->
-            myLists.getLists(accountId, sessionId, 1).observe(viewLifecycleOwner, {
+            lists.observe(viewLifecycleOwner, {
                 showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
             })
         }
@@ -374,16 +383,12 @@ class TvInfoFragment : BaseFragment() {
             )
         }
 
-        checkFavorites(buttonMarkTvAsFavorite)
-
         buttonMarkTvAsFavorite.setOnClickListener {
             markAsFavorite(buttonMarkTvAsFavorite)
         }
 
-        //checkWatchlist(buttonWatchlist)
-
         buttonWatchlist.setOnClickListener {
-            //addToWatchlist(buttonWatchlist)
+            addToWatchlist(buttonWatchlist)
         }
 
         rateButton.setOnClickListener { TODO() }

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
@@ -51,6 +52,8 @@ class CreateNewListDialog : DialogFragment() {
             ).observe(
                 this, {
                     if (it.success == true) {
+                        Toast.makeText(requireContext(), "New List created", Toast.LENGTH_SHORT)
+                            .show()
                         dialog.dismiss()
                     }
                 })

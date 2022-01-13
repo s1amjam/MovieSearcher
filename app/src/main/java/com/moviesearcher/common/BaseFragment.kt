@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
@@ -37,6 +38,11 @@ open class BaseFragment : Fragment() {
     private var isFavorite = false
     private var isWatchlist = false
     private lateinit var mediaInfo: MutableMap<String, Long>
+
+    private val watchlistAddedIcon = R.drawable.ic_baseline_bookmark_added_60
+    private val watchlistRemovedIcon = R.drawable.ic_baseline_bookmark_add_60
+    private val markAsFavoriteIcon = R.drawable.ic_round_star_outline_36
+    private val removeFromFavoriteIcon = R.drawable.ic_round_star_filled_36
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +99,23 @@ open class BaseFragment : Fragment() {
                         menuItem.title = menuItem.title.toString() + " (added)"
                     } else {
                         menuItem.setOnMenuItemClickListener {
-                            Api.addToList(it.itemId, MediaId(mediaId), sessionId)
+                            Api.addToList(it.itemId, MediaId(mediaId), sessionId).observe(
+                                this, { addToListResponse ->
+                                    if (addToListResponse.statusCode == 12) {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Added to List",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Error adding to List",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            )
 
                             true
                         }
@@ -110,8 +132,6 @@ open class BaseFragment : Fragment() {
             val mediaKey = mediaInfo.keys.first()
             val favoriteMovies = Api.getFavoriteMovies(accountId, sessionId)
             val favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
-            val markAsFavoriteIcon = R.drawable.ic_round_star_outline_36
-            val removeFromFavoriteIcon = R.drawable.ic_round_star_filled_36
 
             if (mediaKey == "movie") {
                 favoriteMovies.observe(viewLifecycleOwner, { favoriteItem ->
@@ -146,15 +166,60 @@ open class BaseFragment : Fragment() {
             MarkAsFavoriteRequest(isFavorite, mediaInfo.values.first(), mediaInfo.keys.first())
         )
 
+        if (isFavorite) {
+            button.setImageResource(removeFromFavoriteIcon)
+            Toast.makeText(requireContext(), "Added to Favorites", Toast.LENGTH_SHORT).show()
+        } else {
+            button.setImageResource(markAsFavoriteIcon)
+            Toast.makeText(requireContext(), "Removed from Favorites", Toast.LENGTH_SHORT).show()
+        }
+
         markAsFavorite.observe(viewLifecycleOwner, {
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
                 isFavorite = true
-                checkFavorites(button)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Error adding to Favorites. Try again later.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }
 
-    fun addToWatchlist(button: ImageButton, isWatchlist: Boolean) {
+    fun checkWatchlist(button: ImageButton) {
+        if (sessionId.isNotBlank()) {
+            mediaInfo = getMediaInfo()
+            val mediaId = mediaInfo.values.first()
+            val mediaKey = mediaInfo.keys.first()
+            val moviesWatchlist = Api.getMovieWatchlist(accountId, sessionId)
+            val tvsWatchlist = Api.getTvWatchlist(accountId, sessionId)
+
+            if (mediaKey == "movie") {
+                moviesWatchlist.observe(viewLifecycleOwner, { item ->
+                    button.setImageResource(watchlistRemovedIcon)
+                    item.results!!.forEach {
+                        if (it.id == mediaId) {
+                            isWatchlist = false
+                            button.setImageResource(watchlistAddedIcon)
+                        }
+                    }
+                })
+            } else {
+                tvsWatchlist.observe(viewLifecycleOwner, { item ->
+                    button.setImageResource(watchlistRemovedIcon)
+                    item.results!!.forEach {
+                        if (it.id == mediaId) {
+                            isWatchlist = false
+                            button.setImageResource(watchlistAddedIcon)
+                        }
+                    }
+                })
+            }
+        }
+    }
+
+    fun addToWatchlist(button: ImageButton) {
         mediaInfo = getMediaInfo()
 
         val addToWatchlist = Api.watchlist(
@@ -163,11 +228,23 @@ open class BaseFragment : Fragment() {
             WatchlistRequest(isWatchlist, mediaInfo.values.first(), mediaInfo.keys.first())
         )
 
+        if (isWatchlist) {
+            button.setImageResource(watchlistAddedIcon)
+            Toast.makeText(requireContext(), "Added to Watchlist", Toast.LENGTH_SHORT).show()
+        } else {
+            button.setImageResource(watchlistRemovedIcon)
+            Toast.makeText(requireContext(), "Removed from Watchlist", Toast.LENGTH_SHORT).show()
+        }
+
         addToWatchlist.observe(viewLifecycleOwner, {
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
-                button.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                isWatchlist = true
             } else {
-                button.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                Toast.makeText(
+                    requireContext(),
+                    "Error adding to Watchlist. Try again later.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }

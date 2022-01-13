@@ -13,6 +13,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,12 +26,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
-import com.moviesearcher.common.viewmodel.accountstates.AccountStatesViewModel
 import com.moviesearcher.common.viewmodel.cast.CastViewModel
 import com.moviesearcher.common.viewmodel.images.ImagesViewModel
 import com.moviesearcher.common.viewmodel.recommendations.RecommendationsViewModel
 import com.moviesearcher.common.viewmodel.video.VideoViewModel
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
+import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
@@ -55,7 +56,6 @@ class MovieInfoFragment : BaseFragment() {
     private val videoViewModel: VideoViewModel by viewModels()
     private val myLists: MyListsViewModel by viewModels()
     private val imagesViewModel: ImagesViewModel by viewModels()
-    private val accountStatesViewModel: AccountStatesViewModel by viewModels()
 
     private lateinit var movieInfoCastRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -91,6 +91,9 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var mainCardView: CardView
     private lateinit var progressBar: ProgressBar
     private lateinit var recommendationsCardView: CardView
+
+    private lateinit var lists: LiveData<ListsResponse>
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -242,11 +245,7 @@ class MovieInfoFragment : BaseFragment() {
                     recommendationsRecyclerView.apply {
                         adapter = recommendationsAdapter
                         layoutManager =
-                            LinearLayoutManager(
-                                requireContext(),
-                                LinearLayoutManager.HORIZONTAL,
-                                false
-                            )
+                            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                     }
                     recommendationsAdapter.differ.submitList(recommendationsItems.results)
                 }
@@ -323,32 +322,6 @@ class MovieInfoFragment : BaseFragment() {
                 imageAdapter.differ.submitList(imagesItems.backdrops)
             })
 
-        accountStatesViewModel.getMovieAccountStates(movieId, sessionId)
-            .observe(viewLifecycleOwner, { accountStates ->
-                val isWatchlist = accountStates.watchlist
-                val isFavorite = accountStates.favorite
-
-                if (isWatchlist == false) {
-                    buttonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
-
-                    buttonWatchlist.setOnClickListener {
-                        addToWatchlist(buttonWatchlist, isWatchlist)
-                    }
-                } else {
-                    buttonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-
-                    buttonWatchlist.setOnClickListener {
-                        addToWatchlist(buttonWatchlist, isWatchlist!!)
-                    }
-                }
-
-                if (isFavorite == false) {
-                    buttonMarkMovieAsFavorite.setImageResource(R.drawable.ic_round_star_outline_36)
-                } else {
-                    buttonMarkMovieAsFavorite.setImageResource(R.drawable.ic_round_star_filled_36)
-                }
-            })
-
         buttonSeeAllImages.setOnClickListener {
             val action = MovieInfoFragmentDirections.actionMovieInfoFragmentToImagesFragment()
             action.movieId = movieId.toString()
@@ -356,8 +329,10 @@ class MovieInfoFragment : BaseFragment() {
             findNavController().navigate(action)
         }
 
+        lists = myLists.getLists(accountId, sessionId, 1)
+
         menuButtonAddToList.setOnClickListener { v ->
-            myLists.getLists(accountId, sessionId, 1).observe(viewLifecycleOwner, {
+            lists.observe(viewLifecycleOwner, {
                 showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
             })
         }
@@ -371,6 +346,17 @@ class MovieInfoFragment : BaseFragment() {
                 expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_more_36)
                 activitiesConstraintLayout.visibility = View.GONE
             }
+        }
+
+        checkFavorites(buttonMarkMovieAsFavorite)
+        checkWatchlist(buttonWatchlist)
+
+        buttonMarkMovieAsFavorite.setOnClickListener {
+            markAsFavorite(buttonMarkMovieAsFavorite)
+        }
+
+        buttonWatchlist.setOnClickListener {
+            addToWatchlist(buttonWatchlist)
         }
 
         rateButton.setOnClickListener { TODO() }
