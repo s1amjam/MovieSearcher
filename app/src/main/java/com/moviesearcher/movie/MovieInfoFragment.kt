@@ -245,7 +245,11 @@ class MovieInfoFragment : BaseFragment() {
                     recommendationsRecyclerView.apply {
                         adapter = recommendationsAdapter
                         layoutManager =
-                            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                            LinearLayoutManager(
+                                requireContext(),
+                                LinearLayoutManager.HORIZONTAL,
+                                false
+                            )
                     }
                     recommendationsAdapter.differ.submitList(recommendationsItems.results)
                 }
