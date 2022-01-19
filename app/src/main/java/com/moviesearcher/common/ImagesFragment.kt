@@ -9,19 +9,17 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.common.viewmodel.images.ImagesViewModel
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentImagesBinding
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
-import com.moviesearcher.person.viewmodel.personimages.PersonImagesViewModel
 
 class ImagesFragment : Fragment() {
     private var _binding: FragmentImagesBinding? = null
     private val binding get() = _binding!!
 
     private val args by navArgs<ImagesFragmentArgs>()
-    private val imagesViewModel: ImagesViewModel by viewModels()
-    private val personImagesViewModel: PersonImagesViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
     private lateinit var imagesRecyclerView: RecyclerView
 
     override fun onCreateView(
@@ -44,7 +42,7 @@ class ImagesFragment : Fragment() {
 
         when {
             movieId != null -> {
-                imagesViewModel.getImagesByMovieId(movieId)
+                viewModel.getImagesByMovieId(movieId)
                     .observe(viewLifecycleOwner, { imagesItems ->
                         val imagesAdapter = ImagesAdapter(imagesItems)
 
@@ -56,7 +54,7 @@ class ImagesFragment : Fragment() {
                     })
             }
             tvId != null -> {
-                imagesViewModel.getImagesByTvId(tvId)
+                viewModel.getImagesByTvId(tvId)
                     .observe(viewLifecycleOwner, { imagesItems ->
                         val imagesAdapter = ImagesAdapter(imagesItems)
 
@@ -68,7 +66,7 @@ class ImagesFragment : Fragment() {
                     })
             }
             else -> {
-                personImagesViewModel.getImagesByPersonId(personId!!)
+                viewModel.getImagesByPersonId(personId!!)
                     .observe(viewLifecycleOwner, { imagesItems ->
                         val imagesAdapter = PersonImagesAdapter(imagesItems)
 

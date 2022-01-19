@@ -10,9 +10,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentMyListsBinding
 import com.moviesearcher.list.lists.adapter.MyListsAdapter
-import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 
 private const val TAG = "MyListsFragment"
 
@@ -23,7 +23,7 @@ class MyListsFragment : BaseFragment() {
     private lateinit var myListsRecyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
 
-    private val myListsViewModel: MyListsViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,7 +44,7 @@ class MyListsFragment : BaseFragment() {
         myListsRecyclerView.layoutManager = LinearLayoutManager(context)
         myListsRecyclerView.visibility = View.INVISIBLE
 
-        myListsViewModel.getLists(accountId, sessionId, 1).observe(
+        viewModel.getLists(accountId, sessionId, 1).observe(
             viewLifecycleOwner,
             { myListItems ->
                 myListsRecyclerView.adapter =

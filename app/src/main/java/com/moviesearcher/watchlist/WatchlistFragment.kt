@@ -12,13 +12,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentWatchlistBinding
 import com.moviesearcher.watchlist.movie.adapter.MovieWatchlistAdapter
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
-import com.moviesearcher.watchlist.movie.viewmodel.MovieWatchlistViewModel
 import com.moviesearcher.watchlist.tv.adapter.TvWatchlistAdapter
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
-import com.moviesearcher.watchlist.tv.viewmodel.TvWatchlistViewModel
 
 private const val TAG = "WatchlistFragment"
 
@@ -26,8 +25,7 @@ class WatchlistFragment : BaseFragment() {
     private var _binding: FragmentWatchlistBinding? = null
     private val binding get() = _binding!!
 
-    private val movieWatchlistViewModel: MovieWatchlistViewModel by viewModels()
-    private val tvWatchlistViewModel: TvWatchlistViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var navController: NavController
     private lateinit var movieRecyclerView: RecyclerView
@@ -52,7 +50,7 @@ class WatchlistFragment : BaseFragment() {
         tvCardView = binding.cardviewTvsWatchlist
         movieCardView.visibility = View.INVISIBLE
         tvCardView.visibility = View.INVISIBLE
-            movieRecyclerView = binding.movieRecyclerView
+        movieRecyclerView = binding.movieRecyclerView
         tvRecyclerView = binding.tvRecyclerView
         movieRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -64,10 +62,10 @@ class WatchlistFragment : BaseFragment() {
     }
 
     private fun setupWatchlistUi() {
-        movieWatchlistViewModel.getMovieWatchlist(accountId, sessionId).observe(
+        viewModel.getMovieWatchlist(accountId, sessionId).observe(
             viewLifecycleOwner,
             { movieItems ->
-                tvWatchlistViewModel.getTvWatchlist(accountId, sessionId).observe(
+                viewModel.getTvWatchlist(accountId, sessionId).observe(
                     viewLifecycleOwner,
                     { tvItems ->
                         val movieAdapter = createMovieAdapter(movieItems)
@@ -90,7 +88,7 @@ class WatchlistFragment : BaseFragment() {
             navController,
             accountId,
             sessionId,
-            movieWatchlistViewModel.getMovieWatchlistIds(),
+            viewModel.getMovieWatchlistIds(),
         )
         movieWatchlistAdapter.differ.submitList(movieItems.results)
 
@@ -105,7 +103,7 @@ class WatchlistFragment : BaseFragment() {
             navController,
             accountId,
             sessionId,
-            tvWatchlistViewModel.getTvWatchlistIds(),
+            viewModel.getTvWatchlistIds(),
         )
         tvWatchlistAdapter.differ.submitList(tvItems.results)
 

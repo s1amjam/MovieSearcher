@@ -11,9 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentSearchResultBinding
 import com.moviesearcher.search.adapter.SearchAdapter
-import com.moviesearcher.search.viewmodel.SearchViewModel
 
 private const val TAG = "SearchResultFragment"
 
@@ -22,7 +22,7 @@ class SearchResultFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private lateinit var searchResultRecyclerView: RecyclerView
-    private val searchViewModel: SearchViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var progressBar: ProgressBar
 
@@ -70,7 +70,7 @@ class SearchResultFragment : BaseFragment() {
     }
 
     private fun updateWithSearchResult(searchQuery: String) {
-        searchViewModel.queryForSearch(searchQuery).observe(
+        viewModel.queryForSearch(searchQuery).observe(
             viewLifecycleOwner,
             { searchItems ->
                 val searchAdapter = SearchAdapter(searchItems, findNavController())

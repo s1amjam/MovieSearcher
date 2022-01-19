@@ -17,9 +17,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.CreateNewListDialog
-import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.list.model.Result
 import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
@@ -33,7 +33,7 @@ open class BaseFragment : Fragment() {
 
     lateinit var encryptedSharedPrefs: SharedPreferences
 
-    private val myListsViewModel: MyListsViewModel by viewModels()
+    private val listsViewModel: BaseViewModel by viewModels()
 
     private var isFavorite = false
     private var isWatchlist = false
@@ -92,7 +92,7 @@ open class BaseFragment : Fragment() {
             popup.menu.add(Menu.NONE, it.id!!.toInt(), Menu.NONE, it.name)
             val menuItem = popup.menu.findItem(it.id.toInt())
 
-            myListsViewModel.checkItemStatus(it.id.toInt(), mediaId).observe(viewLifecycleOwner,
+            listsViewModel.checkItemStatus(it.id.toInt(), mediaId).observe(viewLifecycleOwner,
                 { item ->
                     if (item.itemPresent == true) {
                         menuItem.isEnabled = false

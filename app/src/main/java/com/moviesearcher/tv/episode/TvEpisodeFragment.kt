@@ -20,15 +20,13 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentTvEpisodeBinding
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.tv.episode.adapter.cast.TvEpisodeCastAdapter
 import com.moviesearcher.tv.episode.adapter.images.EpisodeImagesAdapter
 import com.moviesearcher.tv.episode.model.Crew
 import com.moviesearcher.tv.episode.model.image.Still
-import com.moviesearcher.tv.episode.viewmodel.EpisodeImagesViewModel
-import com.moviesearcher.tv.episode.viewmodel.EpisodeVideoViewModel
-import com.moviesearcher.tv.episode.viewmodel.TvEpisodeViewModel
 import com.moviesearcher.utils.Constants
 
 private const val TAG = "TvEpisodeFragment"
@@ -39,9 +37,7 @@ class TvEpisodeFragment : BaseFragment() {
 
     private val args by navArgs<TvEpisodeFragmentArgs>()
 
-    private val episodeViewModel: TvEpisodeViewModel by viewModels()
-    private val videoViewModel: EpisodeVideoViewModel by viewModels()
-    private val imagesViewModel: EpisodeImagesViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var tvInfoCastRecyclerView: RecyclerView
     private lateinit var videoRecyclerView: RecyclerView
@@ -113,7 +109,7 @@ class TvEpisodeFragment : BaseFragment() {
         tvInfoConstraintLayout.visibility = View.INVISIBLE
         progressBar.visibility = View.VISIBLE
 
-        episodeViewModel.getTvEpisode(tvId, seasonNumber, episodeNumber).observe(
+        viewModel.getTvEpisode(tvId, seasonNumber, episodeNumber).observe(
             viewLifecycleOwner,
             { tvInfo ->
                 Glide.with(this)
@@ -165,7 +161,7 @@ class TvEpisodeFragment : BaseFragment() {
                 writer.text = getString(R.string.writer).format(writers.joinToString())
             })
 
-        videoViewModel.getTvEpisodeVideos(tvId, seasonNumber, episodeNumber)
+        viewModel.getTvEpisodeVideos(tvId, seasonNumber, episodeNumber)
             .observe(viewLifecycleOwner, { videoItems ->
                 if (videoItems.results?.isEmpty() == true) {
                     videoCardView.visibility = View.GONE
@@ -218,7 +214,7 @@ class TvEpisodeFragment : BaseFragment() {
                 }
             })
 
-        imagesViewModel.getTvEpisodeImages(tvId, seasonNumber, episodeNumber)
+        viewModel.getTvEpisodeImages(tvId, seasonNumber, episodeNumber)
             .observe(viewLifecycleOwner, { imagesItems ->
                 val imageAdapter = EpisodeImagesAdapter(
                     imagesItems,

@@ -8,13 +8,4 @@ object Constants {
     const val SUCCESS_SESSION_URL = "https://www.themoviedb.org/authenticate/%s/allow"
     const val YOUTUBE_PREVIEW_URL = "https://i.ytimg.com/vi/%s/hqdefault.jpg"
     const val YOUTUBE_VIDEO_URL = "https://youtube.com/embed/%s"
-    const val DURATION_5_SECONDS = 5000
-
-    enum class MediaType(s: String) {
-        ALL("all"), MOVIE("movie"), TV("tv"), PERSON("person")
-    }
-
-    enum class TimeWindow(s: String) {
-        DAY("day"), WEEK("week")
-    }
 }

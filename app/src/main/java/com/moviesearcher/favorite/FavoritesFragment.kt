@@ -11,12 +11,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentFavoritesBinding
 import com.moviesearcher.favorite.movie.adapter.FavoriteMovieAdapter
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
-import com.moviesearcher.favorite.movie.viewmodel.FavoriteMoviesViewModel
 import com.moviesearcher.favorite.tv.adapter.FavoriteTvAdapter
-import com.moviesearcher.favorite.tv.viewmodel.FavoriteTvsViewModel
 
 private const val TAG = "FavoritesFragment"
 
@@ -25,8 +24,7 @@ class FavoritesFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private lateinit var favoriteMoviesRecyclerView: RecyclerView
-    private val favoriteMoviesViewModel: FavoriteMoviesViewModel by viewModels()
-    private val favoriteTvsViewModel: FavoriteTvsViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var favoriteMoviesButton: Button
     private lateinit var favoriteTvsButton: Button
@@ -65,7 +63,7 @@ class FavoritesFragment : BaseFragment() {
             progressBar.visibility = View.VISIBLE
             favoriteMoviesRecyclerView.visibility = View.INVISIBLE
 
-            favoriteTvsViewModel.getFavoriteTvs(accountId, sessionId).observe(
+            viewModel.getFavoriteTvs(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { favoriteTvItems ->
                     val favoriteTvAdapter = FavoriteTvAdapter(
@@ -87,7 +85,7 @@ class FavoritesFragment : BaseFragment() {
     }
 
     private fun getFavoriteMovies() {
-        favoriteMoviesViewModel.getFavoriteMovies(accountId, sessionId).observe(
+        viewModel.getFavoriteMovies(accountId, sessionId).observe(
             viewLifecycleOwner,
             { favoriteMovieItems ->
                 setupFavoriteMovieUi(favoriteMovieItems)

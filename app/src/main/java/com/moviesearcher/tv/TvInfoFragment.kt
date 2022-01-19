@@ -26,19 +26,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
-import com.moviesearcher.common.viewmodel.cast.CastViewModel
-import com.moviesearcher.common.viewmodel.images.ImagesViewModel
-import com.moviesearcher.common.viewmodel.recommendations.RecommendationsViewModel
-import com.moviesearcher.common.viewmodel.video.VideoViewModel
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentTvInfoBinding
 import com.moviesearcher.list.lists.model.ListsResponse
-import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.tv.adapter.cast.TvCastAdapter
 import com.moviesearcher.tv.adapter.recommendations.TvRecommendationsAdapter
 import com.moviesearcher.tv.model.cast.Cast
-import com.moviesearcher.tv.viewmodel.TvInfoViewModel
 import com.moviesearcher.utils.Constants
 
 private const val TAG = "TvInfoFragment"
@@ -51,12 +46,7 @@ class TvInfoFragment : BaseFragment() {
 
     private var numberOfSeasons: Int = 0
 
-    private val tvInfoViewModel: TvInfoViewModel by viewModels()
-    private val tvCastViewModel: CastViewModel by viewModels()
-    private val recommendationsViewModel: RecommendationsViewModel by viewModels()
-    private val videoViewModel: VideoViewModel by viewModels()
-    private val myLists: MyListsViewModel by viewModels()
-    private val imagesViewModel: ImagesViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var tvInfoCastRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -156,7 +146,7 @@ class TvInfoFragment : BaseFragment() {
         buttonMarkTvAsFavorite.isVisible = sessionId != ""
         buttonWatchlist.isVisible = sessionId != ""
 
-        tvInfoViewModel.getTvInfoById(tvId).observe(
+        viewModel.getTvInfoById(tvId).observe(
             viewLifecycleOwner,
             { tvInfo ->
                 val minutes = tvInfo.episodeRunTime?.get(0)?.toLong()
@@ -224,7 +214,7 @@ class TvInfoFragment : BaseFragment() {
         checkWatchlist(buttonWatchlist)
         checkFavorites(buttonMarkTvAsFavorite)
 
-        tvCastViewModel.getTvCastById(tvId).observe(viewLifecycleOwner, { castItems ->
+        viewModel.getTvCastById(tvId).observe(viewLifecycleOwner, { castItems ->
             val tvCastAdapter = TvCastAdapter(castItems, findNavController())
             val directors = mutableListOf<String>()
             val writers = mutableListOf<String>()
@@ -254,7 +244,7 @@ class TvInfoFragment : BaseFragment() {
             writer.text = getString(R.string.writer).format(writers.joinToString())
         })
 
-        recommendationsViewModel.getRecommendationsByTvId(tvId)
+        viewModel.getRecommendationsByTvId(tvId)
             .observe(viewLifecycleOwner, { recommendationsItems ->
                 if (recommendationsItems.totalResults == 0) {
                     recommendationsCardView.visibility = View.GONE
@@ -277,7 +267,7 @@ class TvInfoFragment : BaseFragment() {
                 }
             })
 
-        videoViewModel.getVideosByTvId(tvId).observe(viewLifecycleOwner, { videoItems ->
+        viewModel.getVideosByTvId(tvId).observe(viewLifecycleOwner, { videoItems ->
             val videoAdapter = VideoAdapter(
                 videoItems,
                 findNavController()
@@ -325,7 +315,7 @@ class TvInfoFragment : BaseFragment() {
             }
         })
 
-        imagesViewModel.getImagesByTvId(tvId)
+        viewModel.getImagesByTvId(tvId)
             .observe(viewLifecycleOwner, { imagesItems ->
                 val imageAdapter = ImagesAdapter(
                     imagesItems,
@@ -355,7 +345,7 @@ class TvInfoFragment : BaseFragment() {
             findNavController().navigate(action)
         }
 
-        lists = myLists.getLists(accountId, sessionId, 1)
+        lists = viewModel.getLists(accountId, sessionId, 1)
 
         menuButtonAddToList.setOnClickListener { v ->
             lists.observe(viewLifecycleOwner, {

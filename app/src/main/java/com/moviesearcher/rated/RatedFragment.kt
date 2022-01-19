@@ -10,14 +10,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentRatedBinding
 import com.moviesearcher.rated.movie.adapter.RatedMoviesAdapter
 import com.moviesearcher.rated.movie.model.RatedMoviesResponse
-import com.moviesearcher.rated.movie.viewmodel.RatedMoviesViewModel
 import com.moviesearcher.rated.tv.adapter.RatedTvsAdapter
-import com.moviesearcher.rated.tv.viewmodel.RatedTvsViewModel
 import com.moviesearcher.rated.tvepisode.adapter.RatedTvEpisodesAdapter
-import com.moviesearcher.rated.tvepisode.viewmodel.RatedTvEpisodesViewModel
 
 private const val TAG = "RatedFragment"
 
@@ -26,9 +24,7 @@ class RatedFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private lateinit var ratedMoviesRecyclerView: RecyclerView
-    private val ratedMovies: RatedMoviesViewModel by viewModels()
-    private val ratedTvEpisodes: RatedTvEpisodesViewModel by viewModels()
-    private val ratedTvs: RatedTvsViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var ratedMoviesButton: Button
     private lateinit var ratedTvsButton: Button
@@ -47,14 +43,14 @@ class RatedFragment : BaseFragment() {
         ratedTvsButton = binding.buttonRatedTvs
         ratedTvEpisodesButton = binding.buttonRatedTvEpisodes
 
-        ratedMovies.getRatedMovies(accountId, sessionId).observe(
+        viewModel.getRatedMovies(accountId, sessionId).observe(
             viewLifecycleOwner,
             { ratedMovieItems ->
                 setupRatedMoviesUi(ratedMovieItems)
             })
 
         ratedMoviesButton.setOnClickListener {
-            ratedMovies.getRatedMovies(accountId, sessionId).observe(
+            viewModel.getRatedMovies(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { ratedMovieItems ->
                     setupRatedMoviesUi(ratedMovieItems)
@@ -62,7 +58,7 @@ class RatedFragment : BaseFragment() {
         }
 
         ratedTvsButton.setOnClickListener {
-            ratedTvs.getRatedTvs(accountId, sessionId).observe(
+            viewModel.getRatedTvs(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { ratedTvItems ->
                     val ratedMoviesAdapter = RatedTvsAdapter(ratedTvItems, findNavController())
@@ -76,7 +72,7 @@ class RatedFragment : BaseFragment() {
         }
 
         ratedTvEpisodesButton.setOnClickListener {
-            ratedTvEpisodes.getRatedTvEpisodes(accountId, sessionId).observe(
+            viewModel.getRatedTvEpisodes(accountId, sessionId).observe(
                 viewLifecycleOwner,
                 { ratedTvItems ->
                     ratedMoviesRecyclerView.adapter =

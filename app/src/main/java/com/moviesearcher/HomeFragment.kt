@@ -12,12 +12,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
 import com.moviesearcher.movie.adapter.TrendingAdapter
 import com.moviesearcher.movie.model.TrendingResponse
-import com.moviesearcher.movie.viewmodel.TrendingViewModel
-import com.moviesearcher.watchlist.movie.viewmodel.MovieWatchlistViewModel
-import com.moviesearcher.watchlist.tv.viewmodel.TvWatchlistViewModel
 
 private const val TAG = "HomeFragment"
 
@@ -25,9 +23,7 @@ class HomeFragment : BaseFragment() {
     private var _binding: FragmentMovieSearcherBinding? = null
     private val binding get() = _binding!!
 
-    private val trendingViewModel: TrendingViewModel by viewModels()
-    private val movieWatchlistViewModel: MovieWatchlistViewModel by viewModels()
-    private val tvWatchlistViewModel: TvWatchlistViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var navController: NavController
     private lateinit var movieRecyclerView: RecyclerView
@@ -65,12 +61,12 @@ class HomeFragment : BaseFragment() {
 
     private fun getWatchlistIfLogged() {
         if (sessionId.isNotBlank() || sessionId != null) {
-            movieWatchlistViewModel.getMovieWatchlist(accountId, sessionId)
+            viewModel.getMovieWatchlist(accountId, sessionId)
                 .observe(viewLifecycleOwner, {
                     setupTrendingMoviesUi()
                 })
 
-            tvWatchlistViewModel.getTvWatchlist(accountId, sessionId)
+            viewModel.getTvWatchlist(accountId, sessionId)
                 .observe(viewLifecycleOwner, {
                     setupTrendingTvsUi()
                 })
@@ -78,7 +74,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun setupTrendingMoviesUi() {
-        trendingViewModel.trendingMovies.observe(
+        viewModel.getTrendingMovies().observe(
             viewLifecycleOwner,
             { movieItems ->
                 val adapter = createAdapter(movieItems)
@@ -92,7 +88,7 @@ class HomeFragment : BaseFragment() {
             navController,
             accountId,
             sessionId,
-            movieWatchlistViewModel.getMovieWatchlistIds()
+            viewModel.getMovieWatchlistIds()
         )
         trendingAdapter.differ.submitList(movieItems.results)
 
@@ -100,7 +96,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun setupTrendingTvsUi() {
-        trendingViewModel.trendingTvs.observe(
+        viewModel.getTrendingTvs().observe(
             viewLifecycleOwner,
             { tvItems ->
                 val adapter = createAdapter(tvItems)

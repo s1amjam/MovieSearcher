@@ -19,13 +19,11 @@ import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentPersonInfoBinding
 import com.moviesearcher.person.adapter.combinedcredits.CombinedCreditsAdapter
 import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
 import com.moviesearcher.person.model.images.Profile
-import com.moviesearcher.person.viewmodel.person.PersonViewModel
-import com.moviesearcher.person.viewmodel.personCombinedCredits.PersonCombinedCreditsViewModel
-import com.moviesearcher.person.viewmodel.personimages.PersonImagesViewModel
 import com.moviesearcher.utils.Constants
 
 private const val TAG = "PersonInfoFragment"
@@ -36,9 +34,7 @@ class PersonInfoFragment : BaseFragment() {
 
     private val args by navArgs<PersonInfoFragmentArgs>()
 
-    private val personViewModel: PersonViewModel by viewModels()
-    private val personCombinedCreditsViewModel: PersonCombinedCreditsViewModel by viewModels()
-    private val imagesViewModel: PersonImagesViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var filmographyRecyclerView: RecyclerView
     private lateinit var imagesRecyclerView: RecyclerView
@@ -84,7 +80,7 @@ class PersonInfoFragment : BaseFragment() {
         personInfoConstraintLayout.visibility = View.INVISIBLE
         progressBar.visibility = View.VISIBLE
 
-        personViewModel.getPersonById(personId).observe(
+        viewModel.getPersonById(personId).observe(
             viewLifecycleOwner,
             { personInfo ->
                 Glide.with(this)
@@ -108,7 +104,7 @@ class PersonInfoFragment : BaseFragment() {
                 }
             })
 
-        personCombinedCreditsViewModel.getCombinedCreditsByPersonId(personId)
+        viewModel.getCombinedCreditsByPersonId(personId)
             .observe(viewLifecycleOwner, { combinedCreditsItems ->
 
                 val filmographyAdapter = CombinedCreditsAdapter(
@@ -126,7 +122,7 @@ class PersonInfoFragment : BaseFragment() {
                 filmographyAdapter.differ.submitList(combinedCreditsItems.cast)
             })
 
-        imagesViewModel.getImagesByPersonId(personId)
+        viewModel.getImagesByPersonId(personId)
             .observe(viewLifecycleOwner, { imagesItems ->
                 val imageAdapter = PersonImagesAdapter(
                     imagesItems,

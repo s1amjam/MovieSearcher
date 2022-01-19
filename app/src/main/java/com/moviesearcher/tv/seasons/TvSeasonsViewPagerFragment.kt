@@ -11,9 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentTvSeasonsViewPagerBinding
 import com.moviesearcher.tv.episode.adapter.EpisodesAdapter
-import com.moviesearcher.tv.seasons.viewmodel.TvSeasonViewModel
 
 private const val TAG = "TvSeasonsViewPagerFragment"
 
@@ -21,7 +21,7 @@ class TvSeasonsViewPagerFragment : BaseFragment() {
     private var _binding: FragmentTvSeasonsViewPagerBinding? = null
     private val binding get() = _binding!!
 
-    private val tvSeasonsViewModel: TvSeasonViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
@@ -47,7 +47,7 @@ class TvSeasonsViewPagerFragment : BaseFragment() {
         progressBar.visibility = View.VISIBLE
         tvSeasonsConstraintLayout.visibility = View.INVISIBLE
 
-        tvSeasonsViewModel.getTvSeason(
+        viewModel.getTvSeason(
             requireArguments()["id"] as Long?,
             requireArguments()["seasonNumber"] as String?
         )

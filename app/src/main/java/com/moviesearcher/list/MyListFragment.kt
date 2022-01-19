@@ -11,9 +11,9 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentMyListBinding
 import com.moviesearcher.list.adapter.MyListAdapter
-import com.moviesearcher.list.viewmodel.MyListViewModel
 
 private const val TAG = "FavoritesFragment"
 
@@ -26,7 +26,7 @@ class MyListFragment : BaseFragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var myListRecyclerView: RecyclerView
 
-    private val myListViewModel: MyListViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,7 +48,7 @@ class MyListFragment : BaseFragment() {
         progressBar = binding.progressBarList
         progressBar.visibility = View.VISIBLE
 
-        myListViewModel.getList(listId).observe(
+        viewModel.getList(listId).observe(
             viewLifecycleOwner,
             { myListItems ->
                 val myListAdapter = MyListAdapter(

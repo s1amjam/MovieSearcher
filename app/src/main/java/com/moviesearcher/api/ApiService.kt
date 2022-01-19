@@ -1,7 +1,6 @@
 package com.moviesearcher.api
 
 import com.moviesearcher.common.model.account.AccountResponse
-import com.moviesearcher.common.model.accountstates.AccountStatesResponse
 import com.moviesearcher.common.model.auth.CreateSessionResponse
 import com.moviesearcher.common.model.auth.CreateTokenResponse
 import com.moviesearcher.common.model.auth.DeleteSessionResponse
@@ -242,9 +241,6 @@ interface ApiService {
     @GET("tv/{tv_id}/videos")
     fun tvVideos(@Path("tv_id") tvId: Long): Call<VideosResponse>
 
-    @GET("movie/{movie_id}/account_states")
-    fun accountStates(@Path("movie_id") movieId: Long): Call<AccountStatesResponse>
-
     @GET("movie/{movie_id}/images")
     fun images(@Path("movie_id") movieId: Long): Call<ImagesResponse>
 
@@ -286,16 +282,4 @@ interface ApiService {
         @Path("tv_id") tvId: Long?,
         @Path("season_number") seasonNumber: String?,
     ): Call<TvSeasonResponse>
-
-    @GET("movie/{movie_id}/account_states")
-    fun getMovieAccountStates(
-        @Path("movie_id") movieId: Long,
-        @Query("session_id") sessionId: String
-    ): Call<AccountStatesResponse>
-
-    @GET("tv/{tv_id}/account_states")
-    fun getTvAccountStates(
-        @Path("tv_id") tvId: Long,
-        @Query("session_id") sessionId: String
-    ): Call<AccountStatesResponse>
 }

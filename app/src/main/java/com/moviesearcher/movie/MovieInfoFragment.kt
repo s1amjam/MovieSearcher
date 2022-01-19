@@ -26,19 +26,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
-import com.moviesearcher.common.viewmodel.cast.CastViewModel
-import com.moviesearcher.common.viewmodel.images.ImagesViewModel
-import com.moviesearcher.common.viewmodel.recommendations.RecommendationsViewModel
-import com.moviesearcher.common.viewmodel.video.VideoViewModel
+import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.list.lists.model.ListsResponse
-import com.moviesearcher.list.lists.viewmodel.MyListsViewModel
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.movie.model.cast.Cast
-import com.moviesearcher.movie.viewmodel.MovieInfoViewModel
 import com.moviesearcher.utils.Constants
 import java.util.concurrent.TimeUnit
 
@@ -50,12 +45,7 @@ class MovieInfoFragment : BaseFragment() {
 
     private val args by navArgs<MovieInfoFragmentArgs>()
 
-    private val movieInfoViewModel: MovieInfoViewModel by viewModels()
-    private val castViewModel: CastViewModel by viewModels()
-    private val recommendationsViewModel: RecommendationsViewModel by viewModels()
-    private val videoViewModel: VideoViewModel by viewModels()
-    private val myLists: MyListsViewModel by viewModels()
-    private val imagesViewModel: ImagesViewModel by viewModels()
+    private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var movieInfoCastRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -151,7 +141,7 @@ class MovieInfoFragment : BaseFragment() {
         buttonMarkMovieAsFavorite.isVisible = sessionId != ""
         buttonWatchlist.isVisible = sessionId != ""
 
-        movieInfoViewModel.getMovieInfoById(movieId).observe(
+        viewModel.getMovieInfoById(movieId).observe(
             viewLifecycleOwner,
             { movieInfo ->
                 val hours = TimeUnit.MINUTES.toHours(movieInfo?.runtime?.toLong()!!)
@@ -178,7 +168,7 @@ class MovieInfoFragment : BaseFragment() {
                 voteAverage.text = getString(R.string.vote).format(movieInfo.voteAverage.toString())
                 voteCount.text = movieInfo.voteCount.toString()
                 releaseDate.text = movieInfo.releaseDate?.replace("-", ".")
-                originCountry.text = movieInfo.productionCountries?.get(0)?.name
+                originCountry.text = movieInfo.productionCountries?.elementAtOrNull(0).toString()
                 languageSpoken.text = languages.joinToString()
                 filmingLocations.text = locations.joinToString()
 
@@ -203,7 +193,7 @@ class MovieInfoFragment : BaseFragment() {
                 progressBar.visibility = View.GONE
             })
 
-        castViewModel.getMovieCastById(movieId).observe(viewLifecycleOwner, { castItems ->
+        viewModel.getMovieCastById(movieId).observe(viewLifecycleOwner, { castItems ->
             val movieCastAdapter = MovieCastAdapter(castItems, findNavController())
             var tenCast = castItems.cast
 
@@ -232,7 +222,7 @@ class MovieInfoFragment : BaseFragment() {
                 )
         })
 
-        recommendationsViewModel.getRecommendationsByMovieId(movieId)
+        viewModel.getRecommendationsByMovieId(movieId)
             .observe(viewLifecycleOwner, { recommendationsItems ->
                 if (recommendationsItems.totalResults == 0) {
                     recommendationsCardView.visibility = View.GONE
@@ -255,7 +245,7 @@ class MovieInfoFragment : BaseFragment() {
                 }
             })
 
-        videoViewModel.getVideosByMovieId(movieId).observe(viewLifecycleOwner, { videoItems ->
+        viewModel.getVideosByMovieId(movieId).observe(viewLifecycleOwner, { videoItems ->
             val videoAdapter = VideoAdapter(
                 videoItems,
                 findNavController()
@@ -303,7 +293,7 @@ class MovieInfoFragment : BaseFragment() {
             }
         })
 
-        imagesViewModel.getImagesByMovieId(movieId)
+        viewModel.getImagesByMovieId(movieId)
             .observe(viewLifecycleOwner, { imagesItems ->
                 val imageAdapter = ImagesAdapter(
                     imagesItems,
@@ -333,7 +323,7 @@ class MovieInfoFragment : BaseFragment() {
             findNavController().navigate(action)
         }
 
-        lists = myLists.getLists(accountId, sessionId, 1)
+        lists = viewModel.getLists(accountId, sessionId, 1)
 
         menuButtonAddToList.setOnClickListener { v ->
             lists.observe(viewLifecycleOwner, {
