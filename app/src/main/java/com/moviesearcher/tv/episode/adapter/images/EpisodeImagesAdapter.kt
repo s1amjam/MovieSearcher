@@ -10,7 +10,7 @@ import com.moviesearcher.R
 import com.moviesearcher.databinding.ImagesItemBinding
 import com.moviesearcher.tv.episode.model.image.EpisodeImageResponse
 import com.moviesearcher.tv.episode.model.image.Still
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class EpisodeImagesAdapter(
     private val imagesItems: EpisodeImageResponse,

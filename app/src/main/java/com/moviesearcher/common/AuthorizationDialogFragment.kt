@@ -18,8 +18,8 @@ import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.account.Avatar
 import com.moviesearcher.common.model.auth.RequestToken
 import com.moviesearcher.databinding.FragmentAuthorizationDialogBinding
-import com.moviesearcher.utils.Constants
-import com.moviesearcher.utils.Constants.SUCCESS_SESSION_URL
+import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.Constants.SUCCESS_SESSION_URL
 
 class AuthorizationDialogFragment : DialogFragment() {
     private var _binding: FragmentAuthorizationDialogBinding? = null

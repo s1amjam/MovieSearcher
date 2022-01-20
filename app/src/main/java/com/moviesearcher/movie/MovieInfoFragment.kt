@@ -34,7 +34,7 @@ import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.movie.model.cast.Cast
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "MovieInfoFragment"

@@ -1,4 +1,4 @@
-package com.moviesearcher.utils
+package com.moviesearcher.common.utils
 
 object Constants {
     const val BASE_URL = "https://api.themoviedb.org/3/"

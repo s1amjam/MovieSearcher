@@ -20,7 +20,7 @@ import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.list.MyListFragmentDirections
 import com.moviesearcher.list.model.Item
 import com.moviesearcher.list.model.ListResponse
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class MyListAdapter(
     private val listItems: ListResponse,

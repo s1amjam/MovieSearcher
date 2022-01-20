@@ -13,7 +13,7 @@ import com.moviesearcher.R
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.tv.seasons.TvSeasonsFragmentDirections
 import com.moviesearcher.tv.seasons.model.Episode
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class EpisodesAdapter(
     private val episodeItems: List<Episode>,

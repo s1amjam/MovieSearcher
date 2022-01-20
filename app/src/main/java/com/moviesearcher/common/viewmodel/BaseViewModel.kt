@@ -4,9 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.moviesearcher.api.Api
+import com.moviesearcher.api.ApiService
 import com.moviesearcher.common.model.images.ImagesResponse
 import com.moviesearcher.common.model.videos.VideosResponse
+import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.list.lists.model.ListsResponse
@@ -29,6 +32,7 @@ import com.moviesearcher.tv.model.cast.TvCastResponse
 import com.moviesearcher.tv.seasons.model.TvSeasonResponse
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
+import kotlinx.coroutines.launch
 
 class BaseViewModel : ViewModel() {
     private val searchItem: LiveData<SearchResponse>
@@ -47,8 +51,8 @@ class BaseViewModel : ViewModel() {
     private lateinit var checkedItem: LiveData<CheckItemStatusResponse>
     private lateinit var myList: LiveData<ListResponse>
     private lateinit var movieInfo: LiveData<MovieInfoResponse>
-    private lateinit var trendingMovies: LiveData<TrendingResponse>
-    private lateinit var trendingTvs: LiveData<TrendingResponse>
+    private val trendingMovies = MutableLiveData<Resource<TrendingResponse>>()
+    private val trendingTvs = MutableLiveData<Resource<TrendingResponse>>()
     private lateinit var person: LiveData<PersonResponse>
     private lateinit var personCombinedCredits: LiveData<CombinedCreditsResponse>
     private lateinit var personImages: LiveData<PersonImagesResponse>
@@ -67,6 +71,9 @@ class BaseViewModel : ViewModel() {
         searchItem = Transformations.switchMap(mutableQuery) { query ->
             Api.search(query)
         }
+
+        fetchTrendingMovies()
+        fetchTrendingTvs()
     }
 
     fun getTvWatchlist(accountId: Long, sessionId: String): LiveData<TvWatchlistResponse> {
@@ -75,15 +82,35 @@ class BaseViewModel : ViewModel() {
         return tvWatchlist
     }
 
-    fun getTrendingMovies(): LiveData<TrendingResponse> {
-        trendingMovies = Api.getTrending("movie", "day")
+    private fun fetchTrendingMovies() {
+        viewModelScope.launch {
+            trendingMovies.postValue(Resource.loading(null))
+            try {
+                val trendingMoviesFromApi = ApiService.create().getTrending("movie", "day")
+                trendingMovies.postValue(Resource.success(trendingMoviesFromApi))
+            } catch (e: Exception) {
+                trendingMovies.postValue(Resource.error(e.toString(), null))
+            }
+        }
+    }
 
+    fun getTrendingMovies(): LiveData<Resource<TrendingResponse>> {
         return trendingMovies
     }
 
-    fun getTrendingTvs(): LiveData<TrendingResponse> {
-        trendingTvs = Api.getTrending("tv", "day")
+    private fun fetchTrendingTvs() {
+        viewModelScope.launch {
+            trendingTvs.postValue(Resource.loading(null))
+            try {
+                val trendingTvsFromApi = ApiService.create().getTrending("tv", "day")
+                trendingTvs.postValue(Resource.success(trendingTvsFromApi))
+            } catch (e: Exception) {
+                trendingTvs.postValue(Resource.error(e.toString(), null))
+            }
+        }
+    }
 
+    fun getTrendingTvs(): LiveData<Resource<TrendingResponse>> {
         return trendingTvs
     }
 

@@ -10,7 +10,7 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.moviesearcher.databinding.FragmentVideoBinding
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class VideoFragment : Fragment() {
     private var _binding: FragmentVideoBinding? = null

@@ -20,7 +20,7 @@ import com.moviesearcher.favorite.FavoritesFragmentDirections
 import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.movie.model.ResultFavoriteMovie
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class FavoriteMovieAdapter(
     private val favoriteMovieItems: FavoriteMovieResponse,

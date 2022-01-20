@@ -24,7 +24,7 @@ import com.moviesearcher.databinding.FragmentPersonInfoBinding
 import com.moviesearcher.person.adapter.combinedcredits.CombinedCreditsAdapter
 import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
 import com.moviesearcher.person.model.images.Profile
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 private const val TAG = "PersonInfoFragment"
 

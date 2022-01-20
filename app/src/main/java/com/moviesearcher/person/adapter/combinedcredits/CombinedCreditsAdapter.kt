@@ -12,7 +12,7 @@ import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.person.PersonInfoFragmentDirections
 import com.moviesearcher.person.model.combinedcredits.Cast
 import com.moviesearcher.person.model.combinedcredits.CombinedCreditsResponse
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class CombinedCreditsAdapter(
     private val creditsItems: CombinedCreditsResponse,

@@ -10,7 +10,7 @@ import com.moviesearcher.R
 import com.moviesearcher.databinding.ImagesItemBinding
 import com.moviesearcher.person.model.images.PersonImagesResponse
 import com.moviesearcher.person.model.images.Profile
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class PersonImagesAdapter(
     private val imagesItems: PersonImagesResponse,

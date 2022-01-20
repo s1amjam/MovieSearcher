@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.databinding.MovieCardViewBinding
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.watchlist.WatchlistFragmentDirections
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse

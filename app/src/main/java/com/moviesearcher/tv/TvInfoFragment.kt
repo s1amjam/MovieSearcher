@@ -34,7 +34,7 @@ import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.tv.adapter.cast.TvCastAdapter
 import com.moviesearcher.tv.adapter.recommendations.TvRecommendationsAdapter
 import com.moviesearcher.tv.model.cast.Cast
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 private const val TAG = "TvInfoFragment"
 

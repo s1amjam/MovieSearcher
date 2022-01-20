@@ -14,7 +14,7 @@ import com.moviesearcher.databinding.MovieCastItemBinding
 import com.moviesearcher.tv.episode.TvEpisodeFragmentDirections
 import com.moviesearcher.tv.episode.model.Crew
 import com.moviesearcher.tv.episode.model.TvEpisodeResponse
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class TvEpisodeCastAdapter(
     private val castItems: TvEpisodeResponse,

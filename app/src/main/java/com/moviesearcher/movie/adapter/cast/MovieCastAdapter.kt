@@ -14,7 +14,7 @@ import com.moviesearcher.databinding.MovieCastItemBinding
 import com.moviesearcher.movie.MovieInfoFragmentDirections
 import com.moviesearcher.movie.model.cast.Cast
 import com.moviesearcher.movie.model.cast.MovieCastResponse
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class MovieCastAdapter(
     private val castItems: MovieCastResponse,

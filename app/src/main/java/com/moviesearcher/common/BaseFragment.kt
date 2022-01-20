@@ -17,11 +17,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
+import com.moviesearcher.common.utils.EncryptedSharedPrefs
 import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.CreateNewListDialog
 import com.moviesearcher.list.model.Result
-import com.moviesearcher.utils.EncryptedSharedPrefs
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import kotlin.properties.Delegates
 

@@ -10,7 +10,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.moviesearcher.databinding.ActivityMovieSearcherBinding
-import com.moviesearcher.utils.EncryptedSharedPrefs
+import com.moviesearcher.common.utils.EncryptedSharedPrefs
 
 private const val TAG = "MovieSearcherActivity"
 

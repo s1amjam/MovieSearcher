@@ -13,7 +13,7 @@ import androidx.fragment.app.DialogFragment
 import com.moviesearcher.api.Api
 import com.moviesearcher.databinding.DialogCreateNewListBinding
 import com.moviesearcher.list.model.CreateNewList
-import com.moviesearcher.utils.EncryptedSharedPrefs
+import com.moviesearcher.common.utils.EncryptedSharedPrefs
 
 class CreateNewListDialog : DialogFragment() {
     private var _binding: DialogCreateNewListBinding? = null

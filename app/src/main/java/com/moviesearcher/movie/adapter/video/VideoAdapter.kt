@@ -12,7 +12,7 @@ import com.moviesearcher.common.model.videos.Result
 import com.moviesearcher.common.model.videos.VideosResponse
 import com.moviesearcher.databinding.VideoItemViewBinding
 import com.moviesearcher.movie.MovieInfoFragmentDirections
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class VideoAdapter(
     private val videoItems: VideosResponse,

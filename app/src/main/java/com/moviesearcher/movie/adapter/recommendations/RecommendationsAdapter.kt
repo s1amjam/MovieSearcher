@@ -12,7 +12,7 @@ import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.movie.model.ResultFavoriteMovie
 import com.moviesearcher.movie.MovieInfoFragmentDirections
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class RecommendationsAdapter(
     private val recommendationsItems: FavoriteMovieResponse,

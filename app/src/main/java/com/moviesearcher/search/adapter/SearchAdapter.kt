@@ -13,7 +13,7 @@ import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.search.SearchResultFragmentDirections
 import com.moviesearcher.search.model.Result
 import com.moviesearcher.search.model.SearchResponse
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class SearchAdapter(
     private val searchItems: SearchResponse,

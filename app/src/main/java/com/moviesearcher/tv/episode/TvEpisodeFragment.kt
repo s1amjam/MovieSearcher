@@ -27,7 +27,7 @@ import com.moviesearcher.tv.episode.adapter.cast.TvEpisodeCastAdapter
 import com.moviesearcher.tv.episode.adapter.images.EpisodeImagesAdapter
 import com.moviesearcher.tv.episode.model.Crew
 import com.moviesearcher.tv.episode.model.image.Still
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 private const val TAG = "TvEpisodeFragment"
 

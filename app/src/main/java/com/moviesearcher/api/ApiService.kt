@@ -10,6 +10,8 @@ import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
 import com.moviesearcher.common.model.images.ImagesResponse
 import com.moviesearcher.common.model.videos.VideosResponse
+import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.Constants.ACCESS_TOKEN
 import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
@@ -34,8 +36,6 @@ import com.moviesearcher.tv.episode.model.image.EpisodeImageResponse
 import com.moviesearcher.tv.model.TvInfoResponse
 import com.moviesearcher.tv.model.cast.TvCastResponse
 import com.moviesearcher.tv.seasons.model.TvSeasonResponse
-import com.moviesearcher.utils.Constants
-import com.moviesearcher.utils.Constants.ACCESS_TOKEN
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
@@ -88,10 +88,10 @@ interface ApiService {
     }
 
     @GET("trending/{media_type}/{time_window}")
-    fun trending(
+    suspend fun getTrending(
         @Path("media_type") mediaType: String,
         @Path("time_window") timeWindow: String
-    ): Call<TrendingResponse>
+    ): TrendingResponse
 
     @GET("movie/{movie_id}")
     fun movieInfo(@Path("movie_id") movieId: Long): Call<MovieInfoResponse>

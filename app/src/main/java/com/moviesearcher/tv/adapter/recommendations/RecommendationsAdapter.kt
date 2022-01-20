@@ -12,7 +12,7 @@ import com.moviesearcher.databinding.TvCardViewBinding
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.favorite.tv.model.ResultFavoriteTv
 import com.moviesearcher.tv.TvInfoFragmentDirections
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class TvRecommendationsAdapter(
     private val recommendationsItems: FavoriteTvResponse,

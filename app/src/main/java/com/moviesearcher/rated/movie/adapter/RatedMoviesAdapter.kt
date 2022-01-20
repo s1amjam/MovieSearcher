@@ -15,7 +15,7 @@ import com.moviesearcher.databinding.FragmentRatedMovieItemBinding
 import com.moviesearcher.rated.RatedFragmentDirections
 import com.moviesearcher.rated.movie.model.RatedMoviesResponse
 import com.moviesearcher.rated.movie.model.RatedMoviesResult
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class RatedMoviesAdapter(
     private val ratedMovieItems: RatedMoviesResponse,

@@ -1,4 +1,4 @@
-package com.moviesearcher.utils
+package com.moviesearcher.common.utils
 
 import android.content.Context
 import android.content.SharedPreferences

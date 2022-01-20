@@ -10,7 +10,7 @@ import com.moviesearcher.R
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.model.images.ImagesResponse
 import com.moviesearcher.databinding.ImagesItemBinding
-import com.moviesearcher.utils.Constants
+import com.moviesearcher.common.utils.Constants
 
 class ImagesAdapter(
     private val imagesItems: ImagesResponse,

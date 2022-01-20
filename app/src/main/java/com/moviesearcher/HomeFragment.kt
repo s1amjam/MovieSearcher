@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -12,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
 import com.moviesearcher.movie.adapter.TrendingAdapter
@@ -31,6 +33,8 @@ class HomeFragment : BaseFragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var mainLayout: ConstraintLayout
 
+    private var watchlistIds: MutableList<Long>? = mutableListOf()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,44 +46,75 @@ class HomeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainLayout = binding.movieConstraintLayout
-        mainLayout.visibility = View.INVISIBLE
         navController = findNavController()
+        mainLayout = binding.movieConstraintLayout
         progressBar = binding.progressBarMovieSearcherFragment
-        progressBar.visibility = View.VISIBLE
         movieRecyclerView = binding.movieRecyclerView
+        tvRecyclerView = binding.tvRecyclerView
         movieRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        tvRecyclerView = binding.tvRecyclerView
         tvRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         getWatchlistIfLogged()
-        setupTrendingMoviesUi()
-        setupTrendingTvsUi()
+        setupObserver()
+    }
+
+    private fun setupObserver() {
+        viewModel.getTrendingMovies().observe(this, {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { trendingMovies ->
+                        val adapter = createAdapter(trendingMovies)
+                        movieRecyclerView.adapter = adapter
+                    }
+                    progressBar.visibility = View.GONE
+                    movieRecyclerView.visibility = View.VISIBLE
+                }
+                Status.LOADING -> {
+                    movieRecyclerView.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+
+        viewModel.getTrendingTvs().observe(this, {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { trendingTvs ->
+                        val adapter = createAdapter(trendingTvs)
+                        tvRecyclerView.adapter = adapter
+                    }
+                    progressBar.visibility = View.GONE
+                    tvRecyclerView.visibility = View.VISIBLE
+                }
+                Status.LOADING -> {
+                    tvRecyclerView.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        })
     }
 
     private fun getWatchlistIfLogged() {
-        if (sessionId.isNotBlank() || sessionId != null) {
+        if (sessionId.isNotEmpty()) {
             viewModel.getMovieWatchlist(accountId, sessionId)
                 .observe(viewLifecycleOwner, {
-                    setupTrendingMoviesUi()
-                })
-
-            viewModel.getTvWatchlist(accountId, sessionId)
-                .observe(viewLifecycleOwner, {
-                    setupTrendingTvsUi()
+                    viewModel.getTvWatchlist(accountId, sessionId)
+                        .observe(viewLifecycleOwner, {
+                            setupObserver()
+                            watchlistIds = viewModel.getMovieWatchlistIds()
+                        })
                 })
         }
-    }
-
-    private fun setupTrendingMoviesUi() {
-        viewModel.getTrendingMovies().observe(
-            viewLifecycleOwner,
-            { movieItems ->
-                val adapter = createAdapter(movieItems)
-                setupUi(adapter, movieRecyclerView)
-            })
     }
 
     private fun createAdapter(movieItems: TrendingResponse): TrendingAdapter {
@@ -88,22 +123,11 @@ class HomeFragment : BaseFragment() {
             navController,
             accountId,
             sessionId,
-            viewModel.getMovieWatchlistIds()
+            watchlistIds
         )
         trendingAdapter.differ.submitList(movieItems.results)
 
         return trendingAdapter
-    }
-
-    private fun setupTrendingTvsUi() {
-        viewModel.getTrendingTvs().observe(
-            viewLifecycleOwner,
-            { tvItems ->
-                val adapter = createAdapter(tvItems)
-                setupUi(adapter, tvRecyclerView)
-                progressBar.visibility = View.GONE
-                mainLayout.visibility = View.VISIBLE
-            })
     }
 
     override fun onDestroyView() {

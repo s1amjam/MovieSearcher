@@ -10,10 +10,10 @@ import com.bumptech.glide.Glide
 import com.moviesearcher.HomeFragmentDirections
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.movie.model.Result
 import com.moviesearcher.movie.model.TrendingResponse
-import com.moviesearcher.utils.Constants
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 
 class TrendingAdapter(
@@ -21,7 +21,7 @@ class TrendingAdapter(
     private val navController: NavController,
     private val accountId: Long?,
     private val sessionId: String?,
-    private val movieWatchlistIds: MutableList<Long>
+    private val movieWatchlistIds: MutableList<Long>?
 ) : RecyclerView.Adapter<TrendingAdapter.MovieHolder>() {
     private lateinit var binding: MovieCardViewBinding
 
@@ -58,7 +58,7 @@ class TrendingAdapter(
             rating.text = movieItem.getAverage()
 
             if (sessionId?.isNotBlank() == true || sessionId != null) {
-                if (movieWatchlistIds.contains(movieItems.results?.get(position)?.id?.toLong())) {
+                if (movieWatchlistIds?.contains(movieItems.results?.get(position)?.id?.toLong()) == true) {
                     imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
                 } else {
                     imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
@@ -87,7 +87,7 @@ class TrendingAdapter(
 
                 if (sessionId?.isNotBlank() == true || sessionId != null) {
                     if (cardView.tag != null) {
-                        if (movieWatchlistIds.contains(movieItemId)) {
+                        if (movieWatchlistIds?.contains(movieItemId) == true) {
                             imageViewWatchlist
                                 .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
 
@@ -106,10 +106,10 @@ class TrendingAdapter(
                                 sessionId,
                                 WatchlistRequest(true, movieItemId, "movie")
                             )
-                            movieWatchlistIds.add(movieItemId!!)
+                            movieWatchlistIds?.add(movieItemId!!)
                         }
                     } else {
-                        if (movieWatchlistIds.contains(movieItemId)) {
+                        if (movieWatchlistIds?.contains(movieItemId) == true) {
                             Api.watchlist(
                                 accountId!!,
                                 sessionId,
@@ -126,7 +126,7 @@ class TrendingAdapter(
                             )
                             imageViewWatchlist
                                 .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-                            movieWatchlistIds.add(movieItemId!!)
+                            movieWatchlistIds?.add(movieItemId!!)
                         }
                     }
                 }

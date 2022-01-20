@@ -21,7 +21,6 @@ import com.moviesearcher.list.model.CreateNewListResponse
 import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.list.model.add.AddToListResponse
 import com.moviesearcher.movie.model.MovieInfoResponse
-import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.movie.model.cast.MovieCastResponse
 import com.moviesearcher.person.model.combinedcredits.CombinedCreditsResponse
 import com.moviesearcher.person.model.images.PersonImagesResponse
@@ -45,28 +44,28 @@ import retrofit2.Response
 private const val TAG = "Api"
 
 object Api {
-    fun getTrending(mediaType: String, timeWindow: String): MutableLiveData<TrendingResponse> {
-        val responseLiveData: MutableLiveData<TrendingResponse> = MutableLiveData()
-        val resp = ApiService.create().trending(mediaType, timeWindow)
-
-        resp.enqueue(object : Callback<TrendingResponse> {
-            override fun onResponse(
-                call: Call<TrendingResponse>,
-                response: Response<TrendingResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<TrendingResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
+//    fun getTrending(mediaType: String, timeWindow: String): MutableLiveData<TrendingResponse> {
+//        val responseLiveData: MutableLiveData<TrendingResponse> = MutableLiveData()
+//        val resp = ApiService.create().getTrending(mediaType, timeWindow)
+//
+//        resp.enqueue(object : Callback<TrendingResponse> {
+//            override fun onResponse(
+//                call: Call<TrendingResponse>,
+//                response: Response<TrendingResponse>
+//            ) {
+//                responseLiveData.value = response.body()
+//            }
+//
+//            override fun onFailure(
+//                call: Call<TrendingResponse>,
+//                t: Throwable
+//            ) {
+//
+//            }
+//        }
+//        )
+//        return responseLiveData
+//    }
 
     fun getMovieInfo(movieId: Long): MutableLiveData<MovieInfoResponse> {
         val responseLiveData: MutableLiveData<MovieInfoResponse> = MutableLiveData()
