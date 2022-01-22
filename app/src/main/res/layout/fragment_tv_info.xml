@@ -219,9 +219,9 @@
 
                     <ImageButton
                         android:id="@+id/expand_activities_button"
-                        style="?attr/materialButtonOutlinedStyle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:background="@color/transparent"
                         android:src="@drawable/ic_round_expand_more_36"
                         app:layout_constraintBottom_toBottomOf="@+id/rate_button_view"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -239,10 +239,10 @@
 
                         <ImageButton
                             android:id="@+id/button_watchlist"
-                            style="?attr/materialButtonOutlinedStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
+                            android:background="@color/transparent"
                             android:src="@drawable/ic_outline_watch_later_36"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/menu_button_add_tv_to_list"
@@ -252,9 +252,9 @@
 
                         <ImageButton
                             android:id="@+id/menu_button_add_tv_to_list"
-                            style="?attr/materialButtonOutlinedStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:background="@color/transparent"
                             android:src="@drawable/ic_baseline_list_36"
                             app:layout_constraintEnd_toStartOf="@+id/button_mark_tv_as_favorite"
                             app:layout_constraintHorizontal_bias="0.5"
@@ -263,9 +263,9 @@
 
                         <ImageButton
                             android:id="@+id/button_mark_tv_as_favorite"
-                            style="?attr/materialButtonOutlinedStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:background="@color/transparent"
                             android:src="@drawable/ic_round_star_outline_36"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.5"
