@@ -3,14 +3,15 @@ package com.moviesearcher
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.moviesearcher.databinding.ActivityMovieSearcherBinding
 import com.moviesearcher.common.utils.EncryptedSharedPrefs
+import com.moviesearcher.databinding.ActivityMovieSearcherBinding
 
 private const val TAG = "MovieSearcherActivity"
 
@@ -27,6 +28,7 @@ class MovieSearcherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityMovieSearcherBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
