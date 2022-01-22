@@ -26,6 +26,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.list.lists.model.ListsResponse
@@ -34,7 +35,6 @@ import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.movie.model.cast.Cast
-import com.moviesearcher.common.utils.Constants
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "MovieInfoFragment"
@@ -352,8 +352,6 @@ class MovieInfoFragment : BaseFragment() {
         buttonWatchlist.setOnClickListener {
             addToWatchlist(buttonWatchlist)
         }
-
-        rateButton.setOnClickListener { TODO() }
     }
 
     override fun onDestroyView() {

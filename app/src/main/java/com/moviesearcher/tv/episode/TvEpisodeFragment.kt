@@ -20,6 +20,7 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentTvEpisodeBinding
 import com.moviesearcher.movie.adapter.video.VideoAdapter
@@ -27,7 +28,6 @@ import com.moviesearcher.tv.episode.adapter.cast.TvEpisodeCastAdapter
 import com.moviesearcher.tv.episode.adapter.images.EpisodeImagesAdapter
 import com.moviesearcher.tv.episode.model.Crew
 import com.moviesearcher.tv.episode.model.image.Still
-import com.moviesearcher.common.utils.Constants
 
 private const val TAG = "TvEpisodeFragment"
 
@@ -244,8 +244,6 @@ class TvEpisodeFragment : BaseFragment() {
 
             findNavController().navigate(action)
         }
-
-        rateButton.setOnClickListener { TODO() }
     }
 
     override fun onDestroyView() {
