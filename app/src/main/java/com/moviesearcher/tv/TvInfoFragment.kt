@@ -26,6 +26,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentTvInfoBinding
 import com.moviesearcher.list.lists.model.ListsResponse
@@ -34,7 +35,6 @@ import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.tv.adapter.cast.TvCastAdapter
 import com.moviesearcher.tv.adapter.recommendations.TvRecommendationsAdapter
 import com.moviesearcher.tv.model.cast.Cast
-import com.moviesearcher.common.utils.Constants
 
 private const val TAG = "TvInfoFragment"
 
@@ -184,7 +184,7 @@ class TvInfoFragment : BaseFragment() {
                 voteAverage.text = getString(R.string.vote).format(tvInfo.getAverage())
                 voteCount.text = tvInfo.voteCount.toString()
                 releaseDateDetail.text = tvInfo.firstAirDate?.replace("-", ".")
-                originCountry.text = tvInfo.productionCountries?.get(0)?.name
+                originCountry.text = tvInfo.productionCountries?.elementAtOrNull(0)?.name
                 languageSpoken.text = languages.joinToString()
                 filmingLocations.text = locations.joinToString()
                 numberOfEpisodes.text =

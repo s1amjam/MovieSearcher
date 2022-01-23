@@ -168,7 +168,7 @@ class MovieInfoFragment : BaseFragment() {
                 voteAverage.text = getString(R.string.vote).format(movieInfo.voteAverage.toString())
                 voteCount.text = movieInfo.voteCount.toString()
                 releaseDate.text = movieInfo.releaseDate?.replace("-", ".")
-                originCountry.text = movieInfo.productionCountries?.elementAtOrNull(0).toString()
+                originCountry.text = movieInfo.productionCountries?.elementAtOrNull(0)?.name
                 languageSpoken.text = languages.joinToString()
                 filmingLocations.text = locations.joinToString()
 
