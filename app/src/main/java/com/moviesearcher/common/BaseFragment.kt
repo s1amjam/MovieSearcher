@@ -35,8 +35,8 @@ open class BaseFragment : Fragment() {
 
     private val listsViewModel: BaseViewModel by viewModels()
 
-    private var isFavorite = false
-    private var isWatchlist = false
+    private var isFavorite = true
+    private var isWatchlist = true
     private lateinit var mediaInfo: MutableMap<String, Long>
 
     private val watchlistAddedIcon = R.drawable.ic_baseline_bookmark_added_60
@@ -176,7 +176,7 @@ open class BaseFragment : Fragment() {
 
         markAsFavorite.observe(viewLifecycleOwner, {
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
-                isFavorite = true
+                isFavorite = !isFavorite
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -238,7 +238,7 @@ open class BaseFragment : Fragment() {
 
         addToWatchlist.observe(viewLifecycleOwner, {
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
-                isWatchlist = true
+                isWatchlist = !isWatchlist
             } else {
                 Toast.makeText(
                     requireContext(),
