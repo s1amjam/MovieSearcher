@@ -269,8 +269,7 @@ open class BaseFragment : Fragment() {
 
     fun hideKeyboard(view: View) {
         val inputMethodService =
-            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodService.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }

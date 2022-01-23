@@ -1,9 +1,11 @@
 package com.moviesearcher.search
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
@@ -28,6 +30,7 @@ class SearchResultFragment : BaseFragment() {
     private lateinit var progressBar: ProgressBar
 
     private lateinit var nothingWasFoundTv: TextView
+    private lateinit var searchView: SearchView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,9 +48,11 @@ class SearchResultFragment : BaseFragment() {
         searchResultRecyclerView = binding.searchResultRecyclerView
         progressBar = binding.progressBarSearch
         nothingWasFoundTv = binding.nothingFoundTv
-        val searchView = binding.searchView
+        searchView = binding.searchView
         searchResultRecyclerView.visibility = View.INVISIBLE
         nothingWasFoundTv.visibility = View.INVISIBLE
+
+        searchView.requestFocus()
 
         searchView.apply {
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -96,6 +101,14 @@ class SearchResultFragment : BaseFragment() {
                 progressBar.visibility = View.GONE
                 searchResultRecyclerView.visibility = View.VISIBLE
             })
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val inputMethodService =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodService.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
     override fun onDestroyView() {
