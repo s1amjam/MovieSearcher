@@ -52,4 +52,5 @@
     <string name="born">Born: %s</string>
     <string name="died">Died: %s</string>
     <string name="seasons">Seasons</string>
+    <string name="nothing_was_found">Nothing was found</string>
 </resources>

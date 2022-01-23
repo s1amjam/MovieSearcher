@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -26,6 +27,8 @@ class SearchResultFragment : BaseFragment() {
 
     private lateinit var progressBar: ProgressBar
 
+    private lateinit var nothingWasFoundTv: TextView
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,8 +44,10 @@ class SearchResultFragment : BaseFragment() {
 
         searchResultRecyclerView = binding.searchResultRecyclerView
         progressBar = binding.progressBarSearch
-        searchResultRecyclerView.visibility = View.INVISIBLE
+        nothingWasFoundTv = binding.nothingFoundTv
         val searchView = binding.searchView
+        searchResultRecyclerView.visibility = View.INVISIBLE
+        nothingWasFoundTv.visibility = View.INVISIBLE
 
         searchView.apply {
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -73,6 +78,13 @@ class SearchResultFragment : BaseFragment() {
         viewModel.queryForSearch(searchQuery).observe(
             viewLifecycleOwner,
             { searchItems ->
+
+                if (searchItems.totalResults!! <= 0) {
+                    nothingWasFoundTv.visibility = View.VISIBLE
+                } else {
+                    nothingWasFoundTv.visibility = View.INVISIBLE
+                }
+
                 val searchAdapter = SearchAdapter(searchItems, findNavController())
 
                 searchResultRecyclerView.apply {
