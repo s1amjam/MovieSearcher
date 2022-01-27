@@ -35,8 +35,6 @@ import com.moviesearcher.tv.model.TvInfoResponse
 import com.moviesearcher.tv.model.cast.TvCastResponse
 import com.moviesearcher.tv.seasons.model.TvSeasonResponse
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
-import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
-import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -381,57 +379,57 @@ object Api {
         return responseLiveData
     }
 
-    fun getMovieWatchlist(
-        accountId: Long?,
-        sessionId: String?
-    ): MutableLiveData<MovieWatchlistResponse> {
-        val responseLiveData: MutableLiveData<MovieWatchlistResponse> = MutableLiveData()
-        val resp = ApiService.create().getMovieWatchlist(accountId, sessionId)
+//    fun getMovieWatchlist(
+//        accountId: Long?,
+//        sessionId: String?
+//    ): MutableLiveData<MovieWatchlistResponse> {
+//        val responseLiveData: MutableLiveData<MovieWatchlistResponse> = MutableLiveData()
+//        val resp = ApiService.create().getMovieWatchlist(accountId, sessionId)
+//
+//        resp.enqueue(object : Callback<MovieWatchlistResponse> {
+//            override fun onResponse(
+//                call: Call<MovieWatchlistResponse>,
+//                response: Response<MovieWatchlistResponse>
+//            ) {
+//                responseLiveData.value = response.body()
+//            }
+//
+//            override fun onFailure(
+//                call: Call<MovieWatchlistResponse>,
+//                t: Throwable
+//            ) {
+//
+//            }
+//        }
+//        )
+//        return responseLiveData
+//    }
 
-        resp.enqueue(object : Callback<MovieWatchlistResponse> {
-            override fun onResponse(
-                call: Call<MovieWatchlistResponse>,
-                response: Response<MovieWatchlistResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<MovieWatchlistResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getTvWatchlist(
-        accountId: Long?,
-        sessionId: String?
-    ): MutableLiveData<TvWatchlistResponse> {
-        val responseLiveData: MutableLiveData<TvWatchlistResponse> = MutableLiveData()
-        val resp = ApiService.create().getTvWatchlist(accountId, sessionId)
-
-        resp.enqueue(object : Callback<TvWatchlistResponse> {
-            override fun onResponse(
-                call: Call<TvWatchlistResponse>,
-                response: Response<TvWatchlistResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<TvWatchlistResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
+//    fun getTvWatchlist(
+//        accountId: Long?,
+//        sessionId: String?
+//    ): MutableLiveData<TvWatchlistResponse> {
+//        val responseLiveData: MutableLiveData<TvWatchlistResponse> = MutableLiveData()
+//        val resp = ApiService.create().getTvWatchlist(accountId, sessionId)
+//
+//        resp.enqueue(object : Callback<TvWatchlistResponse> {
+//            override fun onResponse(
+//                call: Call<TvWatchlistResponse>,
+//                response: Response<TvWatchlistResponse>
+//            ) {
+//                responseLiveData.value = response.body()
+//            }
+//
+//            override fun onFailure(
+//                call: Call<TvWatchlistResponse>,
+//                t: Throwable
+//            ) {
+//
+//            }
+//        }
+//        )
+//        return responseLiveData
+//    }
 
     fun addToList(
         listId: Int,

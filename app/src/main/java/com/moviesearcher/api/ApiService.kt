@@ -101,6 +101,9 @@ interface ApiService {
     @GET("movie/{movie_id}")
     fun movieInfo(@Path("movie_id") movieId: Long): Call<MovieInfoResponse>
 
+    @GET("movie/{movie_id}")
+    suspend fun movieInfoo(@Path("movie_id") movieId: Long): MovieInfoResponse
+
     @GET("tv/{tv_id}")
     fun tvInfo(@Path("tv_id") tvId: Long): Call<TvInfoResponse>
 
@@ -161,16 +164,16 @@ interface ApiService {
     ): Call<RatedTvEpisodesResponse>
 
     @GET("account/{account_id}/watchlist/movies")
-    fun getMovieWatchlist(
+    suspend fun getMovieWatchlist(
         @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
-    ): Call<MovieWatchlistResponse>
+    ): MovieWatchlistResponse
 
     @GET("account/{account_id}/watchlist/tv")
-    fun getTvWatchlist(
+    suspend fun getTvWatchlist(
         @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
-    ): Call<TvWatchlistResponse>
+    ): TvWatchlistResponse
 
     @POST("list/{list_id}/add_item")
     @Headers("Content-Type: application/json;charset=utf-8")

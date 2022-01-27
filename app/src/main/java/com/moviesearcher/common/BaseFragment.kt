@@ -12,17 +12,21 @@ import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.utils.EncryptedSharedPrefs
+import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.BaseViewModel
+import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.CreateNewListDialog
 import com.moviesearcher.list.model.Result
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
+import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import kotlin.properties.Delegates
 
 private const val TAG = "BaseFragment"
@@ -34,6 +38,7 @@ open class BaseFragment : Fragment() {
     lateinit var encryptedSharedPrefs: SharedPreferences
 
     private val listsViewModel: BaseViewModel by viewModels()
+    private lateinit var watchlistViewModel: WatchlistViewModel
 
     private var isFavorite = true
     private var isWatchlist = true
@@ -192,34 +197,32 @@ open class BaseFragment : Fragment() {
             mediaInfo = getMediaInfo()
             val mediaId = mediaInfo.values.first()
             val mediaKey = mediaInfo.keys.first()
-            val moviesWatchlist = Api.getMovieWatchlist(accountId, sessionId)
-            val tvsWatchlist = Api.getTvWatchlist(accountId, sessionId)
 
-            if (mediaKey == "movie") {
-                moviesWatchlist.observe(viewLifecycleOwner, { item ->
-                    button.setImageResource(watchlistRemovedIcon)
-                    item.results!!.forEach {
-                        if (it.id == mediaId) {
-                            isWatchlist = false
-                            button.setImageResource(watchlistAddedIcon)
+            watchlistViewModel.getWatchlistedItemsIds().observe(this, {
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { movieItems ->
+                            button.setImageResource(watchlistRemovedIcon)
+                            movieItems.forEach {
+                                if (it == mediaId) {
+                                    isWatchlist = false
+                                    button.setImageResource(watchlistAddedIcon)
+                                }
+                            }
                         }
                     }
-                })
-            } else {
-                tvsWatchlist.observe(viewLifecycleOwner, { item ->
-                    button.setImageResource(watchlistRemovedIcon)
-                    item.results!!.forEach {
-                        if (it.id == mediaId) {
-                            isWatchlist = false
-                            button.setImageResource(watchlistAddedIcon)
-                        }
+                    Status.LOADING -> {
                     }
-                })
-            }
+                    Status.ERROR -> {
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    }
+                }
+            })
         }
     }
 
     fun addToWatchlist(button: ImageButton) {
+        setupViewModel()
         mediaInfo = getMediaInfo()
 
         val addToWatchlist = Api.watchlist(
@@ -271,5 +274,16 @@ open class BaseFragment : Fragment() {
         val inputMethodService =
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodService.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun setupViewModel() {
+        if (sessionId.isNotEmpty()) {
+            watchlistViewModel = ViewModelProviders.of(
+                this,
+                ViewModelFactory(
+                    sessionId, accountId
+                )
+            ).get(WatchlistViewModel::class.java)
+        }
     }
 }

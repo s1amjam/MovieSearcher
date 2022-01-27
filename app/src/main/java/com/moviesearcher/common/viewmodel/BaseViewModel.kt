@@ -16,7 +16,6 @@ import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.list.model.CheckItemStatusResponse
 import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.movie.model.MovieInfoResponse
-import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.movie.model.cast.MovieCastResponse
 import com.moviesearcher.person.model.combinedcredits.CombinedCreditsResponse
 import com.moviesearcher.person.model.images.PersonImagesResponse
@@ -30,8 +29,6 @@ import com.moviesearcher.tv.episode.model.image.EpisodeImageResponse
 import com.moviesearcher.tv.model.TvInfoResponse
 import com.moviesearcher.tv.model.cast.TvCastResponse
 import com.moviesearcher.tv.seasons.model.TvSeasonResponse
-import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
-import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
 import kotlinx.coroutines.launch
 
 class BaseViewModel : ViewModel() {
@@ -51,8 +48,6 @@ class BaseViewModel : ViewModel() {
     private lateinit var checkedItem: LiveData<CheckItemStatusResponse>
     private lateinit var myList: LiveData<ListResponse>
     private lateinit var movieInfo: LiveData<MovieInfoResponse>
-    private val trendingMovies = MutableLiveData<Resource<TrendingResponse>>()
-    private val trendingTvs = MutableLiveData<Resource<TrendingResponse>>()
     private lateinit var person: LiveData<PersonResponse>
     private lateinit var personCombinedCredits: LiveData<CombinedCreditsResponse>
     private lateinit var personImages: LiveData<PersonImagesResponse>
@@ -64,92 +59,12 @@ class BaseViewModel : ViewModel() {
     private lateinit var tvEpisode: LiveData<TvEpisodeResponse>
     private lateinit var tvSeason: LiveData<TvSeasonResponse>
     private lateinit var tvInfo: LiveData<TvInfoResponse>
-    private lateinit var movieWatchlist: LiveData<MovieWatchlistResponse>
-    private lateinit var tvWatchlist: LiveData<TvWatchlistResponse>
-    private val upcomingMovies = MutableLiveData<Resource<TrendingResponse>>()
+    private val movieInfoo = MutableLiveData<Resource<MovieInfoResponse>>()
 
     init {
         searchItem = Transformations.switchMap(mutableQuery) { query ->
             Api.search(query)
         }
-
-        fetchTrendingMovies()
-        fetchTrendingTvs()
-        fetchUpcomingMovies()
-    }
-
-    fun getTvWatchlist(accountId: Long, sessionId: String): LiveData<TvWatchlistResponse> {
-        tvWatchlist = Api.getTvWatchlist(accountId, sessionId)
-
-        return tvWatchlist
-    }
-
-    private fun fetchTrendingMovies() {
-        viewModelScope.launch {
-            trendingMovies.postValue(Resource.loading(null))
-            try {
-                val trendingMoviesFromApi = ApiService.create().getTrending("movie", "day")
-                trendingMovies.postValue(Resource.success(trendingMoviesFromApi))
-            } catch (e: Exception) {
-                trendingMovies.postValue(Resource.error(e.toString(), null))
-            }
-        }
-    }
-
-    fun getTrendingMovies(): LiveData<Resource<TrendingResponse>> {
-        return trendingMovies
-    }
-
-    private fun fetchUpcomingMovies() {
-        viewModelScope.launch {
-            upcomingMovies.postValue(Resource.loading(null))
-            try {
-                val upcomingMoviesFromApi = ApiService.create().getUpcomingMovies()
-                upcomingMovies.postValue(Resource.success(upcomingMoviesFromApi))
-            } catch (e: Exception) {
-                upcomingMovies.postValue(Resource.error(e.toString(), null))
-            }
-        }
-    }
-
-    fun getUpcomingMovies(): LiveData<Resource<TrendingResponse>> {
-        return upcomingMovies
-    }
-
-    private fun fetchTrendingTvs() {
-        viewModelScope.launch {
-            trendingTvs.postValue(Resource.loading(null))
-            try {
-                val trendingTvsFromApi = ApiService.create().getTrending("tv", "day")
-                trendingTvs.postValue(Resource.success(trendingTvsFromApi))
-            } catch (e: Exception) {
-                trendingTvs.postValue(Resource.error(e.toString(), null))
-            }
-        }
-    }
-
-    fun getTrendingTvs(): LiveData<Resource<TrendingResponse>> {
-        return trendingTvs
-    }
-
-    fun getTvWatchlistIds(): MutableList<Long> {
-        val tvWatchlistIds: MutableList<Long> = mutableListOf()
-        tvWatchlist.value?.results?.forEach { it -> tvWatchlistIds.add(it.id!!.toLong()) }
-
-        return tvWatchlistIds
-    }
-
-    fun getMovieWatchlist(accountId: Long, sessionId: String): LiveData<MovieWatchlistResponse> {
-        movieWatchlist = Api.getMovieWatchlist(accountId, sessionId)
-
-        return movieWatchlist
-    }
-
-    fun getMovieWatchlistIds(): MutableList<Long> {
-        val movieWatchlistIds: MutableList<Long> = mutableListOf()
-        movieWatchlist.value?.results?.forEach { it -> movieWatchlistIds.add(it.id!!.toLong()) }
-
-        return movieWatchlistIds
     }
 
     fun getTvInfoById(tvId: Long): LiveData<TvInfoResponse> {
@@ -297,6 +212,22 @@ class BaseViewModel : ViewModel() {
         movieInfo = Api.getMovieInfo(movieId)
 
         return movieInfo
+    }
+
+    private fun fetchMovieInfo(movieId: Long) {
+        viewModelScope.launch {
+            movieInfoo.postValue(Resource.loading(null))
+            try {
+                val movieInfoFromApi = ApiService.create().movieInfoo(movieId)
+                movieInfoo.postValue(Resource.success(movieInfoFromApi))
+            } catch (e: Exception) {
+                movieInfoo.postValue(Resource.error(e.toString(), null))
+            }
+        }
+    }
+
+    fun getMovieInfo(): MutableLiveData<Resource<MovieInfoResponse>> {
+        return movieInfoo
     }
 
     fun getPersonById(personId: Long): LiveData<PersonResponse> {

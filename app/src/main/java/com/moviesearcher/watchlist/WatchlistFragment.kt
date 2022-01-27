@@ -5,15 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
-import com.moviesearcher.common.viewmodel.BaseViewModel
+import com.moviesearcher.common.utils.Status
+import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentWatchlistBinding
+import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import com.moviesearcher.watchlist.movie.adapter.MovieWatchlistAdapter
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.adapter.TvWatchlistAdapter
@@ -25,7 +28,7 @@ class WatchlistFragment : BaseFragment() {
     private var _binding: FragmentWatchlistBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: BaseViewModel by viewModels()
+    private lateinit var watchlistViewModel: WatchlistViewModel
 
     private lateinit var navController: NavController
     private lateinit var movieRecyclerView: RecyclerView
@@ -33,6 +36,9 @@ class WatchlistFragment : BaseFragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var movieCardView: CardView
     private lateinit var tvCardView: CardView
+
+    private var movieWatchlistIds: MutableList<Long> = mutableListOf()
+    private var tvWatchlistIds: MutableList<Long> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,26 +64,52 @@ class WatchlistFragment : BaseFragment() {
         progressBar = binding.progressBarWatchlistFragment
         progressBar.visibility = View.VISIBLE
 
-        setupWatchlistUi()
+        setupViewModel()
+        setupObserver()
     }
 
-    private fun setupWatchlistUi() {
-        viewModel.getMovieWatchlist(accountId, sessionId).observe(
-            viewLifecycleOwner,
-            { movieItems ->
-                viewModel.getTvWatchlist(accountId, sessionId).observe(
-                    viewLifecycleOwner,
-                    { tvItems ->
+    private fun setupObserver() {
+        watchlistViewModel.getMovieWatchlist().observe(this, {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { movieItems ->
+                        movieItems.results?.forEach { it -> movieWatchlistIds.add(it.id!!.toLong()) }
                         val movieAdapter = createMovieAdapter(movieItems)
-                        val tvAdapter = createTvAdapter(tvItems)
                         setupUi(movieAdapter, movieRecyclerView)
-                        setupUi(tvAdapter, tvRecyclerView)
-
                         progressBar.visibility = View.GONE
                         movieCardView.visibility = View.VISIBLE
+                    }
+                }
+                Status.LOADING -> {
+                    progressBar.visibility = View.VISIBLE
+                    movieCardView.visibility = View.GONE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+
+        watchlistViewModel.getTvWatchlist().observe(this, {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { tvItems ->
+                        tvItems.results?.forEach { it -> tvWatchlistIds.add(it.id!!.toLong()) }
+                        val tvAdapter = createTvAdapter(tvItems)
+                        setupUi(tvAdapter, tvRecyclerView)
+                        progressBar.visibility = View.GONE
                         tvCardView.visibility = View.VISIBLE
-                    })
-            })
+                    }
+                }
+                Status.LOADING -> {
+                    progressBar.visibility = View.VISIBLE
+                    tvCardView.visibility = View.GONE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        })
     }
 
     private fun createMovieAdapter(
@@ -88,7 +120,7 @@ class WatchlistFragment : BaseFragment() {
             navController,
             accountId,
             sessionId,
-            viewModel.getMovieWatchlistIds(),
+            movieWatchlistIds,
         )
         movieWatchlistAdapter.differ.submitList(movieItems.results)
 
@@ -103,11 +135,20 @@ class WatchlistFragment : BaseFragment() {
             navController,
             accountId,
             sessionId,
-            viewModel.getTvWatchlistIds(),
+            tvWatchlistIds,
         )
         tvWatchlistAdapter.differ.submitList(tvItems.results)
 
         return tvWatchlistAdapter
+    }
+
+    private fun setupViewModel() {
+        watchlistViewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory(
+                sessionId, accountId
+            )
+        ).get(WatchlistViewModel::class.java)
     }
 
     override fun onDestroyView() {

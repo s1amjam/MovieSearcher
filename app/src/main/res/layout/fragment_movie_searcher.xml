@@ -100,7 +100,6 @@
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
                         android:paddingEnd="8dp"
-                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textview_featured_tvs" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -113,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="@string/upcoming"
+                android:text="@string/coming_soon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cardview_tvs_featured_today" />
 

@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/home_fragment"
-        android:name="com.moviesearcher.HomeFragment"
+        android:name="com.moviesearcher.home.HomeFragment"
         android:label="HomeFragment">
         <action
             android:id="@+id/action_home_fragment_to_movie_info_fragment"
