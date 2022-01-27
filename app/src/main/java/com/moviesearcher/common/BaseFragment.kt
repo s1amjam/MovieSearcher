@@ -194,6 +194,7 @@ open class BaseFragment : Fragment() {
 
     fun checkWatchlist(button: ImageButton) {
         if (sessionId.isNotBlank()) {
+            setupViewModel()
             mediaInfo = getMediaInfo()
             val mediaId = mediaInfo.values.first()
             val mediaKey = mediaInfo.keys.first()
