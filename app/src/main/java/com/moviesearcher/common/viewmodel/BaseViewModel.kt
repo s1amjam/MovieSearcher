@@ -66,6 +66,7 @@ class BaseViewModel : ViewModel() {
     private lateinit var tvInfo: LiveData<TvInfoResponse>
     private lateinit var movieWatchlist: LiveData<MovieWatchlistResponse>
     private lateinit var tvWatchlist: LiveData<TvWatchlistResponse>
+    private val upcomingMovies = MutableLiveData<Resource<TrendingResponse>>()
 
     init {
         searchItem = Transformations.switchMap(mutableQuery) { query ->
@@ -74,6 +75,7 @@ class BaseViewModel : ViewModel() {
 
         fetchTrendingMovies()
         fetchTrendingTvs()
+        fetchUpcomingMovies()
     }
 
     fun getTvWatchlist(accountId: Long, sessionId: String): LiveData<TvWatchlistResponse> {
@@ -96,6 +98,22 @@ class BaseViewModel : ViewModel() {
 
     fun getTrendingMovies(): LiveData<Resource<TrendingResponse>> {
         return trendingMovies
+    }
+
+    private fun fetchUpcomingMovies() {
+        viewModelScope.launch {
+            upcomingMovies.postValue(Resource.loading(null))
+            try {
+                val upcomingMoviesFromApi = ApiService.create().getUpcomingMovies()
+                upcomingMovies.postValue(Resource.success(upcomingMoviesFromApi))
+            } catch (e: Exception) {
+                upcomingMovies.postValue(Resource.error(e.toString(), null))
+            }
+        }
+    }
+
+    fun getUpcomingMovies(): LiveData<Resource<TrendingResponse>> {
+        return upcomingMovies
     }
 
     private fun fetchTrendingTvs() {

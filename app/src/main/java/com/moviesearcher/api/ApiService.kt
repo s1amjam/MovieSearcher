@@ -93,6 +93,11 @@ interface ApiService {
         @Path("time_window") timeWindow: String
     ): TrendingResponse
 
+    @GET("movie/upcoming")
+    suspend fun getUpcomingMovies(
+        @Query("region") region: String = "RU"
+    ): TrendingResponse
+
     @GET("movie/{movie_id}")
     fun movieInfo(@Path("movie_id") movieId: Long): Call<MovieInfoResponse>
 

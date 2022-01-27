@@ -28,8 +28,9 @@ class HomeFragment : BaseFragment() {
     private val viewModel: BaseViewModel by viewModels()
 
     private lateinit var navController: NavController
-    private lateinit var movieRecyclerView: RecyclerView
-    private lateinit var tvRecyclerView: RecyclerView
+    private lateinit var trendingMovieRecyclerView: RecyclerView
+    private lateinit var trendingTvRecyclerView: RecyclerView
+    private lateinit var upcomingMovieRecyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var mainLayout: ConstraintLayout
 
@@ -49,11 +50,15 @@ class HomeFragment : BaseFragment() {
         navController = findNavController()
         mainLayout = binding.movieConstraintLayout
         progressBar = binding.progressBarMovieSearcherFragment
-        movieRecyclerView = binding.movieRecyclerView
-        tvRecyclerView = binding.tvRecyclerView
-        movieRecyclerView.layoutManager =
+        trendingMovieRecyclerView = binding.movieRecyclerView
+        trendingTvRecyclerView = binding.tvRecyclerView
+        upcomingMovieRecyclerView = binding.upcomingMoviesRecyclerView
+
+        trendingMovieRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        tvRecyclerView.layoutManager =
+        trendingTvRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        upcomingMovieRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         getWatchlistIfLogged()
@@ -66,13 +71,13 @@ class HomeFragment : BaseFragment() {
                 Status.SUCCESS -> {
                     it.data?.let { trendingMovies ->
                         val adapter = createAdapter(trendingMovies)
-                        movieRecyclerView.adapter = adapter
+                        trendingMovieRecyclerView.adapter = adapter
                     }
                     progressBar.visibility = View.GONE
-                    movieRecyclerView.visibility = View.VISIBLE
+                    trendingMovieRecyclerView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
-                    movieRecyclerView.visibility = View.GONE
+                    trendingMovieRecyclerView.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }
                 Status.ERROR -> {
@@ -87,13 +92,34 @@ class HomeFragment : BaseFragment() {
                 Status.SUCCESS -> {
                     it.data?.let { trendingTvs ->
                         val adapter = createAdapter(trendingTvs)
-                        tvRecyclerView.adapter = adapter
+                        trendingTvRecyclerView.adapter = adapter
                     }
                     progressBar.visibility = View.GONE
-                    tvRecyclerView.visibility = View.VISIBLE
+                    trendingTvRecyclerView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
-                    tvRecyclerView.visibility = View.GONE
+                    trendingTvRecyclerView.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+
+        viewModel.getUpcomingMovies().observe(this, {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { upcomingMovies ->
+                        val adapter = createAdapter(upcomingMovies)
+                        upcomingMovieRecyclerView.adapter = adapter
+                    }
+                    progressBar.visibility = View.GONE
+                    upcomingMovieRecyclerView.visibility = View.VISIBLE
+                }
+                Status.LOADING -> {
+                    upcomingMovieRecyclerView.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }
                 Status.ERROR -> {
