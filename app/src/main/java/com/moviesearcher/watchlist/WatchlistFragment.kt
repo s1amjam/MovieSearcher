@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,7 +28,7 @@ class WatchlistFragment : BaseFragment() {
     private var _binding: FragmentWatchlistBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var watchlistViewModel: WatchlistViewModel
+    private lateinit var viewModel: WatchlistViewModel
 
     private lateinit var navController: NavController
     private lateinit var movieRecyclerView: RecyclerView
@@ -69,13 +69,14 @@ class WatchlistFragment : BaseFragment() {
     }
 
     private fun setupObserver() {
-        watchlistViewModel.getMovieWatchlist().observe(this, {
+        viewModel.getMovieWatchlist().observe(this, {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { movieItems ->
                         movieItems.results?.forEach { it -> movieWatchlistIds.add(it.id!!.toLong()) }
                         val movieAdapter = createMovieAdapter(movieItems)
                         setupUi(movieAdapter, movieRecyclerView)
+
                         progressBar.visibility = View.GONE
                         movieCardView.visibility = View.VISIBLE
                     }
@@ -90,13 +91,14 @@ class WatchlistFragment : BaseFragment() {
             }
         })
 
-        watchlistViewModel.getTvWatchlist().observe(this, {
+        viewModel.getTvWatchlist().observe(this, {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { tvItems ->
                         tvItems.results?.forEach { it -> tvWatchlistIds.add(it.id!!.toLong()) }
                         val tvAdapter = createTvAdapter(tvItems)
                         setupUi(tvAdapter, tvRecyclerView)
+
                         progressBar.visibility = View.GONE
                         tvCardView.visibility = View.VISIBLE
                     }
@@ -143,10 +145,10 @@ class WatchlistFragment : BaseFragment() {
     }
 
     private fun setupViewModel() {
-        watchlistViewModel = ViewModelProviders.of(
+        viewModel = ViewModelProvider(
             this,
             ViewModelFactory(
-                sessionId, accountId
+                sessionId = sessionId, accountId = accountId
             )
         ).get(WatchlistViewModel::class.java)
     }

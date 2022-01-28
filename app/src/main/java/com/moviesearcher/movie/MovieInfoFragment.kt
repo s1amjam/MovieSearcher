@@ -9,11 +9,13 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +29,9 @@ import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.BaseViewModel
+import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
@@ -44,10 +48,12 @@ class MovieInfoFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val args by navArgs<MovieInfoFragmentArgs>()
+    private lateinit var lists: LiveData<ListsResponse>
 
+    private lateinit var movieViewModel: MovieViewModel
     private val viewModel: BaseViewModel by viewModels()
 
-    private lateinit var movieInfoCastRecyclerView: RecyclerView
+    private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
     private lateinit var videoRecyclerView: RecyclerView
     private lateinit var imagesRecyclerView: RecyclerView
@@ -68,6 +74,8 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var director: TextView
     private lateinit var writer: TextView
     private lateinit var videoCardView: CardView
+    private lateinit var castCardView: CardView
+    private lateinit var imagesCardView: CardView
     private lateinit var trailerPreview: ImageView
     private lateinit var trailerName: TextView
     private lateinit var trailerCardView: CardView
@@ -82,8 +90,6 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var recommendationsCardView: CardView
 
-    private lateinit var lists: LiveData<ListsResponse>
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,15 +97,12 @@ class MovieInfoFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMovieInfoBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val movieId = args.movieId
-
-        movieInfoCastRecyclerView = binding.castRecyclerView
+        castRecyclerView = binding.castRecyclerView
         recommendationsRecyclerView = binding.recommendationsRecyclerView
         videoRecyclerView = binding.videoRecyclerView
         imagesRecyclerView = binding.imagesRecyclerView
@@ -123,6 +126,8 @@ class MovieInfoFragment : BaseFragment() {
         director = binding.directorCastTextView
         writer = binding.writerCastTextView
         videoCardView = binding.videoCardView
+        castCardView = binding.cardviewCast
+        imagesCardView = binding.imagesCardView
         trailerPreview = binding.previewTrailerImageView
         trailerName = binding.trailerNameTextView
         trailerCardView = binding.trailerCardView
@@ -141,184 +146,281 @@ class MovieInfoFragment : BaseFragment() {
         buttonMarkMovieAsFavorite.isVisible = sessionId != ""
         buttonWatchlist.isVisible = sessionId != ""
 
-        viewModel.getMovieInfoById(movieId).observe(
-            viewLifecycleOwner,
-            { movieInfo ->
-                val hours = TimeUnit.MINUTES.toHours(movieInfo?.runtime?.toLong()!!)
-                val minutes = movieInfo.runtime.toLong() - TimeUnit.HOURS.toMinutes(hours)
-                val languages = mutableListOf<String>()
-                val locations = mutableListOf<String>()
-                val genres = movieInfo.genres
+        val movieId = args.movieId
 
-                movieInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
-                movieInfo.productionCountries?.forEach { locations.add(it.name!!) }
+        setupViewModel()
+        setupUi()
+    }
 
-                Glide.with(this)
-                    .load(Constants.IMAGE_URL + movieInfo.posterPath)
-                    .placeholder(R.drawable.ic_placeholder)
-                    .centerCrop()
-                    .override(300, 500)
-                    .into(movieInfoPosterImageView)
-                movieInfoTitle.text = movieInfo.title
-                movieInfoRuntime.text =
-                    String.format("%02dh %02dm", hours, minutes).dropWhile { it == '0' }
-                movieInfoTagline.text = movieInfo.tagline
-                movieInfoReleaseDate.text = movieInfo.releaseDate?.dropLast(6)
-                movieInfoOverview.text = movieInfo.overview
-                voteAverage.text = getString(R.string.vote).format(movieInfo.voteAverage.toString())
-                voteCount.text = movieInfo.voteCount.toString()
-                releaseDate.text = movieInfo.releaseDate?.replace("-", ".")
-                originCountry.text = movieInfo.productionCountries?.elementAtOrNull(0)?.name
-                languageSpoken.text = languages.joinToString()
-                filmingLocations.text = locations.joinToString()
+    private fun setupUi() {
+        movieViewModel.getMovieInfo().observe(this, { it ->
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { movieInfo ->
+                        val hours = TimeUnit.MINUTES.toHours(movieInfo.runtime?.toLong()!!)
+                        val minutes = movieInfo.runtime.toLong() - TimeUnit.HOURS.toMinutes(hours)
+                        val languages = mutableListOf<String>()
+                        val locations = mutableListOf<String>()
+                        val genres = movieInfo.genres
 
-                if (genres != null) {
-                    for (genre in genres) {
-                        val chip = this.layoutInflater.inflate(
-                            R.layout.item_chip_tags,
-                            null,
-                            false
-                        ) as Chip
-                        chip.text = genre.name
-                        genresChipGroup.addView(chip)
+                        movieInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
+                        movieInfo.productionCountries?.forEach { locations.add(it.name!!) }
+
+                        Glide.with(this)
+                            .load(Constants.IMAGE_URL + movieInfo.posterPath)
+                            .placeholder(R.drawable.ic_placeholder)
+                            .centerCrop()
+                            .override(300, 500)
+                            .into(movieInfoPosterImageView)
+                        movieInfoTitle.text = movieInfo.title
+                        movieInfoRuntime.text =
+                            String.format("%02dh %02dm", hours, minutes).dropWhile { it == '0' }
+                        movieInfoTagline.text = movieInfo.tagline
+                        movieInfoReleaseDate.text = movieInfo.releaseDate?.dropLast(6)
+                        movieInfoOverview.text = movieInfo.overview
+                        voteAverage.text =
+                            getString(R.string.vote).format(movieInfo.voteAverage.toString())
+                        voteCount.text = movieInfo.voteCount.toString()
+                        releaseDate.text = movieInfo.releaseDate?.replace("-", ".")
+                        originCountry.text = movieInfo.productionCountries?.elementAtOrNull(0)?.name
+                        languageSpoken.text = languages.joinToString()
+                        filmingLocations.text = locations.joinToString()
+
+                        if (genres != null) {
+                            for (genre in genres) {
+                                val chip = this.layoutInflater.inflate(
+                                    R.layout.item_chip_tags,
+                                    null,
+                                    false
+                                ) as Chip
+                                chip.text = genre.name
+                                genresChipGroup.addView(chip)
+                            }
+                        }
+
+                        movieInfoOverview.setOnClickListener {
+                            MaterialAlertDialogBuilder(requireContext()).setMessage(movieInfo.overview)
+                                .show()
+                        }
+
+                        movieInfoConstraintLayout.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
                     }
                 }
-
-                movieInfoOverview.setOnClickListener {
-                    MaterialAlertDialogBuilder(requireContext()).setMessage(movieInfo.overview)
-                        .show()
+                Status.LOADING -> {
+                    progressBar.visibility = View.VISIBLE
+                    movieInfoConstraintLayout.visibility = View.GONE
                 }
-
-                movieInfoConstraintLayout.visibility = View.VISIBLE
-                progressBar.visibility = View.GONE
-            })
-
-        viewModel.getMovieCastById(movieId).observe(viewLifecycleOwner, { castItems ->
-            val movieCastAdapter = MovieCastAdapter(castItems, findNavController())
-            var tenCast = castItems.cast
-
-            while (tenCast?.size!! > 10) {
-                tenCast = tenCast.dropLast(1) as MutableList<Cast>?
+                Status.ERROR -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                }
             }
-
-            castItems.apply {
-                cast = tenCast
-            }
-
-            movieInfoCastRecyclerView.apply {
-                adapter = movieCastAdapter
-                layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            }
-            movieCastAdapter.differ.submitList(castItems.cast)
-
-            director.text =
-                getString(R.string.director).format(
-                    castItems.crew?.find { it.job == "Director" }?.name
-                )
-            writer.text =
-                getString(R.string.writer).format(
-                    castItems.crew?.find { it.job == "Writing" }?.name
-                )
         })
 
-        viewModel.getRecommendationsByMovieId(movieId)
-            .observe(viewLifecycleOwner, { recommendationsItems ->
-                if (recommendationsItems.totalResults == 0) {
-                    recommendationsCardView.visibility = View.GONE
-                } else {
-                    val recommendationsAdapter = RecommendationsAdapter(
-                        recommendationsItems,
-                        findNavController()
-                    )
+        movieViewModel.getMovieCast().observe(this, { it ->
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { castItems ->
+                        val movieCastAdapter = MovieCastAdapter(castItems, findNavController())
+                        var tenCast = castItems.cast
 
-                    recommendationsRecyclerView.apply {
-                        adapter = recommendationsAdapter
-                        layoutManager =
-                            LinearLayoutManager(
-                                requireContext(),
-                                LinearLayoutManager.HORIZONTAL,
-                                false
+                        while (tenCast?.size!! > 10) {
+                            tenCast = tenCast.dropLast(1) as MutableList<Cast>?
+                        }
+
+                        castItems.apply {
+                            cast = tenCast
+                        }
+
+                        castRecyclerView.apply {
+                            adapter = movieCastAdapter
+                            layoutManager =
+                                LinearLayoutManager(
+                                    requireContext(),
+                                    LinearLayoutManager.HORIZONTAL,
+                                    false
+                                )
+                        }
+                        movieCastAdapter.differ.submitList(castItems.cast)
+
+                        director.text =
+                            getString(R.string.director).format(
+                                castItems.crew?.find { it.job == "Director" }?.name
                             )
+                        writer.text =
+                            getString(R.string.writer).format(
+                                castItems.crew?.find { it.job == "Writing" }?.name
+                            )
+
+                        progressBar.visibility = View.GONE
+                        castCardView.visibility = View.VISIBLE
                     }
-                    recommendationsAdapter.differ.submitList(recommendationsItems.results)
+                }
+                Status.LOADING -> {
+                    progressBar.visibility = View.VISIBLE
+                    castCardView.visibility = View.GONE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+
+        movieViewModel.getRecommendations()
+            .observe(this, {
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { recommendationsItems ->
+                            if (recommendationsItems.totalResults == 0) {
+                                recommendationsCardView.visibility = View.GONE
+                                progressBar.visibility = View.GONE
+                            } else {
+                                val recommendationsAdapter = RecommendationsAdapter(
+                                    recommendationsItems,
+                                    findNavController()
+                                )
+
+                                recommendationsRecyclerView.apply {
+                                    adapter = recommendationsAdapter
+                                    layoutManager =
+                                        LinearLayoutManager(
+                                            requireContext(),
+                                            LinearLayoutManager.HORIZONTAL,
+                                            false
+                                        )
+                                }
+                                recommendationsAdapter.differ.submitList(recommendationsItems.results)
+
+                                progressBar.visibility = View.GONE
+                                recommendationsCardView.visibility = View.VISIBLE
+                            }
+                        }
+                    }
+                    Status.LOADING -> {
+                        progressBar.visibility = View.VISIBLE
+                        recommendationsCardView.visibility = View.GONE
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    }
                 }
             })
 
-        viewModel.getVideosByMovieId(movieId).observe(viewLifecycleOwner, { videoItems ->
-            val videoAdapter = VideoAdapter(
-                videoItems,
-                findNavController()
-            )
-
-            if (videoItems.results != null) {
-                val officialTrailer = videoItems.results.find {
-                    it.name?.contains(
-                        "official trailer",
-                        true
-                    ) == true || it.name?.contains(
-                        "trailer",
-                        true
-                    ) == true
-                }
-                if (officialTrailer != null) {
-                    videoItems.results.remove(officialTrailer)
-
-                    Glide.with(requireContext())
-                        .load(Constants.YOUTUBE_PREVIEW_URL.format(officialTrailer.key))
-                        .placeholder(R.drawable.ic_placeholder)
-                        .centerCrop()
-                        .override(800, 600)
-                        .into(trailerPreview)
-
-                    trailerName.text = officialTrailer.name
-
-                    trailerCardView.setOnClickListener {
-                        findNavController().navigate(
-                            MovieInfoFragmentDirections.actionMovieInfoFragmentToVideoFragment(
-                                officialTrailer.key!!
-                            )
+        movieViewModel.getVideos().observe(this, { it ->
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { videoItems ->
+                        val videoAdapter = VideoAdapter(
+                            videoItems,
+                            findNavController()
                         )
+
+                        if (videoItems.results != null) {
+                            val officialTrailer = videoItems.results.find {
+                                it.name?.contains(
+                                    "official trailer",
+                                    true
+                                ) == true || it.name?.contains(
+                                    "trailer",
+                                    true
+                                ) == true
+                            }
+                            if (officialTrailer != null) {
+                                videoItems.results.remove(officialTrailer)
+
+                                Glide.with(requireContext())
+                                    .load(Constants.YOUTUBE_PREVIEW_URL.format(officialTrailer.key))
+                                    .placeholder(R.drawable.ic_placeholder)
+                                    .centerCrop()
+                                    .override(800, 600)
+                                    .into(trailerPreview)
+
+                                trailerName.text = officialTrailer.name
+
+                                trailerCardView.setOnClickListener {
+                                    findNavController().navigate(
+                                        MovieInfoFragmentDirections.actionMovieInfoFragmentToVideoFragment(
+                                            officialTrailer.key!!
+                                        )
+                                    )
+                                }
+                            }
+
+                            videoRecyclerView.apply {
+                                adapter = videoAdapter
+                                layoutManager =
+                                    LinearLayoutManager(
+                                        requireContext(),
+                                        LinearLayoutManager.HORIZONTAL,
+                                        false
+                                    )
+                            }
+                            videoAdapter.differ.submitList(videoItems.results)
+
+                            progressBar.visibility = View.GONE
+                            videoCardView.visibility = View.VISIBLE
+                        } else {
+                            progressBar.visibility = View.GONE
+                            videoCardView.visibility = View.GONE
+                        }
                     }
                 }
-
-                videoRecyclerView.apply {
-                    adapter = videoAdapter
-                    layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                Status.LOADING -> {
+                    progressBar.visibility = View.VISIBLE
+                    videoCardView.visibility = View.GONE
                 }
-                videoAdapter.differ.submitList(videoItems.results)
-            } else {
-                videoCardView.visibility = View.GONE
+                Status.ERROR -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                }
             }
         })
 
-        viewModel.getImagesByMovieId(movieId)
-            .observe(viewLifecycleOwner, { imagesItems ->
-                val imageAdapter = ImagesAdapter(
-                    imagesItems,
-                )
-                var tenImages = imagesItems.backdrops
+        movieViewModel.getImages()
+            .observe(this, {
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { imagesItems ->
+                            val imageAdapter = ImagesAdapter(
+                                imagesItems,
+                            )
+                            var tenImages = imagesItems.backdrops
 
-                while (tenImages?.size!! > 10) {
-                    tenImages = tenImages.dropLast(1) as MutableList<Backdrop>?
-                }
+                            while (tenImages?.size!! > 10) {
+                                tenImages = tenImages.dropLast(1) as MutableList<Backdrop>?
+                            }
 
-                imagesItems.apply {
-                    backdrops = tenImages
-                }
+                            imagesItems.apply {
+                                backdrops = tenImages
+                            }
 
-                imagesRecyclerView.apply {
-                    adapter = imageAdapter
-                    layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                            imagesRecyclerView.apply {
+                                adapter = imageAdapter
+                                layoutManager =
+                                    LinearLayoutManager(
+                                        requireContext(),
+                                        LinearLayoutManager.HORIZONTAL,
+                                        false
+                                    )
+                            }
+                            imageAdapter.differ.submitList(imagesItems.backdrops)
+                        }
+
+                        progressBar.visibility = View.GONE
+                        imagesCardView.visibility = View.VISIBLE
+                    }
+                    Status.LOADING -> {
+                        progressBar.visibility = View.VISIBLE
+                        imagesCardView.visibility = View.GONE
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    }
                 }
-                imageAdapter.differ.submitList(imagesItems.backdrops)
             })
 
         buttonSeeAllImages.setOnClickListener {
             val action = MovieInfoFragmentDirections.actionMovieInfoFragmentToImagesFragment()
-            action.movieId = movieId.toString()
+            action.movieId = args.movieId.toString()
 
             findNavController().navigate(action)
         }
@@ -352,6 +454,14 @@ class MovieInfoFragment : BaseFragment() {
         buttonWatchlist.setOnClickListener {
             addToWatchlist(buttonWatchlist)
         }
+    }
+
+    private fun setupViewModel() {
+        movieViewModel = ViewModelProvider(
+            this, ViewModelFactory(
+                movieId = args.movieId
+            )
+        ).get(MovieViewModel::class.java)
     }
 
     override fun onDestroyView() {

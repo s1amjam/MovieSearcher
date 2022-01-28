@@ -12,7 +12,7 @@ import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.R
@@ -197,9 +197,8 @@ open class BaseFragment : Fragment() {
             setupViewModel()
             mediaInfo = getMediaInfo()
             val mediaId = mediaInfo.values.first()
-            val mediaKey = mediaInfo.keys.first()
 
-            watchlistViewModel.getWatchlistedItemsIds().observe(this, {
+            watchlistViewModel.getWatchlistedItemsIds().observe(this, { it ->
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { movieItems ->
@@ -279,7 +278,7 @@ open class BaseFragment : Fragment() {
 
     private fun setupViewModel() {
         if (sessionId.isNotEmpty()) {
-            watchlistViewModel = ViewModelProviders.of(
+            watchlistViewModel = ViewModelProvider(
                 this,
                 ViewModelFactory(
                     sessionId, accountId

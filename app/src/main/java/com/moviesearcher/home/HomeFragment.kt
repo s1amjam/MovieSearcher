@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -153,16 +153,9 @@ class HomeFragment : BaseFragment() {
         return trendingAdapter
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding?.movieRecyclerView?.adapter = null
-        _binding?.tvRecyclerView?.adapter = null
-        _binding = null
-    }
-
     private fun setupWatchlist() {
         if (sessionId.isNotEmpty()) {
-            watchlistViewModel = ViewModelProviders.of(
+            watchlistViewModel = ViewModelProvider(
                 this,
                 ViewModelFactory(
                     sessionId, accountId
@@ -185,5 +178,12 @@ class HomeFragment : BaseFragment() {
                 }
             }
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding?.movieRecyclerView?.adapter = null
+        _binding?.tvRecyclerView?.adapter = null
+        _binding = null
     }
 }

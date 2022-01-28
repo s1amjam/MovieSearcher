@@ -4,12 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.moviesearcher.api.Api
-import com.moviesearcher.api.ApiService
 import com.moviesearcher.common.model.images.ImagesResponse
 import com.moviesearcher.common.model.videos.VideosResponse
-import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.list.lists.model.ListsResponse
@@ -29,7 +26,6 @@ import com.moviesearcher.tv.episode.model.image.EpisodeImageResponse
 import com.moviesearcher.tv.model.TvInfoResponse
 import com.moviesearcher.tv.model.cast.TvCastResponse
 import com.moviesearcher.tv.seasons.model.TvSeasonResponse
-import kotlinx.coroutines.launch
 
 class BaseViewModel : ViewModel() {
     private val searchItem: LiveData<SearchResponse>
@@ -59,7 +55,6 @@ class BaseViewModel : ViewModel() {
     private lateinit var tvEpisode: LiveData<TvEpisodeResponse>
     private lateinit var tvSeason: LiveData<TvSeasonResponse>
     private lateinit var tvInfo: LiveData<TvInfoResponse>
-    private val movieInfoo = MutableLiveData<Resource<MovieInfoResponse>>()
 
     init {
         searchItem = Transformations.switchMap(mutableQuery) { query ->
@@ -136,17 +131,17 @@ class BaseViewModel : ViewModel() {
         return tvCast
     }
 
-    fun getMovieCastById(movieId: Long): LiveData<MovieCastResponse> {
-        movieCast = Api.getMovieCast(movieId)
+//    fun getMovieCastById(movieId: Long): LiveData<MovieCastResponse> {
+//        movieCast = Api.getMovieCast(movieId)
+//
+//        return movieCast
+//    }
 
-        return movieCast
-    }
-
-    fun getImagesByMovieId(movieId: Long): LiveData<ImagesResponse> {
-        movieImages = Api.images(movieId)
-
-        return movieImages
-    }
+//    fun getImagesByMovieId(movieId: Long): LiveData<ImagesResponse> {
+//        movieImages = Api.images(movieId)
+//
+//        return movieImages
+//    }
 
     fun getImagesByTvId(tvId: Long): LiveData<ImagesResponse> {
         tvImages = Api.tvImages(tvId)
@@ -154,11 +149,11 @@ class BaseViewModel : ViewModel() {
         return tvImages
     }
 
-    fun getRecommendationsByMovieId(movieId: Long): LiveData<FavoriteMovieResponse> {
-        recommendations = Api.getRecommendations(movieId)
-
-        return recommendations
-    }
+//    fun getRecommendationsByMovieId(movieId: Long): LiveData<FavoriteMovieResponse> {
+//        recommendations = Api.getRecommendations(movieId)
+//
+//        return recommendations
+//    }
 
     fun getRecommendationsByTvId(tvId: Long): LiveData<FavoriteTvResponse> {
         tvRecommendations = Api.getTvRecommendations(tvId)
@@ -172,11 +167,11 @@ class BaseViewModel : ViewModel() {
         return tvVideo
     }
 
-    fun getVideosByMovieId(movieId: Long): LiveData<VideosResponse> {
-        video = Api.videos(movieId)
-
-        return video
-    }
+//    fun getVideosByMovieId(movieId: Long): LiveData<VideosResponse> {
+//        video = Api.videos(movieId)
+//
+//        return video
+//    }
 
     fun getFavoriteMovies(accountId: Long, sessionId: String): LiveData<FavoriteMovieResponse> {
         favoriteMovies = Api.getFavoriteMovies(accountId, sessionId)
@@ -208,27 +203,11 @@ class BaseViewModel : ViewModel() {
         return myList
     }
 
-    fun getMovieInfoById(movieId: Long): LiveData<MovieInfoResponse> {
-        movieInfo = Api.getMovieInfo(movieId)
-
-        return movieInfo
-    }
-
-    private fun fetchMovieInfo(movieId: Long) {
-        viewModelScope.launch {
-            movieInfoo.postValue(Resource.loading(null))
-            try {
-                val movieInfoFromApi = ApiService.create().movieInfoo(movieId)
-                movieInfoo.postValue(Resource.success(movieInfoFromApi))
-            } catch (e: Exception) {
-                movieInfoo.postValue(Resource.error(e.toString(), null))
-            }
-        }
-    }
-
-    fun getMovieInfo(): MutableLiveData<Resource<MovieInfoResponse>> {
-        return movieInfoo
-    }
+//    fun getMovieInfoById(movieId: Long): LiveData<MovieInfoResponse> {
+//        movieInfo = Api.getMovieInfo(movieId)
+//
+//        return movieInfo
+//    }
 
     fun getPersonById(personId: Long): LiveData<PersonResponse> {
         person = Api.person(personId)

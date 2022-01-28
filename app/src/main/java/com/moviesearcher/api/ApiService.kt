@@ -99,10 +99,7 @@ interface ApiService {
     ): TrendingResponse
 
     @GET("movie/{movie_id}")
-    fun movieInfo(@Path("movie_id") movieId: Long): Call<MovieInfoResponse>
-
-    @GET("movie/{movie_id}")
-    suspend fun movieInfoo(@Path("movie_id") movieId: Long): MovieInfoResponse
+    suspend fun movieInfo(@Path("movie_id") movieId: Long): MovieInfoResponse
 
     @GET("tv/{tv_id}")
     fun tvInfo(@Path("tv_id") tvId: Long): Call<TvInfoResponse>
@@ -232,25 +229,25 @@ interface ApiService {
     ): Call<ResponseWithCodeAndMessage>
 
     @GET("movie/{movie_id}/credits")
-    fun movieCast(@Path("movie_id") movieId: Long): Call<MovieCastResponse>
+    suspend fun movieCast(@Path("movie_id") movieId: Long): MovieCastResponse
 
     @GET("tv/{tv_id}/aggregate_credits")
     fun tvCast(@Path("tv_id") tvId: Long): Call<TvCastResponse>
 
     @GET("movie/{movie_id}/recommendations")
-    fun recommendations(@Path("movie_id") movieId: Long): Call<FavoriteMovieResponse>
+    suspend fun recommendations(@Path("movie_id") movieId: Long): FavoriteMovieResponse
 
     @GET("tv/{tv_id}/recommendations")
     fun tvRecommendations(@Path("tv_id") tvId: Long): Call<FavoriteTvResponse>
 
     @GET("movie/{movie_id}/videos")
-    fun videos(@Path("movie_id") movieId: Long): Call<VideosResponse>
+    suspend fun videos(@Path("movie_id") movieId: Long): VideosResponse
 
     @GET("tv/{tv_id}/videos")
     fun tvVideos(@Path("tv_id") tvId: Long): Call<VideosResponse>
 
     @GET("movie/{movie_id}/images")
-    fun images(@Path("movie_id") movieId: Long): Call<ImagesResponse>
+    suspend fun images(@Path("movie_id") movieId: Long): ImagesResponse
 
     @GET("tv/{tv_id}/images")
     fun tvImages(@Path("tv_id") tvId: Long): Call<ImagesResponse>

@@ -20,8 +20,6 @@ import com.moviesearcher.list.model.CreateNewList
 import com.moviesearcher.list.model.CreateNewListResponse
 import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.list.model.add.AddToListResponse
-import com.moviesearcher.movie.model.MovieInfoResponse
-import com.moviesearcher.movie.model.cast.MovieCastResponse
 import com.moviesearcher.person.model.combinedcredits.CombinedCreditsResponse
 import com.moviesearcher.person.model.images.PersonImagesResponse
 import com.moviesearcher.person.model.person.PersonResponse
@@ -65,28 +63,28 @@ object Api {
 //        return responseLiveData
 //    }
 
-    fun getMovieInfo(movieId: Long): MutableLiveData<MovieInfoResponse> {
-        val responseLiveData: MutableLiveData<MovieInfoResponse> = MutableLiveData()
-        val resp = ApiService.create().movieInfo(movieId)
-
-        resp.enqueue(object : Callback<MovieInfoResponse> {
-            override fun onResponse(
-                call: Call<MovieInfoResponse>,
-                response: Response<MovieInfoResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<MovieInfoResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
+//    fun getMovieInfo(movieId: Long): MutableLiveData<MovieInfoResponse> {
+//        val responseLiveData: MutableLiveData<MovieInfoResponse> = MutableLiveData()
+//        val resp = ApiService.create().movieInfo(movieId)
+//
+//        resp.enqueue(object : Callback<MovieInfoResponse> {
+//            override fun onResponse(
+//                call: Call<MovieInfoResponse>,
+//                response: Response<MovieInfoResponse>
+//            ) {
+//                responseLiveData.value = response.body()
+//            }
+//
+//            override fun onFailure(
+//                call: Call<MovieInfoResponse>,
+//                t: Throwable
+//            ) {
+//
+//            }
+//        }
+//        )
+//        return responseLiveData
+//    }
 
     fun getTvInfo(tvId: Long): MutableLiveData<TvInfoResponse> {
         val responseLiveData: MutableLiveData<TvInfoResponse> = MutableLiveData()
@@ -637,28 +635,28 @@ object Api {
         return responseLiveData
     }
 
-    fun getMovieCast(movieId: Long): MutableLiveData<MovieCastResponse> {
-        val responseLiveData: MutableLiveData<MovieCastResponse> = MutableLiveData()
-        val resp = ApiService.create().movieCast(movieId)
-
-        resp.enqueue(object : Callback<MovieCastResponse> {
-            override fun onResponse(
-                call: Call<MovieCastResponse>,
-                response: Response<MovieCastResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<MovieCastResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
+//    fun getMovieCast(movieId: Long): MutableLiveData<MovieCastResponse> {
+//        val responseLiveData: MutableLiveData<MovieCastResponse> = MutableLiveData()
+//        val resp = ApiService.create().movieCast(movieId)
+//
+//        resp.enqueue(object : Callback<MovieCastResponse> {
+//            override fun onResponse(
+//                call: Call<MovieCastResponse>,
+//                response: Response<MovieCastResponse>
+//            ) {
+//                responseLiveData.value = response.body()
+//            }
+//
+//            override fun onFailure(
+//                call: Call<MovieCastResponse>,
+//                t: Throwable
+//            ) {
+//
+//            }
+//        }
+//        )
+//        return responseLiveData
+//    }
 
     fun getTvCast(tvId: Long): MutableLiveData<TvCastResponse> {
         val responseLiveData: MutableLiveData<TvCastResponse> = MutableLiveData()
@@ -683,28 +681,28 @@ object Api {
         return responseLiveData
     }
 
-    fun getRecommendations(movieId: Long): MutableLiveData<FavoriteMovieResponse> {
-        val responseLiveData: MutableLiveData<FavoriteMovieResponse> = MutableLiveData()
-        val resp = ApiService.create().recommendations(movieId)
-
-        resp.enqueue(object : Callback<FavoriteMovieResponse> {
-            override fun onResponse(
-                call: Call<FavoriteMovieResponse>,
-                response: Response<FavoriteMovieResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<FavoriteMovieResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
+//    fun getRecommendations(movieId: Long): MutableLiveData<FavoriteMovieResponse> {
+//        val responseLiveData: MutableLiveData<FavoriteMovieResponse> = MutableLiveData()
+//        val resp = ApiService.create().recommendations(movieId)
+//
+//        resp.enqueue(object : Callback<FavoriteMovieResponse> {
+//            override fun onResponse(
+//                call: Call<FavoriteMovieResponse>,
+//                response: Response<FavoriteMovieResponse>
+//            ) {
+//                responseLiveData.value = response.body()
+//            }
+//
+//            override fun onFailure(
+//                call: Call<FavoriteMovieResponse>,
+//                t: Throwable
+//            ) {
+//
+//            }
+//        }
+//        )
+//        return responseLiveData
+//    }
 
     fun getTvRecommendations(tvId: Long): MutableLiveData<FavoriteTvResponse> {
         val responseLiveData: MutableLiveData<FavoriteTvResponse> = MutableLiveData()
@@ -729,28 +727,28 @@ object Api {
         return responseLiveData
     }
 
-    fun videos(movieId: Long): MutableLiveData<VideosResponse> {
-        val responseLiveData: MutableLiveData<VideosResponse> = MutableLiveData()
-        val resp = ApiService.create().videos(movieId)
-
-        resp.enqueue(object : Callback<VideosResponse> {
-            override fun onResponse(
-                call: Call<VideosResponse>,
-                response: Response<VideosResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<VideosResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
+//    fun videos(movieId: Long): MutableLiveData<VideosResponse> {
+//        val responseLiveData: MutableLiveData<VideosResponse> = MutableLiveData()
+//        val resp = ApiService.create().videos(movieId)
+//
+//        resp.enqueue(object : Callback<VideosResponse> {
+//            override fun onResponse(
+//                call: Call<VideosResponse>,
+//                response: Response<VideosResponse>
+//            ) {
+//                responseLiveData.value = response.body()
+//            }
+//
+//            override fun onFailure(
+//                call: Call<VideosResponse>,
+//                t: Throwable
+//            ) {
+//
+//            }
+//        }
+//        )
+//        return responseLiveData
+//    }
 
     fun tvVideos(tvId: Long): MutableLiveData<VideosResponse> {
         val responseLiveData: MutableLiveData<VideosResponse> = MutableLiveData()
@@ -775,27 +773,27 @@ object Api {
         return responseLiveData
     }
 
-    fun images(movieId: Long): MutableLiveData<ImagesResponse> {
-        val responseLiveData: MutableLiveData<ImagesResponse> = MutableLiveData()
-        val resp = ApiService.create().images(movieId)
-
-        resp.enqueue(object : Callback<ImagesResponse> {
-            override fun onResponse(
-                call: Call<ImagesResponse>,
-                response: Response<ImagesResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<ImagesResponse>,
-                t: Throwable
-            ) {
-            }
-        }
-        )
-        return responseLiveData
-    }
+//    fun images(movieId: Long): MutableLiveData<ImagesResponse> {
+//        val responseLiveData: MutableLiveData<ImagesResponse> = MutableLiveData()
+//        val resp = ApiService.create().images(movieId)
+//
+//        resp.enqueue(object : Callback<ImagesResponse> {
+//            override fun onResponse(
+//                call: Call<ImagesResponse>,
+//                response: Response<ImagesResponse>
+//            ) {
+//                responseLiveData.value = response.body()
+//            }
+//
+//            override fun onFailure(
+//                call: Call<ImagesResponse>,
+//                t: Throwable
+//            ) {
+//            }
+//        }
+//        )
+//        return responseLiveData
+//    }
 
     fun tvImages(tvId: Long): MutableLiveData<ImagesResponse> {
         val responseLiveData: MutableLiveData<ImagesResponse> = MutableLiveData()
