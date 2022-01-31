@@ -61,7 +61,7 @@ class MovieSearcherActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
-        navController = binding.navHostContainer.getFragment<NavHostFragment>()?.navController!!
+        navController = binding.navHostContainer.getFragment<NavHostFragment>().navController
         navigationView = binding.navView
         navigationView.setupWithNavController(navController)
         navigationView.inflateMenu(R.menu.bottom_navigation_menu)
