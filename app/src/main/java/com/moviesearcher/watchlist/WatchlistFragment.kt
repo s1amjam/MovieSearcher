@@ -69,7 +69,7 @@ class WatchlistFragment : BaseFragment() {
     }
 
     private fun setupObserver() {
-        viewModel.getMovieWatchlist().observe(this, {
+        viewModel.getMovieWatchlist().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { movieItems ->
@@ -89,9 +89,9 @@ class WatchlistFragment : BaseFragment() {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-        })
+        }
 
-        viewModel.getTvWatchlist().observe(this, {
+        viewModel.getTvWatchlist().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { tvItems ->
@@ -111,7 +111,7 @@ class WatchlistFragment : BaseFragment() {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-        })
+        }
     }
 
     private fun createMovieAdapter(

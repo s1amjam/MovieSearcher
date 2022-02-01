@@ -90,7 +90,6 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var recommendationsCardView: CardView
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -153,7 +152,7 @@ class MovieInfoFragment : BaseFragment() {
     }
 
     private fun setupUi() {
-        movieViewModel.getMovieInfo().observe(this, { it ->
+        movieViewModel.getMovieInfo().observe(viewLifecycleOwner) { it ->
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { movieInfo ->
@@ -215,9 +214,9 @@ class MovieInfoFragment : BaseFragment() {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-        })
+        }
 
-        movieViewModel.getMovieCast().observe(this, { it ->
+        movieViewModel.getMovieCast().observe(viewLifecycleOwner) { it ->
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { castItems ->
@@ -264,10 +263,10 @@ class MovieInfoFragment : BaseFragment() {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-        })
+        }
 
         movieViewModel.getRecommendations()
-            .observe(this, {
+            .observe(viewLifecycleOwner) {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { recommendationsItems ->
@@ -304,9 +303,9 @@ class MovieInfoFragment : BaseFragment() {
                         Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                     }
                 }
-            })
+            }
 
-        movieViewModel.getVideos().observe(this, { it ->
+        movieViewModel.getVideos().observe(viewLifecycleOwner) { it ->
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { videoItems ->
@@ -373,10 +372,10 @@ class MovieInfoFragment : BaseFragment() {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-        })
+        }
 
         movieViewModel.getImages()
-            .observe(this, {
+            .observe(viewLifecycleOwner) {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { imagesItems ->
@@ -416,7 +415,7 @@ class MovieInfoFragment : BaseFragment() {
                         Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                     }
                 }
-            })
+            }
 
         buttonSeeAllImages.setOnClickListener {
             val action = MovieInfoFragmentDirections.actionMovieInfoFragmentToImagesFragment()
@@ -428,9 +427,9 @@ class MovieInfoFragment : BaseFragment() {
         lists = viewModel.getLists(accountId, sessionId, 1)
 
         menuButtonAddToList.setOnClickListener { v ->
-            lists.observe(viewLifecycleOwner, {
+            lists.observe(viewLifecycleOwner) {
                 showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
-            })
+            }
         }
 
         expandActivitiesButton.setOnClickListener {

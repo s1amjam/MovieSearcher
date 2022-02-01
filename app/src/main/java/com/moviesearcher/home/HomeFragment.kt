@@ -76,7 +76,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun setupObserver() {
-        viewModel.getTrendingMovies().observe(this, {
+        viewModel.getTrendingMovies().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { trendingMovies ->
@@ -95,9 +95,9 @@ class HomeFragment : BaseFragment() {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-        })
+        }
 
-        viewModel.getTrendingTvs().observe(this, {
+        viewModel.getTrendingTvs().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { trendingTvs ->
@@ -116,9 +116,9 @@ class HomeFragment : BaseFragment() {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-        })
+        }
 
-        viewModel.getUpcomingMovies().observe(this, {
+        viewModel.getUpcomingMovies().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { upcomingMovies ->
@@ -137,7 +137,7 @@ class HomeFragment : BaseFragment() {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-        })
+        }
     }
 
     private fun createAdapter(movieItems: TrendingResponse): TrendingAdapter {
@@ -163,7 +163,7 @@ class HomeFragment : BaseFragment() {
             ).get(WatchlistViewModel::class.java)
         }
 
-        watchlistViewModel.getWatchlistedItemsIds().observe(this, {
+        watchlistViewModel.getWatchlistedItemsIds().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { movieItems ->
@@ -177,7 +177,7 @@ class HomeFragment : BaseFragment() {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-        })
+        }
     }
 
     override fun onDestroyView() {
