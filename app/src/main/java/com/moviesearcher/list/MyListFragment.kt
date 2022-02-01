@@ -49,25 +49,25 @@ class MyListFragment : BaseFragment() {
         progressBar.visibility = View.VISIBLE
 
         viewModel.getList(listId).observe(
-            viewLifecycleOwner,
-            { myListItems ->
-                val myListAdapter = MyListAdapter(
-                    myListItems,
-                    findNavController(),
-                    args.listId,
-                    sessionId
-                )
-                binding.listTitleTextView.text = myListItems.name
+            viewLifecycleOwner
+        ) { myListItems ->
+            val myListAdapter = MyListAdapter(
+                myListItems,
+                findNavController(),
+                args.listId,
+                sessionId
+            )
+            binding.listTitleTextView.text = myListItems.name
 
-                myListRecyclerView.apply {
-                    adapter = myListAdapter
-                    layoutManager = LinearLayoutManager(context)
-                }
-                myListAdapter.differ.submitList(myListItems.items)
+            myListRecyclerView.apply {
+                adapter = myListAdapter
+                layoutManager = LinearLayoutManager(context)
+            }
+            myListAdapter.differ.submitList(myListItems.items)
 
-                progressBar.visibility = View.GONE
-                myListRecyclerView.visibility = View.VISIBLE
-            })
+            progressBar.visibility = View.GONE
+            myListRecyclerView.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroyView() {

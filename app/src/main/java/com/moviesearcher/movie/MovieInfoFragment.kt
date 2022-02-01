@@ -145,8 +145,6 @@ class MovieInfoFragment : BaseFragment() {
         buttonMarkMovieAsFavorite.isVisible = sessionId != ""
         buttonWatchlist.isVisible = sessionId != ""
 
-        val movieId = args.movieId
-
         setupViewModel()
         setupUi()
     }

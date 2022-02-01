@@ -97,35 +97,36 @@ open class BaseFragment : Fragment() {
             popup.menu.add(Menu.NONE, it.id!!.toInt(), Menu.NONE, it.name)
             val menuItem = popup.menu.findItem(it.id.toInt())
 
-            listsViewModel.checkItemStatus(it.id.toInt(), mediaId).observe(viewLifecycleOwner,
-                { item ->
-                    if (item.itemPresent == true) {
-                        menuItem.isEnabled = false
-                        menuItem.title = menuItem.title.toString() + " (added)"
-                    } else {
-                        menuItem.setOnMenuItemClickListener {
-                            Api.addToList(it.itemId, MediaId(mediaId), sessionId).observe(
-                                this, { addToListResponse ->
-                                    if (addToListResponse.statusCode == 12) {
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Added to List",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Error adding to List",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-                            )
-
-                            true
+            listsViewModel.checkItemStatus(it.id.toInt(), mediaId).observe(
+                viewLifecycleOwner
+            ) { item ->
+                if (item.itemPresent == true) {
+                    menuItem.isEnabled = false
+                    menuItem.title = menuItem.title.toString() + " (added)"
+                } else {
+                    menuItem.setOnMenuItemClickListener {
+                        Api.addToList(it.itemId, MediaId(mediaId), sessionId).observe(
+                            this
+                        ) { addToListResponse ->
+                            if (addToListResponse.statusCode == 12) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Added to List",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Error adding to List",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
+
+                        true
                     }
-                })
+                }
+            }
         }
         popup.show()
     }
@@ -139,7 +140,7 @@ open class BaseFragment : Fragment() {
             val favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
 
             if (mediaKey == "movie") {
-                favoriteMovies.observe(viewLifecycleOwner, { favoriteItem ->
+                favoriteMovies.observe(viewLifecycleOwner) { favoriteItem ->
                     button.setImageResource(markAsFavoriteIcon)
                     favoriteItem.results!!.forEach {
                         if (it.id == mediaId) {
@@ -147,9 +148,9 @@ open class BaseFragment : Fragment() {
                             button.setImageResource(removeFromFavoriteIcon)
                         }
                     }
-                })
+                }
             } else {
-                favoriteTvs.observe(viewLifecycleOwner, { favoriteItem ->
+                favoriteTvs.observe(viewLifecycleOwner) { favoriteItem ->
                     button.setImageResource(markAsFavoriteIcon)
                     favoriteItem.results!!.forEach {
                         if (it.id == mediaId) {
@@ -157,7 +158,7 @@ open class BaseFragment : Fragment() {
                             button.setImageResource(removeFromFavoriteIcon)
                         }
                     }
-                })
+                }
             }
         }
     }
@@ -179,7 +180,7 @@ open class BaseFragment : Fragment() {
             Toast.makeText(requireContext(), "Removed from Favorites", Toast.LENGTH_SHORT).show()
         }
 
-        markAsFavorite.observe(viewLifecycleOwner, {
+        markAsFavorite.observe(viewLifecycleOwner) {
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
                 isFavorite = !isFavorite
             } else {
@@ -189,7 +190,7 @@ open class BaseFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        })
+        }
     }
 
     fun checkWatchlist(button: ImageButton) {
@@ -198,7 +199,7 @@ open class BaseFragment : Fragment() {
             mediaInfo = getMediaInfo()
             val mediaId = mediaInfo.values.first()
 
-            watchlistViewModel.getWatchlistedItemsIds().observe(this, { it ->
+            watchlistViewModel.getWatchlistedItemsIds().observe(this) { it ->
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { movieItems ->
@@ -217,13 +218,23 @@ open class BaseFragment : Fragment() {
                         Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                     }
                 }
-            })
+            }
         }
     }
 
-    fun addToWatchlist(button: ImageButton) {
+    fun addToWatchlist(button: ImageButton, media: MutableMap<String, Long>? = mutableMapOf()) {
         setupViewModel()
-        mediaInfo = getMediaInfo()
+
+        mediaInfo = if (media?.isNullOrEmpty() == true) {
+            getMediaInfo()
+        } else {
+            media
+        }
+
+        if (button.tag != null) {
+            isWatchlist = button.tag.toString().toBoolean()
+            button.tag = null //need to return to normal 'isWatchlist' cycle
+        }
 
         val addToWatchlist = Api.watchlist(
             accountId,
@@ -239,17 +250,17 @@ open class BaseFragment : Fragment() {
             Toast.makeText(requireContext(), "Removed from Watchlist", Toast.LENGTH_SHORT).show()
         }
 
-        addToWatchlist.observe(viewLifecycleOwner, {
+        addToWatchlist.observe(viewLifecycleOwner) {
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
                 isWatchlist = !isWatchlist
             } else {
                 Toast.makeText(
                     requireContext(),
-                    "Error adding to Watchlist. Try again later.",
+                    "Error adding to Watchlist, try again later",
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        })
+        }
     }
 
     open fun setupUi(

@@ -109,9 +109,8 @@ class TvEpisodeFragment : BaseFragment() {
         tvInfoConstraintLayout.visibility = View.INVISIBLE
         progressBar.visibility = View.VISIBLE
 
-        viewModel.getTvEpisode(tvId, seasonNumber, episodeNumber).observe(
-            viewLifecycleOwner,
-            { tvInfo ->
+        viewModel.getTvEpisode(tvId, seasonNumber, episodeNumber)
+            .observe(viewLifecycleOwner) { tvInfo ->
                 Glide.with(this)
                     .load(Constants.IMAGE_URL + tvInfo.stillPath)
                     .placeholder(R.drawable.ic_placeholder)
@@ -159,10 +158,10 @@ class TvEpisodeFragment : BaseFragment() {
 
                 director.text = getString(R.string.director).format(directors.joinToString())
                 writer.text = getString(R.string.writer).format(writers.joinToString())
-            })
+            }
 
         viewModel.getTvEpisodeVideos(tvId, seasonNumber, episodeNumber)
-            .observe(viewLifecycleOwner, { videoItems ->
+            .observe(viewLifecycleOwner) { videoItems ->
                 if (videoItems.results?.isEmpty() == true) {
                     videoCardView.visibility = View.GONE
                 } else {
@@ -212,10 +211,10 @@ class TvEpisodeFragment : BaseFragment() {
                     }
                     videoAdapter.differ.submitList(videoItems.results)
                 }
-            })
+            }
 
         viewModel.getTvEpisodeImages(tvId, seasonNumber, episodeNumber)
-            .observe(viewLifecycleOwner, { imagesItems ->
+            .observe(viewLifecycleOwner) { imagesItems ->
                 val imageAdapter = EpisodeImagesAdapter(
                     imagesItems,
                 )
@@ -235,7 +234,7 @@ class TvEpisodeFragment : BaseFragment() {
                         LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 }
                 imageAdapter.differ.submitList(imagesItems.stills)
-            })
+            }
 
         buttonSeeAllImages.setOnClickListener {
             val action =

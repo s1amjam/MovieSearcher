@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.cardview.widget.CardView
@@ -146,7 +147,11 @@ class HomeFragment : BaseFragment() {
             navController,
             accountId,
             sessionId,
-            watchlistIds
+            watchlistIds,
+            TrendingAdapter.OnClickListener { button: ImageButton,
+                                              mediaInfo: MutableMap<String, Long>? ->
+                addToWatchlist(button, mediaInfo)
+            }
         )
         trendingAdapter.differ.submitList(movieItems.results)
 

@@ -2,26 +2,26 @@ package com.moviesearcher.movie.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
-import com.moviesearcher.api.Api
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.home.HomeFragmentDirections
 import com.moviesearcher.movie.model.Result
 import com.moviesearcher.movie.model.TrendingResponse
-import com.moviesearcher.watchlist.common.model.WatchlistRequest
 
 class TrendingAdapter(
     private val movieItems: TrendingResponse,
     private val navController: NavController,
     private val accountId: Long?,
     private val sessionId: String?,
-    private val movieWatchlistIds: MutableList<Long>?
+    private val movieWatchlistIds: MutableList<Long>?,
+    private val onClickListener: OnClickListener
 ) : RecyclerView.Adapter<TrendingAdapter.MovieHolder>() {
     private lateinit var binding: MovieCardViewBinding
 
@@ -29,9 +29,11 @@ class TrendingAdapter(
         private val rating = binding.textViewRating
         private val title = binding.textViewTitle
         private val releaseDate = binding.textViewReleaseDate
-        private val imageViewWatchlist = binding.imageViewWatchlist
+        private val imageButtonWatchlist = binding.imageButtonWatchlist
         private val posterImageView = binding.posterImageView
         private val cardView = binding.trendingCardView
+
+        private val mediaInfo: MutableMap<String, Long> = mutableMapOf()
 
         fun bind(movieItem: Result) {
             if (movieItem.title != null) {
@@ -59,16 +61,21 @@ class TrendingAdapter(
 
             if (sessionId?.isNotBlank() == true || sessionId != null) {
                 if (movieWatchlistIds?.contains(movieItems.results?.get(position)?.id?.toLong()) == true) {
-                    imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                    imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                    imageButtonWatchlist.tag = "false"
                 } else {
-                    imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                    imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                    imageButtonWatchlist.tag = "true"
                 }
             }
 
             cardView.setOnClickListener {
                 val movieId = it.id.toLong()
 
-                //Only 'Movie' has a 'title', 'Tv series' has a 'name', so binding title to tag
+                /**
+                 * Only 'Movie' has a 'title', 'Tv series' has a 'name', so binding 'title'(movie)
+                 * to 'tag'
+                 */
                 if (it.tag != null) {
                     navController.navigate(
                         HomeFragmentDirections
@@ -82,54 +89,25 @@ class TrendingAdapter(
                 }
             }
 
-            imageViewWatchlist.setOnClickListener {
-                val movieItemId = movieItems.results?.get(position)?.id?.toLong()
-
-                if (sessionId?.isNotBlank() == true || sessionId != null) {
-                    if (cardView.tag != null) {
-                        if (movieWatchlistIds?.contains(movieItemId) == true) {
-                            imageViewWatchlist
-                                .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
-
-                            Api.watchlist(
-                                accountId!!,
-                                sessionId,
-                                WatchlistRequest(false, movieItemId, "movie")
-                            )
-                            movieWatchlistIds.remove(movieItemId!!)
-                        } else {
-                            imageViewWatchlist
-                                .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-
-                            Api.watchlist(
-                                accountId!!,
-                                sessionId,
-                                WatchlistRequest(true, movieItemId, "movie")
-                            )
-                            movieWatchlistIds?.add(movieItemId!!)
-                        }
-                    } else {
-                        if (movieWatchlistIds?.contains(movieItemId) == true) {
-                            Api.watchlist(
-                                accountId!!,
-                                sessionId,
-                                WatchlistRequest(false, movieItemId, "tv")
-                            )
-                            imageViewWatchlist
-                                .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
-                            movieWatchlistIds.remove(movieItemId!!)
-                        } else {
-                            Api.watchlist(
-                                accountId!!,
-                                sessionId,
-                                WatchlistRequest(true, movieItemId, "tv")
-                            )
-                            imageViewWatchlist
-                                .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-                            movieWatchlistIds?.add(movieItemId!!)
-                        }
-                    }
+            if (cardView.tag != null) {
+                mediaInfo["movie"] = cardView.id.toLong()
+                imageButtonWatchlist.setOnClickListener {
+                    onClickListener.onClick(imageButtonWatchlist, mediaInfo)
                 }
+            } else {
+                mediaInfo["tv"] = cardView.id.toLong()
+                imageButtonWatchlist.setOnClickListener {
+                    onClickListener.onClick(imageButtonWatchlist, mediaInfo)
+                }
+            }
+        }
+
+        private fun setImageButtonWatchlistOnClickListener(
+            button: ImageButton,
+            mediaInfo: MutableMap<String, Long>
+        ) {
+            imageButtonWatchlist.setOnClickListener {
+                onClickListener.onClick(button, mediaInfo)
             }
         }
     }
@@ -163,5 +141,15 @@ class TrendingAdapter(
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         val reply = differ.currentList[position]
         holder.bind(reply)
+    }
+
+    class OnClickListener(
+        val clickListener: (
+            button: ImageButton,
+            mediaInfo: MutableMap<String, Long>?
+        ) -> Unit
+    ) {
+        fun onClick(button: ImageButton, mediaInfo: MutableMap<String, Long>? = mutableMapOf()) =
+            clickListener(button, mediaInfo)
     }
 }

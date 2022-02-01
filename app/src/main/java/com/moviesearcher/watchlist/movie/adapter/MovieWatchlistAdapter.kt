@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
-import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.watchlist.WatchlistFragmentDirections
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
@@ -30,7 +30,7 @@ class MovieWatchlistAdapter(
         private val rating = binding.textViewRating
         private val title = binding.textViewTitle
         private val releaseDate = binding.textViewReleaseDate
-        private val imageViewWatchlist = binding.imageViewWatchlist
+        private val imageViewWatchlist = binding.imageButtonWatchlist
         private val posterImageView = binding.posterImageView
         private val cardView = binding.trendingCardView
 

@@ -17,9 +17,9 @@ import androidx.fragment.app.DialogFragment
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.account.Avatar
 import com.moviesearcher.common.model.auth.RequestToken
-import com.moviesearcher.databinding.FragmentAuthorizationDialogBinding
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Constants.SUCCESS_SESSION_URL
+import com.moviesearcher.databinding.FragmentAuthorizationDialogBinding
 
 class AuthorizationDialogFragment : DialogFragment() {
     private var _binding: FragmentAuthorizationDialogBinding? = null
@@ -54,13 +54,13 @@ class AuthorizationDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Api.createRequestToken().observe(requireActivity(),
-            { response ->
-                webView.loadUrl(Constants.AUTH_URL.format(response.requestToken))
-                requestToken = response.requestToken.toString()
-                val constraintLayout = binding.fragmentAuthorizationDialogConstraintLayout
-                dialog?.window?.setContentView(constraintLayout)
-            })
+        Api.createRequestToken().observe(requireActivity()
+        ) { response ->
+            webView.loadUrl(Constants.AUTH_URL.format(response.requestToken))
+            requestToken = response.requestToken.toString()
+            val constraintLayout = binding.fragmentAuthorizationDialogConstraintLayout
+            dialog?.window?.setContentView(constraintLayout)
+        }
 
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
@@ -88,11 +88,11 @@ class AuthorizationDialogFragment : DialogFragment() {
                     progressBar.visibility = VISIBLE
 
                     Api.createSession(RequestToken(requestToken))
-                        .observe(requireActivity(), { response ->
+                        .observe(requireActivity()) { response ->
                             sessionId = response.sessionId
 
                             Api.getAccount(sessionId)
-                                .observe(requireActivity(), { accountResponse ->
+                                .observe(requireActivity()) { accountResponse ->
                                     username = accountResponse.username
                                     accountId = accountResponse.id!!.toLong()
                                     name = accountResponse.name
@@ -113,8 +113,8 @@ class AuthorizationDialogFragment : DialogFragment() {
 
                                     progressBar.visibility = View.GONE
                                     dismiss()
-                                })
-                        })
+                                }
+                        }
                 }
             }
         }

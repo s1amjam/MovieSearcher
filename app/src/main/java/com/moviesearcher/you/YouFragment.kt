@@ -134,14 +134,13 @@ class YouFragment : BaseFragment() {
     }
 
     private fun doLogout() {
-        Api.deleteSession(SessionId(sessionId)).observe(viewLifecycleOwner,
-            { response ->
-                if (response.success == true) {
-                    encryptedSharedPrefs.edit().clear().apply()
-                    sessionId = ""
-                    checkIfLoggedIn()
-                }
-            })
+        Api.deleteSession(SessionId(sessionId)).observe(viewLifecycleOwner) { response ->
+            if (response.success == true) {
+                encryptedSharedPrefs.edit().clear().apply()
+                sessionId = ""
+                checkIfLoggedIn()
+            }
+        }
     }
 
     override fun onDestroyView() {

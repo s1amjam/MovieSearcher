@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,12 +25,8 @@ class ImagesFragment : Fragment() {
 
     private val args by navArgs<ImagesFragmentArgs>()
 
-    private val movieId = args.movieId?.toLong()
-    private val tvId = args.tvId?.toLong()
-    private val personId = args.personId?.toLong()
-
     private val viewModel: BaseViewModel by viewModels()
-    private val movieViewModel: MovieViewModel by viewModels { ViewModelFactory(movieId = movieId) }
+    private lateinit var movieViewModel: MovieViewModel
     private lateinit var imagesRecyclerView: RecyclerView
 
     override fun onCreateView(
@@ -43,13 +40,18 @@ class ImagesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val movieId = args.movieId?.toLong()
+        val tvId = args.tvId?.toLong()
+        val personId = args.personId?.toLong()
+
+        setupViewModel()
 
         imagesRecyclerView = binding.photosRecyclerView
 
         when {
             movieId != null -> {
                 movieViewModel.getImages()
-                    .observe(this, {
+                    .observe(viewLifecycleOwner) {
                         when (it.status) {
                             Status.SUCCESS -> {
                                 it.data?.let { imagesItems ->
@@ -69,33 +71,45 @@ class ImagesFragment : Fragment() {
                                     .show()
                             }
                         }
-                    })
+                    }
             }
-            tvId != null -> {
-                viewModel.getImagesByTvId(tvId)
-                    .observe(viewLifecycleOwner, { imagesItems ->
-                        val imagesAdapter = ImagesAdapter(imagesItems)
+            args.tvId != null -> {
+                if (tvId != null) {
+                    viewModel.getImagesByTvId(tvId)
+                        .observe(viewLifecycleOwner) { imagesItems ->
+                            val imagesAdapter = ImagesAdapter(imagesItems)
 
-                        imagesRecyclerView.apply {
-                            adapter = imagesAdapter
-                            layoutManager = GridLayoutManager(requireContext(), 2)
+                            imagesRecyclerView.apply {
+                                adapter = imagesAdapter
+                                layoutManager = GridLayoutManager(requireContext(), 2)
+                            }
+                            imagesAdapter.differ.submitList(imagesItems.backdrops)
                         }
-                        imagesAdapter.differ.submitList(imagesItems.backdrops)
-                    })
+                }
             }
             else -> {
-                viewModel.getImagesByPersonId(personId!!)
-                    .observe(viewLifecycleOwner, { imagesItems ->
-                        val imagesAdapter = PersonImagesAdapter(imagesItems)
+                if (personId != null) {
+                    viewModel.getImagesByPersonId(personId)
+                        .observe(viewLifecycleOwner) { imagesItems ->
+                            val imagesAdapter = PersonImagesAdapter(imagesItems)
 
-                        imagesRecyclerView.apply {
-                            adapter = imagesAdapter
-                            layoutManager = GridLayoutManager(requireContext(), 2)
+                            imagesRecyclerView.apply {
+                                adapter = imagesAdapter
+                                layoutManager = GridLayoutManager(requireContext(), 2)
+                            }
+                            imagesAdapter.differ.submitList(imagesItems.profiles)
                         }
-                        imagesAdapter.differ.submitList(imagesItems.profiles)
-                    })
+                }
             }
         }
+    }
+
+    private fun setupViewModel() {
+        movieViewModel = ViewModelProvider(
+            this, ViewModelFactory(
+                movieId = args.movieId?.toLong()
+            )
+        ).get(ImagesViewModel::class.java)
     }
 
     override fun onDestroyView() {

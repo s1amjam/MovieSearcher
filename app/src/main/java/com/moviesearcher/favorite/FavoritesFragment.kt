@@ -64,35 +64,35 @@ class FavoritesFragment : BaseFragment() {
             favoriteMoviesRecyclerView.visibility = View.INVISIBLE
 
             viewModel.getFavoriteTvs(accountId, sessionId).observe(
-                viewLifecycleOwner,
-                { favoriteTvItems ->
-                    val favoriteTvAdapter = FavoriteTvAdapter(
-                        favoriteTvItems, findNavController(),
-                        sessionId,
-                        accountId
-                    )
+                viewLifecycleOwner
+            ) { favoriteTvItems ->
+                val favoriteTvAdapter = FavoriteTvAdapter(
+                    favoriteTvItems, findNavController(),
+                    sessionId,
+                    accountId
+                )
 
-                    favoriteMoviesRecyclerView.apply {
-                        adapter = favoriteTvAdapter
-                        layoutManager = LinearLayoutManager(context)
-                    }
-                    favoriteTvAdapter.differ.submitList(favoriteTvItems.results)
+                favoriteMoviesRecyclerView.apply {
+                    adapter = favoriteTvAdapter
+                    layoutManager = LinearLayoutManager(context)
+                }
+                favoriteTvAdapter.differ.submitList(favoriteTvItems.results)
 
-                    progressBar.visibility = View.GONE
-                    favoriteMoviesRecyclerView.visibility = View.VISIBLE
-                })
+                progressBar.visibility = View.GONE
+                favoriteMoviesRecyclerView.visibility = View.VISIBLE
+            }
         }
     }
 
     private fun getFavoriteMovies() {
         viewModel.getFavoriteMovies(accountId, sessionId).observe(
-            viewLifecycleOwner,
-            { favoriteMovieItems ->
-                setupFavoriteMovieUi(favoriteMovieItems)
+            viewLifecycleOwner
+        ) { favoriteMovieItems ->
+            setupFavoriteMovieUi(favoriteMovieItems)
 
-                progressBar.visibility = View.GONE
-                favoriteMoviesRecyclerView.visibility = View.VISIBLE
-            })
+            progressBar.visibility = View.GONE
+            favoriteMoviesRecyclerView.visibility = View.VISIBLE
+        }
     }
 
     private fun setupFavoriteMovieUi(favoriteMovieItems: FavoriteMovieResponse) {

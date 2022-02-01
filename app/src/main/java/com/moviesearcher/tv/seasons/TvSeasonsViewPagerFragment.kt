@@ -50,9 +50,7 @@ class TvSeasonsViewPagerFragment : BaseFragment() {
         viewModel.getTvSeason(
             requireArguments()["id"] as Long?,
             requireArguments()["seasonNumber"] as String?
-        )
-            .observe(viewLifecycleOwner, { episodeItems ->
-
+        ).observe(viewLifecycleOwner) { episodeItems ->
                 val episodesAdapter = EpisodesAdapter(
                     episodeItems.episodes!!, findNavController(),
                     requireArguments()["seasonNumber"] as String?,
@@ -68,7 +66,7 @@ class TvSeasonsViewPagerFragment : BaseFragment() {
 
                 progressBar.visibility = View.GONE
                 tvSeasonsConstraintLayout.visibility = View.VISIBLE
-            })
+            }
     }
 
     override fun onDestroyView() {

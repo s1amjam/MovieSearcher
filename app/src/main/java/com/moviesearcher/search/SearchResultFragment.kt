@@ -80,27 +80,25 @@ class SearchResultFragment : BaseFragment() {
     }
 
     private fun updateWithSearchResult(searchQuery: String) {
-        viewModel.queryForSearch(searchQuery).observe(
-            viewLifecycleOwner,
-            { searchItems ->
+        viewModel.queryForSearch(searchQuery).observe(viewLifecycleOwner) { searchItems ->
 
-                if (searchItems.totalResults!! <= 0) {
-                    nothingWasFoundTv.visibility = View.VISIBLE
-                } else {
-                    nothingWasFoundTv.visibility = View.INVISIBLE
-                }
+            if (searchItems.totalResults!! <= 0) {
+                nothingWasFoundTv.visibility = View.VISIBLE
+            } else {
+                nothingWasFoundTv.visibility = View.INVISIBLE
+            }
 
-                val searchAdapter = SearchAdapter(searchItems, findNavController())
+            val searchAdapter = SearchAdapter(searchItems, findNavController())
 
-                searchResultRecyclerView.apply {
-                    adapter = searchAdapter
-                    layoutManager = LinearLayoutManager(context)
-                }
-                searchAdapter.differ.submitList(searchItems.results)
+            searchResultRecyclerView.apply {
+                adapter = searchAdapter
+                layoutManager = LinearLayoutManager(context)
+            }
+            searchAdapter.differ.submitList(searchItems.results)
 
-                progressBar.visibility = View.GONE
-                searchResultRecyclerView.visibility = View.VISIBLE
-            })
+            progressBar.visibility = View.GONE
+            searchResultRecyclerView.visibility = View.VISIBLE
+        }
     }
 
     override fun onResume() {

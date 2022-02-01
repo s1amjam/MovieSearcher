@@ -146,75 +146,73 @@ class TvInfoFragment : BaseFragment() {
         buttonMarkTvAsFavorite.isVisible = sessionId != ""
         buttonWatchlist.isVisible = sessionId != ""
 
-        viewModel.getTvInfoById(tvId).observe(
-            viewLifecycleOwner,
-            { tvInfo ->
-                val minutes = tvInfo.episodeRunTime?.get(0)?.toLong()
-                val languages = mutableListOf<String>()
-                val locations = mutableListOf<String>()
-                val genres = tvInfo.genres
-                val lastAirDate: String
+        viewModel.getTvInfoById(tvId).observe(viewLifecycleOwner) { tvInfo ->
+            val minutes = tvInfo.episodeRunTime?.get(0)?.toLong()
+            val languages = mutableListOf<String>()
+            val locations = mutableListOf<String>()
+            val genres = tvInfo.genres
+            val lastAirDate: String
 
-                numberOfSeasons = tvInfo.numberOfSeasons!!
+            numberOfSeasons = tvInfo.numberOfSeasons!!
 
-                tvInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
-                tvInfo.productionCountries?.forEach { locations.add(it.name!!) }
+            tvInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
+            tvInfo.productionCountries?.forEach { locations.add(it.name!!) }
 
-                Glide.with(this)
-                    .load(Constants.IMAGE_URL + tvInfo.posterPath)
-                    .placeholder(R.drawable.ic_placeholder)
-                    .centerCrop()
-                    .override(300, 500)
-                    .into(tvInfoPosterImageView)
-                tvInfoTitle.text = tvInfo.name
-                tvInfoRuntime.text = String.format("%02dm", minutes).dropWhile { it == '0' }
-                tvInfoTagline.text = tvInfo.tagline
-                val firstAirDate: String = tvInfo.firstAirDate?.dropLast(6).toString()
-                if (tvInfo.inProduction == false && tvInfo.lastAirDate != null) {
-                    lastAirDate = tvInfo.lastAirDate.dropLast(6)
-                    releaseDate.text = getString(R.string.tv_series_finished_date_range).format(
-                        firstAirDate,
-                        lastAirDate
-                    )
-                } else {
-                    releaseDate.text =
-                        getString(R.string.tv_series_in_production_date_range).format(firstAirDate)
+            Glide.with(this)
+                .load(Constants.IMAGE_URL + tvInfo.posterPath)
+                .placeholder(R.drawable.ic_placeholder)
+                .centerCrop()
+                .override(300, 500)
+                .into(tvInfoPosterImageView)
+            tvInfoTitle.text = tvInfo.name
+            tvInfoRuntime.text = String.format("%02dm", minutes).dropWhile { it == '0' }
+            tvInfoTagline.text = tvInfo.tagline
+            val firstAirDate: String = tvInfo.firstAirDate?.dropLast(6).toString()
+            if (tvInfo.inProduction == false && tvInfo.lastAirDate != null) {
+                lastAirDate = tvInfo.lastAirDate.dropLast(6)
+                releaseDate.text = getString(R.string.tv_series_finished_date_range).format(
+                    firstAirDate,
+                    lastAirDate
+                )
+            } else {
+                releaseDate.text =
+                    getString(R.string.tv_series_in_production_date_range).format(firstAirDate)
+            }
+            tvInfoOverview.text = tvInfo.overview
+            voteAverage.text = getString(R.string.vote).format(tvInfo.getAverage())
+            voteCount.text = tvInfo.voteCount.toString()
+            releaseDateDetail.text = tvInfo.firstAirDate?.replace("-", ".")
+            originCountry.text = tvInfo.productionCountries?.elementAtOrNull(0)?.name
+            languageSpoken.text = languages.joinToString()
+            filmingLocations.text = locations.joinToString()
+            numberOfEpisodes.text =
+                getString(R.string.count_of_episodes).format(tvInfo.numberOfEpisodes.toString())
+
+            if (genres != null) {
+                for (genre in genres) {
+                    val chip = this.layoutInflater.inflate(
+                        R.layout.item_chip_tags,
+                        null,
+                        false
+                    ) as Chip
+                    chip.text = genre.name
+                    genresChipGroup.addView(chip)
                 }
-                tvInfoOverview.text = tvInfo.overview
-                voteAverage.text = getString(R.string.vote).format(tvInfo.getAverage())
-                voteCount.text = tvInfo.voteCount.toString()
-                releaseDateDetail.text = tvInfo.firstAirDate?.replace("-", ".")
-                originCountry.text = tvInfo.productionCountries?.elementAtOrNull(0)?.name
-                languageSpoken.text = languages.joinToString()
-                filmingLocations.text = locations.joinToString()
-                numberOfEpisodes.text =
-                    getString(R.string.count_of_episodes).format(tvInfo.numberOfEpisodes.toString())
+            }
 
-                if (genres != null) {
-                    for (genre in genres) {
-                        val chip = this.layoutInflater.inflate(
-                            R.layout.item_chip_tags,
-                            null,
-                            false
-                        ) as Chip
-                        chip.text = genre.name
-                        genresChipGroup.addView(chip)
-                    }
-                }
+            tvInfoOverview.setOnClickListener {
+                MaterialAlertDialogBuilder(requireContext()).setMessage(tvInfo.overview)
+                    .show()
+            }
 
-                tvInfoOverview.setOnClickListener {
-                    MaterialAlertDialogBuilder(requireContext()).setMessage(tvInfo.overview)
-                        .show()
-                }
-
-                tvInfoConstraintLayout.visibility = View.VISIBLE
-                progressBar.visibility = View.GONE
-            })
+            tvInfoConstraintLayout.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
+        }
 
         checkWatchlist(buttonWatchlist)
         checkFavorites(buttonMarkTvAsFavorite)
 
-        viewModel.getTvCastById(tvId).observe(viewLifecycleOwner, { castItems ->
+        viewModel.getTvCastById(tvId).observe(viewLifecycleOwner) { castItems ->
             val tvCastAdapter = TvCastAdapter(castItems, findNavController())
             val directors = mutableListOf<String>()
             val writers = mutableListOf<String>()
@@ -242,10 +240,10 @@ class TvInfoFragment : BaseFragment() {
 
             director.text = getString(R.string.director).format(directors.joinToString())
             writer.text = getString(R.string.writer).format(writers.joinToString())
-        })
+        }
 
         viewModel.getRecommendationsByTvId(tvId)
-            .observe(viewLifecycleOwner, { recommendationsItems ->
+            .observe(viewLifecycleOwner) { recommendationsItems ->
                 if (recommendationsItems.totalResults == 0) {
                     recommendationsCardView.visibility = View.GONE
                 } else {
@@ -265,9 +263,9 @@ class TvInfoFragment : BaseFragment() {
                     }
                     tvRecommendationsAdapter.differ.submitList(recommendationsItems.results)
                 }
-            })
+            }
 
-        viewModel.getVideosByTvId(tvId).observe(viewLifecycleOwner, { videoItems ->
+        viewModel.getVideosByTvId(tvId).observe(viewLifecycleOwner) { videoItems ->
             val videoAdapter = VideoAdapter(
                 videoItems,
                 findNavController()
@@ -313,10 +311,10 @@ class TvInfoFragment : BaseFragment() {
             } else {
                 videoCardView.visibility = View.GONE
             }
-        })
+        }
 
         viewModel.getImagesByTvId(tvId)
-            .observe(viewLifecycleOwner, { imagesItems ->
+            .observe(viewLifecycleOwner) { imagesItems ->
                 val imageAdapter = ImagesAdapter(
                     imagesItems,
                 )
@@ -336,7 +334,7 @@ class TvInfoFragment : BaseFragment() {
                         LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 }
                 imageAdapter.differ.submitList(imagesItems.backdrops)
-            })
+            }
 
         buttonSeeAllImages.setOnClickListener {
             val action = TvInfoFragmentDirections.actionTvInfoFragmentToImagesFragment()
@@ -348,9 +346,9 @@ class TvInfoFragment : BaseFragment() {
         lists = viewModel.getLists(accountId, sessionId, 1)
 
         menuButtonAddToList.setOnClickListener { v ->
-            lists.observe(viewLifecycleOwner, {
+            lists.observe(viewLifecycleOwner) {
                 showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
-            })
+            }
         }
 
         expandActivitiesButton.setOnClickListener {

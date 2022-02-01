@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
-import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.watchlist.WatchlistFragmentDirections
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
@@ -30,7 +30,7 @@ class TvWatchlistAdapter(
         private val rating = binding.textViewRating
         private val title = binding.textViewTitle
         private val releaseDate = binding.textViewReleaseDate
-        private val imageViewWatchlist = binding.imageViewWatchlist
+        private val imageButtonWatchlist = binding.imageButtonWatchlist
         private val posterImageView = binding.posterImageView
         private val cardView = binding.trendingCardView
 
@@ -50,9 +50,9 @@ class TvWatchlistAdapter(
 
             if (sessionId?.isNotBlank() == true || sessionId != null) {
                 if (tvWatchlistIds.contains(currentTv)) {
-                    imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                    imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
                 } else {
-                    imageViewWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                    imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
                 }
             }
 
@@ -62,7 +62,7 @@ class TvWatchlistAdapter(
                 )
             }
 
-            imageViewWatchlist.setOnClickListener {
+            imageButtonWatchlist.setOnClickListener {
                 if (sessionId?.isNotBlank() == true || sessionId != null) {
                     if (tvWatchlistIds.contains(currentTv)) {
                         Api.watchlist(
@@ -70,7 +70,7 @@ class TvWatchlistAdapter(
                             sessionId,
                             WatchlistRequest(false, currentTv, "tv")
                         )
-                        imageViewWatchlist
+                        imageButtonWatchlist
                             .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
                         tvWatchlistIds.remove(currentTv!!)
                     } else {
@@ -79,7 +79,7 @@ class TvWatchlistAdapter(
                             sessionId,
                             WatchlistRequest(true, currentTv, "tv")
                         )
-                        imageViewWatchlist
+                        imageButtonWatchlist
                             .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
                         tvWatchlistIds.add(currentTv!!)
                     }

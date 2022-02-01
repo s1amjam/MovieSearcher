@@ -45,13 +45,13 @@ class MyListsFragment : BaseFragment() {
         myListsRecyclerView.visibility = View.INVISIBLE
 
         viewModel.getLists(accountId, sessionId, 1).observe(
-            viewLifecycleOwner,
-            { myListItems ->
-                myListsRecyclerView.adapter =
-                    MyListsAdapter(myListItems, findNavController(), sessionId)
-                progressBar.visibility = View.GONE
-                myListsRecyclerView.visibility = View.VISIBLE
-            })
+            viewLifecycleOwner
+        ) { myListItems ->
+            myListsRecyclerView.adapter =
+                MyListsAdapter(myListItems, findNavController(), sessionId)
+            progressBar.visibility = View.GONE
+            myListsRecyclerView.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroyView() {

@@ -44,40 +44,40 @@ class RatedFragment : BaseFragment() {
         ratedTvEpisodesButton = binding.buttonRatedTvEpisodes
 
         viewModel.getRatedMovies(accountId, sessionId).observe(
-            viewLifecycleOwner,
-            { ratedMovieItems ->
-                setupRatedMoviesUi(ratedMovieItems)
-            })
+            viewLifecycleOwner
+        ) { ratedMovieItems ->
+            setupRatedMoviesUi(ratedMovieItems)
+        }
 
         ratedMoviesButton.setOnClickListener {
             viewModel.getRatedMovies(accountId, sessionId).observe(
-                viewLifecycleOwner,
-                { ratedMovieItems ->
-                    setupRatedMoviesUi(ratedMovieItems)
-                })
+                viewLifecycleOwner
+            ) { ratedMovieItems ->
+                setupRatedMoviesUi(ratedMovieItems)
+            }
         }
 
         ratedTvsButton.setOnClickListener {
             viewModel.getRatedTvs(accountId, sessionId).observe(
-                viewLifecycleOwner,
-                { ratedTvItems ->
-                    val ratedMoviesAdapter = RatedTvsAdapter(ratedTvItems, findNavController())
+                viewLifecycleOwner
+            ) { ratedTvItems ->
+                val ratedMoviesAdapter = RatedTvsAdapter(ratedTvItems, findNavController())
 
-                    ratedMoviesRecyclerView.apply {
-                        adapter = ratedMoviesAdapter
-                        layoutManager = LinearLayoutManager(context)
-                    }
-                    ratedMoviesAdapter.differ.submitList(ratedTvItems.results)
-                })
+                ratedMoviesRecyclerView.apply {
+                    adapter = ratedMoviesAdapter
+                    layoutManager = LinearLayoutManager(context)
+                }
+                ratedMoviesAdapter.differ.submitList(ratedTvItems.results)
+            }
         }
 
         ratedTvEpisodesButton.setOnClickListener {
             viewModel.getRatedTvEpisodes(accountId, sessionId).observe(
-                viewLifecycleOwner,
-                { ratedTvItems ->
-                    ratedMoviesRecyclerView.adapter =
-                        RatedTvEpisodesAdapter(ratedTvItems, findNavController())
-                })
+                viewLifecycleOwner
+            ) { ratedTvItems ->
+                ratedMoviesRecyclerView.adapter =
+                    RatedTvEpisodesAdapter(ratedTvItems, findNavController())
+            }
         }
 
         return view

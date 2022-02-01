@@ -19,6 +19,9 @@ class ViewModelFactory(
         if (modelClass.isAssignableFrom(MovieViewModel::class.java)) {
             return MovieViewModel(movieId!!) as T
         }
+        if (modelClass.isAssignableFrom(MovieViewModel::class.java)) {
+            return MovieViewModel(movieId!!) as T
+        }
         throw IllegalArgumentException("Unknown class name")
     }
 

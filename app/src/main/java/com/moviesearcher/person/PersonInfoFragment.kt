@@ -19,12 +19,12 @@ import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.databinding.FragmentPersonInfoBinding
 import com.moviesearcher.person.adapter.combinedcredits.CombinedCreditsAdapter
 import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
 import com.moviesearcher.person.model.images.Profile
-import com.moviesearcher.common.utils.Constants
 
 private const val TAG = "PersonInfoFragment"
 
@@ -81,32 +81,31 @@ class PersonInfoFragment : BaseFragment() {
         progressBar.visibility = View.VISIBLE
 
         viewModel.getPersonById(personId).observe(
-            viewLifecycleOwner,
-            { personInfo ->
-                Glide.with(this)
-                    .load(Constants.IMAGE_URL + personInfo.profile_path)
-                    .placeholder(R.drawable.ic_placeholder)
-                    .centerCrop()
-                    .override(300, 500)
-                    .into(personPhotoImageView)
-                personName.text = personInfo.name
-                personBorn.text = getString(R.string.born).format(personInfo.birthday)
-                if (personInfo.deathday == null) {
-                    personDied.visibility = View.GONE
-                }
-                personDied.text = getString(R.string.died).format(personInfo.deathday)
-                personBio.text = personInfo.biography
-                personKnownFor.text = personInfo.known_for_department
+            viewLifecycleOwner
+        ) { personInfo ->
+            Glide.with(this)
+                .load(Constants.IMAGE_URL + personInfo.profile_path)
+                .placeholder(R.drawable.ic_placeholder)
+                .centerCrop()
+                .override(300, 500)
+                .into(personPhotoImageView)
+            personName.text = personInfo.name
+            personBorn.text = getString(R.string.born).format(personInfo.birthday)
+            if (personInfo.deathday == null) {
+                personDied.visibility = View.GONE
+            }
+            personDied.text = getString(R.string.died).format(personInfo.deathday)
+            personBio.text = personInfo.biography
+            personKnownFor.text = personInfo.known_for_department
 
-                personBio.setOnClickListener {
-                    MaterialAlertDialogBuilder(requireContext()).setMessage(personInfo.biography)
-                        .show()
-                }
-            })
+            personBio.setOnClickListener {
+                MaterialAlertDialogBuilder(requireContext()).setMessage(personInfo.biography)
+                    .show()
+            }
+        }
 
         viewModel.getCombinedCreditsByPersonId(personId)
-            .observe(viewLifecycleOwner, { combinedCreditsItems ->
-
+            .observe(viewLifecycleOwner) { combinedCreditsItems ->
                 val filmographyAdapter = CombinedCreditsAdapter(
                     combinedCreditsItems,
                     findNavController(),
@@ -120,10 +119,10 @@ class PersonInfoFragment : BaseFragment() {
                         LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 }
                 filmographyAdapter.differ.submitList(combinedCreditsItems.cast)
-            })
+            }
 
         viewModel.getImagesByPersonId(personId)
-            .observe(viewLifecycleOwner, { imagesItems ->
+            .observe(viewLifecycleOwner) { imagesItems ->
                 val imageAdapter = PersonImagesAdapter(
                     imagesItems,
                 )
@@ -147,7 +146,7 @@ class PersonInfoFragment : BaseFragment() {
 
                 progressBar.visibility = View.GONE
                 personInfoConstraintLayout.visibility = View.VISIBLE
-            })
+            }
 
         buttonSeeAllImages.setOnClickListener {
             val action = PersonInfoFragmentDirections.actionPersonInfoFragmentToImagesFragment()
