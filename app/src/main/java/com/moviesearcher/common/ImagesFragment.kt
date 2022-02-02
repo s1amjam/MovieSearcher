@@ -44,34 +44,33 @@ class ImagesFragment : Fragment() {
         val tvId = args.tvId?.toLong()
         val personId = args.personId?.toLong()
 
-        setupViewModel()
-
         imagesRecyclerView = binding.photosRecyclerView
 
         when {
             movieId != null -> {
-                movieViewModel.getImages()
-                    .observe(viewLifecycleOwner) {
-                        when (it.status) {
-                            Status.SUCCESS -> {
-                                it.data?.let { imagesItems ->
-                                    val imagesAdapter = ImagesAdapter(imagesItems)
+                setupMovieImagesViewModel()
 
-                                    imagesRecyclerView.apply {
-                                        adapter = imagesAdapter
-                                        layoutManager = GridLayoutManager(requireContext(), 2)
-                                    }
-                                    imagesAdapter.differ.submitList(imagesItems.backdrops)
+                movieViewModel.getImages().observe(viewLifecycleOwner) {
+                    when (it.status) {
+                        Status.SUCCESS -> {
+                            it.data?.let { imagesItems ->
+                                val imagesAdapter = ImagesAdapter(imagesItems)
+
+                                imagesRecyclerView.apply {
+                                    adapter = imagesAdapter
+                                    layoutManager = GridLayoutManager(requireContext(), 2)
                                 }
-                            }
-                            Status.LOADING -> {
-                            }
-                            Status.ERROR -> {
-                                Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG)
-                                    .show()
+                                imagesAdapter.differ.submitList(imagesItems.backdrops)
                             }
                         }
+                        Status.LOADING -> {
+                        }
+                        Status.ERROR -> {
+                            Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG)
+                                .show()
+                        }
                     }
+                }
             }
             args.tvId != null -> {
                 if (tvId != null) {
@@ -104,12 +103,12 @@ class ImagesFragment : Fragment() {
         }
     }
 
-    private fun setupViewModel() {
+    private fun setupMovieImagesViewModel() {
         movieViewModel = ViewModelProvider(
             this, ViewModelFactory(
                 movieId = args.movieId?.toLong()
             )
-        ).get(ImagesViewModel::class.java)
+        ).get(MovieViewModel::class.java)
     }
 
     override fun onDestroyView() {
