@@ -54,15 +54,12 @@ class WatchlistFragment : BaseFragment() {
 
         movieCardView = binding.cardviewMoviesWatchlist
         tvCardView = binding.cardviewTvsWatchlist
-        movieCardView.visibility = View.INVISIBLE
-        tvCardView.visibility = View.INVISIBLE
         movieRecyclerView = binding.movieRecyclerView
         tvRecyclerView = binding.tvRecyclerView
         movieRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         navController = findNavController()
         progressBar = binding.progressBarWatchlistFragment
-        progressBar.visibility = View.VISIBLE
 
         setupViewModel()
         setupObserver()
@@ -86,7 +83,11 @@ class WatchlistFragment : BaseFragment() {
                     movieCardView.visibility = View.GONE
                 }
                 Status.ERROR -> {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -108,7 +109,11 @@ class WatchlistFragment : BaseFragment() {
                     tvCardView.visibility = View.GONE
                 }
                 Status.ERROR -> {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }

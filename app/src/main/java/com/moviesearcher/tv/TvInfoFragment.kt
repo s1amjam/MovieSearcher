@@ -9,11 +9,13 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +29,9 @@ import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.BaseViewModel
+import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentTvInfoBinding
 import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
@@ -43,49 +47,50 @@ class TvInfoFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val args by navArgs<TvInfoFragmentArgs>()
-
+    private lateinit var lists: LiveData<ListsResponse>
     private var numberOfSeasons: Int = 0
 
+    private lateinit var tvViewModel: TvViewModel
     private val viewModel: BaseViewModel by viewModels()
 
-    private lateinit var tvInfoCastRecyclerView: RecyclerView
+    private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
     private lateinit var videoRecyclerView: RecyclerView
     private lateinit var imagesRecyclerView: RecyclerView
-    private lateinit var tvInfoPosterImageView: ImageView
-    private lateinit var tvInfoTitle: TextView
-    private lateinit var tvInfoRuntime: TextView
-    private lateinit var tvInfoTagline: TextView
-    private lateinit var releaseDate: TextView
-    private lateinit var tvInfoOverview: TextView
-    private lateinit var voteAverage: TextView
-    private lateinit var voteCount: TextView
-    private lateinit var tvInfoConstraintLayout: ConstraintLayout
-    private lateinit var menuButtonAddToList: ImageButton
-    private lateinit var buttonMarkTvAsFavorite: ImageButton
-    private lateinit var buttonWatchlist: ImageButton
-    private lateinit var buttonSeeAllImages: Button
+    private lateinit var posterImageView: ImageView
+    private lateinit var titleTextView: TextView
+    private lateinit var runtimeTextView: TextView
+    private lateinit var taglineTextView: TextView
+    private lateinit var releaseDateTextView: TextView
+    private lateinit var overviewTextView: TextView
+    private lateinit var voteAverageTextView: TextView
+    private lateinit var voteCountTextView: TextView
+    private lateinit var mainConstraintLayout: ConstraintLayout
+    private lateinit var addToListMenuButton: ImageButton
+    private lateinit var markTvAsFavoriteButton: ImageButton
+    private lateinit var watchlistButton: ImageButton
+    private lateinit var seeAllImagesButton: Button
     private lateinit var rateButton: Button
-    private lateinit var director: TextView
-    private lateinit var writer: TextView
+    private lateinit var directorTextView: TextView
+    private lateinit var writerTextView: TextView
     private lateinit var videoCardView: CardView
-    private lateinit var trailerPreview: ImageView
-    private lateinit var trailerName: TextView
+    private lateinit var trailerPreviewImageView: ImageView
+    private lateinit var trailerNameTextView: TextView
     private lateinit var trailerCardView: CardView
-    private lateinit var releaseDateDetail: TextView
-    private lateinit var originCountry: TextView
-    private lateinit var languageSpoken: TextView
-    private lateinit var filmingLocations: TextView
+    private lateinit var releaseDateDetailTextView: TextView
+    private lateinit var originCountryTextView: TextView
+    private lateinit var languageSpokenTextView: TextView
+    private lateinit var filmingLocationsTextView: TextView
     private lateinit var genresChipGroup: ChipGroup
-    private lateinit var numberOfEpisodes: TextView
+    private lateinit var numberOfEpisodesTextView: TextView
     private lateinit var expandActivitiesButton: ImageButton
     private lateinit var activitiesConstraintLayout: ConstraintLayout
     private lateinit var mainCardView: CardView
     private lateinit var progressBar: ProgressBar
     private lateinit var recommendationsCardView: CardView
     private lateinit var episodeGuideButton: Button
-
-    private lateinit var lists: LiveData<ListsResponse>
+    private lateinit var castCardView: CardView
+    private lateinit var imagesCardView: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,293 +98,425 @@ class TvInfoFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTvInfoBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val tvId = args.tvId
 
-        tvInfoCastRecyclerView = binding.castRecyclerView
+        castRecyclerView = binding.castRecyclerView
         recommendationsRecyclerView = binding.recommendationsRecyclerView
         videoRecyclerView = binding.videoRecyclerView
         imagesRecyclerView = binding.imagesRecyclerView
 
-        tvInfoConstraintLayout = binding.tvInfoConstraintLayout
-        tvInfoPosterImageView = binding.tvInfoPosterImageView
-        tvInfoTitle = binding.tvTitleTextView
+        mainConstraintLayout = binding.tvInfoConstraintLayout
+        posterImageView = binding.tvInfoPosterImageView
+        titleTextView = binding.tvTitleTextView
         genresChipGroup = binding.chipGroupGenres
-        tvInfoRuntime = binding.runtimeTextView
-        tvInfoTagline = binding.taglineTextView
-        releaseDate = binding.releaseDateTextView
-        tvInfoOverview = binding.overviewTextView
-        menuButtonAddToList = binding.menuButtonAddTvToList
-        buttonMarkTvAsFavorite = binding.buttonMarkTvAsFavorite
-        buttonWatchlist = binding.buttonWatchlist
-        buttonSeeAllImages = binding.buttonSeeAllImages
-        voteAverage = binding.textViewRating
-        voteCount = binding.textViewVoteCount
+        runtimeTextView = binding.runtimeTextView
+        taglineTextView = binding.taglineTextView
+        releaseDateTextView = binding.releaseDateTextView
+        overviewTextView = binding.overviewTextView
+        addToListMenuButton = binding.menuButtonAddTvToList
+        markTvAsFavoriteButton = binding.buttonMarkTvAsFavorite
+        watchlistButton = binding.buttonWatchlist
+        seeAllImagesButton = binding.buttonSeeAllImages
+        voteAverageTextView = binding.textViewRating
+        voteCountTextView = binding.textViewVoteCount
         rateButton = binding.rateButtonView
-        director = binding.directorCastTextView
-        writer = binding.writerCastTextView
+        directorTextView = binding.directorCastTextView
+        writerTextView = binding.writerCastTextView
         videoCardView = binding.videoCardView
-        trailerPreview = binding.previewTrailerImageView
-        trailerName = binding.trailerNameTextView
+        trailerPreviewImageView = binding.previewTrailerImageView
+        trailerNameTextView = binding.trailerNameTextView
         trailerCardView = binding.trailerCardView
-        releaseDateDetail = binding.textviewReleaseDateDetail
-        originCountry = binding.textviewOriginCountryDetail
-        languageSpoken = binding.textviewLanguageSpokenDetail
-        filmingLocations = binding.textviewFilmingLocationsDetail
-        numberOfEpisodes = binding.numberOfEpisodesTextView
+        releaseDateDetailTextView = binding.textviewReleaseDateDetail
+        originCountryTextView = binding.textviewOriginCountryDetail
+        languageSpokenTextView = binding.textviewLanguageSpokenDetail
+        filmingLocationsTextView = binding.textviewFilmingLocationsDetail
+        numberOfEpisodesTextView = binding.numberOfEpisodesTextView
         expandActivitiesButton = binding.expandActivitiesButton
         activitiesConstraintLayout = binding.activitiesConstraintLayout
         mainCardView = binding.mainTvInfoCardView
         progressBar = binding.progressBarTvInfo
         recommendationsCardView = binding.recommendationsCardView
         episodeGuideButton = binding.episodeGuideButton
+        castCardView = binding.castCv
+        imagesCardView = binding.imagesCardView
 
-        tvInfoConstraintLayout.visibility = View.INVISIBLE
-        progressBar.visibility = View.VISIBLE
+        addToListMenuButton.isVisible = sessionId != ""
+        markTvAsFavoriteButton.isVisible = sessionId != ""
+        watchlistButton.isVisible = sessionId != ""
 
-        menuButtonAddToList.isVisible = sessionId != ""
-        buttonMarkTvAsFavorite.isVisible = sessionId != ""
-        buttonWatchlist.isVisible = sessionId != ""
+        setupViewModel()
+        setupUi()
+    }
 
-        viewModel.getTvInfoById(tvId).observe(viewLifecycleOwner) { tvInfo ->
-            val minutes = tvInfo.episodeRunTime?.get(0)?.toLong()
-            val languages = mutableListOf<String>()
-            val locations = mutableListOf<String>()
-            val genres = tvInfo.genres
-            val lastAirDate: String
+    private fun setupUi() {
+        tvViewModel.getTvInfo().observe(viewLifecycleOwner) { it ->
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { tvInfo ->
+                        val minutes = tvInfo.episodeRunTime?.get(0)?.toLong()
+                        val languages = mutableListOf<String>()
+                        val locations = mutableListOf<String>()
+                        val genres = tvInfo.genres
+                        val lastAirDate: String
 
-            numberOfSeasons = tvInfo.numberOfSeasons!!
+                        numberOfSeasons = tvInfo.numberOfSeasons!!
 
-            tvInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
-            tvInfo.productionCountries?.forEach { locations.add(it.name!!) }
+                        tvInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
+                        tvInfo.productionCountries?.forEach { locations.add(it.name!!) }
 
-            Glide.with(this)
-                .load(Constants.IMAGE_URL + tvInfo.posterPath)
-                .placeholder(R.drawable.ic_placeholder)
-                .centerCrop()
-                .override(300, 500)
-                .into(tvInfoPosterImageView)
-            tvInfoTitle.text = tvInfo.name
-            tvInfoRuntime.text = String.format("%02dm", minutes).dropWhile { it == '0' }
-            tvInfoTagline.text = tvInfo.tagline
-            val firstAirDate: String = tvInfo.firstAirDate?.dropLast(6).toString()
-            if (tvInfo.inProduction == false && tvInfo.lastAirDate != null) {
-                lastAirDate = tvInfo.lastAirDate.dropLast(6)
-                releaseDate.text = getString(R.string.tv_series_finished_date_range).format(
-                    firstAirDate,
-                    lastAirDate
-                )
-            } else {
-                releaseDate.text =
-                    getString(R.string.tv_series_in_production_date_range).format(firstAirDate)
-            }
-            tvInfoOverview.text = tvInfo.overview
-            voteAverage.text = getString(R.string.vote).format(tvInfo.getAverage())
-            voteCount.text = tvInfo.voteCount.toString()
-            releaseDateDetail.text = tvInfo.firstAirDate?.replace("-", ".")
-            originCountry.text = tvInfo.productionCountries?.elementAtOrNull(0)?.name
-            languageSpoken.text = languages.joinToString()
-            filmingLocations.text = locations.joinToString()
-            numberOfEpisodes.text =
-                getString(R.string.count_of_episodes).format(tvInfo.numberOfEpisodes.toString())
+                        Glide.with(this)
+                            .load(Constants.IMAGE_URL + tvInfo.posterPath)
+                            .placeholder(R.drawable.ic_placeholder)
+                            .centerCrop()
+                            .override(300, 500)
+                            .into(posterImageView)
+                        titleTextView.text = tvInfo.name
+                        runtimeTextView.text =
+                            String.format("%02dm", minutes).dropWhile { it == '0' }
+                        taglineTextView.text = tvInfo.tagline
+                        val firstAirDate: String = tvInfo.firstAirDate?.dropLast(6).toString()
+                        if (tvInfo.inProduction == false && tvInfo.lastAirDate != null) {
+                            lastAirDate = tvInfo.lastAirDate.dropLast(6)
+                            releaseDateTextView.text =
+                                getString(R.string.tv_series_finished_date_range).format(
+                                    firstAirDate,
+                                    lastAirDate
+                                )
+                        } else {
+                            releaseDateTextView.text =
+                                getString(R.string.tv_series_in_production_date_range).format(
+                                    firstAirDate
+                                )
+                        }
+                        overviewTextView.text = tvInfo.overview
+                        voteAverageTextView.text =
+                            getString(R.string.vote).format(tvInfo.getAverage())
+                        voteCountTextView.text = tvInfo.voteCount.toString()
+                        releaseDateDetailTextView.text = tvInfo.firstAirDate?.replace("-", ".")
+                        originCountryTextView.text =
+                            tvInfo.productionCountries?.elementAtOrNull(0)?.name
+                        languageSpokenTextView.text = languages.joinToString()
+                        filmingLocationsTextView.text = locations.joinToString()
+                        numberOfEpisodesTextView.text =
+                            getString(R.string.count_of_episodes).format(tvInfo.numberOfEpisodes.toString())
 
-            if (genres != null) {
-                for (genre in genres) {
-                    val chip = this.layoutInflater.inflate(
-                        R.layout.item_chip_tags,
-                        null,
-                        false
-                    ) as Chip
-                    chip.text = genre.name
-                    genresChipGroup.addView(chip)
+                        if (genres != null) {
+                            for (genre in genres) {
+                                val chip = this.layoutInflater.inflate(
+                                    R.layout.item_chip_tags,
+                                    null,
+                                    false
+                                ) as Chip
+                                chip.text = genre.name
+                                genresChipGroup.addView(chip)
+                            }
+                        }
+
+                        overviewTextView.setOnClickListener {
+                            MaterialAlertDialogBuilder(requireContext()).setMessage(tvInfo.overview)
+                                .show()
+                        }
+
+                        progressBar.visibility = View.GONE
+                        mainConstraintLayout.visibility = View.VISIBLE
+                    }
+                }
+                Status.LOADING -> {
+                    mainConstraintLayout.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
 
-            tvInfoOverview.setOnClickListener {
-                MaterialAlertDialogBuilder(requireContext()).setMessage(tvInfo.overview)
-                    .show()
+            tvViewModel.getTvCast().observe(viewLifecycleOwner) { it ->
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { castItems ->
+                            if (!castItems.cast.isNullOrEmpty()) {
+                                val tvCastAdapter = TvCastAdapter(castItems, findNavController())
+                                val directors = mutableListOf<String>()
+                                val writers = mutableListOf<String>()
+                                var tenCast = castItems.cast
+
+                                while (tenCast?.size!! > 10) {
+                                    tenCast = tenCast.dropLast(1) as MutableList<Cast>?
+                                }
+
+                                castItems.apply {
+                                    cast = tenCast
+                                }
+
+                                castRecyclerView.apply {
+                                    adapter = tvCastAdapter
+                                    layoutManager =
+                                        LinearLayoutManager(
+                                            requireContext(),
+                                            LinearLayoutManager.HORIZONTAL,
+                                            false
+                                        )
+                                }
+                                tvCastAdapter.differ.submitList(castItems.cast)
+
+                                castItems.crew?.filter { it.known_for_department == "Directing" }
+                                    .also { it -> it?.forEach { directors.add(it.original_name!!) } }
+                                castItems.crew?.filter { it.known_for_department == "Writing" }
+                                    .also { it -> it?.forEach { writers.add(it.original_name!!) } }
+
+                                directorTextView.text =
+                                    getString(R.string.director).format(directors.joinToString())
+                                writerTextView.text =
+                                    getString(R.string.writer).format(writers.joinToString())
+
+                                progressBar.visibility = View.GONE
+                                castCardView.visibility = View.VISIBLE
+                            } else {
+                                progressBar.visibility = View.GONE
+                            }
+                        }
+                    }
+                    Status.LOADING -> {
+                        castCardView.visibility = View.GONE
+                        progressBar.visibility = View.VISIBLE
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(
+                            requireContext(),
+                            ERROR_MESSAGE.format(it.message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
             }
 
-            tvInfoConstraintLayout.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE
-        }
+            tvViewModel.getRecommendations().observe(viewLifecycleOwner) {
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { recommendationsItems ->
+                            if (recommendationsItems.totalResults == 0) {
+                                recommendationsCardView.visibility = View.GONE
+                                progressBar.visibility = View.GONE
+                            } else {
+                                val tvRecommendationsAdapter = TvRecommendationsAdapter(
+                                    recommendationsItems,
+                                    findNavController()
+                                )
 
-        checkWatchlist(buttonWatchlist)
-        checkFavorites(buttonMarkTvAsFavorite)
+                                recommendationsRecyclerView.apply {
+                                    adapter = tvRecommendationsAdapter
+                                    layoutManager =
+                                        LinearLayoutManager(
+                                            requireContext(),
+                                            LinearLayoutManager.HORIZONTAL,
+                                            false
+                                        )
+                                }
+                                tvRecommendationsAdapter.differ.submitList(recommendationsItems.results)
 
-        viewModel.getTvCastById(tvId).observe(viewLifecycleOwner) { castItems ->
-            val tvCastAdapter = TvCastAdapter(castItems, findNavController())
-            val directors = mutableListOf<String>()
-            val writers = mutableListOf<String>()
-            var tenCast = castItems.cast
-
-            while (tenCast?.size!! > 10) {
-                tenCast = tenCast.dropLast(1) as MutableList<Cast>?
+                                progressBar.visibility = View.GONE
+                                recommendationsCardView.visibility = View.VISIBLE
+                            }
+                        }
+                    }
+                    Status.LOADING -> {
+                        recommendationsCardView.visibility = View.GONE
+                        progressBar.visibility = View.VISIBLE
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(
+                            requireContext(),
+                            ERROR_MESSAGE.format(it.message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
             }
 
-            castItems.apply {
-                cast = tenCast
+            tvViewModel.getVideos().observe(viewLifecycleOwner) { it ->
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { videoItems ->
+                            if (!videoItems.results.isNullOrEmpty()) {
+                                val videoAdapter = VideoAdapter(
+                                    videoItems,
+                                    findNavController()
+                                )
+
+                                val officialTrailer = videoItems.results.find {
+                                    it.name?.contains(
+                                        "official trailer",
+                                        true
+                                    ) == true || it.name?.contains(
+                                        "trailer",
+                                        true
+                                    ) == true
+                                }
+                                if (officialTrailer != null) {
+                                    videoItems.results.remove(officialTrailer)
+
+                                    Glide.with(requireContext())
+                                        .load(Constants.YOUTUBE_PREVIEW_URL.format(officialTrailer.key))
+                                        .placeholder(R.drawable.ic_placeholder)
+                                        .centerCrop()
+                                        .override(800, 600)
+                                        .into(trailerPreviewImageView)
+
+                                    trailerNameTextView.text = officialTrailer.name
+
+                                    trailerCardView.setOnClickListener {
+                                        findNavController().navigate(
+                                            TvInfoFragmentDirections.actionTvInfoFragmentToVideoFragment(
+                                                officialTrailer.key!!
+                                            )
+                                        )
+                                    }
+                                }
+
+                                videoRecyclerView.apply {
+                                    adapter = videoAdapter
+                                    layoutManager =
+                                        LinearLayoutManager(
+                                            requireContext(),
+                                            LinearLayoutManager.HORIZONTAL,
+                                            false
+                                        )
+                                }
+                                videoAdapter.differ.submitList(videoItems.results)
+
+                                progressBar.visibility = View.GONE
+                                videoCardView.visibility = View.VISIBLE
+                            } else {
+                                videoCardView.visibility = View.GONE
+                            }
+                        }
+                    }
+                    Status.LOADING -> {
+                        videoCardView.visibility = View.GONE
+                        progressBar.visibility = View.VISIBLE
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(
+                            requireContext(),
+                            ERROR_MESSAGE.format(it.message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
             }
 
-            tvInfoCastRecyclerView.apply {
-                adapter = tvCastAdapter
-                layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            tvViewModel.getImages().observe(viewLifecycleOwner) {
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { imagesItems ->
+                            if (!imagesItems.backdrops.isNullOrEmpty()) {
+                                val imageAdapter = ImagesAdapter(
+                                    imagesItems,
+                                )
+                                var tenImages = imagesItems.backdrops
+
+                                while (tenImages?.size!! > 10) {
+                                    tenImages = tenImages.dropLast(1) as MutableList<Backdrop>?
+                                }
+
+                                imagesItems.apply {
+                                    backdrops = tenImages
+                                }
+
+                                imagesRecyclerView.apply {
+                                    adapter = imageAdapter
+                                    layoutManager =
+                                        LinearLayoutManager(
+                                            requireContext(),
+                                            LinearLayoutManager.HORIZONTAL,
+                                            false
+                                        )
+                                }
+                                imageAdapter.differ.submitList(imagesItems.backdrops)
+
+                                progressBar.visibility = View.GONE
+                                imagesCardView.visibility = View.VISIBLE
+                            } else {
+                                progressBar.visibility = View.GONE
+                            }
+                        }
+                    }
+                    Status.LOADING -> {
+                        imagesCardView.visibility = View.GONE
+                        progressBar.visibility = View.VISIBLE
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(
+                            requireContext(),
+                            ERROR_MESSAGE.format(it.message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
             }
-            tvCastAdapter.differ.submitList(castItems.cast)
 
-            castItems.crew?.filter { it.known_for_department == "Directing" }
-                .also { it -> it?.forEach { directors.add(it.original_name!!) } }
-            castItems.crew?.filter { it.known_for_department == "Writing" }
-                .also { it -> it?.forEach { writers.add(it.original_name!!) } }
+            seeAllImagesButton.setOnClickListener {
+                val action = TvInfoFragmentDirections.actionTvInfoFragmentToImagesFragment()
+                action.tvId = args.tvId.toString()
 
-            director.text = getString(R.string.director).format(directors.joinToString())
-            writer.text = getString(R.string.writer).format(writers.joinToString())
-        }
+                findNavController().navigate(action)
+            }
 
-        viewModel.getRecommendationsByTvId(tvId)
-            .observe(viewLifecycleOwner) { recommendationsItems ->
-                if (recommendationsItems.totalResults == 0) {
-                    recommendationsCardView.visibility = View.GONE
+            lists = viewModel.getLists(accountId, sessionId, 1)
+
+            addToListMenuButton.setOnClickListener { v ->
+                lists.observe(viewLifecycleOwner) {
+                    showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
+                }
+            }
+
+            expandActivitiesButton.setOnClickListener {
+                if (activitiesConstraintLayout.visibility == View.GONE) {
+                    TransitionManager.beginDelayedTransition(mainCardView)
+                    expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_less_36)
+                    activitiesConstraintLayout.visibility = View.VISIBLE
                 } else {
-                    val tvRecommendationsAdapter = TvRecommendationsAdapter(
-                        recommendationsItems,
-                        findNavController()
+                    expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_more_36)
+                    activitiesConstraintLayout.visibility = View.GONE
+                }
+            }
+
+            episodeGuideButton.setOnClickListener {
+                findNavController().navigate(
+                    TvInfoFragmentDirections.actionTvInfoFragmentToTvSeasonsFragment(
+                        args.tvId,
+                        numberOfSeasons
                     )
-
-                    recommendationsRecyclerView.apply {
-                        adapter = tvRecommendationsAdapter
-                        layoutManager =
-                            LinearLayoutManager(
-                                requireContext(),
-                                LinearLayoutManager.HORIZONTAL,
-                                false
-                            )
-                    }
-                    tvRecommendationsAdapter.differ.submitList(recommendationsItems.results)
-                }
-            }
-
-        viewModel.getVideosByTvId(tvId).observe(viewLifecycleOwner) { videoItems ->
-            val videoAdapter = VideoAdapter(
-                videoItems,
-                findNavController()
-            )
-
-            if (videoItems.results != null) {
-                val officialTrailer = videoItems.results.find {
-                    it.name?.contains(
-                        "official trailer",
-                        true
-                    ) == true || it.name?.contains(
-                        "trailer",
-                        true
-                    ) == true
-                }
-                if (officialTrailer != null) {
-                    videoItems.results.remove(officialTrailer)
-
-                    Glide.with(requireContext())
-                        .load(Constants.YOUTUBE_PREVIEW_URL.format(officialTrailer.key))
-                        .placeholder(R.drawable.ic_placeholder)
-                        .centerCrop()
-                        .override(800, 600)
-                        .into(trailerPreview)
-
-                    trailerName.text = officialTrailer.name
-
-                    trailerCardView.setOnClickListener {
-                        findNavController().navigate(
-                            TvInfoFragmentDirections.actionTvInfoFragmentToVideoFragment(
-                                officialTrailer.key!!
-                            )
-                        )
-                    }
-                }
-
-                videoRecyclerView.apply {
-                    adapter = videoAdapter
-                    layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-                }
-                videoAdapter.differ.submitList(videoItems.results)
-            } else {
-                videoCardView.visibility = View.GONE
-            }
-        }
-
-        viewModel.getImagesByTvId(tvId)
-            .observe(viewLifecycleOwner) { imagesItems ->
-                val imageAdapter = ImagesAdapter(
-                    imagesItems,
                 )
-                var tenImages = imagesItems.backdrops
-
-                while (tenImages?.size!! > 10) {
-                    tenImages = tenImages.dropLast(1) as MutableList<Backdrop>?
-                }
-
-                imagesItems.apply {
-                    backdrops = tenImages
-                }
-
-                imagesRecyclerView.apply {
-                    adapter = imageAdapter
-                    layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-                }
-                imageAdapter.differ.submitList(imagesItems.backdrops)
             }
 
-        buttonSeeAllImages.setOnClickListener {
-            val action = TvInfoFragmentDirections.actionTvInfoFragmentToImagesFragment()
-            action.tvId = tvId.toString()
+            checkWatchlist(watchlistButton)
+            checkFavorites(markTvAsFavoriteButton)
 
-            findNavController().navigate(action)
-        }
+            markTvAsFavoriteButton.setOnClickListener {
+                markAsFavorite(markTvAsFavoriteButton)
+            }
 
-        lists = viewModel.getLists(accountId, sessionId, 1)
-
-        menuButtonAddToList.setOnClickListener { v ->
-            lists.observe(viewLifecycleOwner) {
-                showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
+            watchlistButton.setOnClickListener {
+                addToWatchlist(watchlistButton)
             }
         }
+    }
 
-        expandActivitiesButton.setOnClickListener {
-            if (activitiesConstraintLayout.visibility == View.GONE) {
-                TransitionManager.beginDelayedTransition(mainCardView)
-                expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_less_36)
-                activitiesConstraintLayout.visibility = View.VISIBLE
-            } else {
-                expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_more_36)
-                activitiesConstraintLayout.visibility = View.GONE
-            }
-        }
-
-        episodeGuideButton.setOnClickListener {
-            findNavController().navigate(
-                TvInfoFragmentDirections.actionTvInfoFragmentToTvSeasonsFragment(
-                    tvId,
-                    numberOfSeasons
-                )
+    private fun setupViewModel() {
+        tvViewModel = ViewModelProvider(
+            this, ViewModelFactory(
+                tvId = args.tvId
             )
-        }
-
-        buttonMarkTvAsFavorite.setOnClickListener {
-            markAsFavorite(buttonMarkTvAsFavorite)
-        }
-
-        buttonWatchlist.setOnClickListener {
-            addToWatchlist(buttonWatchlist)
-        }
-
-        rateButton.setOnClickListener { TODO() }
+        ).get(TvViewModel::class.java)
     }
 
     override fun onDestroyView() {

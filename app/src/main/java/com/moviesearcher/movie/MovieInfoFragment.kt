@@ -57,34 +57,35 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var recommendationsRecyclerView: RecyclerView
     private lateinit var videoRecyclerView: RecyclerView
     private lateinit var imagesRecyclerView: RecyclerView
-    private lateinit var movieInfoPosterImageView: ImageView
-    private lateinit var movieInfoTitle: TextView
-    private lateinit var movieInfoRuntime: TextView
-    private lateinit var movieInfoTagline: TextView
-    private lateinit var movieInfoReleaseDate: TextView
-    private lateinit var movieInfoOverview: TextView
-    private lateinit var voteAverage: TextView
-    private lateinit var voteCount: TextView
-    private lateinit var movieInfoConstraintLayout: ConstraintLayout
-    private lateinit var menuButtonAddToList: ImageButton
-    private lateinit var buttonMarkMovieAsFavorite: ImageButton
-    private lateinit var buttonWatchlist: ImageButton
-    private lateinit var buttonSeeAllImages: Button
+
+    private lateinit var posterImageView: ImageView
+    private lateinit var titleTextView: TextView
+    private lateinit var runtimeTextView: TextView
+    private lateinit var taglineTextView: TextView
+    private lateinit var releaseDateTextView: TextView
+    private lateinit var overviewTextView: TextView
+    private lateinit var voteAverageTextView: TextView
+    private lateinit var voteCountTextView: TextView
+    private lateinit var mainConstraintLayout: ConstraintLayout
+    private lateinit var addToListImageButton: ImageButton
+    private lateinit var markMovieAsFavoriteImageButton: ImageButton
+    private lateinit var watchlistImageButton: ImageButton
+    private lateinit var seeAllImagesButton: Button
     private lateinit var rateButton: Button
-    private lateinit var director: TextView
-    private lateinit var writer: TextView
+    private lateinit var directorTextView: TextView
+    private lateinit var writerTextView: TextView
     private lateinit var videoCardView: CardView
     private lateinit var castCardView: CardView
     private lateinit var imagesCardView: CardView
-    private lateinit var trailerPreview: ImageView
-    private lateinit var trailerName: TextView
+    private lateinit var trailerPreviewImageView: ImageView
+    private lateinit var trailerNameTextView: TextView
     private lateinit var trailerCardView: CardView
-    private lateinit var releaseDate: TextView
-    private lateinit var originCountry: TextView
-    private lateinit var languageSpoken: TextView
-    private lateinit var filmingLocations: TextView
+    private lateinit var releaseDateDetailTextView: TextView
+    private lateinit var originCountryTextView: TextView
+    private lateinit var languageSpokenTextView: TextView
+    private lateinit var filmingLocationsTextView: TextView
     private lateinit var genresChipGroup: ChipGroup
-    private lateinit var expandActivitiesButton: ImageButton
+    private lateinit var expandActivitiesImageButton: ImageButton
     private lateinit var activitiesConstraintLayout: ConstraintLayout
     private lateinit var mainCardView: CardView
     private lateinit var progressBar: ProgressBar
@@ -106,44 +107,42 @@ class MovieInfoFragment : BaseFragment() {
         videoRecyclerView = binding.videoRecyclerView
         imagesRecyclerView = binding.imagesRecyclerView
 
-        movieInfoConstraintLayout = binding.movieInfoConstraintLayout
-        movieInfoConstraintLayout.visibility = View.INVISIBLE
-        movieInfoPosterImageView = binding.movieInfoPosterImageView
-        movieInfoTitle = binding.movieTitleTextView
+        mainConstraintLayout = binding.movieInfoConstraintLayout
+        posterImageView = binding.movieInfoPosterImageView
+        titleTextView = binding.movieTitleTextView
         genresChipGroup = binding.chipGroupGenres
-        movieInfoRuntime = binding.runtimeTextView
-        movieInfoTagline = binding.taglineTextView
-        movieInfoReleaseDate = binding.releaseDateTextView
-        movieInfoOverview = binding.overviewTextView
-        menuButtonAddToList = binding.menuButtonAddMovieToList
-        buttonMarkMovieAsFavorite = binding.buttonMarkMovieAsFavorite
-        buttonWatchlist = binding.buttonWatchlist
-        buttonSeeAllImages = binding.buttonSeeAllImages
-        voteAverage = binding.textViewRating
-        voteCount = binding.textViewVoteCount
+        runtimeTextView = binding.runtimeTextView
+        taglineTextView = binding.taglineTextView
+        releaseDateTextView = binding.releaseDateTextView
+        overviewTextView = binding.overviewTextView
+        addToListImageButton = binding.menuButtonAddMovieToList
+        markMovieAsFavoriteImageButton = binding.buttonMarkMovieAsFavorite
+        watchlistImageButton = binding.buttonWatchlist
+        seeAllImagesButton = binding.buttonSeeAllImages
+        voteAverageTextView = binding.textViewRating
+        voteCountTextView = binding.textViewVoteCount
         rateButton = binding.rateButtonView
-        director = binding.directorCastTextView
-        writer = binding.writerCastTextView
+        directorTextView = binding.directorCastTextView
+        writerTextView = binding.writerCastTextView
         videoCardView = binding.videoCardView
-        castCardView = binding.cardviewCast
+        castCardView = binding.castCv
         imagesCardView = binding.imagesCardView
-        trailerPreview = binding.previewTrailerImageView
-        trailerName = binding.trailerNameTextView
+        trailerPreviewImageView = binding.previewTrailerImageView
+        trailerNameTextView = binding.trailerNameTextView
         trailerCardView = binding.trailerCardView
-        releaseDate = binding.textviewReleaseDateDetail
-        originCountry = binding.textviewOriginCountryDetail
-        languageSpoken = binding.textviewLanguageSpokenDetail
-        filmingLocations = binding.textviewFilmingLocationsDetail
-        expandActivitiesButton = binding.expandActivitiesButton
+        releaseDateDetailTextView = binding.textviewReleaseDateDetail
+        originCountryTextView = binding.textviewOriginCountryDetail
+        languageSpokenTextView = binding.textviewLanguageSpokenDetail
+        filmingLocationsTextView = binding.textviewFilmingLocationsDetail
+        expandActivitiesImageButton = binding.expandActivitiesButton
         activitiesConstraintLayout = binding.activitiesConstraintLayout
         mainCardView = binding.mainMovieInfoCardView
         progressBar = binding.progressBarMovieInfo
         recommendationsCardView = binding.recommendationsCardView
-        progressBar.visibility = View.VISIBLE
 
-        menuButtonAddToList.isVisible = sessionId != ""
-        buttonMarkMovieAsFavorite.isVisible = sessionId != ""
-        buttonWatchlist.isVisible = sessionId != ""
+        addToListImageButton.isVisible = sessionId != ""
+        markMovieAsFavoriteImageButton.isVisible = sessionId != ""
+        watchlistImageButton.isVisible = sessionId != ""
 
         setupViewModel()
         setupUi()
@@ -168,20 +167,21 @@ class MovieInfoFragment : BaseFragment() {
                             .placeholder(R.drawable.ic_placeholder)
                             .centerCrop()
                             .override(300, 500)
-                            .into(movieInfoPosterImageView)
-                        movieInfoTitle.text = movieInfo.title
-                        movieInfoRuntime.text =
+                            .into(posterImageView)
+                        titleTextView.text = movieInfo.title
+                        runtimeTextView.text =
                             String.format("%02dh %02dm", hours, minutes).dropWhile { it == '0' }
-                        movieInfoTagline.text = movieInfo.tagline
-                        movieInfoReleaseDate.text = movieInfo.releaseDate?.dropLast(6)
-                        movieInfoOverview.text = movieInfo.overview
-                        voteAverage.text =
+                        taglineTextView.text = movieInfo.tagline
+                        releaseDateTextView.text = movieInfo.releaseDate?.dropLast(6)
+                        overviewTextView.text = movieInfo.overview
+                        voteAverageTextView.text =
                             getString(R.string.vote).format(movieInfo.voteAverage.toString())
-                        voteCount.text = movieInfo.voteCount.toString()
-                        releaseDate.text = movieInfo.releaseDate?.replace("-", ".")
-                        originCountry.text = movieInfo.productionCountries?.elementAtOrNull(0)?.name
-                        languageSpoken.text = languages.joinToString()
-                        filmingLocations.text = locations.joinToString()
+                        voteCountTextView.text = movieInfo.voteCount.toString()
+                        releaseDateDetailTextView.text = movieInfo.releaseDate?.replace("-", ".")
+                        originCountryTextView.text =
+                            movieInfo.productionCountries?.elementAtOrNull(0)?.name
+                        languageSpokenTextView.text = languages.joinToString()
+                        filmingLocationsTextView.text = locations.joinToString()
 
                         if (genres != null) {
                             for (genre in genres) {
@@ -195,21 +195,25 @@ class MovieInfoFragment : BaseFragment() {
                             }
                         }
 
-                        movieInfoOverview.setOnClickListener {
+                        overviewTextView.setOnClickListener {
                             MaterialAlertDialogBuilder(requireContext()).setMessage(movieInfo.overview)
                                 .show()
                         }
 
-                        movieInfoConstraintLayout.visibility = View.VISIBLE
+                        mainConstraintLayout.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
                     }
                 }
                 Status.LOADING -> {
                     progressBar.visibility = View.VISIBLE
-                    movieInfoConstraintLayout.visibility = View.GONE
+                    mainConstraintLayout.visibility = View.GONE
                 }
                 Status.ERROR -> {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -218,39 +222,43 @@ class MovieInfoFragment : BaseFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { castItems ->
-                        val movieCastAdapter = MovieCastAdapter(castItems, findNavController())
-                        var tenCast = castItems.cast
+                        if (!castItems.cast.isNullOrEmpty()) {
+                            val movieCastAdapter = MovieCastAdapter(castItems, findNavController())
+                            var tenCast = castItems.cast
 
-                        while (tenCast?.size!! > 10) {
-                            tenCast = tenCast.dropLast(1) as MutableList<Cast>?
-                        }
+                            while (tenCast?.size!! > 10) {
+                                tenCast = tenCast.dropLast(1) as MutableList<Cast>?
+                            }
 
-                        castItems.apply {
-                            cast = tenCast
-                        }
+                            castItems.apply {
+                                cast = tenCast
+                            }
 
-                        castRecyclerView.apply {
-                            adapter = movieCastAdapter
-                            layoutManager =
-                                LinearLayoutManager(
-                                    requireContext(),
-                                    LinearLayoutManager.HORIZONTAL,
-                                    false
+                            castRecyclerView.apply {
+                                adapter = movieCastAdapter
+                                layoutManager =
+                                    LinearLayoutManager(
+                                        requireContext(),
+                                        LinearLayoutManager.HORIZONTAL,
+                                        false
+                                    )
+                            }
+                            movieCastAdapter.differ.submitList(castItems.cast)
+
+                            directorTextView.text =
+                                getString(R.string.director).format(
+                                    castItems.crew?.find { it.job == "Director" }?.name
                                 )
+                            writerTextView.text =
+                                getString(R.string.writer).format(
+                                    castItems.crew?.find { it.job == "Writing" }?.name
+                                )
+
+                            progressBar.visibility = View.GONE
+                            castCardView.visibility = View.VISIBLE
+                        } else {
+                            progressBar.visibility = View.GONE
                         }
-                        movieCastAdapter.differ.submitList(castItems.cast)
-
-                        director.text =
-                            getString(R.string.director).format(
-                                castItems.crew?.find { it.job == "Director" }?.name
-                            )
-                        writer.text =
-                            getString(R.string.writer).format(
-                                castItems.crew?.find { it.job == "Writing" }?.name
-                            )
-
-                        progressBar.visibility = View.GONE
-                        castCardView.visibility = View.VISIBLE
                     }
                 }
                 Status.LOADING -> {
@@ -258,61 +266,67 @@ class MovieInfoFragment : BaseFragment() {
                     castCardView.visibility = View.GONE
                 }
                 Status.ERROR -> {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
 
-        movieViewModel.getRecommendations()
-            .observe(viewLifecycleOwner) {
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        it.data?.let { recommendationsItems ->
-                            if (recommendationsItems.totalResults == 0) {
-                                recommendationsCardView.visibility = View.GONE
-                                progressBar.visibility = View.GONE
-                            } else {
-                                val recommendationsAdapter = RecommendationsAdapter(
-                                    recommendationsItems,
-                                    findNavController()
-                                )
+        movieViewModel.getRecommendations().observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { recommendationsItems ->
+                        if (recommendationsItems.totalResults == 0) {
+                            progressBar.visibility = View.GONE
+                        } else {
+                            val recommendationsAdapter = RecommendationsAdapter(
+                                recommendationsItems,
+                                findNavController()
+                            )
 
-                                recommendationsRecyclerView.apply {
-                                    adapter = recommendationsAdapter
-                                    layoutManager =
-                                        LinearLayoutManager(
-                                            requireContext(),
-                                            LinearLayoutManager.HORIZONTAL,
-                                            false
-                                        )
-                                }
-                                recommendationsAdapter.differ.submitList(recommendationsItems.results)
-
-                                progressBar.visibility = View.GONE
-                                recommendationsCardView.visibility = View.VISIBLE
+                            recommendationsRecyclerView.apply {
+                                adapter = recommendationsAdapter
+                                layoutManager =
+                                    LinearLayoutManager(
+                                        requireContext(),
+                                        LinearLayoutManager.HORIZONTAL,
+                                        false
+                                    )
                             }
+                            recommendationsAdapter.differ.submitList(recommendationsItems.results)
+
+                            progressBar.visibility = View.GONE
+                            recommendationsCardView.visibility = View.VISIBLE
                         }
                     }
-                    Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
-                        recommendationsCardView.visibility = View.GONE
-                    }
-                    Status.ERROR -> {
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
-                    }
+                }
+                Status.LOADING -> {
+                    progressBar.visibility = View.VISIBLE
+                    recommendationsCardView.visibility = View.GONE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
+        }
 
         movieViewModel.getVideos().observe(viewLifecycleOwner) { it ->
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { videoItems ->
-                        val videoAdapter = VideoAdapter(
-                            videoItems,
-                            findNavController()
-                        )
+                        if (!videoItems.results.isNullOrEmpty()) {
+                            val videoAdapter = VideoAdapter(
+                                videoItems,
+                                findNavController()
+                            )
 
-                        if (videoItems.results != null) {
                             val officialTrailer = videoItems.results.find {
                                 it.name?.contains(
                                     "official trailer",
@@ -330,9 +344,9 @@ class MovieInfoFragment : BaseFragment() {
                                     .placeholder(R.drawable.ic_placeholder)
                                     .centerCrop()
                                     .override(800, 600)
-                                    .into(trailerPreview)
+                                    .into(trailerPreviewImageView)
 
-                                trailerName.text = officialTrailer.name
+                                trailerNameTextView.text = officialTrailer.name
 
                                 trailerCardView.setOnClickListener {
                                     findNavController().navigate(
@@ -358,7 +372,6 @@ class MovieInfoFragment : BaseFragment() {
                             videoCardView.visibility = View.VISIBLE
                         } else {
                             progressBar.visibility = View.GONE
-                            videoCardView.visibility = View.GONE
                         }
                     }
                 }
@@ -367,16 +380,20 @@ class MovieInfoFragment : BaseFragment() {
                     videoCardView.visibility = View.GONE
                 }
                 Status.ERROR -> {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
 
-        movieViewModel.getImages()
-            .observe(viewLifecycleOwner) {
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        it.data?.let { imagesItems ->
+        movieViewModel.getImages().observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { imagesItems ->
+                        if (!imagesItems.backdrops.isNullOrEmpty()) {
                             val imageAdapter = ImagesAdapter(
                                 imagesItems,
                             )
@@ -400,22 +417,29 @@ class MovieInfoFragment : BaseFragment() {
                                     )
                             }
                             imageAdapter.differ.submitList(imagesItems.backdrops)
-                        }
 
-                        progressBar.visibility = View.GONE
-                        imagesCardView.visibility = View.VISIBLE
-                    }
-                    Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
-                        imagesCardView.visibility = View.GONE
-                    }
-                    Status.ERROR -> {
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                            progressBar.visibility = View.GONE
+                            imagesCardView.visibility = View.VISIBLE
+                        } else {
+                            progressBar.visibility = View.GONE
+                        }
                     }
                 }
+                Status.LOADING -> {
+                    progressBar.visibility = View.VISIBLE
+                    imagesCardView.visibility = View.GONE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
+        }
 
-        buttonSeeAllImages.setOnClickListener {
+        seeAllImagesButton.setOnClickListener {
             val action = MovieInfoFragmentDirections.actionMovieInfoFragmentToImagesFragment()
             action.movieId = args.movieId.toString()
 
@@ -424,32 +448,32 @@ class MovieInfoFragment : BaseFragment() {
 
         lists = viewModel.getLists(accountId, sessionId, 1)
 
-        menuButtonAddToList.setOnClickListener { v ->
+        addToListImageButton.setOnClickListener { v ->
             lists.observe(viewLifecycleOwner) {
                 showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
             }
         }
 
-        expandActivitiesButton.setOnClickListener {
+        expandActivitiesImageButton.setOnClickListener {
             if (activitiesConstraintLayout.visibility == View.GONE) {
                 TransitionManager.beginDelayedTransition(mainCardView)
-                expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_less_36)
+                expandActivitiesImageButton.setImageResource(R.drawable.ic_round_expand_less_36)
                 activitiesConstraintLayout.visibility = View.VISIBLE
             } else {
-                expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_more_36)
+                expandActivitiesImageButton.setImageResource(R.drawable.ic_round_expand_more_36)
                 activitiesConstraintLayout.visibility = View.GONE
             }
         }
 
-        checkFavorites(buttonMarkMovieAsFavorite)
-        checkWatchlist(buttonWatchlist)
+        checkFavorites(markMovieAsFavoriteImageButton)
+        checkWatchlist(watchlistImageButton)
 
-        buttonMarkMovieAsFavorite.setOnClickListener {
-            markAsFavorite(buttonMarkMovieAsFavorite)
+        markMovieAsFavoriteImageButton.setOnClickListener {
+            markAsFavorite(markMovieAsFavoriteImageButton)
         }
 
-        buttonWatchlist.setOnClickListener {
-            addToWatchlist(buttonWatchlist)
+        watchlistImageButton.setOnClickListener {
+            addToWatchlist(watchlistImageButton)
         }
     }
 

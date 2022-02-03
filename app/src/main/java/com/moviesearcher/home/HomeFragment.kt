@@ -93,7 +93,11 @@ class HomeFragment : BaseFragment() {
                 }
                 Status.ERROR -> {
                     progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -114,7 +118,11 @@ class HomeFragment : BaseFragment() {
                 }
                 Status.ERROR -> {
                     progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -135,7 +143,11 @@ class HomeFragment : BaseFragment() {
                 }
                 Status.ERROR -> {
                     progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -179,7 +191,11 @@ class HomeFragment : BaseFragment() {
                 Status.LOADING -> {
                 }
                 Status.ERROR -> {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }

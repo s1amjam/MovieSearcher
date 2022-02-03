@@ -32,6 +32,7 @@ import kotlin.properties.Delegates
 private const val TAG = "BaseFragment"
 
 open class BaseFragment : Fragment() {
+    val ERROR_MESSAGE = "Something went wrong '%s'"
     lateinit var sessionId: String
     var accountId by Delegates.notNull<Long>()
 
@@ -215,7 +216,11 @@ open class BaseFragment : Fragment() {
                     Status.LOADING -> {
                     }
                     Status.ERROR -> {
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            requireContext(),
+                            ERROR_MESSAGE.format(it.message),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
