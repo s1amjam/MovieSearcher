@@ -41,6 +41,8 @@ class HomeFragment : BaseFragment() {
     private lateinit var trendingMoviesCardView: CardView
     private lateinit var trendingTvsCardView: CardView
     private lateinit var upcomingMoviesCardView: CardView
+    private lateinit var featuredConstraintLayout: ConstraintLayout
+    private lateinit var upcomingConstraintLayout: ConstraintLayout
 
     private var watchlistIds: MutableList<Long>? = mutableListOf()
 
@@ -56,7 +58,7 @@ class HomeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
-        mainLayout = binding.movieConstraintLayout
+        mainLayout = binding.homeConstraintLayout
         progressBar = binding.progressBarMovieSearcherFragment
         trendingMovieRecyclerView = binding.movieRecyclerView
         trendingTvRecyclerView = binding.tvRecyclerView
@@ -64,6 +66,8 @@ class HomeFragment : BaseFragment() {
         trendingMoviesCardView = binding.cardviewMoviesFeaturedToday
         trendingTvsCardView = binding.cardviewTvsFeaturedToday
         upcomingMoviesCardView = binding.cardviewUpcomingMovies
+        featuredConstraintLayout = binding.featuredCl
+        upcomingConstraintLayout = binding.upcomingCl
 
         trendingMovieRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -85,9 +89,11 @@ class HomeFragment : BaseFragment() {
                         trendingMovieRecyclerView.adapter = adapter
                     }
                     progressBar.visibility = View.GONE
+                    featuredConstraintLayout.visibility = View.VISIBLE
                     trendingMoviesCardView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
+                    featuredConstraintLayout.visibility = View.GONE
                     trendingMoviesCardView.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }
@@ -110,9 +116,11 @@ class HomeFragment : BaseFragment() {
                         trendingTvRecyclerView.adapter = adapter
                     }
                     progressBar.visibility = View.GONE
+                    featuredConstraintLayout.visibility = View.VISIBLE
                     trendingTvsCardView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
+                    featuredConstraintLayout.visibility = View.GONE
                     trendingTvsCardView.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }
@@ -135,9 +143,11 @@ class HomeFragment : BaseFragment() {
                         upcomingMovieRecyclerView.adapter = adapter
                     }
                     progressBar.visibility = View.GONE
+                    upcomingConstraintLayout.visibility = View.VISIBLE
                     upcomingMoviesCardView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
+                    upcomingConstraintLayout.visibility = View.GONE
                     upcomingMoviesCardView.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }
@@ -178,24 +188,24 @@ class HomeFragment : BaseFragment() {
                     sessionId, accountId
                 )
             ).get(WatchlistViewModel::class.java)
-        }
 
-        watchlistViewModel.getWatchlistedItemsIds().observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    it.data?.let { movieItems ->
-                        movieItems.forEach { it -> watchlistIds?.add(it) }
-                        setupObserver()
+            watchlistViewModel.getWatchlistedItemsIds().observe(viewLifecycleOwner) { it ->
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { movieItems ->
+                            movieItems.forEach { watchlistIds?.add(it) }
+                            setupObserver()
+                        }
                     }
-                }
-                Status.LOADING -> {
-                }
-                Status.ERROR -> {
-                    Toast.makeText(
-                        requireContext(),
-                        ERROR_MESSAGE.format(it.message),
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Status.LOADING -> {
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(
+                            requireContext(),
+                            ERROR_MESSAGE.format(it.message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
         }

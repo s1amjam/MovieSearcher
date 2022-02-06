@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
@@ -54,7 +55,8 @@ class AuthorizationDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Api.createRequestToken().observe(requireActivity()
+        Api.createRequestToken().observe(
+            requireActivity()
         ) { response ->
             webView.loadUrl(Constants.AUTH_URL.format(response.requestToken))
             requestToken = response.requestToken.toString()
@@ -89,31 +91,40 @@ class AuthorizationDialogFragment : DialogFragment() {
 
                     Api.createSession(RequestToken(requestToken))
                         .observe(requireActivity()) { response ->
-                            sessionId = response.sessionId
+                            if (!response.sessionId.isNullOrEmpty()) {
+                                sessionId = response.sessionId
 
-                            Api.getAccount(sessionId)
-                                .observe(requireActivity()) { accountResponse ->
-                                    username = accountResponse.username
-                                    accountId = accountResponse.id!!.toLong()
-                                    name = accountResponse.name
-                                    includeAdult = accountResponse.includeAdult!!
-                                    avatar = accountResponse.avatar
+                                Api.getAccount(sessionId)
+                                    .observe(requireActivity()) { accountResponse ->
+                                        username = accountResponse.username
+                                        accountId = accountResponse.id!!.toLong()
+                                        name = accountResponse.name
+                                        includeAdult = accountResponse.includeAdult!!
+                                        avatar = accountResponse.avatar
 
-                                    parentFragmentManager.setFragmentResult(
-                                        "accountResponse",
-                                        bundleOf(
-                                            "sessionId" to sessionId,
-                                            "includeAdult" to includeAdult.toString(),
-                                            "accountId" to accountId,
-                                            "avatar" to avatar?.gravatar?.hash,
-                                            "username" to username,
-                                            "name" to name,
+                                        parentFragmentManager.setFragmentResult(
+                                            "accountResponse",
+                                            bundleOf(
+                                                "sessionId" to sessionId,
+                                                "includeAdult" to includeAdult.toString(),
+                                                "accountId" to accountId,
+                                                "avatar" to avatar?.gravatar?.hash,
+                                                "username" to username,
+                                                "name" to name,
+                                            )
                                         )
-                                    )
 
-                                    progressBar.visibility = View.GONE
-                                    dismiss()
-                                }
+                                        progressBar.visibility = View.GONE
+                                        dismiss()
+                                    }
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Something went wrong. Try again later.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                dismiss()
+                            }
                         }
                 }
             }

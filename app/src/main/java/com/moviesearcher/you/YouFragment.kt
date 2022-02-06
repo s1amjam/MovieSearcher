@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.setFragmentResultListener
@@ -26,6 +28,8 @@ class YouFragment : BaseFragment() {
     private lateinit var listsCardView: CardView
     private lateinit var favoritesCardView: CardView
     private lateinit var ratedCardView: CardView
+    private lateinit var titleTv: TextView
+    private lateinit var accountLogoIv: ImageView
 
     private lateinit var navController: NavController
 
@@ -40,12 +44,14 @@ class YouFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        navController = findNavController()
         buttonLogin = binding.buttonLogin
         watchlistsCardView = binding.watchlistCardView
         listsCardView = binding.listsCardView
         favoritesCardView = binding.favoritesCardView
         ratedCardView = binding.ratedCardView
-        navController = findNavController()
+        titleTv = binding.titleTv
+        accountLogoIv = binding.accountLogoIv
 
         checkIfLoggedIn()
 
@@ -60,6 +66,9 @@ class YouFragment : BaseFragment() {
 
     private fun checkIfLoggedIn() {
         if (sessionId.isNullOrEmpty()) {
+            titleTv.setText(R.string.please_log_in)
+            accountLogoIv.visibility = View.GONE
+
             watchlistsCardView.setOnClickListener {
                 Toast.makeText(
                     requireContext(),
@@ -90,6 +99,9 @@ class YouFragment : BaseFragment() {
             }
             buttonLogin.setText(R.string.login_button)
         } else {
+            titleTv.text = encryptedSharedPrefs.getString("username", "")
+            accountLogoIv.visibility = View.VISIBLE
+
             watchlistsCardView.setOnClickListener {
                 navController.navigate(R.id.fragment_watchlist)
             }

@@ -53,5 +53,6 @@
     <string name="died">Died: %s</string>
     <string name="seasons">Seasons</string>
     <string name="nothing_was_found">Nothing was found</string>
-    <string name="coming_soon">Coming Soon</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="please_log_in">Please log in to see your Watchlists, Favorites, etc…</string>
 </resources>
