@@ -1,4 +1,4 @@
-package com.moviesearcher.movie.adapter
+package com.moviesearcher.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,17 +11,16 @@ import com.moviesearcher.R
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.OnClickListener
 import com.moviesearcher.databinding.MovieCardViewBinding
-import com.moviesearcher.home.HomeFragmentDirections
 import com.moviesearcher.movie.model.Result
 import com.moviesearcher.movie.model.TrendingResponse
 
-class TrendingAdapter(
+class HomeAdapter(
     private val movieItems: TrendingResponse,
     private val navController: NavController,
     private val sessionId: String?,
     private val movieWatchlistIds: MutableList<Long>?,
     private val onClickListener: OnClickListener
-) : RecyclerView.Adapter<TrendingAdapter.MovieHolder>() {
+) : RecyclerView.Adapter<HomeAdapter.MovieHolder>() {
     private lateinit var binding: MovieCardViewBinding
 
     inner class MovieHolder(binding: MovieCardViewBinding) : RecyclerView.ViewHolder(binding.root) {
