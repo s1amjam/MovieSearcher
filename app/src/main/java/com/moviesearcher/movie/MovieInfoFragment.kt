@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,6 +40,7 @@ import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.movie.model.cast.Cast
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "MovieInfoFragment"
@@ -473,7 +475,9 @@ class MovieInfoFragment : BaseFragment() {
         }
 
         watchlistImageButton.setOnClickListener {
-            addToWatchlist(watchlistImageButton)
+            lifecycleScope.launch {
+                addToWatchlist(watchlistImageButton)
+            }
         }
     }
 

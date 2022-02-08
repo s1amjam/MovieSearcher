@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.utils.OnClickListener
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
@@ -167,11 +168,9 @@ class HomeFragment : BaseFragment() {
         val trendingAdapter = TrendingAdapter(
             movieItems,
             navController,
-            accountId,
             sessionId,
             watchlistIds,
-            TrendingAdapter.OnClickListener { button: ImageButton,
-                                              mediaInfo: MutableMap<String, Long>? ->
+            OnClickListener { button: ImageButton, mediaInfo: MutableMap<String, Long>? ->
                 addToWatchlist(button, mediaInfo)
             }
         )

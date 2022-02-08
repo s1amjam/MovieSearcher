@@ -4,15 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.utils.OnClickListener
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentWatchlistBinding
@@ -31,11 +33,10 @@ class WatchlistFragment : BaseFragment() {
     private lateinit var viewModel: WatchlistViewModel
 
     private lateinit var navController: NavController
-    private lateinit var movieRecyclerView: RecyclerView
-    private lateinit var tvRecyclerView: RecyclerView
+    private lateinit var watchlistRv: RecyclerView
+    private lateinit var movieWatchlistButton: Button
+    private lateinit var tvWatchlistButton: Button
     private lateinit var progressBar: ProgressBar
-    private lateinit var movieCardView: CardView
-    private lateinit var tvCardView: CardView
 
     private var movieWatchlistIds: MutableList<Long> = mutableListOf()
     private var tvWatchlistIds: MutableList<Long> = mutableListOf()
@@ -52,61 +53,39 @@ class WatchlistFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        movieCardView = binding.cardviewMoviesWatchlist
-        tvCardView = binding.cardviewTvsWatchlist
-        movieRecyclerView = binding.movieRecyclerView
-        tvRecyclerView = binding.tvRecyclerView
-        movieRecyclerView.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         navController = findNavController()
-        progressBar = binding.progressBarWatchlistFragment
+        watchlistRv = binding.watchlistRv
+        movieWatchlistButton = binding.moviesWatchlistButton
+        tvWatchlistButton = binding.tvWatchlistButton
+        progressBar = binding.watchlistPb
 
         setupViewModel()
-        setupObserver()
+        setupMovieUi()
+
+        movieWatchlistButton.setOnClickListener {
+            setupMovieUi()
+        }
+
+        tvWatchlistButton.setOnClickListener {
+            setupTvUi()
+        }
     }
 
-    private fun setupObserver() {
+    private fun setupMovieUi() {
         viewModel.getMovieWatchlist().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { movieItems ->
                         movieItems.results?.forEach { it -> movieWatchlistIds.add(it.id!!.toLong()) }
-                        val movieAdapter = createMovieAdapter(movieItems)
-                        setupUi(movieAdapter, movieRecyclerView)
+                        createWatchlistAdapter(movieItems)
 
                         progressBar.visibility = View.GONE
-                        movieCardView.visibility = View.VISIBLE
+                        watchlistRv.visibility = View.VISIBLE
                     }
                 }
                 Status.LOADING -> {
                     progressBar.visibility = View.VISIBLE
-                    movieCardView.visibility = View.GONE
-                }
-                Status.ERROR -> {
-                    Toast.makeText(
-                        requireContext(),
-                        ERROR_MESSAGE.format(it.message),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-        }
-
-        viewModel.getTvWatchlist().observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    it.data?.let { tvItems ->
-                        tvItems.results?.forEach { it -> tvWatchlistIds.add(it.id!!.toLong()) }
-                        val tvAdapter = createTvAdapter(tvItems)
-                        setupUi(tvAdapter, tvRecyclerView)
-
-                        progressBar.visibility = View.GONE
-                        tvCardView.visibility = View.VISIBLE
-                    }
-                }
-                Status.LOADING -> {
-                    progressBar.visibility = View.VISIBLE
-                    tvCardView.visibility = View.GONE
+                    watchlistRv.visibility = View.GONE
                 }
                 Status.ERROR -> {
                     Toast.makeText(
@@ -119,16 +98,48 @@ class WatchlistFragment : BaseFragment() {
         }
     }
 
-    private fun createMovieAdapter(
+    private fun setupTvUi() {
+        viewModel.getTvWatchlist().observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { tvItems ->
+                        tvItems.results?.forEach { it -> tvWatchlistIds.add(it.id!!.toLong()) }
+                        createTvAdapter(tvItems)
+
+                        progressBar.visibility = View.GONE
+                        watchlistRv.visibility = View.VISIBLE
+                    }
+                }
+                Status.LOADING -> {
+                    progressBar.visibility = View.VISIBLE
+                    watchlistRv.visibility = View.GONE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun createWatchlistAdapter(
         movieItems: MovieWatchlistResponse
     ): MovieWatchlistAdapter {
         val movieWatchlistAdapter = MovieWatchlistAdapter(
             movieItems,
             navController,
-            accountId,
-            sessionId,
-            movieWatchlistIds,
+            OnClickListener { button: ImageButton, mediaInfo: MutableMap<String, Long>? ->
+                addToWatchlist(button, mediaInfo)
+            }
         )
+        watchlistRv.apply {
+            watchlistRv.adapter = movieWatchlistAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+
         movieWatchlistAdapter.differ.submitList(movieItems.results)
 
         return movieWatchlistAdapter
@@ -144,6 +155,11 @@ class WatchlistFragment : BaseFragment() {
             sessionId,
             tvWatchlistIds,
         )
+        watchlistRv.apply {
+            watchlistRv.adapter = tvWatchlistAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+
         tvWatchlistAdapter.differ.submitList(tvItems.results)
 
         return tvWatchlistAdapter
@@ -160,6 +176,7 @@ class WatchlistFragment : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding?.watchlistRv?.adapter = null
         _binding = null
     }
 }

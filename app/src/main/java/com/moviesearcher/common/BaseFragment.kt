@@ -13,8 +13,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
@@ -247,15 +245,15 @@ open class BaseFragment : Fragment() {
             WatchlistRequest(isWatchlist, mediaInfo.values.first(), mediaInfo.keys.first())
         )
 
-        if (isWatchlist) {
-            button.setImageResource(watchlistAddedIcon)
-            Toast.makeText(requireContext(), "Added to Watchlist", Toast.LENGTH_SHORT).show()
-        } else {
-            button.setImageResource(watchlistRemovedIcon)
-            Toast.makeText(requireContext(), "Removed from Watchlist", Toast.LENGTH_SHORT).show()
-        }
-
         addToWatchlist.observe(viewLifecycleOwner) {
+            if (isWatchlist) {
+                button.setImageResource(watchlistAddedIcon)
+                Toast.makeText(requireContext(), "Added to Watchlist", Toast.LENGTH_SHORT).show()
+            } else {
+                button.setImageResource(watchlistRemovedIcon)
+                Toast.makeText(requireContext(), "Removed from Watchlist", Toast.LENGTH_SHORT).show()
+            }
+
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
                 isWatchlist = !isWatchlist
             } else {
@@ -265,24 +263,6 @@ open class BaseFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
-    }
-
-    open fun setupUi(
-        _adapter: RecyclerView.Adapter<*>,
-        recyclerView: RecyclerView
-    ) {
-        setupRecyclerView(_adapter, recyclerView)
-    }
-
-    open fun setupRecyclerView(
-        _adapter: RecyclerView.Adapter<*>,
-        recyclerView: RecyclerView
-    ) {
-        recyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
-            adapter = _adapter
-            setHasFixedSize(true)
         }
     }
 

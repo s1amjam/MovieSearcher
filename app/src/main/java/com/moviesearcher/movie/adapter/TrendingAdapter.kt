@@ -2,7 +2,6 @@ package com.moviesearcher.movie.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageButton
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -10,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.OnClickListener
 import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.home.HomeFragmentDirections
 import com.moviesearcher.movie.model.Result
@@ -18,7 +18,6 @@ import com.moviesearcher.movie.model.TrendingResponse
 class TrendingAdapter(
     private val movieItems: TrendingResponse,
     private val navController: NavController,
-    private val accountId: Long?,
     private val sessionId: String?,
     private val movieWatchlistIds: MutableList<Long>?,
     private val onClickListener: OnClickListener
@@ -101,15 +100,6 @@ class TrendingAdapter(
                 }
             }
         }
-
-        private fun setImageButtonWatchlistOnClickListener(
-            button: ImageButton,
-            mediaInfo: MutableMap<String, Long>
-        ) {
-            imageButtonWatchlist.setOnClickListener {
-                onClickListener.onClick(button, mediaInfo)
-            }
-        }
     }
 
     private val differCallback = object : DiffUtil.ItemCallback<Result>() {
@@ -141,15 +131,5 @@ class TrendingAdapter(
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         val reply = differ.currentList[position]
         holder.bind(reply)
-    }
-
-    class OnClickListener(
-        val clickListener: (
-            button: ImageButton,
-            mediaInfo: MutableMap<String, Long>?
-        ) -> Unit
-    ) {
-        fun onClick(button: ImageButton, mediaInfo: MutableMap<String, Long>? = mutableMapOf()) =
-            clickListener(button, mediaInfo)
     }
 }
