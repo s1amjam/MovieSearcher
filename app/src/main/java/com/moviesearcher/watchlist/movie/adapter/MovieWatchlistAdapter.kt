@@ -51,8 +51,8 @@ class MovieWatchlistAdapter(
             cardView.id = movieItem.id?.toInt()!!
             watchlistIb.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
             watchlistIb.tag = "false"
-
             mediaInfo["movie"] = cardView.id.toLong()
+
             watchlistIb.setOnClickListener {
                 onClickListener?.onClick(watchlistIb, mediaInfo)
             }

@@ -20,7 +20,6 @@ import com.moviesearcher.common.utils.OnClickListener
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
-import com.moviesearcher.movie.adapter.TrendingAdapter
 import com.moviesearcher.movie.model.TrendingResponse
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 
@@ -164,8 +163,8 @@ class HomeFragment : BaseFragment() {
         }
     }
 
-    private fun createAdapter(movieItems: TrendingResponse): TrendingAdapter {
-        val trendingAdapter = TrendingAdapter(
+    private fun createAdapter(movieItems: TrendingResponse): HomeAdapter {
+        val trendingAdapter = HomeAdapter(
             movieItems,
             navController,
             sessionId,
