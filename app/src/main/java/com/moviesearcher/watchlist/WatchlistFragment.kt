@@ -21,8 +21,7 @@ import com.moviesearcher.databinding.FragmentWatchlistBinding
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import com.moviesearcher.watchlist.movie.adapter.MovieWatchlistAdapter
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
-import com.moviesearcher.watchlist.tv.adapter.TvWatchlistAdapter
-import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
+import com.moviesearcher.watchlist.tv.model.MovieWatchlistResult
 
 private const val TAG = "WatchlistFragment"
 
@@ -99,12 +98,29 @@ class WatchlistFragment : BaseFragment() {
     }
 
     private fun setupTvUi() {
-        viewModel.getTvWatchlist().observe(viewLifecycleOwner) {
+        viewModel.getTvWatchlist().observe(viewLifecycleOwner) { it ->
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { tvItems ->
                         tvItems.results?.forEach { it -> tvWatchlistIds.add(it.id!!.toLong()) }
-                        createTvAdapter(tvItems)
+                        val movieWatchlistResponse = MovieWatchlistResponse().apply {
+                            val list = mutableListOf<MovieWatchlistResult>()
+                            tvItems.results?.forEach {
+                                list.add(
+                                    MovieWatchlistResult(
+                                        id = it.id,
+                                        title = it.name,
+                                        overview = it.overview,
+                                        voteAverage = it.voteAverage,
+                                        releaseDate = it.firstAirDate,
+                                        posterPath = it.posterPath
+                                    )
+                                )
+                            }
+
+                            results = list
+                        }
+                        createWatchlistAdapter(movieWatchlistResponse, true)
 
                         progressBar.visibility = View.GONE
                         watchlistRv.visibility = View.VISIBLE
@@ -126,14 +142,16 @@ class WatchlistFragment : BaseFragment() {
     }
 
     private fun createWatchlistAdapter(
-        movieItems: MovieWatchlistResponse
+        movieItems: MovieWatchlistResponse,
+        isTv: Boolean = false
     ): MovieWatchlistAdapter {
         val movieWatchlistAdapter = MovieWatchlistAdapter(
             movieItems,
             navController,
             OnClickListener { button: ImageButton, mediaInfo: MutableMap<String, Long>? ->
                 addToWatchlist(button, mediaInfo)
-            }
+            },
+            isTv
         )
         watchlistRv.apply {
             watchlistRv.adapter = movieWatchlistAdapter
@@ -143,26 +161,6 @@ class WatchlistFragment : BaseFragment() {
         movieWatchlistAdapter.differ.submitList(movieItems.results)
 
         return movieWatchlistAdapter
-    }
-
-    private fun createTvAdapter(
-        tvItems: TvWatchlistResponse
-    ): TvWatchlistAdapter {
-        val tvWatchlistAdapter = TvWatchlistAdapter(
-            tvItems,
-            navController,
-            accountId,
-            sessionId,
-            tvWatchlistIds,
-        )
-        watchlistRv.apply {
-            watchlistRv.adapter = tvWatchlistAdapter
-            layoutManager = LinearLayoutManager(context)
-        }
-
-        tvWatchlistAdapter.differ.submitList(tvItems.results)
-
-        return tvWatchlistAdapter
     }
 
     private fun setupViewModel() {

@@ -18,7 +18,8 @@ import com.moviesearcher.watchlist.tv.model.MovieWatchlistResult
 class MovieWatchlistAdapter(
     private val watchlistItems: MovieWatchlistResponse,
     private val navController: NavController,
-    private val onClickListener: OnClickListener? = null
+    private val onClickListener: OnClickListener? = null,
+    private val isTv: Boolean = false
 ) : RecyclerView.Adapter<MovieWatchlistAdapter.WatchlistViewHolder>() {
 
     inner class WatchlistViewHolder(val binding: ExtendedCardViewBinding) :
@@ -51,17 +52,29 @@ class MovieWatchlistAdapter(
             cardView.id = movieItem.id?.toInt()!!
             watchlistIb.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
             watchlistIb.tag = "false"
-            mediaInfo["movie"] = cardView.id.toLong()
+
+            if (isTv) {
+                mediaInfo["tv"] = cardView.id.toLong()
+
+                cardView.setOnClickListener {
+                    navController.navigate(
+                        WatchlistFragmentDirections
+                            .actionWatchlistFragmentToTvInfoFragment(movieItem.id)
+                    )
+                }
+            } else {
+                mediaInfo["movie"] = cardView.id.toLong()
+
+                cardView.setOnClickListener {
+                    navController.navigate(
+                        WatchlistFragmentDirections
+                            .actionWatchlistFragmentToMovieInfoFragment(movieItem.id)
+                    )
+                }
+            }
 
             watchlistIb.setOnClickListener {
                 onClickListener?.onClick(watchlistIb, mediaInfo)
-            }
-
-            cardView.setOnClickListener {
-                navController.navigate(
-                    WatchlistFragmentDirections
-                        .actionWatchlistFragmentToMovieInfoFragment(movieItem.id)
-                )
             }
         }
     }

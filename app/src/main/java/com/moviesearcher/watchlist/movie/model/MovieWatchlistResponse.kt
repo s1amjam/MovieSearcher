@@ -5,11 +5,11 @@ import com.moviesearcher.watchlist.tv.model.MovieWatchlistResult
 
 data class MovieWatchlistResponse(
     @SerializedName("page")
-    val page: Int?,
+    val page: Int? = null,
     @SerializedName("results")
-    val results: List<MovieWatchlistResult>?,
+    var results: List<MovieWatchlistResult>? = null,
     @SerializedName("total_pages")
-    val totalPages: Int?,
+    val totalPages: Int? = null,
     @SerializedName("total_results")
-    val totalResults: Int?
+    val totalResults: Int? = null
 )
