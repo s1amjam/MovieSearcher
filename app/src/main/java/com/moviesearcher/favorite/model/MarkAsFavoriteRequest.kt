@@ -1,4 +1,4 @@
-package com.moviesearcher.favorite.common.model
+package com.moviesearcher.favorite.model
 
 import com.google.gson.annotations.SerializedName
 

@@ -6,16 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
-import androidx.fragment.app.viewModels
+import android.widget.TextView
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
-import com.moviesearcher.common.viewmodel.BaseViewModel
+import com.moviesearcher.common.utils.Status
+import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentFavoritesBinding
 import com.moviesearcher.favorite.movie.adapter.FavoriteMovieAdapter
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.tv.adapter.FavoriteTvAdapter
+import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 
 private const val TAG = "FavoritesFragment"
 
@@ -24,11 +28,12 @@ class FavoritesFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private lateinit var favoriteMoviesRecyclerView: RecyclerView
-    private val viewModel: BaseViewModel by viewModels()
+    private lateinit var viewModel: FavoriteViewModel
 
     private lateinit var favoriteMoviesButton: Button
     private lateinit var favoriteTvsButton: Button
     private lateinit var progressBar: ProgressBar
+    private lateinit var dontHaveFavoritesTv: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,51 +52,87 @@ class FavoritesFragment : BaseFragment() {
         favoriteMoviesButton = binding.buttonFavoriteMovies
         favoriteTvsButton = binding.buttonFavoriteTvs
         progressBar = binding.progressBarFavorites
-        progressBar.visibility = View.VISIBLE
-        favoriteMoviesRecyclerView.visibility = View.INVISIBLE
+        dontHaveFavoritesTv = binding.dontHaveFavoritesTextView
 
-        getFavoriteMovies()
+        setupViewModel()
+        setupUi()
+    }
+
+    private fun setupUi() {
+        getMovies()
 
         favoriteMoviesButton.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
-            favoriteMoviesRecyclerView.visibility = View.INVISIBLE
-
-            getFavoriteMovies()
+            getMovies()
         }
 
         favoriteTvsButton.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
-            favoriteMoviesRecyclerView.visibility = View.INVISIBLE
+            getTvs()
+        }
+    }
 
-            viewModel.getFavoriteTvs(accountId, sessionId).observe(
-                viewLifecycleOwner
-            ) { favoriteTvItems ->
-                val favoriteTvAdapter = FavoriteTvAdapter(
-                    favoriteTvItems, findNavController(),
-                    sessionId,
-                    accountId
-                )
+    private fun getMovies() {
+        viewModel.getFavoriteMovie().observe(
+            viewLifecycleOwner
+        ) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { favoriteMovieItems ->
+                        if (favoriteMovieItems.totalResults == 0) {
+                            dontHaveFavoritesTv.visibility = View.VISIBLE
+                        } else {
+                            setupFavoriteMovieUi(favoriteMovieItems)
 
-                favoriteMoviesRecyclerView.apply {
-                    adapter = favoriteTvAdapter
-                    layoutManager = LinearLayoutManager(context)
+                            progressBar.visibility = View.GONE
+                            favoriteMoviesRecyclerView.visibility = View.VISIBLE
+                        }
+                        progressBar.visibility = View.GONE
+                    }
                 }
-                favoriteTvAdapter.differ.submitList(favoriteTvItems.results)
-
-                progressBar.visibility = View.GONE
-                favoriteMoviesRecyclerView.visibility = View.VISIBLE
+                Status.LOADING -> {
+                    favoriteMoviesRecyclerView.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }
 
-    private fun getFavoriteMovies() {
-        viewModel.getFavoriteMovies(accountId, sessionId).observe(
+    private fun getTvs() {
+        viewModel.getFavoriteTv().observe(
             viewLifecycleOwner
-        ) { favoriteMovieItems ->
-            setupFavoriteMovieUi(favoriteMovieItems)
+        ) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { favoriteMovieItems ->
+                        if (favoriteMovieItems.totalResults == 0) {
+                            dontHaveFavoritesTv.visibility = View.VISIBLE
+                        } else {
+                            setupFavoriteTvsUi(favoriteMovieItems)
 
-            progressBar.visibility = View.GONE
-            favoriteMoviesRecyclerView.visibility = View.VISIBLE
+                            progressBar.visibility = View.GONE
+                            favoriteMoviesRecyclerView.visibility = View.VISIBLE
+                        }
+                        progressBar.visibility = View.GONE
+                    }
+                }
+                Status.LOADING -> {
+                    favoriteMoviesRecyclerView.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
         }
     }
 
@@ -108,6 +149,29 @@ class FavoritesFragment : BaseFragment() {
             layoutManager = LinearLayoutManager(context)
         }
         favoriteMovieAdapter.differ.submitList(favoriteMovieItems.results)
+    }
+
+    private fun setupFavoriteTvsUi(favoriteTvItems: FavoriteTvResponse) {
+        val favoriteTvAdapter = FavoriteTvAdapter(
+            favoriteTvItems, findNavController(),
+            sessionId,
+            accountId
+        )
+
+        favoriteMoviesRecyclerView.apply {
+            adapter = favoriteTvAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+        favoriteTvAdapter.differ.submitList(favoriteTvItems.results)
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            this, ViewModelFactory(
+                sessionId,
+                accountId
+            )
+        ).get(FavoriteViewModel::class.java)
     }
 
     override fun onDestroyView() {

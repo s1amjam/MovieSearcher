@@ -55,4 +55,6 @@
     <string name="nothing_was_found">Nothing was found</string>
     <string name="upcoming">Upcoming</string>
     <string name="please_log_in">Please log in to see your Watchlists, Favorites, etc…</string>
+    <string name="dont_have_favorites">You don\'t have any favorites yet</string>
+    <string name="no_episodes">There is no episodes yet</string>
 </resources>

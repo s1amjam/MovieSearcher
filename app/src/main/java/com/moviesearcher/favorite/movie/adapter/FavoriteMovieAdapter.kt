@@ -15,12 +15,12 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.favorite.FavoritesFragmentDirections
-import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
+import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.movie.model.ResultFavoriteMovie
-import com.moviesearcher.common.utils.Constants
 
 class FavoriteMovieAdapter(
     private val favoriteMovieItems: FavoriteMovieResponse,

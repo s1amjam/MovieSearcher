@@ -20,7 +20,8 @@ import com.moviesearcher.common.utils.EncryptedSharedPrefs
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.common.viewmodel.ViewModelFactory
-import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
+import com.moviesearcher.favorite.FavoriteViewModel
+import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.CreateNewListDialog
 import com.moviesearcher.list.model.Result
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
@@ -38,6 +39,7 @@ open class BaseFragment : Fragment() {
 
     private val listsViewModel: BaseViewModel by viewModels()
     private lateinit var watchlistViewModel: WatchlistViewModel
+    private lateinit var favoriteViewModel: FavoriteViewModel
 
     private var isFavorite = true
     private var isWatchlist = true
@@ -132,29 +134,62 @@ open class BaseFragment : Fragment() {
 
     fun checkFavorites(button: ImageButton) {
         if (sessionId.isNotBlank()) {
+            setupViewModel()
             mediaInfo = getMediaInfo()
             val mediaId = mediaInfo.values.first()
             val mediaKey = mediaInfo.keys.first()
-            val favoriteMovies = Api.getFavoriteMovies(accountId, sessionId)
-            val favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
 
             if (mediaKey == "movie") {
-                favoriteMovies.observe(viewLifecycleOwner) { favoriteItem ->
-                    button.setImageResource(markAsFavoriteIcon)
-                    favoriteItem.results!!.forEach {
-                        if (it.id == mediaId) {
-                            isFavorite = false
-                            button.setImageResource(removeFromFavoriteIcon)
+                favoriteViewModel.getFavoriteMovie().observe(
+                    viewLifecycleOwner
+                ) { it ->
+                    when (it.status) {
+                        Status.SUCCESS -> {
+                            it.data?.let { favoriteMovieItems ->
+                                button.setImageResource(markAsFavoriteIcon)
+                                favoriteMovieItems.results!!.forEach {
+                                    if (it.id == mediaId) {
+                                        isFavorite = false
+                                        button.setImageResource(removeFromFavoriteIcon)
+                                    }
+                                }
+                            }
+                        }
+                        Status.LOADING -> {
+                        }
+                        Status.ERROR -> {
+                            Toast.makeText(
+                                requireContext(),
+                                ERROR_MESSAGE.format(it.message),
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }
             } else {
-                favoriteTvs.observe(viewLifecycleOwner) { favoriteItem ->
-                    button.setImageResource(markAsFavoriteIcon)
-                    favoriteItem.results!!.forEach {
-                        if (it.id == mediaId) {
-                            isFavorite = false
-                            button.setImageResource(removeFromFavoriteIcon)
+                favoriteViewModel.getFavoriteTv().observe(
+                    viewLifecycleOwner
+                ) { it ->
+                    when (it.status) {
+                        Status.SUCCESS -> {
+                            it.data?.let { favoriteMovieItems ->
+                                button.setImageResource(markAsFavoriteIcon)
+                                favoriteMovieItems.results!!.forEach {
+                                    if (it.id == mediaId) {
+                                        isFavorite = false
+                                        button.setImageResource(removeFromFavoriteIcon)
+                                    }
+                                }
+                            }
+                        }
+                        Status.LOADING -> {
+                        }
+                        Status.ERROR -> {
+                            Toast.makeText(
+                                requireContext(),
+                                ERROR_MESSAGE.format(it.message),
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }
@@ -251,7 +286,8 @@ open class BaseFragment : Fragment() {
                 Toast.makeText(requireContext(), "Added to Watchlist", Toast.LENGTH_SHORT).show()
             } else {
                 button.setImageResource(watchlistRemovedIcon)
-                Toast.makeText(requireContext(), "Removed from Watchlist", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Removed from Watchlist", Toast.LENGTH_SHORT)
+                    .show()
             }
 
             if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
@@ -280,6 +316,13 @@ open class BaseFragment : Fragment() {
                     sessionId, accountId
                 )
             ).get(WatchlistViewModel::class.java)
+
+            favoriteViewModel = ViewModelProvider(
+                this,
+                ViewModelFactory(
+                    sessionId, accountId
+                )
+            ).get(FavoriteViewModel::class.java)
         }
     }
 }

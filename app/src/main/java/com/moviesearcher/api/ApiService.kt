@@ -12,7 +12,7 @@ import com.moviesearcher.common.model.images.ImagesResponse
 import com.moviesearcher.common.model.videos.VideosResponse
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Constants.ACCESS_TOKEN
-import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
+import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.list.lists.model.ListsResponse
@@ -131,16 +131,16 @@ interface ApiService {
     ): Call<ListsResponse>
 
     @GET("account/{account_id}/favorite/movies")
-    fun getFavoriteMovies(
+    suspend fun getFavoriteMovies(
         @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
-    ): Call<FavoriteMovieResponse>
+    ): FavoriteMovieResponse
 
     @GET("account/{account_id}/favorite/tv")
-    fun getFavoriteTvs(
+    suspend fun getFavoriteTvs(
         @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
-    ): Call<FavoriteTvResponse>
+    ): FavoriteTvResponse
 
     @GET("account/{account_id}/rated/movies")
     fun getRatedMovies(
@@ -283,8 +283,8 @@ interface ApiService {
     ): Call<VideosResponse>
 
     @GET("tv/{tv_id}/season/{season_number}")
-    fun getTvSeason(
+    suspend fun getTvSeason(
         @Path("tv_id") tvId: Long?,
         @Path("season_number") seasonNumber: String?,
-    ): Call<TvSeasonResponse>
+    ): TvSeasonResponse
 }

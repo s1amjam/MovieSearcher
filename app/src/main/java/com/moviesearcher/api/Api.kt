@@ -10,9 +10,7 @@ import com.moviesearcher.common.model.auth.SessionId
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
 import com.moviesearcher.common.model.videos.VideosResponse
-import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
-import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
-import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
+import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.list.model.CheckItemStatusResponse
 import com.moviesearcher.list.model.CreateNewList
@@ -28,7 +26,6 @@ import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
 import com.moviesearcher.search.model.SearchResponse
 import com.moviesearcher.tv.episode.model.TvEpisodeResponse
 import com.moviesearcher.tv.episode.model.image.EpisodeImageResponse
-import com.moviesearcher.tv.seasons.model.TvSeasonResponse
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import retrofit2.Call
 import retrofit2.Callback
@@ -167,58 +164,6 @@ object Api {
 
             override fun onFailure(
                 call: Call<ListsResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getFavoriteMovies(
-        accountId: Long?,
-        sessionId: String?
-    ): MutableLiveData<FavoriteMovieResponse> {
-        val responseLiveData: MutableLiveData<FavoriteMovieResponse> = MutableLiveData()
-        val resp = ApiService.create().getFavoriteMovies(accountId, sessionId)
-
-        resp.enqueue(object : Callback<FavoriteMovieResponse> {
-            override fun onResponse(
-                call: Call<FavoriteMovieResponse>,
-                response: Response<FavoriteMovieResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<FavoriteMovieResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getFavoriteTvs(
-        accountId: Long?,
-        sessionId: String?
-    ): MutableLiveData<FavoriteTvResponse> {
-        val responseLiveData: MutableLiveData<FavoriteTvResponse> = MutableLiveData()
-        val resp = ApiService.create().getFavoriteTvs(accountId, sessionId)
-
-        resp.enqueue(object : Callback<FavoriteTvResponse> {
-            override fun onResponse(
-                call: Call<FavoriteTvResponse>,
-                response: Response<FavoriteTvResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<FavoriteTvResponse>,
                 t: Throwable
             ) {
 
@@ -596,31 +541,6 @@ object Api {
 
             override fun onFailure(
                 call: Call<TvEpisodeResponse>,
-                t: Throwable
-            ) {
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getTvSeason(
-        tvId: Long?,
-        seasonNumber: String?,
-    ): MutableLiveData<TvSeasonResponse> {
-        val responseLiveData: MutableLiveData<TvSeasonResponse> = MutableLiveData()
-        val resp = ApiService.create().getTvSeason(tvId, seasonNumber)
-
-        resp.enqueue(object : Callback<TvSeasonResponse> {
-            override fun onResponse(
-                call: Call<TvSeasonResponse>,
-                response: Response<TvSeasonResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<TvSeasonResponse>,
                 t: Throwable
             ) {
             }

@@ -17,7 +17,7 @@ import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.favorite.FavoritesFragmentDirections
-import com.moviesearcher.favorite.common.model.MarkAsFavoriteRequest
+import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.favorite.tv.model.ResultFavoriteTv
 import com.moviesearcher.common.utils.Constants

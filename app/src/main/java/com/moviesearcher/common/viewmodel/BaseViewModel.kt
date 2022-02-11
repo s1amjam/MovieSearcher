@@ -6,8 +6,6 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.videos.VideosResponse
-import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
-import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.list.model.CheckItemStatusResponse
 import com.moviesearcher.list.model.ListResponse
@@ -20,13 +18,10 @@ import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
 import com.moviesearcher.search.model.SearchResponse
 import com.moviesearcher.tv.episode.model.TvEpisodeResponse
 import com.moviesearcher.tv.episode.model.image.EpisodeImageResponse
-import com.moviesearcher.tv.seasons.model.TvSeasonResponse
 
 class BaseViewModel : ViewModel() {
     private val searchItem: LiveData<SearchResponse>
     private var mutableQuery: MutableLiveData<String> = MutableLiveData()
-    private lateinit var favoriteMovies: LiveData<FavoriteMovieResponse>
-    private lateinit var favoriteTvs: LiveData<FavoriteTvResponse>
     private lateinit var myLists: LiveData<ListsResponse>
     private lateinit var checkedItem: LiveData<CheckItemStatusResponse>
     private lateinit var myList: LiveData<ListResponse>
@@ -39,21 +34,11 @@ class BaseViewModel : ViewModel() {
     private lateinit var tvEpisodeImages: LiveData<EpisodeImageResponse>
     private lateinit var episodeVideos: LiveData<VideosResponse>
     private lateinit var tvEpisode: LiveData<TvEpisodeResponse>
-    private lateinit var tvSeason: LiveData<TvSeasonResponse>
 
     init {
         searchItem = Transformations.switchMap(mutableQuery) { query ->
             Api.search(query)
         }
-    }
-
-    fun getTvSeason(
-        tvId: Long?,
-        seasonNumber: String?,
-    ): LiveData<TvSeasonResponse> {
-        tvSeason = Api.getTvSeason(tvId, seasonNumber)
-
-        return tvSeason
     }
 
     fun getTvEpisode(
@@ -102,18 +87,6 @@ class BaseViewModel : ViewModel() {
         ratedTvs = Api.getRatedTvs(accountId, sessionId)
 
         return ratedTvs
-    }
-
-    fun getFavoriteMovies(accountId: Long, sessionId: String): LiveData<FavoriteMovieResponse> {
-        favoriteMovies = Api.getFavoriteMovies(accountId, sessionId)
-
-        return favoriteMovies
-    }
-
-    fun getFavoriteTvs(accountId: Long, sessionId: String): LiveData<FavoriteTvResponse> {
-        favoriteTvs = Api.getFavoriteTvs(accountId, sessionId)
-
-        return favoriteTvs
     }
 
     fun getLists(accountId: Long, sessionId: String, page: Int): LiveData<ListsResponse> {
