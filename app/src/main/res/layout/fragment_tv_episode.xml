@@ -193,10 +193,9 @@
 
                     <Button
                         android:id="@+id/rate_button_view"
+                        style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:drawableTint="@android:color/black"
                         android:text="@string/rate_this"
                         android:textColor="#2196F3"
                         app:icon="@drawable/ic_baseline_star_rate_24"

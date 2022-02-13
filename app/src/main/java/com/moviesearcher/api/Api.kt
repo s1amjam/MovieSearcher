@@ -9,7 +9,6 @@ import com.moviesearcher.common.model.auth.RequestToken
 import com.moviesearcher.common.model.auth.SessionId
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
-import com.moviesearcher.common.model.videos.VideosResponse
 import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.list.model.CheckItemStatusResponse
@@ -24,8 +23,6 @@ import com.moviesearcher.rated.movie.model.RatedMoviesResponse
 import com.moviesearcher.rated.tv.model.RatedTvsResponse
 import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
 import com.moviesearcher.search.model.SearchResponse
-import com.moviesearcher.tv.episode.model.TvEpisodeResponse
-import com.moviesearcher.tv.episode.model.image.EpisodeImageResponse
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import retrofit2.Call
 import retrofit2.Callback
@@ -515,84 +512,6 @@ object Api {
 
             override fun onFailure(
                 call: Call<CombinedCreditsResponse>,
-                t: Throwable
-            ) {
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getTvEpisode(
-        tvId: Long,
-        seasonNumber: String,
-        episodeNumber: Int
-    ): MutableLiveData<TvEpisodeResponse> {
-        val responseLiveData: MutableLiveData<TvEpisodeResponse> = MutableLiveData()
-        val resp = ApiService.create().getTvEpisode(tvId, seasonNumber, episodeNumber)
-
-        resp.enqueue(object : Callback<TvEpisodeResponse> {
-            override fun onResponse(
-                call: Call<TvEpisodeResponse>,
-                response: Response<TvEpisodeResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<TvEpisodeResponse>,
-                t: Throwable
-            ) {
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getTvEpisodeImages(
-        tvId: Long,
-        seasonNumber: String,
-        episodeNumber: Int
-    ): MutableLiveData<EpisodeImageResponse> {
-        val responseLiveData: MutableLiveData<EpisodeImageResponse> = MutableLiveData()
-        val resp = ApiService.create().getTvEpisodeImages(tvId, seasonNumber, episodeNumber)
-
-        resp.enqueue(object : Callback<EpisodeImageResponse> {
-            override fun onResponse(
-                call: Call<EpisodeImageResponse>,
-                response: Response<EpisodeImageResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<EpisodeImageResponse>,
-                t: Throwable
-            ) {
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getTvEpisodeVideos(
-        tvId: Long,
-        seasonNumber: String,
-        episodeNumber: Int
-    ): MutableLiveData<VideosResponse> {
-        val responseLiveData: MutableLiveData<VideosResponse> = MutableLiveData()
-        val resp = ApiService.create().getTvEpisodeVideos(tvId, seasonNumber, episodeNumber)
-
-        resp.enqueue(object : Callback<VideosResponse> {
-            override fun onResponse(
-                call: Call<VideosResponse>,
-                response: Response<VideosResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<VideosResponse>,
                 t: Throwable
             ) {
             }

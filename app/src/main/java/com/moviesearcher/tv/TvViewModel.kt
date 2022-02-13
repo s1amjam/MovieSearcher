@@ -95,7 +95,7 @@ class TvViewModel(private val tvId: Long) : ViewModel() {
         viewModelScope.launch {
             images.postValue(Resource.loading(null))
             try {
-                val imagesFromApi = ApiService.create().images(tvId)
+                val imagesFromApi = ApiService.create().tvImages(tvId)
                 images.postValue(Resource.success(imagesFromApi))
             } catch (e: Exception) {
                 images.postValue(Resource.error(e.toString(), null))

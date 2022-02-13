@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.moviesearcher.favorite.FavoriteViewModel
 import com.moviesearcher.movie.MovieViewModel
 import com.moviesearcher.tv.TvViewModel
+import com.moviesearcher.tv.episode.TvEpisodeViewModel
 import com.moviesearcher.tv.seasons.TvSeasonViewModel
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 
@@ -14,6 +15,7 @@ class ViewModelFactory(
     private val movieId: Long? = null,
     private val tvId: Long? = null,
     private val seasonNumber: String? = null,
+    private val episodeNumber: Int? = null,
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -31,6 +33,9 @@ class ViewModelFactory(
         }
         if (modelClass.isAssignableFrom(TvSeasonViewModel::class.java)) {
             return TvSeasonViewModel(tvId, seasonNumber) as T
+        }
+        if (modelClass.isAssignableFrom(TvEpisodeViewModel::class.java)) {
+            return TvEpisodeViewModel(tvId!!, seasonNumber!!, episodeNumber!!) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

@@ -262,25 +262,25 @@ interface ApiService {
     fun personImages(@Path("person_id") personId: Long): Call<PersonImagesResponse>
 
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}")
-    fun getTvEpisode(
+    suspend fun getTvEpisode(
         @Path("tv_id") tvId: Long,
         @Path("season_number") seasonNumber: String,
         @Path("episode_number") episodeNumber: Int,
-    ): Call<TvEpisodeResponse>
+    ): TvEpisodeResponse
 
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/images")
-    fun getTvEpisodeImages(
+    suspend fun getTvEpisodeImages(
         @Path("tv_id") tvId: Long,
         @Path("season_number") seasonNumber: String,
         @Path("episode_number") episodeNumber: Int,
-    ): Call<EpisodeImageResponse>
+    ): EpisodeImageResponse
 
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/videos")
-    fun getTvEpisodeVideos(
+    suspend fun getTvEpisodeVideos(
         @Path("tv_id") tvId: Long,
         @Path("season_number") seasonNumber: String,
         @Path("episode_number") episodeNumber: Int,
-    ): Call<VideosResponse>
+    ): VideosResponse
 
     @GET("tv/{tv_id}/season/{season_number}")
     suspend fun getTvSeason(
