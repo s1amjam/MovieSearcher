@@ -16,9 +16,6 @@ import com.moviesearcher.list.model.CreateNewList
 import com.moviesearcher.list.model.CreateNewListResponse
 import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.list.model.add.AddToListResponse
-import com.moviesearcher.person.model.combinedcredits.CombinedCreditsResponse
-import com.moviesearcher.person.model.images.PersonImagesResponse
-import com.moviesearcher.person.model.person.PersonResponse
 import com.moviesearcher.rated.movie.model.RatedMoviesResponse
 import com.moviesearcher.rated.tv.model.RatedTvsResponse
 import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
@@ -448,72 +445,6 @@ object Api {
                 t: Throwable
             ) {
 
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun person(personId: Long): MutableLiveData<PersonResponse> {
-        val responseLiveData: MutableLiveData<PersonResponse> = MutableLiveData()
-        val resp = ApiService.create().person(personId)
-
-        resp.enqueue(object : Callback<PersonResponse> {
-            override fun onResponse(
-                call: Call<PersonResponse>,
-                response: Response<PersonResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<PersonResponse>,
-                t: Throwable
-            ) {
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun personImages(personId: Long): MutableLiveData<PersonImagesResponse> {
-        val responseLiveData: MutableLiveData<PersonImagesResponse> = MutableLiveData()
-        val resp = ApiService.create().personImages(personId)
-
-        resp.enqueue(object : Callback<PersonImagesResponse> {
-            override fun onResponse(
-                call: Call<PersonImagesResponse>,
-                response: Response<PersonImagesResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<PersonImagesResponse>,
-                t: Throwable
-            ) {
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun personCombinedCredits(personId: Long): MutableLiveData<CombinedCreditsResponse> {
-        val responseLiveData: MutableLiveData<CombinedCreditsResponse> = MutableLiveData()
-        val resp = ApiService.create().personCombinedCredits(personId)
-
-        resp.enqueue(object : Callback<CombinedCreditsResponse> {
-            override fun onResponse(
-                call: Call<CombinedCreditsResponse>,
-                response: Response<CombinedCreditsResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<CombinedCreditsResponse>,
-                t: Throwable
-            ) {
             }
         }
         )

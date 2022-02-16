@@ -253,13 +253,13 @@ interface ApiService {
     suspend fun tvImages(@Path("tv_id") tvId: Long): ImagesResponse
 
     @GET("person/{person_id}")
-    fun person(@Path("person_id") personId: Long): Call<PersonResponse>
+    suspend fun person(@Path("person_id") personId: Long): PersonResponse
 
     @GET("person/{person_id}/combined_credits")
-    fun personCombinedCredits(@Path("person_id") personId: Long): Call<CombinedCreditsResponse>
+    suspend fun personCombinedCredits(@Path("person_id") personId: Long): CombinedCreditsResponse
 
     @GET("person/{person_id}/images")
-    fun personImages(@Path("person_id") personId: Long): Call<PersonImagesResponse>
+    suspend fun personImages(@Path("person_id") personId: Long): PersonImagesResponse
 
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}")
     suspend fun getTvEpisode(

@@ -8,9 +8,6 @@ import com.moviesearcher.api.Api
 import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.list.model.CheckItemStatusResponse
 import com.moviesearcher.list.model.ListResponse
-import com.moviesearcher.person.model.combinedcredits.CombinedCreditsResponse
-import com.moviesearcher.person.model.images.PersonImagesResponse
-import com.moviesearcher.person.model.person.PersonResponse
 import com.moviesearcher.rated.movie.model.RatedMoviesResponse
 import com.moviesearcher.rated.tv.model.RatedTvsResponse
 import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
@@ -22,9 +19,6 @@ class BaseViewModel : ViewModel() {
     private lateinit var myLists: LiveData<ListsResponse>
     private lateinit var checkedItem: LiveData<CheckItemStatusResponse>
     private lateinit var myList: LiveData<ListResponse>
-    private lateinit var person: LiveData<PersonResponse>
-    private lateinit var personCombinedCredits: LiveData<CombinedCreditsResponse>
-    private lateinit var personImages: LiveData<PersonImagesResponse>
     private lateinit var ratedMovies: LiveData<RatedMoviesResponse>
     private lateinit var ratedTvs: LiveData<RatedTvsResponse>
     private lateinit var ratedTvEpisodes: LiveData<RatedTvEpisodesResponse>
@@ -69,24 +63,6 @@ class BaseViewModel : ViewModel() {
         myList = Api.getListInfo(listId)
 
         return myList
-    }
-
-    fun getPersonById(personId: Long): LiveData<PersonResponse> {
-        person = Api.person(personId)
-
-        return person
-    }
-
-    fun getCombinedCreditsByPersonId(personId: Long): LiveData<CombinedCreditsResponse> {
-        personCombinedCredits = Api.personCombinedCredits(personId)
-
-        return personCombinedCredits
-    }
-
-    fun getImagesByPersonId(personId: Long): LiveData<PersonImagesResponse> {
-        personImages = Api.personImages(personId)
-
-        return personImages
     }
 
     fun getRatedMovies(accountId: Long, sessionId: String): LiveData<RatedMoviesResponse> {

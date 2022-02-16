@@ -8,9 +8,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +20,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.utils.Constants
-import com.moviesearcher.common.viewmodel.BaseViewModel
+import com.moviesearcher.common.utils.Status
+import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentPersonInfoBinding
 import com.moviesearcher.person.adapter.combinedcredits.CombinedCreditsAdapter
 import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
@@ -34,7 +35,7 @@ class PersonInfoFragment : BaseFragment() {
 
     private val args by navArgs<PersonInfoFragmentArgs>()
 
-    private val viewModel: BaseViewModel by viewModels()
+    private lateinit var viewModel: PersonViewModel
 
     private lateinit var filmographyRecyclerView: RecyclerView
     private lateinit var imagesRecyclerView: RecyclerView
@@ -44,10 +45,11 @@ class PersonInfoFragment : BaseFragment() {
     private lateinit var personDied: TextView
     private lateinit var personBio: TextView
     private lateinit var personKnownFor: TextView
-    private lateinit var personInfoConstraintLayout: ConstraintLayout
     private lateinit var buttonSeeAllImages: Button
-    private lateinit var mainCardView: CardView
     private lateinit var progressBar: ProgressBar
+    private lateinit var personInfoCardView: CardView
+    private lateinit var filmographyCardView: CardView
+    private lateinit var imagesCardView: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,95 +67,161 @@ class PersonInfoFragment : BaseFragment() {
 
         filmographyRecyclerView = binding.filmographyRecyclerView
         imagesRecyclerView = binding.imagesRecyclerView
-
-        personInfoConstraintLayout = binding.personInfoConstraintLayout
         personPhotoImageView = binding.photoImageView
         personName = binding.personNameTextView
         personBorn = binding.bornTextView
         personDied = binding.diedTextView
         personBio = binding.bioTextView
         buttonSeeAllImages = binding.buttonSeeAllImages
-        mainCardView = binding.mainPersonInfoCardView
         personKnownFor = binding.knownForTextView
         progressBar = binding.progressBarPerson
+        personInfoCardView = binding.mainPersonInfoCardView
+        filmographyCardView = binding.filmographyCardView
+        imagesCardView = binding.imagesCardView
 
-        personInfoConstraintLayout.visibility = View.INVISIBLE
-        progressBar.visibility = View.VISIBLE
+        setupViewModel()
 
-        viewModel.getPersonById(personId).observe(
-            viewLifecycleOwner
-        ) { personInfo ->
-            Glide.with(this)
-                .load(Constants.IMAGE_URL + personInfo.profile_path)
-                .placeholder(R.drawable.ic_placeholder)
-                .centerCrop()
-                .override(300, 500)
-                .into(personPhotoImageView)
-            personName.text = personInfo.name
-            personBorn.text = getString(R.string.born).format(personInfo.birthday)
-            if (personInfo.deathday == null) {
-                personDied.visibility = View.GONE
-            }
-            personDied.text = getString(R.string.died).format(personInfo.deathday)
-            personBio.text = personInfo.biography
-            personKnownFor.text = personInfo.known_for_department
+        viewModel.getPerson().observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { personInfo ->
+                        Glide.with(this)
+                            .load(Constants.IMAGE_URL + personInfo.profile_path)
+                            .placeholder(R.drawable.ic_placeholder)
+                            .centerCrop()
+                            .override(300, 500)
+                            .into(personPhotoImageView)
+                        personName.text = personInfo.name
+                        personBorn.text = getString(R.string.born).format(personInfo.birthday)
+                        if (personInfo.deathday == null) {
+                            personDied.visibility = View.GONE
+                        }
+                        personDied.text = getString(R.string.died).format(personInfo.deathday)
+                        personBio.text = personInfo.biography
+                        personKnownFor.text = personInfo.known_for_department
 
-            personBio.setOnClickListener {
-                MaterialAlertDialogBuilder(requireContext()).setMessage(personInfo.biography)
-                    .show()
+                        personBio.setOnClickListener {
+                            MaterialAlertDialogBuilder(requireContext()).setMessage(personInfo.biography)
+                                .show()
+                        }
+                    }
+                    progressBar.visibility = View.GONE
+                    personInfoCardView.visibility = View.VISIBLE
+                }
+                Status.LOADING -> {
+                    personInfoCardView.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
 
-        viewModel.getCombinedCreditsByPersonId(personId)
-            .observe(viewLifecycleOwner) { combinedCreditsItems ->
-                val filmographyAdapter = CombinedCreditsAdapter(
-                    combinedCreditsItems,
-                    findNavController(),
-                    accountId,
-                    sessionId,
-                )
+        viewModel.getPersonCombinedCredits().observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { combinedCreditsItems ->
+                        val filmographyAdapter = CombinedCreditsAdapter(
+                            combinedCreditsItems,
+                            findNavController(),
+                            accountId,
+                            sessionId,
+                        )
 
-                filmographyRecyclerView.apply {
-                    adapter = filmographyAdapter
-                    layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                        filmographyRecyclerView.apply {
+                            adapter = filmographyAdapter
+                            layoutManager =
+                                LinearLayoutManager(
+                                    requireContext(),
+                                    LinearLayoutManager.HORIZONTAL,
+                                    false
+                                )
+                        }
+                        filmographyAdapter.differ.submitList(combinedCreditsItems.cast)
+                    }
+                    progressBar.visibility = View.GONE
+                    filmographyCardView.visibility = View.VISIBLE
                 }
-                filmographyAdapter.differ.submitList(combinedCreditsItems.cast)
+                Status.LOADING -> {
+                    filmographyCardView.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
+        }
 
-        viewModel.getImagesByPersonId(personId)
-            .observe(viewLifecycleOwner) { imagesItems ->
-                val imageAdapter = PersonImagesAdapter(
-                    imagesItems,
-                )
+        viewModel.getPersonImages().observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { imagesItems ->
+                        val imageAdapter = PersonImagesAdapter(
+                            imagesItems,
+                        )
 
-                var tenImages = imagesItems.profiles
+                        var tenImages = imagesItems.profiles
 
-                while (tenImages?.size!! > 10) {
-                    tenImages = tenImages.dropLast(1) as MutableList<Profile>
+                        while (tenImages?.size!! > 10) {
+                            tenImages = tenImages.dropLast(1) as MutableList<Profile>
+                        }
+
+                        imagesItems.apply {
+                            profiles = tenImages
+                        }
+
+                        imagesRecyclerView.apply {
+                            adapter = imageAdapter
+                            layoutManager =
+                                LinearLayoutManager(
+                                    requireContext(),
+                                    LinearLayoutManager.HORIZONTAL,
+                                    false
+                                )
+                        }
+                        imageAdapter.differ.submitList(imagesItems.profiles)
+                    }
+                    progressBar.visibility = View.GONE
+                    imagesCardView.visibility = View.VISIBLE
                 }
-
-                imagesItems.apply {
-                    profiles = tenImages
+                Status.LOADING -> {
+                    imagesCardView.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
                 }
-
-                imagesRecyclerView.apply {
-                    adapter = imageAdapter
-                    layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
-                imageAdapter.differ.submitList(imagesItems.profiles)
-
-                progressBar.visibility = View.GONE
-                personInfoConstraintLayout.visibility = View.VISIBLE
             }
+        }
 
         buttonSeeAllImages.setOnClickListener {
-            val action = PersonInfoFragmentDirections.actionPersonInfoFragmentToImagesFragment()
+            val action =
+                PersonInfoFragmentDirections.actionPersonInfoFragmentToImagesFragment()
             action.personId = personId.toString()
 
             findNavController().navigate(action)
         }
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            this, ViewModelFactory(
+                personId = args.personId
+            )
+        ).get(PersonViewModel::class.java)
     }
 
     override fun onDestroyView() {

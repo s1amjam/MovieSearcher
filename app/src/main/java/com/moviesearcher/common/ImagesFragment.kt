@@ -5,17 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentImagesBinding
 import com.moviesearcher.movie.MovieViewModel
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
+import com.moviesearcher.person.PersonViewModel
 import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
 import com.moviesearcher.tv.TvViewModel
 
@@ -25,9 +24,10 @@ class ImagesFragment : BaseFragment() {
 
     private val args by navArgs<ImagesFragmentArgs>()
 
-    private val viewModel: BaseViewModel by viewModels()
     private lateinit var movieViewModel: MovieViewModel
     private lateinit var tvViewModel: TvViewModel
+    private lateinit var personViewModel: PersonViewModel
+
     private lateinit var imagesRecyclerView: RecyclerView
 
     override fun onCreateView(
@@ -106,15 +106,30 @@ class ImagesFragment : BaseFragment() {
                 }
             }
             personId != null -> {
-                viewModel.getImagesByPersonId(personId)
-                    .observe(viewLifecycleOwner) { imagesItems ->
-                        val imagesAdapter = PersonImagesAdapter(imagesItems)
+                personViewModel.getPersonImages()
+                    .observe(viewLifecycleOwner) {
+                        when (it.status) {
+                            Status.SUCCESS -> {
+                                it.data?.let { imagesItems ->
+                                    val imagesAdapter = PersonImagesAdapter(imagesItems)
 
-                        imagesRecyclerView.apply {
-                            adapter = imagesAdapter
-                            layoutManager = GridLayoutManager(requireContext(), 2)
+                                    imagesRecyclerView.apply {
+                                        adapter = imagesAdapter
+                                        layoutManager = GridLayoutManager(requireContext(), 2)
+                                    }
+                                    imagesAdapter.differ.submitList(imagesItems.profiles)
+                                }
+                            }
+                            Status.LOADING -> {
+                            }
+                            Status.ERROR -> {
+                                Toast.makeText(
+                                    requireContext(),
+                                    ERROR_MESSAGE.format(it.message),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                         }
-                        imagesAdapter.differ.submitList(imagesItems.profiles)
                     }
             }
         }
@@ -133,6 +148,12 @@ class ImagesFragment : BaseFragment() {
                     tvId = args.tvId?.toLong()
                 )
             ).get(TvViewModel::class.java)
+        } else if (args.personId != null) {
+            personViewModel = ViewModelProvider(
+                this, ViewModelFactory(
+                    personId = args.personId!!.toLong()
+                )
+            ).get(PersonViewModel::class.java)
         }
     }
 
