@@ -16,9 +16,6 @@ import com.moviesearcher.list.model.CreateNewList
 import com.moviesearcher.list.model.CreateNewListResponse
 import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.list.model.add.AddToListResponse
-import com.moviesearcher.rated.movie.model.RatedMoviesResponse
-import com.moviesearcher.rated.tv.model.RatedTvsResponse
-import com.moviesearcher.rated.tvepisode.model.RatedTvEpisodesResponse
 import com.moviesearcher.search.model.SearchResponse
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import retrofit2.Call
@@ -158,84 +155,6 @@ object Api {
 
             override fun onFailure(
                 call: Call<ListsResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getRatedMovies(
-        accountId: Long?,
-        sessionId: String?
-    ): MutableLiveData<RatedMoviesResponse> {
-        val responseLiveData: MutableLiveData<RatedMoviesResponse> = MutableLiveData()
-        val resp = ApiService.create().getRatedMovies(accountId, sessionId)
-
-        resp.enqueue(object : Callback<RatedMoviesResponse> {
-            override fun onResponse(
-                call: Call<RatedMoviesResponse>,
-                response: Response<RatedMoviesResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<RatedMoviesResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getRatedTvs(
-        accountId: Long?,
-        sessionId: String?
-    ): MutableLiveData<RatedTvsResponse> {
-        val responseLiveData: MutableLiveData<RatedTvsResponse> = MutableLiveData()
-        val resp = ApiService.create().getRatedTvs(accountId, sessionId)
-
-        resp.enqueue(object : Callback<RatedTvsResponse> {
-            override fun onResponse(
-                call: Call<RatedTvsResponse>,
-                response: Response<RatedTvsResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<RatedTvsResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getRatedTvEpisodes(
-        accountId: Long?,
-        sessionId: String?
-    ): MutableLiveData<RatedTvEpisodesResponse> {
-        val responseLiveData: MutableLiveData<RatedTvEpisodesResponse> = MutableLiveData()
-        val resp = ApiService.create().getRatedTvEpisodes(accountId, sessionId)
-
-        resp.enqueue(object : Callback<RatedTvEpisodesResponse> {
-            override fun onResponse(
-                call: Call<RatedTvEpisodesResponse>,
-                response: Response<RatedTvEpisodesResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<RatedTvEpisodesResponse>,
                 t: Throwable
             ) {
 

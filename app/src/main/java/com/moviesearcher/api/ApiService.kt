@@ -143,22 +143,22 @@ interface ApiService {
     ): FavoriteTvResponse
 
     @GET("account/{account_id}/rated/movies")
-    fun getRatedMovies(
+    suspend fun getRatedMovies(
         @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
-    ): Call<RatedMoviesResponse>
+    ): RatedMoviesResponse
 
     @GET("account/{account_id}/rated/tv")
-    fun getRatedTvs(
+    suspend fun getRatedTvs(
         @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
-    ): Call<RatedTvsResponse>
+    ): RatedTvsResponse
 
     @GET("account/{account_id}/rated/tv/episodes")
-    fun getRatedTvEpisodes(
+    suspend fun getRatedTvEpisodes(
         @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?
-    ): Call<RatedTvEpisodesResponse>
+    ): RatedTvEpisodesResponse
 
     @GET("account/{account_id}/watchlist/movies")
     suspend fun getMovieWatchlist(

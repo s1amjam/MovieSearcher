@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.moviesearcher.favorite.FavoriteViewModel
 import com.moviesearcher.movie.MovieViewModel
 import com.moviesearcher.person.PersonViewModel
+import com.moviesearcher.rated.RatedViewModel
 import com.moviesearcher.tv.TvViewModel
 import com.moviesearcher.tv.episode.TvEpisodeViewModel
 import com.moviesearcher.tv.seasons.TvSeasonViewModel
@@ -40,6 +41,9 @@ class ViewModelFactory(
         }
         if (modelClass.isAssignableFrom(PersonViewModel::class.java)) {
             return PersonViewModel(personId!!) as T
+        }
+        if (modelClass.isAssignableFrom(RatedViewModel::class.java)) {
+            return RatedViewModel(sessionId!!, accountId!!) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }
