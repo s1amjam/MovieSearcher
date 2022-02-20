@@ -105,11 +105,11 @@ interface ApiService {
     suspend fun tvInfo(@Path("tv_id") tvId: Long): TvInfoResponse
 
     @GET("search/multi")
-    fun search(
+    suspend fun search(
         @Query("query", encoded = true) query: String,
         @Query("page") page: Int = 1,
         @Query("include_adult") includeAdult: Boolean = false
-    ): Call<SearchResponse>
+    ): SearchResponse
 
     @GET("authentication/token/new")
     fun newRequestToken(): Call<CreateTokenResponse>

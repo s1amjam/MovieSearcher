@@ -1,6 +1,7 @@
 package com.moviesearcher.search.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.navigation.NavController
@@ -9,11 +10,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.search.SearchResultFragmentDirections
 import com.moviesearcher.search.model.Result
 import com.moviesearcher.search.model.SearchResponse
-import com.moviesearcher.common.utils.Constants
 
 class SearchAdapter(
     private val searchItems: SearchResponse,
@@ -29,8 +30,11 @@ class SearchAdapter(
         private val overview = binding.textViewDescription
         private val poster = binding.posterImageView
         private val cardView = binding.cardView
+        private val removeButton = binding.imageButtonRemove
 
         fun bind(searchResultItem: Result) {
+            removeButton.visibility = View.GONE
+
             Glide.with(this.itemView)
                 .load(Constants.IMAGE_URL + searchResultItem.posterPath)
                 .placeholder(R.drawable.ic_placeholder)

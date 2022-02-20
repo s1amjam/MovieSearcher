@@ -8,13 +8,15 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
-import com.moviesearcher.common.viewmodel.BaseViewModel
+import com.moviesearcher.common.utils.Status
+import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentSearchResultBinding
 import com.moviesearcher.search.adapter.SearchAdapter
 
@@ -25,7 +27,7 @@ class SearchResultFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private lateinit var searchResultRecyclerView: RecyclerView
-    private val viewModel: BaseViewModel by viewModels()
+    private lateinit var viewModel: SearchViewModel
 
     private lateinit var progressBar: ProgressBar
 
@@ -49,8 +51,10 @@ class SearchResultFragment : BaseFragment() {
         progressBar = binding.progressBarSearch
         nothingWasFoundTv = binding.nothingFoundTv
         searchView = binding.searchView
-        searchResultRecyclerView.visibility = View.INVISIBLE
+
         nothingWasFoundTv.visibility = View.INVISIBLE
+
+        setupViewModel()
 
         searchView.requestFocus()
 
@@ -80,24 +84,43 @@ class SearchResultFragment : BaseFragment() {
     }
 
     private fun updateWithSearchResult(searchQuery: String) {
-        viewModel.queryForSearch(searchQuery).observe(viewLifecycleOwner) { searchItems ->
+        viewModel.queryForSearch(searchQuery)
+        viewModel.getSearchResult().observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { searchItems ->
+                        if (searchItems.totalResults!! <= 0) {
+                            nothingWasFoundTv.visibility = View.VISIBLE
+                            progressBar.visibility = View.GONE
+                        } else {
+                            val searchAdapter = SearchAdapter(searchItems, findNavController())
 
-            if (searchItems.totalResults!! <= 0) {
-                nothingWasFoundTv.visibility = View.VISIBLE
-            } else {
-                nothingWasFoundTv.visibility = View.INVISIBLE
+                            searchResultRecyclerView.apply {
+                                adapter = searchAdapter
+                                layoutManager = LinearLayoutManager(context)
+                            }
+                            searchAdapter.differ.submitList(searchItems.results)
+
+                            progressBar.visibility = View.GONE
+                            nothingWasFoundTv.visibility = View.INVISIBLE
+                            searchResultRecyclerView.visibility = View.VISIBLE
+                        }
+                    }
+                }
+                Status.LOADING -> {
+                    searchResultRecyclerView.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                    nothingWasFoundTv.visibility = View.INVISIBLE
+                }
+                Status.ERROR -> {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
-
-            val searchAdapter = SearchAdapter(searchItems, findNavController())
-
-            searchResultRecyclerView.apply {
-                adapter = searchAdapter
-                layoutManager = LinearLayoutManager(context)
-            }
-            searchAdapter.differ.submitList(searchItems.results)
-
-            progressBar.visibility = View.GONE
-            searchResultRecyclerView.visibility = View.VISIBLE
         }
     }
 
@@ -107,6 +130,12 @@ class SearchResultFragment : BaseFragment() {
         val inputMethodService =
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodService.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            this, ViewModelFactory()
+        ).get(SearchViewModel::class.java)
     }
 
     override fun onDestroyView() {

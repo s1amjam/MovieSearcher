@@ -6,6 +6,7 @@ import com.moviesearcher.favorite.FavoriteViewModel
 import com.moviesearcher.movie.MovieViewModel
 import com.moviesearcher.person.PersonViewModel
 import com.moviesearcher.rated.RatedViewModel
+import com.moviesearcher.search.SearchViewModel
 import com.moviesearcher.tv.TvViewModel
 import com.moviesearcher.tv.episode.TvEpisodeViewModel
 import com.moviesearcher.tv.seasons.TvSeasonViewModel
@@ -44,6 +45,9 @@ class ViewModelFactory(
         }
         if (modelClass.isAssignableFrom(RatedViewModel::class.java)) {
             return RatedViewModel(sessionId!!, accountId!!) as T
+        }
+        if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
+            return SearchViewModel() as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

@@ -16,7 +16,6 @@ import com.moviesearcher.list.model.CreateNewList
 import com.moviesearcher.list.model.CreateNewListResponse
 import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.list.model.add.AddToListResponse
-import com.moviesearcher.search.model.SearchResponse
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,29 +24,6 @@ import retrofit2.Response
 private const val TAG = "Api"
 
 object Api {
-
-    fun search(query: String): MutableLiveData<SearchResponse> {
-        val responseLiveData: MutableLiveData<SearchResponse> = MutableLiveData()
-        val resp = ApiService.create().search(query)
-
-        resp.enqueue(object : Callback<SearchResponse> {
-            override fun onResponse(
-                call: Call<SearchResponse>,
-                response: Response<SearchResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<SearchResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
 
     fun createRequestToken(): MutableLiveData<CreateTokenResponse> {
         val resp = ApiService.create().newRequestToken()
