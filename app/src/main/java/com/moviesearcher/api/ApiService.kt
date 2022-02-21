@@ -181,15 +181,13 @@ interface ApiService {
     ): Call<AddToListResponse>
 
     @GET("list/{list_id}")
-    fun getListInfo(
-        @Path("list_id") listId: Int
-    ): Call<ListResponse>
+    suspend fun getListInfo(@Path("list_id") listId: Int): ListResponse
 
     @GET("list/{list_id}/item_status")
-    fun checkItemStatus(
+    suspend fun checkItemStatus(
         @Path("list_id") listId: Int,
         @Query("movie_id") movieId: Long
-    ): Call<CheckItemStatusResponse>
+    ): CheckItemStatusResponse
 
     @POST("list")
     @Headers("Content-Type: application/json;charset=utf-8")

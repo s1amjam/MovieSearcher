@@ -11,10 +11,8 @@ import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
 import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.lists.model.ListsResponse
-import com.moviesearcher.list.model.CheckItemStatusResponse
 import com.moviesearcher.list.model.CreateNewList
 import com.moviesearcher.list.model.CreateNewListResponse
-import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.list.model.add.AddToListResponse
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import retrofit2.Call
@@ -158,52 +156,6 @@ object Api {
 
             override fun onFailure(
                 call: Call<AddToListResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getListInfo(listId: Int): MutableLiveData<ListResponse> {
-        val responseLiveData: MutableLiveData<ListResponse> = MutableLiveData()
-        val resp = ApiService.create().getListInfo(listId)
-
-        resp.enqueue(object : Callback<ListResponse> {
-            override fun onResponse(
-                call: Call<ListResponse>,
-                response: Response<ListResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<ListResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun checkItemStatus(listId: Int, movieId: Long): MutableLiveData<CheckItemStatusResponse> {
-        val responseLiveData: MutableLiveData<CheckItemStatusResponse> = MutableLiveData()
-        val resp = ApiService.create().checkItemStatus(listId, movieId)
-
-        resp.enqueue(object : Callback<CheckItemStatusResponse> {
-            override fun onResponse(
-                call: Call<CheckItemStatusResponse>,
-                response: Response<CheckItemStatusResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<CheckItemStatusResponse>,
                 t: Throwable
             ) {
 

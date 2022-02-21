@@ -11,18 +11,17 @@ import android.widget.Toast
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.utils.EncryptedSharedPrefs
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.favorite.FavoriteViewModel
 import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.CreateNewListDialog
+import com.moviesearcher.list.ListViewModel
 import com.moviesearcher.list.model.Result
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
@@ -37,7 +36,7 @@ open class BaseFragment : Fragment() {
 
     lateinit var encryptedSharedPrefs: SharedPreferences
 
-    private val listsViewModel: BaseViewModel by viewModels()
+    private lateinit var listViewModel: ListViewModel
     private lateinit var watchlistViewModel: WatchlistViewModel
     private lateinit var favoriteViewModel: FavoriteViewModel
 
@@ -98,38 +97,55 @@ open class BaseFragment : Fragment() {
             popup.menu.add(Menu.NONE, it.id!!.toInt(), Menu.NONE, it.name)
             val menuItem = popup.menu.findItem(it.id.toInt())
 
-            listsViewModel.checkItemStatus(it.id.toInt(), mediaId).observe(
+            setupListViewModel(it.id.toInt(), mediaId)
+
+            listViewModel.getCheckedItem().observe(
                 viewLifecycleOwner
-            ) { item ->
-                if (item.itemPresent == true) {
-                    menuItem.isEnabled = false
-                    menuItem.title = menuItem.title.toString() + " (added)"
-                } else {
-                    menuItem.setOnMenuItemClickListener {
-                        Api.addToList(it.itemId, MediaId(mediaId), sessionId).observe(
-                            this
-                        ) { addToListResponse ->
-                            if (addToListResponse.statusCode == 12) {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Added to List",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+            ) { it ->
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { item ->
+                            if (item.itemPresent == true) {
+                                menuItem.isEnabled = false
+                                menuItem.title = menuItem.title.toString() + " (added)"
                             } else {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Error adding to List",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                menuItem.setOnMenuItemClickListener {
+                                    Api.addToList(it.itemId, MediaId(mediaId), sessionId).observe(
+                                        this
+                                    ) { addToListResponse ->
+                                        if (addToListResponse.statusCode == 12) {
+                                            Toast.makeText(
+                                                requireContext(),
+                                                "Added to List",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else {
+                                            Toast.makeText(
+                                                requireContext(),
+                                                "Error adding to List",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+
+                                    true
+                                }
                             }
                         }
-
-                        true
+                        popup.show()
+                    }
+                    Status.LOADING -> {
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(
+                            requireContext(),
+                            ERROR_MESSAGE.format(it.message),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
         }
-        popup.show()
     }
 
     fun checkFavorites(button: ImageButton) {
@@ -211,7 +227,8 @@ open class BaseFragment : Fragment() {
             Toast.makeText(requireContext(), "Added to Favorites", Toast.LENGTH_SHORT).show()
         } else {
             button.setImageResource(markAsFavoriteIcon)
-            Toast.makeText(requireContext(), "Removed from Favorites", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Removed from Favorites", Toast.LENGTH_SHORT)
+                .show()
         }
 
         markAsFavorite.observe(viewLifecycleOwner) {
@@ -283,7 +300,8 @@ open class BaseFragment : Fragment() {
         addToWatchlist.observe(viewLifecycleOwner) {
             if (isWatchlist) {
                 button.setImageResource(watchlistAddedIcon)
-                Toast.makeText(requireContext(), "Added to Watchlist", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Added to Watchlist", Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 button.setImageResource(watchlistRemovedIcon)
                 Toast.makeText(requireContext(), "Removed from Watchlist", Toast.LENGTH_SHORT)
@@ -323,6 +341,17 @@ open class BaseFragment : Fragment() {
                     sessionId, accountId
                 )
             ).get(FavoriteViewModel::class.java)
+        }
+    }
+
+    private fun setupListViewModel(listId: Int, movieId: Long) {
+        if (sessionId.isNotEmpty()) {
+            listViewModel = ViewModelProvider(
+                this,
+                ViewModelFactory(
+                    listId = listId, movieId = movieId
+                )
+            ).get(ListViewModel::class.java)
         }
     }
 }

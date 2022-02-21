@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.fragment.app.viewModels
+import android.widget.TextView
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
-import com.moviesearcher.common.viewmodel.BaseViewModel
+import com.moviesearcher.common.utils.Status
+import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMyListBinding
 import com.moviesearcher.list.adapter.MyListAdapter
 
@@ -25,8 +28,9 @@ class MyListFragment : BaseFragment() {
 
     private lateinit var progressBar: ProgressBar
     private lateinit var myListRecyclerView: RecyclerView
+    private lateinit var emptyListTextView: TextView
 
-    private val viewModel: BaseViewModel by viewModels()
+    private lateinit var viewModel: ListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,33 +45,62 @@ class MyListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val listId = args.listId
-
         myListRecyclerView = binding.fragmentMyListRecyclerView
-        myListRecyclerView.visibility = View.INVISIBLE
         progressBar = binding.progressBarList
-        progressBar.visibility = View.VISIBLE
+        emptyListTextView = binding.emptyListTv
 
-        viewModel.getList(listId).observe(
-            viewLifecycleOwner
-        ) { myListItems ->
-            val myListAdapter = MyListAdapter(
-                myListItems,
-                findNavController(),
-                args.listId,
-                sessionId
-            )
-            binding.listTitleTextView.text = myListItems.name
+        setupViewModel()
 
-            myListRecyclerView.apply {
-                adapter = myListAdapter
-                layoutManager = LinearLayoutManager(context)
+        viewModel.getMyList().observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { myListItems ->
+                        if (myListItems.itemCount == 0) {
+                            progressBar.visibility = View.GONE
+                            emptyListTextView.visibility = View.VISIBLE
+                        } else {
+                            val myListAdapter = MyListAdapter(
+                                myListItems,
+                                findNavController(),
+                                args.listId,
+                                sessionId
+                            )
+                            binding.listTitleTextView.text = myListItems.name
+
+                            myListRecyclerView.apply {
+                                adapter = myListAdapter
+                                layoutManager = LinearLayoutManager(context)
+                            }
+                            myListAdapter.differ.submitList(myListItems.items)
+
+                            progressBar.visibility = View.GONE
+                            emptyListTextView.visibility = View.GONE
+                            myListRecyclerView.visibility = View.VISIBLE
+                        }
+                    }
+                }
+                Status.LOADING -> {
+                    myListRecyclerView.visibility = View.GONE
+                    emptyListTextView.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
-            myListAdapter.differ.submitList(myListItems.items)
-
-            progressBar.visibility = View.GONE
-            myListRecyclerView.visibility = View.VISIBLE
         }
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(listId = args.listId)
+        ).get(ListViewModel::class.java)
     }
 
     override fun onDestroyView() {
