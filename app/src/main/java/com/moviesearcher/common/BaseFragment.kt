@@ -99,9 +99,7 @@ open class BaseFragment : Fragment() {
 
             setupListViewModel(it.id.toInt(), mediaId)
 
-            listViewModel.getCheckedItem().observe(
-                viewLifecycleOwner
-            ) { it ->
+            listViewModel.getCheckedItem().observe(viewLifecycleOwner) { it ->
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { item ->

@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -31,9 +30,9 @@ import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
+import com.moviesearcher.list.lists.ListsViewModel
 import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
@@ -53,7 +52,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var lists: LiveData<ListsResponse>
 
     private lateinit var movieViewModel: MovieViewModel
-    private val viewModel: BaseViewModel by viewModels()
+    private lateinit var listsViewModel: ListsViewModel
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -448,11 +447,25 @@ class MovieInfoFragment : BaseFragment() {
             findNavController().navigate(action)
         }
 
-        lists = viewModel.getLists(accountId, sessionId, 1)
-
-        addToListImageButton.setOnClickListener { v ->
-            lists.observe(viewLifecycleOwner) {
-                showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
+        listsViewModel.getLists().observe(viewLifecycleOwner) { it ->
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let {
+                        addToListImageButton.setOnClickListener { v ->
+                            showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
+                        }
+                    }
+                }
+                Status.LOADING -> {
+                }
+                Status.ERROR -> {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
 
@@ -487,6 +500,14 @@ class MovieInfoFragment : BaseFragment() {
                 movieId = args.movieId
             )
         ).get(MovieViewModel::class.java)
+
+        if (sessionId.isNotEmpty()) {
+            listsViewModel = ViewModelProvider(
+                this, ViewModelFactory(
+                    sessionId, accountId, page = 1
+                )
+            ).get(ListsViewModel::class.java)
+        }
     }
 
     override fun onDestroyView() {

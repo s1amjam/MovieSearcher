@@ -5,12 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.fragment.app.viewModels
+import android.widget.TextView
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
-import com.moviesearcher.common.viewmodel.BaseViewModel
+import com.moviesearcher.common.utils.Status
+import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMyListsBinding
 import com.moviesearcher.list.lists.adapter.MyListsAdapter
 
@@ -22,8 +25,9 @@ class MyListsFragment : BaseFragment() {
 
     private lateinit var myListsRecyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var noListsTv: TextView
 
-    private val viewModel: BaseViewModel by viewModels()
+    private lateinit var viewModel: ListsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,19 +43,52 @@ class MyListsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         progressBar = binding.progressBarLists
-        progressBar.visibility = View.VISIBLE
         myListsRecyclerView = binding.fragmentMyListsRecyclerView
         myListsRecyclerView.layoutManager = LinearLayoutManager(context)
-        myListsRecyclerView.visibility = View.INVISIBLE
+        noListsTv = binding.noListsTv
 
-        viewModel.getLists(accountId, sessionId, 1).observe(
-            viewLifecycleOwner
-        ) { myListItems ->
-            myListsRecyclerView.adapter =
-                MyListsAdapter(myListItems, findNavController(), sessionId)
-            progressBar.visibility = View.GONE
-            myListsRecyclerView.visibility = View.VISIBLE
+        setupViewModel()
+
+        viewModel.getLists().observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { myListItems ->
+                        if (myListItems.totalResults == 0) {
+                            progressBar.visibility = View.GONE
+                            noListsTv.visibility = View.VISIBLE
+                        } else {
+                            myListsRecyclerView.adapter =
+                                MyListsAdapter(myListItems, findNavController(), sessionId)
+
+                            progressBar.visibility = View.GONE
+                            noListsTv.visibility = View.GONE
+                            myListsRecyclerView.visibility = View.VISIBLE
+                        }
+                    }
+                }
+                Status.LOADING -> {
+                    myListsRecyclerView.visibility = View.GONE
+                    noListsTv.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
         }
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            this, ViewModelFactory(
+                sessionId, accountId, page = 1
+            )
+        ).get(ListsViewModel::class.java)
     }
 
     override fun onDestroyView() {

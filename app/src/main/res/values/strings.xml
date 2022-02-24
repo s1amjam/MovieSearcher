@@ -58,4 +58,5 @@
     <string name="dont_have_favorites">You don\'t have any favorites yet</string>
     <string name="no_episodes">There is no episodes yet</string>
     <string name="list_is_empty">List is empty, add something</string>
+    <string name="no_lists">There is no lists yet</string>
 </resources>

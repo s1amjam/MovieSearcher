@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -30,9 +29,9 @@ import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.BaseViewModel
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentTvInfoBinding
+import com.moviesearcher.list.lists.ListsViewModel
 import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
@@ -51,7 +50,7 @@ class TvInfoFragment : BaseFragment() {
     private var numberOfSeasons: Int = 0
 
     private lateinit var tvViewModel: TvViewModel
-    private val viewModel: BaseViewModel by viewModels()
+    private lateinit var listsViewModel: ListsViewModel
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -66,7 +65,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var voteAverageTextView: TextView
     private lateinit var voteCountTextView: TextView
     private lateinit var mainConstraintLayout: ConstraintLayout
-    private lateinit var addToListMenuButton: ImageButton
+    private lateinit var addToListImageButton: ImageButton
     private lateinit var markTvAsFavoriteButton: ImageButton
     private lateinit var watchlistButton: ImageButton
     private lateinit var seeAllImagesButton: Button
@@ -117,7 +116,7 @@ class TvInfoFragment : BaseFragment() {
         taglineTextView = binding.taglineTextView
         releaseDateTextView = binding.releaseDateTextView
         overviewTextView = binding.overviewTextView
-        addToListMenuButton = binding.menuButtonAddTvToList
+        addToListImageButton = binding.menuButtonAddTvToList
         markTvAsFavoriteButton = binding.buttonMarkTvAsFavorite
         watchlistButton = binding.buttonWatchlist
         seeAllImagesButton = binding.buttonSeeAllImages
@@ -144,7 +143,7 @@ class TvInfoFragment : BaseFragment() {
         castCardView = binding.castCv
         imagesCardView = binding.imagesCardView
 
-        addToListMenuButton.isVisible = sessionId != ""
+        addToListImageButton.isVisible = sessionId != ""
         markTvAsFavoriteButton.isVisible = sessionId != ""
         watchlistButton.isVisible = sessionId != ""
 
@@ -157,7 +156,12 @@ class TvInfoFragment : BaseFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { tvInfo ->
-                        val minutes = tvInfo.episodeRunTime?.get(0)?.toLong()
+                        var minutes: Long = 0
+
+                        if (tvInfo.episodeRunTime?.isNotEmpty() == true) {
+                            minutes = tvInfo.episodeRunTime[0].toLong()
+                        }
+
                         val languages = mutableListOf<String>()
                         val locations = mutableListOf<String>()
                         val genres = tvInfo.genres
@@ -470,11 +474,25 @@ class TvInfoFragment : BaseFragment() {
                 findNavController().navigate(action)
             }
 
-            lists = viewModel.getLists(accountId, sessionId, 1)
-
-            addToListMenuButton.setOnClickListener { v ->
-                lists.observe(viewLifecycleOwner) {
-                    showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
+            listsViewModel.getLists().observe(viewLifecycleOwner) { it ->
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let {
+                            addToListImageButton.setOnClickListener { v ->
+                                showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
+                            }
+                        }
+                    }
+                    Status.LOADING -> {
+                    }
+                    Status.ERROR -> {
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(
+                            requireContext(),
+                            ERROR_MESSAGE.format(it.message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
 
@@ -517,6 +535,14 @@ class TvInfoFragment : BaseFragment() {
                 tvId = args.tvId
             )
         ).get(TvViewModel::class.java)
+
+        if (sessionId.isNotEmpty()) {
+            listsViewModel = ViewModelProvider(
+                this, ViewModelFactory(
+                    sessionId, accountId, page = 1
+                )
+            ).get(ListsViewModel::class.java)
+        }
     }
 
     override fun onDestroyView() {

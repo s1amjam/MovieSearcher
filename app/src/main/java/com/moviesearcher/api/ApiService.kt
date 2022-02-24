@@ -124,11 +124,11 @@ interface ApiService {
     fun getAccount(@Query("session_id") sessionId: String): Call<AccountResponse>
 
     @GET("account/{account_id}/lists")
-    fun getCreatedLists(
+    suspend fun getCreatedLists(
         @Path("account_id") accountId: Long?,
         @Query("session_id") sessionId: String?,
         @Query("page") page: Int = 1
-    ): Call<ListsResponse>
+    ): ListsResponse
 
     @GET("account/{account_id}/favorite/movies")
     suspend fun getFavoriteMovies(

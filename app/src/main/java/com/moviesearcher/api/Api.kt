@@ -10,7 +10,6 @@ import com.moviesearcher.common.model.auth.SessionId
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
 import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
-import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.list.model.CreateNewList
 import com.moviesearcher.list.model.CreateNewListResponse
 import com.moviesearcher.list.model.add.AddToListResponse
@@ -106,29 +105,6 @@ object Api {
 
             override fun onFailure(
                 call: Call<AccountResponse>,
-                t: Throwable
-            ) {
-
-            }
-        }
-        )
-        return responseLiveData
-    }
-
-    fun getLists(accountId: Long?, sessionId: String?, page: Int): MutableLiveData<ListsResponse> {
-        val responseLiveData: MutableLiveData<ListsResponse> = MutableLiveData()
-        val resp = ApiService.create().getCreatedLists(accountId, sessionId, page)
-
-        resp.enqueue(object : Callback<ListsResponse> {
-            override fun onResponse(
-                call: Call<ListsResponse>,
-                response: Response<ListsResponse>
-            ) {
-                responseLiveData.value = response.body()
-            }
-
-            override fun onFailure(
-                call: Call<ListsResponse>,
                 t: Throwable
             ) {
 
