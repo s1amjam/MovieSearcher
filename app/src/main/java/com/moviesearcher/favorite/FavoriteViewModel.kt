@@ -13,11 +13,6 @@ class FavoriteViewModel(private val sessionId: String, private val accountId: Lo
     private val favoriteMovies = MutableLiveData<Resource<FavoriteMovieResponse>>()
     private val favoriteTvs = MutableLiveData<Resource<FavoriteTvResponse>>()
 
-    init {
-        fetchFavoriteMovie()
-        fetchFavoriteTv()
-    }
-
     private fun fetchFavoriteMovie() {
         viewModelScope.launch {
             favoriteMovies.postValue(Resource.loading(null))
@@ -32,6 +27,10 @@ class FavoriteViewModel(private val sessionId: String, private val accountId: Lo
     }
 
     fun getFavoriteMovie(): MutableLiveData<Resource<FavoriteMovieResponse>> {
+        if (favoriteMovies.value == null) {
+            fetchFavoriteMovie()
+        }
+
         return favoriteMovies
     }
 
@@ -48,6 +47,10 @@ class FavoriteViewModel(private val sessionId: String, private val accountId: Lo
     }
 
     fun getFavoriteTv(): MutableLiveData<Resource<FavoriteTvResponse>> {
+        if (favoriteTvs.value == null) {
+            fetchFavoriteTv()
+        }
+
         return favoriteTvs
     }
 }

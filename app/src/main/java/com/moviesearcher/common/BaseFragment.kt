@@ -248,7 +248,7 @@ open class BaseFragment : Fragment() {
             mediaInfo = getMediaInfo()
             val mediaId = mediaInfo.values.first()
 
-            watchlistViewModel.getWatchlistedItemsIds().observe(this) { it ->
+            watchlistViewModel.getWatchlistItemsIds().observe(viewLifecycleOwner) { it ->
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { movieItems ->

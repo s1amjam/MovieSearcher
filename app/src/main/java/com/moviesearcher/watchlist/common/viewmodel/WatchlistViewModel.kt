@@ -14,13 +14,7 @@ import kotlinx.coroutines.launch
 class WatchlistViewModel(private val accountId: Long, private val sessionId: String) : ViewModel() {
     private val movieWatchlist = MutableLiveData<Resource<MovieWatchlistResponse>>()
     private val tvWatchlist = MutableLiveData<Resource<TvWatchlistResponse>>()
-    private val watchlistedItemsIds = MutableLiveData<Resource<MutableList<Long>>>()
-
-    init {
-        fetchMoviesWatchlist()
-        fetchTvWatchlist()
-        fetchWatchlistedItemsIds()
-    }
+    private val watchlistItemsIds = MutableLiveData<Resource<MutableList<Long>>>()
 
     private fun fetchMoviesWatchlist() {
         viewModelScope.launch {
@@ -36,6 +30,10 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
     }
 
     fun getMovieWatchlist(): MutableLiveData<Resource<MovieWatchlistResponse>> {
+        if (movieWatchlist.value == null) {
+            fetchMoviesWatchlist()
+        }
+
         return movieWatchlist
     }
 
@@ -52,12 +50,16 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
     }
 
     fun getTvWatchlist(): MutableLiveData<Resource<TvWatchlistResponse>> {
+        if (tvWatchlist.value == null) {
+            fetchTvWatchlist()
+        }
+
         return tvWatchlist
     }
 
-    private fun fetchWatchlistedItemsIds() {
+    private fun fetchWatchlistItemsIds() {
         viewModelScope.launch {
-            watchlistedItemsIds.postValue(Resource.loading(null))
+            watchlistItemsIds.postValue(Resource.loading(null))
             try {
                 coroutineScope {
                     val moviesWatchlistFromApiDeferred =
@@ -69,18 +71,26 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
                     val tvWatchlistFromApi = tvWatchlistFromApiDeferred.await()
 
                     val allWatchlistIdsFromApi = mutableListOf<Long>()
-                    moviesWatchlistFromApi.results?.forEach { it -> allWatchlistIdsFromApi.add(it.id!!.toLong()) }
-                    tvWatchlistFromApi.results?.forEach { it -> allWatchlistIdsFromApi.add(it.id!!.toLong()) }
+                    moviesWatchlistFromApi.results?.forEach { it ->
+                        allWatchlistIdsFromApi.add(it.id!!.toLong())
+                    }
+                    tvWatchlistFromApi.results?.forEach { it ->
+                        allWatchlistIdsFromApi.add(it.id!!.toLong())
+                    }
 
-                    watchlistedItemsIds.postValue(Resource.success(allWatchlistIdsFromApi))
+                    watchlistItemsIds.postValue(Resource.success(allWatchlistIdsFromApi))
                 }
             } catch (e: Exception) {
-                watchlistedItemsIds.postValue(Resource.error(e.toString(), null))
+                watchlistItemsIds.postValue(Resource.error(e.toString(), null))
             }
         }
     }
 
-    fun getWatchlistedItemsIds(): MutableLiveData<Resource<MutableList<Long>>> {
-        return watchlistedItemsIds
+    fun getWatchlistItemsIds(): MutableLiveData<Resource<MutableList<Long>>> {
+        if (watchlistItemsIds.value == null) {
+            fetchWatchlistItemsIds()
+        }
+
+        return watchlistItemsIds
     }
 }

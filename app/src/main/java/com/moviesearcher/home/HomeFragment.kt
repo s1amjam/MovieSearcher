@@ -187,7 +187,7 @@ class HomeFragment : BaseFragment() {
                 )
             ).get(WatchlistViewModel::class.java)
 
-            watchlistViewModel.getWatchlistedItemsIds().observe(viewLifecycleOwner) { it ->
+            watchlistViewModel.getWatchlistItemsIds().observe(viewLifecycleOwner) { it ->
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { movieItems ->
