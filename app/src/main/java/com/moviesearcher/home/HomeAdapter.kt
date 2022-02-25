@@ -58,7 +58,10 @@ class HomeAdapter(
             rating.text = movieItem.getAverage()
 
             if (sessionId?.isNotBlank() == true || sessionId != null) {
-                if (movieWatchlistIds?.contains(movieItems.results?.get(position)?.id?.toLong()) == true) {
+                if (movieWatchlistIds?.contains(
+                        movieItems.results?.get(position)?.id?.toLong()
+                    ) == true
+                ) {
                     imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
                     imageButtonWatchlist.tag = "false"
                 } else {

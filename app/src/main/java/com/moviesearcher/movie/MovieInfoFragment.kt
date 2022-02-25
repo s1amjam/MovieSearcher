@@ -13,9 +13,7 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,13 +31,12 @@ import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.list.lists.ListsViewModel
-import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.movie.model.cast.Cast
-import kotlinx.coroutines.launch
+import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "MovieInfoFragment"
@@ -48,11 +45,13 @@ class MovieInfoFragment : BaseFragment() {
     private var _binding: FragmentMovieInfoBinding? = null
     private val binding get() = _binding!!
 
+    private val mediaInfo: MutableMap<String, Long> = mutableMapOf()
+
     private val args by navArgs<MovieInfoFragmentArgs>()
-    private lateinit var lists: LiveData<ListsResponse>
 
     private lateinit var movieViewModel: MovieViewModel
     private lateinit var listsViewModel: ListsViewModel
+    private lateinit var watchlistViewModel: WatchlistViewModel
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -488,9 +487,14 @@ class MovieInfoFragment : BaseFragment() {
         }
 
         watchlistImageButton.setOnClickListener {
-            lifecycleScope.launch {
-                addToWatchlist(watchlistImageButton)
-            }
+            mediaInfo["movie"] = args.movieId
+
+            watchlistViewModel.addToWatchlist(
+                watchlistImageButton,
+                mediaInfo,
+                requireContext(),
+                viewLifecycleOwner
+            )
         }
     }
 
@@ -507,6 +511,13 @@ class MovieInfoFragment : BaseFragment() {
                     sessionId, accountId, page = 1
                 )
             ).get(ListsViewModel::class.java)
+
+            watchlistViewModel = ViewModelProvider(
+                this,
+                ViewModelFactory(
+                    sessionId, accountId
+                )
+            ).get(WatchlistViewModel::class.java)
         }
     }
 

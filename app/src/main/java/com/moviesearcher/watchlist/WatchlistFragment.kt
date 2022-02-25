@@ -149,7 +149,12 @@ class WatchlistFragment : BaseFragment() {
             movieItems,
             navController,
             OnClickListener { button: ImageButton, mediaInfo: MutableMap<String, Long>? ->
-                addToWatchlist(button, mediaInfo)
+                viewModel.addToWatchlist(
+                    button,
+                    mediaInfo,
+                    requireContext(),
+                    viewLifecycleOwner
+                )
             },
             isTv
         )

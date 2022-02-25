@@ -163,13 +163,15 @@ interface ApiService {
     @GET("account/{account_id}/watchlist/movies")
     suspend fun getMovieWatchlist(
         @Path("account_id") accountId: Long?,
-        @Query("session_id") sessionId: String?
+        @Query("session_id") sessionId: String?,
+        @Query("page") page: Int = 1
     ): MovieWatchlistResponse
 
     @GET("account/{account_id}/watchlist/tv")
     suspend fun getTvWatchlist(
         @Path("account_id") accountId: Long?,
-        @Query("session_id") sessionId: String?
+        @Query("session_id") sessionId: String?,
+        @Query("page") page: Int = 1
     ): TvWatchlistResponse
 
     @POST("list/{list_id}/add_item")

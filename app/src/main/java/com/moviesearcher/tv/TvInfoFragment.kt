@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -32,12 +31,12 @@ import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentTvInfoBinding
 import com.moviesearcher.list.lists.ListsViewModel
-import com.moviesearcher.list.lists.model.ListsResponse
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.tv.adapter.cast.TvCastAdapter
 import com.moviesearcher.tv.adapter.recommendations.TvRecommendationsAdapter
 import com.moviesearcher.tv.model.cast.Cast
+import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 
 private const val TAG = "TvInfoFragment"
 
@@ -45,12 +44,14 @@ class TvInfoFragment : BaseFragment() {
     private var _binding: FragmentTvInfoBinding? = null
     private val binding get() = _binding!!
 
+    private val mediaInfo: MutableMap<String, Long> = mutableMapOf()
+
     private val args by navArgs<TvInfoFragmentArgs>()
-    private lateinit var lists: LiveData<ListsResponse>
     private var numberOfSeasons: Int = 0
 
     private lateinit var tvViewModel: TvViewModel
     private lateinit var listsViewModel: ListsViewModel
+    private lateinit var watchlistViewModel: WatchlistViewModel
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -524,7 +525,14 @@ class TvInfoFragment : BaseFragment() {
             }
 
             watchlistButton.setOnClickListener {
-                addToWatchlist(watchlistButton)
+                mediaInfo["tv"] = args.tvId
+
+                watchlistViewModel.addToWatchlist(
+                    watchlistButton,
+                    mediaInfo,
+                    requireContext(),
+                    viewLifecycleOwner
+                )
             }
         }
     }
@@ -542,6 +550,13 @@ class TvInfoFragment : BaseFragment() {
                     sessionId, accountId, page = 1
                 )
             ).get(ListsViewModel::class.java)
+
+            watchlistViewModel = ViewModelProvider(
+                this,
+                ViewModelFactory(
+                    sessionId, accountId
+                )
+            ).get(WatchlistViewModel::class.java)
         }
     }
 

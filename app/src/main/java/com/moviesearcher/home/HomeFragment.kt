@@ -170,7 +170,12 @@ class HomeFragment : BaseFragment() {
             sessionId,
             watchlistIds,
             OnClickListener { button: ImageButton, mediaInfo: MutableMap<String, Long>? ->
-                addToWatchlist(button, mediaInfo)
+                watchlistViewModel.addToWatchlist(
+                    button,
+                    mediaInfo,
+                    requireContext(),
+                    viewLifecycleOwner
+                )
             }
         )
         trendingAdapter.differ.submitList(movieItems.results)

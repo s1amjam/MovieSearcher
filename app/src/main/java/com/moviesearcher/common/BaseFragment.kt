@@ -23,7 +23,6 @@ import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.CreateNewListDialog
 import com.moviesearcher.list.ListViewModel
 import com.moviesearcher.list.model.Result
-import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import kotlin.properties.Delegates
 
@@ -256,6 +255,7 @@ open class BaseFragment : Fragment() {
                             movieItems.forEach {
                                 if (it == mediaId) {
                                     isWatchlist = false
+                                    button.tag = "false"
                                     button.setImageResource(watchlistAddedIcon)
                                 }
                             }
@@ -271,49 +271,6 @@ open class BaseFragment : Fragment() {
                         ).show()
                     }
                 }
-            }
-        }
-    }
-
-    fun addToWatchlist(button: ImageButton, media: MutableMap<String, Long>? = mutableMapOf()) {
-        setupViewModel()
-
-        mediaInfo = if (media?.isNullOrEmpty() == true) {
-            getMediaInfo()
-        } else {
-            media
-        }
-
-        if (button.tag != null) {
-            isWatchlist = button.tag.toString().toBoolean()
-            button.tag = null //need to return to normal 'isWatchlist' cycle
-        }
-
-        val addToWatchlist = Api.watchlist(
-            accountId,
-            sessionId,
-            WatchlistRequest(isWatchlist, mediaInfo.values.first(), mediaInfo.keys.first())
-        )
-
-        addToWatchlist.observe(viewLifecycleOwner) {
-            if (isWatchlist) {
-                button.setImageResource(watchlistAddedIcon)
-                Toast.makeText(requireContext(), "Added to Watchlist", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                button.setImageResource(watchlistRemovedIcon)
-                Toast.makeText(requireContext(), "Removed from Watchlist", Toast.LENGTH_SHORT)
-                    .show()
-            }
-
-            if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
-                isWatchlist = !isWatchlist
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Error adding to Watchlist, try again later",
-                    Toast.LENGTH_SHORT
-                ).show()
             }
         }
     }
