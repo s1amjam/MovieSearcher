@@ -30,6 +30,7 @@ import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentTvInfoBinding
+import com.moviesearcher.list.ListViewModel
 import com.moviesearcher.list.lists.ListsViewModel
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
@@ -52,6 +53,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var tvViewModel: TvViewModel
     private lateinit var listsViewModel: ListsViewModel
     private lateinit var watchlistViewModel: WatchlistViewModel
+    private lateinit var listViewModel: ListViewModel
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -68,7 +70,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var mainConstraintLayout: ConstraintLayout
     private lateinit var addToListImageButton: ImageButton
     private lateinit var markTvAsFavoriteButton: ImageButton
-    private lateinit var watchlistButton: ImageButton
+    private lateinit var watchlistImageButton: ImageButton
     private lateinit var seeAllImagesButton: Button
     private lateinit var rateButton: Button
     private lateinit var directorTextView: TextView
@@ -119,7 +121,7 @@ class TvInfoFragment : BaseFragment() {
         overviewTextView = binding.overviewTextView
         addToListImageButton = binding.menuButtonAddTvToList
         markTvAsFavoriteButton = binding.buttonMarkTvAsFavorite
-        watchlistButton = binding.buttonWatchlist
+        watchlistImageButton = binding.buttonWatchlist
         seeAllImagesButton = binding.buttonSeeAllImages
         voteAverageTextView = binding.textViewRating
         voteCountTextView = binding.textViewVoteCount
@@ -146,7 +148,9 @@ class TvInfoFragment : BaseFragment() {
 
         addToListImageButton.isVisible = sessionId != ""
         markTvAsFavoriteButton.isVisible = sessionId != ""
-        watchlistButton.isVisible = sessionId != ""
+        watchlistImageButton.isVisible = sessionId != ""
+
+        mediaInfo["tv"] = args.tvId
 
         setupViewModel()
         setupUi()
@@ -475,26 +479,44 @@ class TvInfoFragment : BaseFragment() {
                 findNavController().navigate(action)
             }
 
-            listsViewModel.getLists().observe(viewLifecycleOwner) { it ->
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        it.data?.let {
-                            addToListImageButton.setOnClickListener { v ->
-                                showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
+            if (sessionId.isNotEmpty()) {
+                addToListImageButton.isClickable = true
+
+                listsViewModel.getLists().observe(viewLifecycleOwner) { lists ->
+                    lists.data?.results?.get(0)?.id?.toInt()
+                        ?.let { it1 -> setupListViewModel(it1, args.tvId) }
+
+                    when (lists.status) {
+                        Status.SUCCESS -> {
+                            lists.data?.let {
+                                addToListImageButton.setOnClickListener { v ->
+                                    listViewModel.showAddToListMenu(
+                                        v,
+                                        R.menu.list_popup_menu,
+                                        it.results!!,
+                                        mediaInfo,
+                                        viewLifecycleOwner,
+                                        requireContext(),
+                                        sessionId,
+                                        childFragmentManager
+                                    )
+                                }
                             }
                         }
-                    }
-                    Status.LOADING -> {
-                    }
-                    Status.ERROR -> {
-                        progressBar.visibility = View.GONE
-                        Toast.makeText(
-                            requireContext(),
-                            ERROR_MESSAGE.format(it.message),
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Status.LOADING -> {
+                        }
+                        Status.ERROR -> {
+                            progressBar.visibility = View.GONE
+                            Toast.makeText(
+                                requireContext(),
+                                ERROR_MESSAGE.format(lists.message),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
                 }
+            } else {
+                addToListImageButton.isClickable = false
             }
 
             expandActivitiesButton.setOnClickListener {
@@ -517,18 +539,21 @@ class TvInfoFragment : BaseFragment() {
                 )
             }
 
-            checkWatchlist(watchlistButton)
+            watchlistViewModel.checkWatchlist(
+                watchlistImageButton,
+                mediaInfo,
+                viewLifecycleOwner,
+                requireContext()
+            )
             checkFavorites(markTvAsFavoriteButton)
 
             markTvAsFavoriteButton.setOnClickListener {
                 markAsFavorite(markTvAsFavoriteButton)
             }
 
-            watchlistButton.setOnClickListener {
-                mediaInfo["tv"] = args.tvId
-
+            watchlistImageButton.setOnClickListener {
                 watchlistViewModel.addToWatchlist(
-                    watchlistButton,
+                    watchlistImageButton,
                     mediaInfo,
                     requireContext(),
                     viewLifecycleOwner
@@ -557,6 +582,17 @@ class TvInfoFragment : BaseFragment() {
                     sessionId, accountId
                 )
             ).get(WatchlistViewModel::class.java)
+        }
+    }
+
+    private fun setupListViewModel(listId: Int, tvId: Long) {
+        if (sessionId.isNotEmpty()) {
+            listViewModel = ViewModelProvider(
+                this,
+                ViewModelFactory(
+                    listId = listId, movieId = tvId
+                )
+            ).get(ListViewModel::class.java)
         }
     }
 

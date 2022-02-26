@@ -11,9 +11,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import com.moviesearcher.api.Api
+import com.moviesearcher.common.utils.EncryptedSharedPrefs
 import com.moviesearcher.databinding.DialogCreateNewListBinding
 import com.moviesearcher.list.model.CreateNewList
-import com.moviesearcher.common.utils.EncryptedSharedPrefs
 
 class CreateNewListDialog : DialogFragment() {
     private var _binding: DialogCreateNewListBinding? = null
@@ -50,13 +50,14 @@ class CreateNewListDialog : DialogFragment() {
                 sessionId,
                 CreateNewList(listName.text.toString(), listDescription.text.toString(), "en")
             ).observe(
-                this, {
-                    if (it.success == true) {
-                        Toast.makeText(requireContext(), "New List created", Toast.LENGTH_SHORT)
-                            .show()
-                        dialog.dismiss()
-                    }
-                })
+                this
+            ) {
+                if (it.success == true) {
+                    Toast.makeText(requireContext(), "New List created", Toast.LENGTH_SHORT)
+                        .show()
+                    dialog.dismiss()
+                }
+            }
         }
 
         buttonCancel.setOnClickListener { dialog.cancel() }

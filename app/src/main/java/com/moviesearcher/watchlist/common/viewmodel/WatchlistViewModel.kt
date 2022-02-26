@@ -11,12 +11,15 @@ import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.api.ApiService
 import com.moviesearcher.common.utils.Resource
+import com.moviesearcher.common.utils.Status
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+
+const val ERROR_MESSAGE = "Something went wrong '%s'"
 
 class WatchlistViewModel(private val accountId: Long, private val sessionId: String) : ViewModel() {
     private val movieWatchlist = MutableLiveData<Resource<MovieWatchlistResponse>>()
@@ -142,6 +145,41 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
                     "Error adding to Watchlist, try again later",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+        }
+    }
+
+    fun checkWatchlist(
+        button: ImageButton,
+        media: MutableMap<String, Long>? = mutableMapOf(),
+        lifecycleOwner: LifecycleOwner,
+        context: Context
+    ) {
+        if (sessionId.isNotBlank()) {
+            getWatchlistItemsIds().observe(lifecycleOwner) { it ->
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { movieItems ->
+                            button.setImageResource(watchlistRemovedIcon)
+                            movieItems.forEach {
+                                if (it == media?.values?.first()) {
+                                    isWatchlist = false
+                                    button.tag = "false"
+                                    button.setImageResource(watchlistAddedIcon)
+                                }
+                            }
+                        }
+                    }
+                    Status.LOADING -> {
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(
+                            context,
+                            ERROR_MESSAGE.format(it.message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
             }
         }
     }

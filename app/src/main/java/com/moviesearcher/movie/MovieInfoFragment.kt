@@ -30,6 +30,7 @@ import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
+import com.moviesearcher.list.ListViewModel
 import com.moviesearcher.list.lists.ListsViewModel
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
@@ -52,6 +53,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var movieViewModel: MovieViewModel
     private lateinit var listsViewModel: ListsViewModel
     private lateinit var watchlistViewModel: WatchlistViewModel
+    private lateinit var listViewModel: ListViewModel
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -143,6 +145,8 @@ class MovieInfoFragment : BaseFragment() {
         addToListImageButton.isVisible = sessionId != ""
         markMovieAsFavoriteImageButton.isVisible = sessionId != ""
         watchlistImageButton.isVisible = sessionId != ""
+
+        mediaInfo["movie"] = args.movieId
 
         setupViewModel()
         setupUi()
@@ -446,26 +450,44 @@ class MovieInfoFragment : BaseFragment() {
             findNavController().navigate(action)
         }
 
-        listsViewModel.getLists().observe(viewLifecycleOwner) { it ->
-            when (it.status) {
-                Status.SUCCESS -> {
-                    it.data?.let {
-                        addToListImageButton.setOnClickListener { v ->
-                            showAddToListMenu(v, R.menu.list_popup_menu, it.results!!)
+        if (sessionId.isNotEmpty()) {
+            addToListImageButton.isClickable = true
+
+            listsViewModel.getLists().observe(viewLifecycleOwner) { lists ->
+                lists.data?.results?.get(0)?.id?.toInt()
+                    ?.let { it1 -> setupListViewModel(it1, args.movieId) }
+
+                when (lists.status) {
+                    Status.SUCCESS -> {
+                        lists.data?.let {
+                            addToListImageButton.setOnClickListener { v ->
+                                listViewModel.showAddToListMenu(
+                                    v,
+                                    R.menu.list_popup_menu,
+                                    it.results!!,
+                                    mediaInfo,
+                                    viewLifecycleOwner,
+                                    requireContext(),
+                                    sessionId,
+                                    childFragmentManager
+                                )
+                            }
                         }
                     }
-                }
-                Status.LOADING -> {
-                }
-                Status.ERROR -> {
-                    progressBar.visibility = View.GONE
-                    Toast.makeText(
-                        requireContext(),
-                        ERROR_MESSAGE.format(it.message),
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Status.LOADING -> {
+                    }
+                    Status.ERROR -> {
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(
+                            requireContext(),
+                            ERROR_MESSAGE.format(lists.message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
+        } else {
+            addToListImageButton.isClickable = false
         }
 
         expandActivitiesImageButton.setOnClickListener {
@@ -480,15 +502,18 @@ class MovieInfoFragment : BaseFragment() {
         }
 
         checkFavorites(markMovieAsFavoriteImageButton)
-        checkWatchlist(watchlistImageButton)
+
+        watchlistViewModel.checkWatchlist(
+            watchlistImageButton, mediaInfo,
+            viewLifecycleOwner,
+            requireContext()
+        )
 
         markMovieAsFavoriteImageButton.setOnClickListener {
             markAsFavorite(markMovieAsFavoriteImageButton)
         }
 
         watchlistImageButton.setOnClickListener {
-            mediaInfo["movie"] = args.movieId
-
             watchlistViewModel.addToWatchlist(
                 watchlistImageButton,
                 mediaInfo,
@@ -518,6 +543,17 @@ class MovieInfoFragment : BaseFragment() {
                     sessionId, accountId
                 )
             ).get(WatchlistViewModel::class.java)
+        }
+    }
+
+    private fun setupListViewModel(listId: Int, movieId: Long) {
+        if (sessionId.isNotEmpty()) {
+            listViewModel = ViewModelProvider(
+                this,
+                ViewModelFactory(
+                    listId = listId, movieId = movieId
+                )
+            ).get(ListViewModel::class.java)
         }
     }
 
