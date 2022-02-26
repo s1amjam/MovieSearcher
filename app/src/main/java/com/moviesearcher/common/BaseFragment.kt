@@ -16,7 +16,6 @@ import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.favorite.FavoriteViewModel
 import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
-import com.moviesearcher.list.ListViewModel
 import kotlin.properties.Delegates
 
 private const val TAG = "BaseFragment"
@@ -28,7 +27,6 @@ open class BaseFragment : Fragment() {
 
     lateinit var encryptedSharedPrefs: SharedPreferences
 
-    private lateinit var listViewModel: ListViewModel
     private lateinit var favoriteViewModel: FavoriteViewModel
 
     private var isFavorite = true

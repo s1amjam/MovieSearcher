@@ -54,8 +54,8 @@ class MyListsAdapter(
         val binding = holder.binding
         //val imageButtonDeleteList: ImageButton = binding.imageButtonDeleteList
 
-        //TODO: for now its bugged on API provider side
-        // https://trello.com/c/slruAstb/75-return-a-proper-response-when-lists-are-deleted
+        //for now its bugged on API provider side
+        //https://trello.com/c/slruAstb/75-return-a-proper-response-when-lists-are-deleted
 //        imageButtonDeleteList.setOnClickListener {
 //            AlertDialog.Builder(holder.itemView.context)
 //                .setTitle("Delete list?")
