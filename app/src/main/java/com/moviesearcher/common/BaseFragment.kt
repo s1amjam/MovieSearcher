@@ -27,14 +27,6 @@ open class BaseFragment : Fragment() {
 
     lateinit var encryptedSharedPrefs: SharedPreferences
 
-    private lateinit var favoriteViewModel: FavoriteViewModel
-
-    private var isFavorite = true
-    private lateinit var mediaInfo: MutableMap<String, Long>
-
-    private val markAsFavoriteIcon = R.drawable.ic_round_star_outline_36
-    private val removeFromFavoriteIcon = R.drawable.ic_round_star_filled_36
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,131 +36,9 @@ open class BaseFragment : Fragment() {
         accountId = encryptedSharedPrefs.getLong("accountId", 0L)
     }
 
-    private fun getMediaInfo(): MutableMap<String, Long> {
-        val movieId = requireArguments().getLong("movie_id")
-        val tvId = requireArguments().getLong("tv_id")
-        val emptyMediaId: Long = 0
-        val mediaInfo: MutableMap<String, Long> = mutableMapOf()
-
-        if (movieId == emptyMediaId) {
-            mediaInfo["tv"] = tvId
-        } else {
-            mediaInfo["movie"] = movieId
-        }
-
-        return mediaInfo
-    }
-
-    fun checkFavorites(button: ImageButton) {
-        if (sessionId.isNotBlank()) {
-            setupViewModel()
-            mediaInfo = getMediaInfo()
-            val mediaId = mediaInfo.values.first()
-            val mediaKey = mediaInfo.keys.first()
-
-            if (mediaKey == "movie") {
-                favoriteViewModel.getFavoriteMovie().observe(
-                    viewLifecycleOwner
-                ) { it ->
-                    when (it.status) {
-                        Status.SUCCESS -> {
-                            it.data?.let { favoriteMovieItems ->
-                                button.setImageResource(markAsFavoriteIcon)
-                                favoriteMovieItems.results!!.forEach {
-                                    if (it.id == mediaId) {
-                                        isFavorite = false
-                                        button.setImageResource(removeFromFavoriteIcon)
-                                    }
-                                }
-                            }
-                        }
-                        Status.LOADING -> {
-                        }
-                        Status.ERROR -> {
-                            Toast.makeText(
-                                requireContext(),
-                                ERROR_MESSAGE.format(it.message),
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
-                }
-            } else {
-                favoriteViewModel.getFavoriteTv().observe(
-                    viewLifecycleOwner
-                ) { it ->
-                    when (it.status) {
-                        Status.SUCCESS -> {
-                            it.data?.let { favoriteMovieItems ->
-                                button.setImageResource(markAsFavoriteIcon)
-                                favoriteMovieItems.results!!.forEach {
-                                    if (it.id == mediaId) {
-                                        isFavorite = false
-                                        button.setImageResource(removeFromFavoriteIcon)
-                                    }
-                                }
-                            }
-                        }
-                        Status.LOADING -> {
-                        }
-                        Status.ERROR -> {
-                            Toast.makeText(
-                                requireContext(),
-                                ERROR_MESSAGE.format(it.message),
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun markAsFavorite(button: ImageButton) {
-        mediaInfo = getMediaInfo()
-
-        val markAsFavorite = Api.markAsFavorite(
-            accountId,
-            sessionId,
-            MarkAsFavoriteRequest(isFavorite, mediaInfo.values.first(), mediaInfo.keys.first())
-        )
-
-        if (isFavorite) {
-            button.setImageResource(removeFromFavoriteIcon)
-            Toast.makeText(requireContext(), "Added to Favorites", Toast.LENGTH_SHORT).show()
-        } else {
-            button.setImageResource(markAsFavoriteIcon)
-            Toast.makeText(requireContext(), "Removed from Favorites", Toast.LENGTH_SHORT)
-                .show()
-        }
-
-        markAsFavorite.observe(viewLifecycleOwner) {
-            if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
-                isFavorite = !isFavorite
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Error adding to Favorites. Try again later.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-
     fun hideKeyboard(view: View) {
         val inputMethodService =
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodService.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
-    private fun setupViewModel() {
-        if (sessionId.isNotEmpty()) {
-            favoriteViewModel = ViewModelProvider(
-                this,
-                ViewModelFactory(
-                    sessionId, accountId
-                )
-            ).get(FavoriteViewModel::class.java)
-        }
     }
 }

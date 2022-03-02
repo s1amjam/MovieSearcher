@@ -4,12 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -30,6 +25,7 @@ import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
+import com.moviesearcher.favorite.FavoriteViewModel
 import com.moviesearcher.list.ListViewModel
 import com.moviesearcher.list.lists.ListsViewModel
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
@@ -54,6 +50,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var listsViewModel: ListsViewModel
     private lateinit var watchlistViewModel: WatchlistViewModel
     private lateinit var listViewModel: ListViewModel
+    private lateinit var favoriteViewModel: FavoriteViewModel
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -501,7 +498,12 @@ class MovieInfoFragment : BaseFragment() {
             }
         }
 
-        checkFavorites(markMovieAsFavoriteImageButton)
+        favoriteViewModel.checkFavorites(
+            markMovieAsFavoriteImageButton,
+            viewLifecycleOwner,
+            mediaInfo,
+            requireContext()
+        )
 
         watchlistViewModel.checkWatchlist(
             watchlistImageButton, mediaInfo,
@@ -510,7 +512,12 @@ class MovieInfoFragment : BaseFragment() {
         )
 
         markMovieAsFavoriteImageButton.setOnClickListener {
-            markAsFavorite(markMovieAsFavoriteImageButton)
+            favoriteViewModel.markAsFavorite(
+                markMovieAsFavoriteImageButton,
+                viewLifecycleOwner,
+                mediaInfo,
+                requireContext()
+            )
         }
 
         watchlistImageButton.setOnClickListener {
@@ -543,6 +550,13 @@ class MovieInfoFragment : BaseFragment() {
                     sessionId, accountId
                 )
             ).get(WatchlistViewModel::class.java)
+
+            favoriteViewModel = ViewModelProvider(
+                this,
+                ViewModelFactory(
+                    sessionId, accountId
+                )
+            ).get(FavoriteViewModel::class.java)
         }
     }
 
