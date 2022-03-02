@@ -210,6 +210,10 @@ class TvInfoFragment : BaseFragment() {
                         numberOfEpisodesTextView.text =
                             getString(R.string.count_of_episodes).format(tvInfo.numberOfEpisodes.toString())
 
+                        if (taglineTextView.text == "") {
+                            taglineTextView.visibility = View.GONE
+                        }
+
                         if (genres != null) {
                             for (genre in genres) {
                                 val chip = this.layoutInflater.inflate(

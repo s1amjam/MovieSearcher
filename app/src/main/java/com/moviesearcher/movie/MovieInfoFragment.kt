@@ -184,6 +184,10 @@ class MovieInfoFragment : BaseFragment() {
                         languageSpokenTextView.text = languages.joinToString()
                         filmingLocationsTextView.text = locations.joinToString()
 
+                        if (taglineTextView.text == "") {
+                            taglineTextView.visibility = View.GONE
+                        }
+
                         if (genres != null) {
                             for (genre in genres) {
                                 val chip = this.layoutInflater.inflate(
