@@ -245,6 +245,7 @@ class TvInfoFragment : BaseFragment() {
                         ERROR_MESSAGE.format(it.message),
                         Toast.LENGTH_LONG
                     ).show()
+                    progressBar.visibility = View.GONE
                 }
             }
 
@@ -304,6 +305,7 @@ class TvInfoFragment : BaseFragment() {
                             ERROR_MESSAGE.format(it.message),
                             Toast.LENGTH_LONG
                         ).show()
+                        progressBar.visibility = View.GONE
                     }
                 }
             }
@@ -347,6 +349,7 @@ class TvInfoFragment : BaseFragment() {
                             ERROR_MESSAGE.format(it.message),
                             Toast.LENGTH_LONG
                         ).show()
+                        progressBar.visibility = View.GONE
                     }
                 }
             }
@@ -419,6 +422,7 @@ class TvInfoFragment : BaseFragment() {
                             ERROR_MESSAGE.format(it.message),
                             Toast.LENGTH_LONG
                         ).show()
+                        progressBar.visibility = View.GONE
                     }
                 }
             }
@@ -469,6 +473,7 @@ class TvInfoFragment : BaseFragment() {
                             ERROR_MESSAGE.format(it.message),
                             Toast.LENGTH_LONG
                         ).show()
+                        progressBar.visibility = View.GONE
                     }
                 }
             }
@@ -507,12 +512,12 @@ class TvInfoFragment : BaseFragment() {
                         Status.LOADING -> {
                         }
                         Status.ERROR -> {
-                            progressBar.visibility = View.GONE
                             Toast.makeText(
                                 requireContext(),
                                 ERROR_MESSAGE.format(lists.message),
                                 Toast.LENGTH_LONG
                             ).show()
+                            progressBar.visibility = View.GONE
                         }
                     }
                 }

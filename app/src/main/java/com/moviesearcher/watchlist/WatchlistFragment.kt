@@ -92,6 +92,7 @@ class WatchlistFragment : BaseFragment() {
                         ERROR_MESSAGE.format(it.message),
                         Toast.LENGTH_LONG
                     ).show()
+                    progressBar.visibility = View.GONE
                 }
             }
         }
@@ -136,6 +137,7 @@ class WatchlistFragment : BaseFragment() {
                         ERROR_MESSAGE.format(it.message),
                         Toast.LENGTH_LONG
                     ).show()
+                    progressBar.visibility = View.GONE
                 }
             }
         }

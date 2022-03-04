@@ -112,16 +112,16 @@ interface ApiService {
     ): SearchResponse
 
     @GET("authentication/token/new")
-    fun newRequestToken(): Call<CreateTokenResponse>
+    suspend fun newRequestToken(): CreateTokenResponse
 
     @POST("authentication/session/new")
-    fun createSession(@Body requestToken: RequestToken): Call<CreateSessionResponse>
+    suspend fun createSession(@Body requestToken: RequestToken): CreateSessionResponse
 
     @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
-    fun deleteSession(@Body sessionId: SessionId): Call<DeleteSessionResponse>
+    suspend fun deleteSession(@Body sessionId: SessionId): DeleteSessionResponse
 
     @GET("account")
-    fun getAccount(@Query("session_id") sessionId: String): Call<AccountResponse>
+    suspend fun getAccount(@Query("session_id") sessionId: String): AccountResponse
 
     @GET("account/{account_id}/lists")
     suspend fun getCreatedLists(

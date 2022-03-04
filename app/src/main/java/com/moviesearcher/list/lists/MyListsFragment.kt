@@ -72,12 +72,12 @@ class MyListsFragment : BaseFragment() {
                     progressBar.visibility = View.VISIBLE
                 }
                 Status.ERROR -> {
-                    progressBar.visibility = View.GONE
                     Toast.makeText(
                         requireContext(),
                         ERROR_MESSAGE.format(it.message),
                         Toast.LENGTH_LONG
                     ).show()
+                    progressBar.visibility = View.GONE
                 }
             }
         }

@@ -98,6 +98,7 @@ class FavoritesFragment : BaseFragment() {
                         ERROR_MESSAGE.format(it.message),
                         Toast.LENGTH_LONG
                     ).show()
+                    progressBar.visibility = View.GONE
                 }
             }
         }
@@ -131,6 +132,7 @@ class FavoritesFragment : BaseFragment() {
                         ERROR_MESSAGE.format(it.message),
                         Toast.LENGTH_LONG
                     ).show()
+                    progressBar.visibility = View.GONE
                 }
             }
         }

@@ -4,19 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.moviesearcher.R
-import com.moviesearcher.api.Api
 import com.moviesearcher.common.AuthorizationDialogFragment
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.auth.SessionId
+import com.moviesearcher.common.utils.Status
+import com.moviesearcher.common.viewmodel.AuthViewModel
 import com.moviesearcher.databinding.FragmentYouBinding
 
 class YouFragment : BaseFragment() {
@@ -30,8 +29,11 @@ class YouFragment : BaseFragment() {
     private lateinit var ratedCardView: CardView
     private lateinit var titleTv: TextView
     private lateinit var accountLogoIv: ImageView
+    private lateinit var progressBar: ProgressBar
 
     private lateinit var navController: NavController
+
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +54,7 @@ class YouFragment : BaseFragment() {
         ratedCardView = binding.ratedCardView
         titleTv = binding.titleTv
         accountLogoIv = binding.accountLogoIv
+        progressBar = binding.progressBar
 
         checkIfLoggedIn()
 
@@ -146,11 +149,34 @@ class YouFragment : BaseFragment() {
     }
 
     private fun doLogout() {
-        Api.deleteSession(SessionId(sessionId)).observe(viewLifecycleOwner) { response ->
-            if (response.success == true) {
-                encryptedSharedPrefs.edit().clear().apply()
-                sessionId = ""
-                checkIfLoggedIn()
+        viewModel.getDeleteSession(SessionId(sessionId)).observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let {
+                        progressBar.visibility = View.GONE
+
+                        Toast.makeText(
+                            requireContext(),
+                            "You was successfully logged out",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        encryptedSharedPrefs.edit().clear().apply()
+                        sessionId = ""
+                        checkIfLoggedIn()
+                    }
+                }
+                Status.LOADING -> {
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    progressBar.visibility = View.GONE
+                }
             }
         }
     }
