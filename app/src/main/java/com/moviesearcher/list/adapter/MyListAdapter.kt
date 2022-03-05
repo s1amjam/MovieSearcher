@@ -3,6 +3,7 @@ package com.moviesearcher.list.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
@@ -16,11 +17,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.list.MyListFragmentDirections
 import com.moviesearcher.list.model.Item
 import com.moviesearcher.list.model.ListResponse
-import com.moviesearcher.common.utils.Constants
 
 class MyListAdapter(
     private val listItems: ListResponse,
@@ -75,7 +76,7 @@ class MyListAdapter(
                         MediaId(movieItem.id!!.toLong())
                     )
 
-                removeFromListResponse.observe(binding.root.findViewTreeLifecycleOwner()!!, {
+                removeFromListResponse.observe(binding.root.findViewTreeLifecycleOwner()!!) {
                     if (it.success) {
                         listItems.items.remove(movieItem)
                         notifyItemRemoved(currentItemPosition)
@@ -95,24 +96,24 @@ class MyListAdapter(
                                 )
 
                             addToListResponse.observe(
-                                view.findViewTreeLifecycleOwner()!!,
-                                { addToFavorite ->
-                                    if (addToFavorite.statusCode == 12) {
-                                        listItems.items.add(currentItemPosition, movieItem)
-                                        notifyItemInserted(currentItemPosition)
-                                        Toast.makeText(
-                                            itemView.context,
-                                            "\"${movieItem.name ?: movieItem.title}\" added back",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        Toast.makeText(
-                                            itemView.context,
-                                            "Error while adding movie back",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                })
+                                view.findViewTreeLifecycleOwner()!!
+                            ) { addToFavorite ->
+                                if (addToFavorite.statusCode == 12) {
+                                    listItems.items.add(currentItemPosition, movieItem)
+                                    notifyItemInserted(currentItemPosition)
+                                    Toast.makeText(
+                                        itemView.context,
+                                        "\"${movieItem.name ?: movieItem.title}\" added back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        itemView.context,
+                                        "Error while adding movie back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
                         }
                         listItemRemovedSnackbar.show()
                     } else {
@@ -122,7 +123,7 @@ class MyListAdapter(
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                })
+                }
             }
 
             cardView.setOnClickListener {

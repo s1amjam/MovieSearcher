@@ -4,24 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
-import com.moviesearcher.common.utils.OnClickListener
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
 import com.moviesearcher.movie.model.TrendingResponse
-import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 
 private const val TAG = "HomeFragment"
 
@@ -30,7 +25,6 @@ class HomeFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: HomeViewModel by viewModels()
-    private lateinit var watchlistViewModel: WatchlistViewModel
 
     private lateinit var navController: NavController
     private lateinit var trendingMovieRecyclerView: RecyclerView
@@ -43,8 +37,6 @@ class HomeFragment : BaseFragment() {
     private lateinit var upcomingMoviesCardView: CardView
     private lateinit var featuredConstraintLayout: ConstraintLayout
     private lateinit var upcomingConstraintLayout: ConstraintLayout
-
-    private var watchlistIds: MutableList<Long>? = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,7 +68,6 @@ class HomeFragment : BaseFragment() {
         upcomingMovieRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        setupWatchlist()
         setupObserver()
     }
 
@@ -167,52 +158,10 @@ class HomeFragment : BaseFragment() {
         val trendingAdapter = HomeAdapter(
             movieItems,
             navController,
-            sessionId,
-            watchlistIds,
-            OnClickListener { button: ImageButton, mediaInfo: MutableMap<String, Long>? ->
-                watchlistViewModel.addToWatchlist(
-                    button,
-                    mediaInfo,
-                    requireContext(),
-                    viewLifecycleOwner
-                )
-            }
         )
         trendingAdapter.differ.submitList(movieItems.results)
 
         return trendingAdapter
-    }
-
-    private fun setupWatchlist() {
-        if (sessionId.isNotEmpty()) {
-            watchlistViewModel = ViewModelProvider(
-                this,
-                ViewModelFactory(
-                    sessionId, accountId
-                )
-            ).get(WatchlistViewModel::class.java)
-
-            watchlistViewModel.getWatchlistItemsIds().observe(viewLifecycleOwner) { it ->
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        it.data?.let { movieItems ->
-                            movieItems.forEach { watchlistIds?.add(it) }
-                            setupObserver()
-                        }
-                    }
-                    Status.LOADING -> {
-                    }
-                    Status.ERROR -> {
-                        Toast.makeText(
-                            requireContext(),
-                            ERROR_MESSAGE.format(it.message),
-                            Toast.LENGTH_LONG
-                        ).show()
-                        progressBar.visibility = View.GONE
-                    }
-                }
-            }
-        }
     }
 
     override fun onDestroyView() {

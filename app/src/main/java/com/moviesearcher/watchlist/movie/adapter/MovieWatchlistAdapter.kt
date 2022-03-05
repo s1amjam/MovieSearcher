@@ -14,6 +14,7 @@ import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.watchlist.WatchlistFragmentDirections
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.MovieWatchlistResult
+import kotlin.collections.set
 
 class MovieWatchlistAdapter(
     private val watchlistItems: MovieWatchlistResponse,
@@ -50,7 +51,7 @@ class MovieWatchlistAdapter(
             overview.text = movieItem.overview
             rating.text = movieItem.getAverage()
             cardView.id = movieItem.id?.toInt()!!
-            watchlistIb.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+            watchlistIb.setImageResource(R.drawable.ic_watchlist_added_36)
             watchlistIb.tag = "false"
 
             if (isTv) {

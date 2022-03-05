@@ -3,6 +3,7 @@ package com.moviesearcher.favorite.tv.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
@@ -15,12 +16,12 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.favorite.FavoritesFragmentDirections
 import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.favorite.tv.model.ResultFavoriteTv
-import com.moviesearcher.common.utils.Constants
 
 class FavoriteTvAdapter(
     private val favoriteTvItems: FavoriteTvResponse,
@@ -69,7 +70,7 @@ class FavoriteTvAdapter(
                         ),
                     )
 
-                removeFromFavoriteResponse.observe(binding.root.findViewTreeLifecycleOwner()!!, {
+                removeFromFavoriteResponse.observe(binding.root.findViewTreeLifecycleOwner()!!) {
                     if (it.success) {
                         favoriteTvItems.results.remove(tvItem)
                         notifyItemRemoved(currentItemPosition)
@@ -93,24 +94,24 @@ class FavoriteTvAdapter(
                                 )
 
                             addToFavoriteResponse.observe(
-                                view.findViewTreeLifecycleOwner()!!,
-                                { addToFavorite ->
-                                    if (addToFavorite.success) {
-                                        favoriteTvItems.results.add(currentItemPosition, tvItem)
-                                        notifyItemInserted(currentItemPosition)
-                                        Toast.makeText(
-                                            itemView.context,
-                                            "\"${tvItem.name}\" added back",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        Toast.makeText(
-                                            itemView.context,
-                                            "Error while adding tv back",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                })
+                                view.findViewTreeLifecycleOwner()!!
+                            ) { addToFavorite ->
+                                if (addToFavorite.success) {
+                                    favoriteTvItems.results.add(currentItemPosition, tvItem)
+                                    notifyItemInserted(currentItemPosition)
+                                    Toast.makeText(
+                                        itemView.context,
+                                        "\"${tvItem.name}\" added back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        itemView.context,
+                                        "Error while adding tv back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
                         }
                         favoriteItemRemovedSnackbar.show()
                     } else {
@@ -120,7 +121,7 @@ class FavoriteTvAdapter(
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                })
+                }
             }
 
             cardView.setOnClickListener {

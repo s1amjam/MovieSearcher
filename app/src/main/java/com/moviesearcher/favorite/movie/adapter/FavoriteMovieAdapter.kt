@@ -3,6 +3,7 @@ package com.moviesearcher.favorite.movie.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
@@ -69,7 +70,7 @@ class FavoriteMovieAdapter(
                         ),
                     )
 
-                removeFromFavoriteResponse.observe(binding.root.findViewTreeLifecycleOwner()!!, {
+                removeFromFavoriteResponse.observe(binding.root.findViewTreeLifecycleOwner()!!) {
                     if (it.success) {
                         favoriteMovieItems.results.remove(movieItem)
                         notifyItemRemoved(currentItemPosition)
@@ -93,27 +94,27 @@ class FavoriteMovieAdapter(
                                 )
 
                             addToFavoriteResponse.observe(
-                                view.findViewTreeLifecycleOwner()!!,
-                                { addToFavorite ->
-                                    if (addToFavorite.success) {
-                                        favoriteMovieItems.results.add(
-                                            currentItemPosition,
-                                            movieItem
-                                        )
-                                        notifyItemInserted(currentItemPosition)
-                                        Toast.makeText(
-                                            itemView.context,
-                                            "\"${movieItem.title}\" added back",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        Toast.makeText(
-                                            itemView.context,
-                                            "Error while adding movie back",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                })
+                                view.findViewTreeLifecycleOwner()!!
+                            ) { addToFavorite ->
+                                if (addToFavorite.success) {
+                                    favoriteMovieItems.results.add(
+                                        currentItemPosition,
+                                        movieItem
+                                    )
+                                    notifyItemInserted(currentItemPosition)
+                                    Toast.makeText(
+                                        itemView.context,
+                                        "\"${movieItem.title}\" added back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        itemView.context,
+                                        "Error while adding movie back",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
                         }
                         favoriteItemRemovedSnackbar.show()
                     } else {
@@ -123,7 +124,7 @@ class FavoriteMovieAdapter(
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                })
+                }
             }
 
             cardView.setOnClickListener {

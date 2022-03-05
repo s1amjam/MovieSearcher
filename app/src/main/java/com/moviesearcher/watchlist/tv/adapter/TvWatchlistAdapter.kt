@@ -50,9 +50,9 @@ class TvWatchlistAdapter(
 
             if (sessionId?.isNotBlank() == true || sessionId != null) {
                 if (tvWatchlistIds.contains(currentTv)) {
-                    imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                    imageButtonWatchlist.setImageResource(R.drawable.ic_watchlist_added_36)
                 } else {
-                    imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                    imageButtonWatchlist.setImageResource(R.drawable.ic_watchlist_add_36)
                 }
             }
 
@@ -71,7 +71,7 @@ class TvWatchlistAdapter(
                             WatchlistRequest(false, currentTv, "tv")
                         )
                         imageButtonWatchlist
-                            .setImageResource(R.drawable.ic_baseline_bookmark_add_60)
+                            .setImageResource(R.drawable.ic_watchlist_add_36)
                         tvWatchlistIds.remove(currentTv!!)
                     } else {
                         Api.watchlist(
@@ -80,7 +80,7 @@ class TvWatchlistAdapter(
                             WatchlistRequest(true, currentTv, "tv")
                         )
                         imageButtonWatchlist
-                            .setImageResource(R.drawable.ic_baseline_bookmark_added_60)
+                            .setImageResource(R.drawable.ic_watchlist_added_36)
                         tvWatchlistIds.add(currentTv!!)
                     }
                 }

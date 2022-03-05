@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
 import com.moviesearcher.common.utils.Constants
-import com.moviesearcher.common.utils.OnClickListener
 import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.movie.model.Result
 import com.moviesearcher.movie.model.TrendingResponse
@@ -17,9 +16,6 @@ import com.moviesearcher.movie.model.TrendingResponse
 class HomeAdapter(
     private val movieItems: TrendingResponse,
     private val navController: NavController,
-    private val sessionId: String?,
-    private val movieWatchlistIds: MutableList<Long>?,
-    private val onClickListener: OnClickListener
 ) : RecyclerView.Adapter<HomeAdapter.MovieHolder>() {
     private lateinit var binding: MovieCardViewBinding
 
@@ -27,11 +23,8 @@ class HomeAdapter(
         private val rating = binding.textViewRating
         private val title = binding.textViewTitle
         private val releaseDate = binding.textViewReleaseDate
-        private val imageButtonWatchlist = binding.imageButtonWatchlist
         private val posterImageView = binding.posterImageView
         private val cardView = binding.trendingCardView
-
-        private val mediaInfo: MutableMap<String, Long> = mutableMapOf()
 
         fun bind(movieItem: Result) {
             if (movieItem.title != null) {
@@ -57,19 +50,6 @@ class HomeAdapter(
             cardView.tag = movieItem.title
             rating.text = movieItem.getAverage()
 
-            if (sessionId?.isNotBlank() == true || sessionId != null) {
-                if (movieWatchlistIds?.contains(
-                        movieItems.results?.get(position)?.id?.toLong()
-                    ) == true
-                ) {
-                    imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_added_60)
-                    imageButtonWatchlist.tag = "false"
-                } else {
-                    imageButtonWatchlist.setImageResource(R.drawable.ic_baseline_bookmark_add_60)
-                    imageButtonWatchlist.tag = "true"
-                }
-            }
-
             cardView.setOnClickListener {
                 val movieId = it.id.toLong()
 
@@ -87,18 +67,6 @@ class HomeAdapter(
                         HomeFragmentDirections
                             .actionHomeFragmentToTvInfoFragment(movieId)
                     )
-                }
-            }
-
-            if (cardView.tag != null) {
-                mediaInfo["movie"] = cardView.id.toLong()
-                imageButtonWatchlist.setOnClickListener {
-                    onClickListener.onClick(imageButtonWatchlist, mediaInfo)
-                }
-            } else {
-                mediaInfo["tv"] = cardView.id.toLong()
-                imageButtonWatchlist.setOnClickListener {
-                    onClickListener.onClick(imageButtonWatchlist, mediaInfo)
                 }
             }
         }

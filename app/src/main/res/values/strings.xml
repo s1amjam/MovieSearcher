@@ -59,4 +59,5 @@
     <string name="no_episodes">There is no episodes yet</string>
     <string name="list_is_empty">List is empty, add something</string>
     <string name="no_lists">There is no lists yet</string>
+    <string name="remove">Remove</string>
 </resources>

@@ -26,8 +26,8 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
     private val tvWatchlist = MutableLiveData<Resource<TvWatchlistResponse>>()
     private val watchlistItemsIds = MutableLiveData<Resource<MutableList<Long>>>()
 
-    private val watchlistAddedIcon = R.drawable.ic_baseline_bookmark_added_60
-    private val watchlistRemovedIcon = R.drawable.ic_baseline_bookmark_add_60
+    private val watchlistAddedIcon = R.drawable.ic_watchlist_added_36
+    private val watchlistRemovedIcon = R.drawable.ic_watchlist_add_36
 
     private var isWatchlist = true
 
