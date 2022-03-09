@@ -4,7 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -251,14 +256,25 @@ class MovieInfoFragment : BaseFragment() {
                             }
                             movieCastAdapter.differ.submitList(castItems.cast)
 
-                            directorTextView.text =
-                                getString(R.string.director).format(
-                                    castItems.crew?.find { it.job == "Director" }?.name
-                                )
-                            writerTextView.text =
-                                getString(R.string.writer).format(
-                                    castItems.crew?.find { it.job == "Writing" }?.name
-                                )
+                            val director = castItems.crew?.find { it.job == "Director" }?.name
+                            if (director?.isNotEmpty() == true) {
+                                directorTextView.text =
+                                    getString(R.string.director).format(
+                                        castItems.crew.find { it.job == "Director" }?.name
+                                    )
+                            } else {
+                                directorTextView.visibility = View.GONE
+                            }
+
+                            val writer = castItems.crew?.find { it.job == "Writing" }?.name
+                            if (writer?.isNotEmpty() == true) {
+                                writerTextView.text =
+                                    getString(R.string.writer).format(
+                                        castItems.crew.find { it.job == "Writing" }?.name
+                                    )
+                            } else {
+                                writerTextView.visibility = View.GONE
+                            }
 
                             progressBar.visibility = View.GONE
                             castCardView.visibility = View.VISIBLE

@@ -4,7 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -278,15 +283,40 @@ class TvInfoFragment : BaseFragment() {
                                 }
                                 tvCastAdapter.differ.submitList(castItems.cast)
 
-                                castItems.crew?.filter { it.known_for_department == "Directing" }
-                                    .also { it -> it?.forEach { directors.add(it.original_name!!) } }
-                                castItems.crew?.filter { it.known_for_department == "Writing" }
-                                    .also { it -> it?.forEach { writers.add(it.original_name!!) } }
+                                val director =
+                                    castItems.crew?.filter {
+                                        it.known_for_department == "Directing"
+                                    }
+                                        .also { it ->
+                                            it?.forEach {
+                                                directors.add(it.original_name!!)
+                                            }
+                                        }
 
-                                directorTextView.text =
-                                    getString(R.string.director).format(directors.joinToString())
-                                writerTextView.text =
-                                    getString(R.string.writer).format(writers.joinToString())
+                                if (director?.isNotEmpty() == true) {
+                                    directorTextView.text =
+                                        getString(R.string.director).format(directors.joinToString())
+                                } else {
+                                    directorTextView.visibility = View.GONE
+                                }
+
+
+                                val writer =
+                                    castItems.crew?.filter {
+                                        it.known_for_department == "Writing"
+                                    }
+                                        .also { it ->
+                                            it?.forEach {
+                                                writers.add(it.original_name!!)
+                                            }
+                                        }
+
+                                if (writer?.isNotEmpty() == true) {
+                                    writerTextView.text =
+                                        getString(R.string.writer).format(writers.joinToString())
+                                } else {
+                                    writerTextView.visibility = View.GONE
+                                }
 
                                 progressBar.visibility = View.GONE
                                 castCardView.visibility = View.VISIBLE

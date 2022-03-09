@@ -73,7 +73,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tagline_text_view" />
 
@@ -286,6 +285,7 @@
                         android:layout_marginBottom="8dp"
                         android:ellipsize="end"
                         android:maxLines="1"
+                        app:layout_constraintBottom_toTopOf="@+id/writer_cast_text_view"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/cast_recycler_view" />

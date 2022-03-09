@@ -94,19 +94,25 @@
 
     <style name="Widget.MovieSearcher.TextLarge" parent="TextAppearance.Material3.DisplayLarge">
         <item name="android:textSize">35sp</item>
+        <item name="android:fontFamily">@font/sf_pro_display_bold</item>
+        <item name="fontFamily">@font/sf_pro_display_bold</item>
     </style>
 
     <style name="Widget.MovieSearcher.TextMedium" parent="TextAppearance.Material3.DisplayMedium">
         <item name="android:textSize">20sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/sf_pro_display_medium</item>
+        <item name="fontFamily">@font/sf_pro_display_medium</item>
     </style>
 
     <style name="Widget.MovieSearcher.TextSmall" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/sf_pro_display_regular</item>
+        <item name="fontFamily">@font/sf_pro_display_regular</item>
     </style>
 
     <style name="Widget.MovieSearcher.TextSmallBold" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/sf_pro_display_bold</item>
+        <item name="fontFamily">@font/sf_pro_display_bold</item>
     </style>
 </resources>
