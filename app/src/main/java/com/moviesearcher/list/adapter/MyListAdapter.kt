@@ -2,8 +2,6 @@ package com.moviesearcher.list.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
@@ -11,14 +9,15 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.R
 import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.Status
 import com.moviesearcher.databinding.ExtendedCardViewBinding
+import com.moviesearcher.list.ListViewModel
 import com.moviesearcher.list.MyListFragmentDirections
 import com.moviesearcher.list.model.Item
 import com.moviesearcher.list.model.ListResponse
@@ -27,10 +26,9 @@ class MyListAdapter(
     private val listItems: ListResponse,
     private val navController: NavController,
     private val listId: Int,
-    private val sessionId: String
+    private val sessionId: String,
+    private val listViewModel: ListViewModel
 ) : RecyclerView.Adapter<MyListAdapter.MyListViewHolder>() {
-    private lateinit var cardView: MaterialCardView
-    private lateinit var imageButtonRemoveFromList: ImageButton
 
     inner class MyListViewHolder(val binding: ExtendedCardViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -40,6 +38,8 @@ class MyListAdapter(
         private val releaseDate = binding.textViewReleaseDate
         private val posterImageView = binding.posterImageView
         private val overview = binding.textViewDescription
+        private val cardView = binding.cardView
+        private val imageButtonRemoveFromList = binding.imageButtonRemove
 
         fun bind(movieItem: Item) {
             val currentItemPosition = listItems.items?.indexOf(movieItem)!!
@@ -87,41 +87,37 @@ class MyListAdapter(
                             BaseTransientBottomBar.LENGTH_LONG
                         )
 
-                        listItemRemovedSnackbar.setAction("UNDO") { view ->
-                            val addToListResponse =
-                                Api.addToList(
-                                    listId,
-                                    MediaId(movieItem.id.toLong()),
-                                    sessionId,
-                                )
-
-                            addToListResponse.observe(
-                                view.findViewTreeLifecycleOwner()!!
-                            ) { addToFavorite ->
-                                if (addToFavorite.statusCode == 12) {
-                                    listItems.items.add(currentItemPosition, movieItem)
-                                    notifyItemInserted(currentItemPosition)
-                                    Toast.makeText(
-                                        itemView.context,
-                                        "\"${movieItem.name ?: movieItem.title}\" added back",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    Toast.makeText(
-                                        itemView.context,
-                                        "Error while adding movie back",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                        listItemRemovedSnackbar.setAction("UNDO") {
+                            listViewModel.addToList(
+                                listId,
+                                sessionId,
+                                MediaId(movieItem.id.toLong()),
+                            ).observe(binding.root.findViewTreeLifecycleOwner()!!) { item ->
+                                when (item.status) {
+                                    Status.SUCCESS -> {
+                                        item.data?.let {
+                                            listItems.items.add(currentItemPosition, movieItem)
+                                            notifyItemInserted(currentItemPosition)
+                                            Toast.makeText(
+                                                itemView.context,
+                                                "\"${movieItem.name ?: movieItem.title}\" added back",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                        listItemRemovedSnackbar.show()
+                                    }
+                                    Status.LOADING -> {
+                                    }
+                                    Status.ERROR -> {
+                                        Toast.makeText(
+                                            itemView.context,
+                                            "Error while adding movie back",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             }
                         }
-                        listItemRemovedSnackbar.show()
-                    } else {
-                        Toast.makeText(
-                            itemView.context,
-                            "Error while removing from list",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
                 }
             }
@@ -164,14 +160,12 @@ class MyListAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): MyListViewHolder {
+    ): MyListAdapter.MyListViewHolder {
         val binding = ExtendedCardViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        cardView = binding.cardView
-        imageButtonRemoveFromList = binding.imageButtonRemove
 
         return MyListViewHolder(binding)
     }

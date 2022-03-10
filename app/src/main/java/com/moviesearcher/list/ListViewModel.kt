@@ -12,13 +12,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviesearcher.R
-import com.moviesearcher.api.Api
 import com.moviesearcher.api.ApiService
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.common.utils.Status
+import com.moviesearcher.list.model.CreateNewList
+import com.moviesearcher.list.model.CreateNewListResponse
 import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.list.model.Result
+import com.moviesearcher.list.model.add.AddToListResponse
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -29,6 +31,8 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
     private val checkedItem = MutableLiveData<Resource<MutableMap<Int, Boolean>>>()
     private val myList = MutableLiveData<Resource<ListResponse>>()
     private val checkedItems: MutableMap<Int, Boolean> = mutableMapOf()
+    private val addToList = MutableLiveData<Resource<AddToListResponse>>()
+    private val createNewList = MutableLiveData<Resource<CreateNewListResponse>>()
 
     init {
         fetchMyList()
@@ -71,6 +75,50 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
 
     fun getMyList(): MutableLiveData<Resource<ListResponse>> {
         return myList
+    }
+
+    private fun fetchAddToList(listId: Int, sessionId: String, mediaId: MediaId) {
+        viewModelScope.launch {
+            addToList.postValue(Resource.loading(null))
+            try {
+                val addToListFromApi = ApiService.create().addToList(listId, sessionId, mediaId)
+                addToList.postValue(Resource.success(addToListFromApi))
+            } catch (e: Exception) {
+                addToList.postValue(Resource.error(e.toString(), null))
+            }
+        }
+    }
+
+    fun addToList(
+        listId: Int,
+        sessionId: String,
+        mediaId: MediaId
+    ): MutableLiveData<Resource<AddToListResponse>> {
+        fetchAddToList(listId, sessionId, mediaId)
+
+        return addToList
+    }
+
+    private fun fetchCreateNewList(sessionId: String, createNewListRequest: CreateNewList) {
+        viewModelScope.launch {
+            createNewList.postValue(Resource.loading(null))
+            try {
+                val createNewListFromApi =
+                    ApiService.create().createNewList(sessionId, createNewListRequest)
+                createNewList.postValue(Resource.success(createNewListFromApi))
+            } catch (e: Exception) {
+                createNewList.postValue(Resource.error(e.toString(), null))
+            }
+        }
+    }
+
+    fun createNewList(
+        sessionId: String,
+        createNewListRequest: CreateNewList
+    ): MutableLiveData<Resource<CreateNewListResponse>> {
+        fetchCreateNewList(sessionId, createNewListRequest)
+
+        return createNewList
     }
 
     fun showAddToListMenu(
@@ -118,31 +166,36 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
                                 }
                             } else {
                                 popup.menu.findItem(it.key).setOnMenuItemClickListener {
-                                    Api.addToList(
+                                    addToList(
                                         it.itemId,
-                                        MediaId(media?.values?.first()!!),
-                                        sessionId
-                                    ).observe(
-                                        lifecycleOwner
-                                    ) { addToListResponse ->
-                                        if (addToListResponse.statusCode == 12) {
-                                            menuItem.isEnabled = false
-                                            if (!menuItem.title.contains("(added)")) {
-                                                menuItem.title =
-                                                    menuItem.title.toString() + " (added)"
-                                            }
+                                        sessionId,
+                                        MediaId(media?.values?.first()!!)
+                                    ).observe(lifecycleOwner) { item ->
+                                        when (item.status) {
+                                            Status.SUCCESS -> {
+                                                item.data?.let {
+                                                    menuItem.isEnabled = false
+                                                    if (!menuItem.title.contains("(added)")) {
+                                                        menuItem.title =
+                                                            menuItem.title.toString() + " (added)"
+                                                    }
 
-                                            Toast.makeText(
-                                                context,
-                                                "Added to List",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        } else {
-                                            Toast.makeText(
-                                                context,
-                                                "Error adding to List",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Added to List",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
+                                            Status.LOADING -> {
+                                            }
+                                            Status.ERROR -> {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Error adding to List",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                         }
                                     }
 
@@ -167,7 +220,7 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
     }
 
     private fun showCreateNewListDialog(childFragmentManager: FragmentManager) {
-        val dialog = CreateNewListDialog()
+        val dialog = CreateNewListDialog(this)
         dialog.show(childFragmentManager, "CreateNewListDialogFragment")
     }
 }

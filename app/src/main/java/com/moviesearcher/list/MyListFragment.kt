@@ -63,7 +63,8 @@ class MyListFragment : BaseFragment() {
                                 myListItems,
                                 findNavController(),
                                 args.listId,
-                                sessionId
+                                sessionId,
+                                viewModel
                             )
                             binding.listTitleTextView.text = myListItems.name
 

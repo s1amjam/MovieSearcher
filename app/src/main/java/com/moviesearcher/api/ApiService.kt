@@ -176,11 +176,11 @@ interface ApiService {
 
     @POST("list/{list_id}/add_item")
     @Headers("Content-Type: application/json;charset=utf-8")
-    fun addToList(
+    suspend fun addToList(
         @Path("list_id") listId: Int,
         @Query("session_id") sessionId: String?,
         @Body mediaId: MediaId
-    ): Call<AddToListResponse>
+    ): AddToListResponse
 
     @GET("list/{list_id}")
     suspend fun getListInfo(@Path("list_id") listId: Int): ListResponse
@@ -193,10 +193,10 @@ interface ApiService {
 
     @POST("list")
     @Headers("Content-Type: application/json;charset=utf-8")
-    fun createNewList(
+    suspend fun createNewList(
         @Query("session_id") sessionId: String?,
         @Body createNewList: CreateNewList
-    ): Call<CreateNewListResponse>
+    ): CreateNewListResponse
 
     @POST("list/{list_id}/remove_item")
     @Headers("Content-Type: application/json;charset=utf-8")
