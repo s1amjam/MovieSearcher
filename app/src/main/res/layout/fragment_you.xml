@@ -43,6 +43,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/watchlist_card_view"
         style="@style/Widget.MovieSearcher.CardView.LineCardView"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_tv">

@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.R
-import com.moviesearcher.api.Api
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
@@ -69,54 +68,69 @@ class MyListAdapter(
             cardView.tag = movieItem.title
 
             imageButtonRemoveFromList.setOnClickListener {
-                val removeFromListResponse =
-                    Api.removeFromList(
-                        listId,
-                        sessionId,
-                        MediaId(movieItem.id!!.toLong())
-                    )
+                listViewModel.removeFromList(
+                    listId,
+                    sessionId,
+                    MediaId(movieItem.id!!.toLong())
+                ).observe(binding.root.findViewTreeLifecycleOwner()!!) { item ->
+                    when (item.status) {
+                        Status.SUCCESS -> {
+                            item.data?.let {
+                                listItems.items.remove(movieItem)
+                                notifyItemRemoved(currentItemPosition)
 
-                removeFromListResponse.observe(binding.root.findViewTreeLifecycleOwner()!!) {
-                    if (it.success) {
-                        listItems.items.remove(movieItem)
-                        notifyItemRemoved(currentItemPosition)
+                                val listItemRemovedSnackbar = Snackbar.make(
+                                    binding.root.rootView,
+                                    "\"${movieItem.name ?: movieItem.title}\" " +
+                                            "was removed from List",
+                                    BaseTransientBottomBar.LENGTH_LONG
+                                )
 
-                        val listItemRemovedSnackbar = Snackbar.make(
-                            binding.root.rootView,
-                            "\"${movieItem.name ?: movieItem.title}\" was removed from Favorites",
-                            BaseTransientBottomBar.LENGTH_LONG
-                        )
-
-                        listItemRemovedSnackbar.setAction("UNDO") {
-                            listViewModel.addToList(
-                                listId,
-                                sessionId,
-                                MediaId(movieItem.id.toLong()),
-                            ).observe(binding.root.findViewTreeLifecycleOwner()!!) { item ->
-                                when (item.status) {
-                                    Status.SUCCESS -> {
-                                        item.data?.let {
-                                            listItems.items.add(currentItemPosition, movieItem)
-                                            notifyItemInserted(currentItemPosition)
-                                            Toast.makeText(
-                                                itemView.context,
-                                                "\"${movieItem.name ?: movieItem.title}\" added back",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                listItemRemovedSnackbar.setAction("UNDO") {
+                                    listViewModel.addToList(
+                                        listId,
+                                        sessionId,
+                                        MediaId(movieItem.id.toLong()),
+                                    ).observe(binding.root.findViewTreeLifecycleOwner()!!) { item ->
+                                        when (item.status) {
+                                            Status.SUCCESS -> {
+                                                item.data?.let {
+                                                    listItems.items.add(
+                                                        oldPosition-1,
+                                                        movieItem
+                                                    )
+                                                    notifyItemInserted(oldPosition-1)
+                                                    Toast.makeText(
+                                                        itemView.context,
+                                                        "\"${movieItem.name ?: movieItem.title}\" " +
+                                                                "added back",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                                listItemRemovedSnackbar.show()
+                                            }
+                                            Status.LOADING -> {
+                                            }
+                                            Status.ERROR -> {
+                                                Toast.makeText(
+                                                    itemView.context,
+                                                    "Error while adding movie back",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                         }
-                                        listItemRemovedSnackbar.show()
-                                    }
-                                    Status.LOADING -> {
-                                    }
-                                    Status.ERROR -> {
-                                        Toast.makeText(
-                                            itemView.context,
-                                            "Error while adding movie back",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
                                     }
                                 }
                             }
+                        }
+                        Status.LOADING -> {
+                        }
+                        Status.ERROR -> {
+                            Toast.makeText(
+                                itemView.context,
+                                "Error while adding movie back",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }

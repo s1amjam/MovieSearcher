@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.moviesearcher.R
 import com.moviesearcher.api.ApiService
 import com.moviesearcher.common.model.common.MediaId
+import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
 import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.list.model.CreateNewList
@@ -33,6 +34,7 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
     private val checkedItems: MutableMap<Int, Boolean> = mutableMapOf()
     private val addToList = MutableLiveData<Resource<AddToListResponse>>()
     private val createNewList = MutableLiveData<Resource<CreateNewListResponse>>()
+    private val removeFromList = MutableLiveData<Resource<ResponseWithCodeAndMessage>>()
 
     init {
         fetchMyList()
@@ -119,6 +121,33 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
         fetchCreateNewList(sessionId, createNewListRequest)
 
         return createNewList
+    }
+
+    private fun fetchRemoveFromList(
+        listId: Int,
+        sessionId: String,
+        mediaId: MediaId
+    ) {
+        viewModelScope.launch {
+            removeFromList.postValue(Resource.loading(null))
+            try {
+                val removeFromListFromApi =
+                    ApiService.create().removeFromList(listId, sessionId, mediaId)
+                removeFromList.postValue(Resource.success(removeFromListFromApi))
+            } catch (e: Exception) {
+                removeFromList.postValue(Resource.error(e.toString(), null))
+            }
+        }
+    }
+
+    fun removeFromList(
+        listId: Int,
+        sessionId: String,
+        mediaId: MediaId
+    ): MutableLiveData<Resource<ResponseWithCodeAndMessage>> {
+        fetchRemoveFromList(listId, sessionId, mediaId)
+
+        return removeFromList
     }
 
     fun showAddToListMenu(

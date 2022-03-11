@@ -8,8 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviesearcher.R
-import com.moviesearcher.api.Api
 import com.moviesearcher.api.ApiService
+import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
 import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
@@ -25,6 +25,7 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
     private val movieWatchlist = MutableLiveData<Resource<MovieWatchlistResponse>>()
     private val tvWatchlist = MutableLiveData<Resource<TvWatchlistResponse>>()
     private val watchlistItemsIds = MutableLiveData<Resource<MutableList<Long>>>()
+    private val watchlist = MutableLiveData<Resource<ResponseWithCodeAndMessage>>()
 
     private val watchlistAddedIcon = R.drawable.ic_watchlist_added_36
     private val watchlistRemovedIcon = R.drawable.ic_watchlist_add_36
@@ -50,6 +51,33 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         }
 
         return movieWatchlist
+    }
+
+    private fun fetchWatchlist(
+        accountId: Long,
+        sessionId: String,
+        watchlistRequest: WatchlistRequest
+    ) {
+        viewModelScope.launch {
+            watchlist.postValue(Resource.loading(null))
+            try {
+                val watchlistFromApi =
+                    ApiService.create().watchlist(accountId, sessionId, watchlistRequest)
+                watchlist.postValue(Resource.success(watchlistFromApi))
+            } catch (e: Exception) {
+                watchlist.postValue(Resource.error(e.toString(), null))
+            }
+        }
+    }
+
+    fun getWatchlist(
+        accountId: Long,
+        sessionId: String,
+        watchlistRequest: WatchlistRequest
+    ): MutableLiveData<Resource<ResponseWithCodeAndMessage>> {
+        fetchWatchlist(accountId, sessionId, watchlistRequest)
+
+        return watchlist
     }
 
     private fun fetchTvWatchlist() {
@@ -101,7 +129,7 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         }
     }
 
-    fun getWatchlistItemsIds(): MutableLiveData<Resource<MutableList<Long>>> {
+    private fun getWatchlistItemsIds(): MutableLiveData<Resource<MutableList<Long>>> {
         if (watchlistItemsIds.value == null) {
             fetchWatchlistItemsIds()
         }
@@ -120,31 +148,39 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
             button.tag = null //need to return to normal 'isWatchlist' cycle
         }
 
-        val addToWatchlist = Api.watchlist(
+        getWatchlist(
             accountId,
             sessionId,
             WatchlistRequest(isWatchlist, media?.values?.first(), media?.keys?.first())
-        )
+        ).observe(lifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let {
+                        if (isWatchlist) {
+                            button.setImageResource(watchlistAddedIcon)
+                            Toast.makeText(context, "Added to Watchlist", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            button.setImageResource(watchlistRemovedIcon)
+                            Toast.makeText(context, "Removed from Watchlist", Toast.LENGTH_SHORT)
+                                .show()
+                        }
 
-        addToWatchlist.observe(lifecycleOwner) {
-            if (isWatchlist) {
-                button.setImageResource(watchlistAddedIcon)
-                Toast.makeText(context, "Added to Watchlist", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                button.setImageResource(watchlistRemovedIcon)
-                Toast.makeText(context, "Removed from Watchlist", Toast.LENGTH_SHORT)
-                    .show()
-            }
-
-            if (it.statusCode == 13 || it.statusCode == 1 || it.statusCode == 12) {
-                isWatchlist = !isWatchlist
-            } else {
-                Toast.makeText(
-                    context,
-                    "Error adding to Watchlist, try again later",
-                    Toast.LENGTH_SHORT
-                ).show()
+                        isWatchlist = !isWatchlist
+                    }
+                }
+                Status.LOADING -> {
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        context,
+                        ERROR_MESSAGE.format(
+                            "Error adding to Watchlist, try again later"
+                                    + it.message
+                        ),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }

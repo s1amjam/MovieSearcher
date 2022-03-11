@@ -200,17 +200,17 @@ interface ApiService {
 
     @POST("list/{list_id}/remove_item")
     @Headers("Content-Type: application/json;charset=utf-8")
-    fun removeFromList(
+    suspend fun removeFromList(
         @Path("list_id") listId: Int,
         @Query("session_id") sessionId: String?,
         @Body mediaId: MediaId
-    ): Call<ResponseWithCodeAndMessage>
+    ): ResponseWithCodeAndMessage
 
     @DELETE("list/{list_id}")
-    fun deleteList(
+    suspend fun deleteList(
         @Path("list_id") listId: Int,
         @Query("session_id") sessionId: String
-    ): Call<ResponseWithCodeAndMessage>
+    ): ResponseWithCodeAndMessage
 
     @POST("account/{account_id}/favorite")
     @Headers("Content-Type: application/json;charset=utf-8")
@@ -222,11 +222,11 @@ interface ApiService {
 
     @POST("account/{account_id}/watchlist")
     @Headers("Content-Type: application/json;charset=utf-8")
-    fun watchlist(
+    suspend fun watchlist(
         @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String?,
         @Body watchlist: WatchlistRequest
-    ): Call<ResponseWithCodeAndMessage>
+    ): ResponseWithCodeAndMessage
 
     @GET("movie/{movie_id}/credits")
     suspend fun movieCast(@Path("movie_id") movieId: Long): MovieCastResponse
