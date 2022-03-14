@@ -1,7 +1,9 @@
 package com.moviesearcher.watchlist.movie.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -9,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
 import com.moviesearcher.common.utils.Constants
-import com.moviesearcher.common.utils.OnClickListener
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.watchlist.WatchlistFragmentDirections
+import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.MovieWatchlistResult
 import kotlin.collections.set
@@ -19,14 +21,13 @@ import kotlin.collections.set
 class MovieWatchlistAdapter(
     private val watchlistItems: MovieWatchlistResponse,
     private val navController: NavController,
-    private val onClickListener: OnClickListener? = null,
+    private val viewModel: WatchlistViewModel,
+    private val context: Context,
     private val isTv: Boolean = false
 ) : RecyclerView.Adapter<MovieWatchlistAdapter.WatchlistViewHolder>() {
 
     inner class WatchlistViewHolder(val binding: ExtendedCardViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        private val mediaInfo: MutableMap<String, Long> = mutableMapOf()
 
         private val rating = binding.textViewRating
         private val title = binding.textViewTitle
@@ -37,6 +38,8 @@ class MovieWatchlistAdapter(
         private val watchlistIb = binding.imageButtonRemove
 
         fun bind(movieItem: MovieWatchlistResult) {
+            val mediaInfo: MutableMap<String, Long> = mutableMapOf()
+
             title.text = movieItem.title
             releaseDate.text = movieItem.releaseDate?.replace("-", ".")
 
@@ -75,7 +78,12 @@ class MovieWatchlistAdapter(
             }
 
             watchlistIb.setOnClickListener {
-                onClickListener?.onClick(watchlistIb, mediaInfo)
+                viewModel.addToWatchlist(
+                    watchlistIb,
+                    mediaInfo,
+                    context,
+                    binding.root.findViewTreeLifecycleOwner()!!
+                )
             }
         }
     }

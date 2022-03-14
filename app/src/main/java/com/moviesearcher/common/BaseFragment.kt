@@ -5,17 +5,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageButton
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.moviesearcher.R
-import com.moviesearcher.api.Api
 import com.moviesearcher.common.utils.EncryptedSharedPrefs
-import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
-import com.moviesearcher.favorite.FavoriteViewModel
-import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import kotlin.properties.Delegates
 
 private const val TAG = "BaseFragment"

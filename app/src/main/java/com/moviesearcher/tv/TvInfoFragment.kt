@@ -633,7 +633,7 @@ class TvInfoFragment : BaseFragment() {
             favoriteViewModel = ViewModelProvider(
                 this,
                 ViewModelFactory(
-                    sessionId, accountId
+                    sessionId, accountId, isFavorite = true
                 )
             ).get(FavoriteViewModel::class.java)
         }

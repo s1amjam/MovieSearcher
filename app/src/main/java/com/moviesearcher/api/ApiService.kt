@@ -42,7 +42,6 @@ import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -214,11 +213,11 @@ interface ApiService {
 
     @POST("account/{account_id}/favorite")
     @Headers("Content-Type: application/json;charset=utf-8")
-    fun markAsFavorite(
+    suspend fun markAsFavorite(
         @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String?,
         @Body markAsFavorite: MarkAsFavoriteRequest
-    ): Call<ResponseWithCodeAndMessage>
+    ): ResponseWithCodeAndMessage
 
     @POST("account/{account_id}/watchlist")
     @Headers("Content-Type: application/json;charset=utf-8")

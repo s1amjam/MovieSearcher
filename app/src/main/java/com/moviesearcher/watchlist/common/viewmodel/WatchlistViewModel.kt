@@ -70,7 +70,7 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         }
     }
 
-    fun getWatchlist(
+    private fun getWatchlist(
         accountId: Long,
         sessionId: String,
         watchlistRequest: WatchlistRequest
@@ -139,7 +139,7 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
 
     fun addToWatchlist(
         button: ImageButton,
-        media: MutableMap<String, Long>? = mutableMapOf(),
+        media: MutableMap<String, Long> = mutableMapOf(),
         context: Context,
         lifecycleOwner: LifecycleOwner
     ) {
@@ -148,11 +148,13 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
             button.tag = null //need to return to normal 'isWatchlist' cycle
         }
 
-        getWatchlist(
+        val obs = getWatchlist(
             accountId,
             sessionId,
-            WatchlistRequest(isWatchlist, media?.values?.first(), media?.keys?.first())
-        ).observe(lifecycleOwner) {
+            WatchlistRequest(isWatchlist, media.values.first(), media.keys.first())
+        )
+
+        obs.observe(lifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let {
@@ -167,6 +169,8 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
                         }
 
                         isWatchlist = !isWatchlist
+
+                            //TODO: maybe remove observer?
                     }
                 }
                 Status.LOADING -> {
@@ -175,14 +179,15 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
                     Toast.makeText(
                         context,
                         ERROR_MESSAGE.format(
-                            "Error adding to Watchlist, try again later"
-                                    + it.message
+                            "Error adding to Watchlist, try again later" + it.message
                         ),
                         Toast.LENGTH_LONG
                     ).show()
                 }
             }
         }
+
+
     }
 
     fun checkWatchlist(

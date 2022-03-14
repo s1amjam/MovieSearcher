@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -14,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.BaseFragment
-import com.moviesearcher.common.utils.OnClickListener
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentWatchlistBinding
@@ -150,14 +148,8 @@ class WatchlistFragment : BaseFragment() {
         val movieWatchlistAdapter = MovieWatchlistAdapter(
             movieItems,
             navController,
-            OnClickListener { button: ImageButton, mediaInfo: MutableMap<String, Long>? ->
-                viewModel.addToWatchlist(
-                    button,
-                    mediaInfo,
-                    requireContext(),
-                    viewLifecycleOwner
-                )
-            },
+            viewModel,
+            requireContext(),
             isTv
         )
         watchlistRv.apply {

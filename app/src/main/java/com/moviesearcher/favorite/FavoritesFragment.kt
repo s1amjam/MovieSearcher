@@ -142,8 +142,8 @@ class FavoritesFragment : BaseFragment() {
         val favoriteMovieAdapter = FavoriteMovieAdapter(
             favoriteMovieItems,
             findNavController(),
-            sessionId,
-            accountId
+            viewModel,
+            requireContext()
         )
 
         favoriteMoviesRecyclerView.apply {
@@ -156,8 +156,8 @@ class FavoritesFragment : BaseFragment() {
     private fun setupFavoriteTvsUi(favoriteTvItems: FavoriteTvResponse) {
         val favoriteTvAdapter = FavoriteTvAdapter(
             favoriteTvItems, findNavController(),
-            sessionId,
-            accountId
+            viewModel,
+            requireContext()
         )
 
         favoriteMoviesRecyclerView.apply {
@@ -171,7 +171,8 @@ class FavoritesFragment : BaseFragment() {
         viewModel = ViewModelProvider(
             this, ViewModelFactory(
                 sessionId,
-                accountId
+                accountId,
+                isFavorite = false
             )
         ).get(FavoriteViewModel::class.java)
     }

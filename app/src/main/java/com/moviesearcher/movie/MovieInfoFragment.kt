@@ -531,7 +531,8 @@ class MovieInfoFragment : BaseFragment() {
         )
 
         watchlistViewModel.checkWatchlist(
-            watchlistImageButton, mediaInfo,
+            watchlistImageButton,
+            mediaInfo,
             viewLifecycleOwner,
             requireContext()
         )
@@ -579,7 +580,7 @@ class MovieInfoFragment : BaseFragment() {
             favoriteViewModel = ViewModelProvider(
                 this,
                 ViewModelFactory(
-                    sessionId, accountId
+                    sessionId, accountId, isFavorite = true
                 )
             ).get(FavoriteViewModel::class.java)
         }
