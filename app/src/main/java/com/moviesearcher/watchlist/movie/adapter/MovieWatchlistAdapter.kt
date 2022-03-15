@@ -23,6 +23,8 @@ class MovieWatchlistAdapter(
     private val navController: NavController,
     private val viewModel: WatchlistViewModel,
     private val context: Context,
+    private val accountId: Long,
+    private val sessionId: String,
     private val isTv: Boolean = false
 ) : RecyclerView.Adapter<MovieWatchlistAdapter.WatchlistViewHolder>() {
 
@@ -40,9 +42,6 @@ class MovieWatchlistAdapter(
         fun bind(movieItem: MovieWatchlistResult) {
             val mediaInfo: MutableMap<String, Long> = mutableMapOf()
 
-            title.text = movieItem.title
-            releaseDate.text = movieItem.releaseDate?.replace("-", ".")
-
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + movieItem.posterPath)
                 .placeholder(R.drawable.ic_placeholder)
@@ -50,6 +49,8 @@ class MovieWatchlistAdapter(
                 .override(400, 600)
                 .into(poster)
 
+            title.text = movieItem.title
+            releaseDate.text = movieItem.releaseDate?.replace("-", ".")
             cardView.tag = movieItem.title
             overview.text = movieItem.overview
             rating.text = movieItem.getAverage()

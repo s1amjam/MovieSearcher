@@ -150,6 +150,8 @@ class WatchlistFragment : BaseFragment() {
             navController,
             viewModel,
             requireContext(),
+            accountId,
+            sessionId,
             isTv
         )
         watchlistRv.apply {

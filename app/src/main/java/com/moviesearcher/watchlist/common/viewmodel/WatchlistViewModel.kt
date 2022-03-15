@@ -70,7 +70,7 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         }
     }
 
-    private fun getWatchlist(
+    private fun postWatchlist(
         accountId: Long,
         sessionId: String,
         watchlistRequest: WatchlistRequest
@@ -148,13 +148,11 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
             button.tag = null //need to return to normal 'isWatchlist' cycle
         }
 
-        val obs = getWatchlist(
+        postWatchlist(
             accountId,
             sessionId,
             WatchlistRequest(isWatchlist, media.values.first(), media.keys.first())
-        )
-
-        obs.observe(lifecycleOwner) {
+        ).observe(lifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let {
@@ -169,8 +167,6 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
                         }
 
                         isWatchlist = !isWatchlist
-
-                            //TODO: maybe remove observer?
                     }
                 }
                 Status.LOADING -> {
@@ -186,8 +182,6 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
                 }
             }
         }
-
-
     }
 
     fun checkWatchlist(
