@@ -30,8 +30,6 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
     private val watchlistAddedIcon = R.drawable.ic_watchlist_added_36
     private val watchlistRemovedIcon = R.drawable.ic_watchlist_add_36
 
-    private var isWatchlist = true
-
     private fun fetchMoviesWatchlist() {
         viewModelScope.launch {
             movieWatchlist.postValue(Resource.loading(null))
@@ -70,7 +68,7 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         }
     }
 
-    private fun postWatchlist(
+    fun postWatchlist(
         accountId: Long,
         sessionId: String,
         watchlistRequest: WatchlistRequest
@@ -137,50 +135,13 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         return watchlistItemsIds
     }
 
-    fun addToWatchlist(
-        button: ImageButton,
-        media: MutableMap<String, Long> = mutableMapOf(),
-        context: Context,
-        lifecycleOwner: LifecycleOwner
-    ) {
-        if (button.tag != null) {
-            isWatchlist = button.tag.toString().toBoolean()
-            button.tag = null //need to return to normal 'isWatchlist' cycle
-        }
-
-        postWatchlist(
-            accountId,
-            sessionId,
-            WatchlistRequest(isWatchlist, media.values.first(), media.keys.first())
-        ).observe(lifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    it.data?.let {
-                        if (isWatchlist) {
-                            button.setImageResource(watchlistAddedIcon)
-                            Toast.makeText(context, "Added to Watchlist", Toast.LENGTH_SHORT)
-                                .show()
-                        } else {
-                            button.setImageResource(watchlistRemovedIcon)
-                            Toast.makeText(context, "Removed from Watchlist", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-
-                        isWatchlist = !isWatchlist
-                    }
-                }
-                Status.LOADING -> {
-                }
-                Status.ERROR -> {
-                    Toast.makeText(
-                        context,
-                        ERROR_MESSAGE.format(
-                            "Error adding to Watchlist, try again later" + it.message
-                        ),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
+    fun processWatchlistButtons(button: ImageButton) {
+        if (button.tag.toString().toBoolean()) {
+            button.tag = "false"
+            button.setImageResource(watchlistAddedIcon)
+        } else {
+            button.tag = "true"
+            button.setImageResource(watchlistRemovedIcon)
         }
     }
 
@@ -196,12 +157,12 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
                     Status.SUCCESS -> {
                         it.data?.let { movieItems ->
                             button.setImageResource(watchlistRemovedIcon)
-                            movieItems.forEach {
-                                if (it == media?.values?.first()) {
-                                    isWatchlist = false
-                                    button.tag = "false"
-                                    button.setImageResource(watchlistAddedIcon)
-                                }
+
+                            if (movieItems.contains(media?.values?.first())) {
+                                button.tag = "false"
+                                button.setImageResource(watchlistAddedIcon)
+                            } else {
+                                button.tag = "true"
                             }
                         }
                     }

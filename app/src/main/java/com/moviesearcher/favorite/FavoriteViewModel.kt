@@ -87,12 +87,15 @@ class FavoriteViewModel(
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { favoriteMovieItems ->
+                            val ids = mutableListOf<Long>()
                             button.setImageResource(markAsFavoriteIcon)
-                            favoriteMovieItems.results!!.forEach {
-                                if (it.id == mediaId) {
-                                    _isFavorite = false
-                                    button.setImageResource(removeFromFavoriteIcon)
-                                }
+                            favoriteMovieItems.results?.forEach { it.id?.let { id -> ids.add(id) } }
+
+                            if (ids.contains(mediaId)) {
+                                button.tag = "false"
+                                button.setImageResource(removeFromFavoriteIcon)
+                            } else {
+                                button.tag = "true"
                             }
                         }
                     }
@@ -112,12 +115,15 @@ class FavoriteViewModel(
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { favoriteMovieItems ->
+                            val ids = mutableListOf<Long>()
                             button.setImageResource(markAsFavoriteIcon)
-                            favoriteMovieItems.results!!.forEach {
-                                if (it.id == mediaId) {
-                                    _isFavorite = false
-                                    button.setImageResource(removeFromFavoriteIcon)
-                                }
+                            favoriteMovieItems.results?.forEach { it.id?.let { id -> ids.add(id) } }
+
+                            if (ids.contains(mediaId)) {
+                                button.tag = "false"
+                                button.setImageResource(removeFromFavoriteIcon)
+                            } else {
+                                button.tag = "true"
                             }
                         }
                     }
@@ -130,48 +136,6 @@ class FavoriteViewModel(
                             Toast.LENGTH_LONG
                         ).show()
                     }
-                }
-            }
-        }
-    }
-
-    fun markAsFavorite(
-        button: ImageButton,
-        viewLifecycleOwner: LifecycleOwner,
-        mediaInfo: MutableMap<String, Long>,
-        context: Context,
-    ) {
-        postMarkAsFavorite(
-            accountId,
-            sessionId,
-            MarkAsFavoriteRequest(_isFavorite, mediaInfo.values.first(), mediaInfo.keys.first())
-        ).observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    it.data?.let {
-                        if (_isFavorite) {
-                            button.setImageResource(removeFromFavoriteIcon)
-                        } else {
-                            button.setImageResource(markAsFavoriteIcon)
-                        }
-
-                        _isFavorite = !_isFavorite
-                    }
-                }
-                Status.LOADING -> {
-                    if (_isFavorite) {
-                        button.setImageResource(removeFromFavoriteIcon)
-                    } else {
-                        button.setImageResource(markAsFavoriteIcon)
-                    }
-                }
-                Status.ERROR -> {
-                    button.setImageResource(markAsFavoriteIcon)
-                    Toast.makeText(
-                        context,
-                        "Error adding to Favorites. Try again later.",
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
             }
         }
@@ -194,7 +158,7 @@ class FavoriteViewModel(
         }
     }
 
-    private fun postMarkAsFavorite(
+    fun postMarkAsFavorite(
         accountId: Long,
         sessionId: String,
         markAsFavoriteRequest: MarkAsFavoriteRequest
@@ -202,5 +166,15 @@ class FavoriteViewModel(
         fetchMarkAsFavorite(accountId, sessionId, markAsFavoriteRequest)
 
         return markAsFavorite
+    }
+
+    fun processFavoriteButtons(button: ImageButton) {
+        if (button.tag.toString().toBoolean()) {
+            button.tag = "false"
+            button.setImageResource(removeFromFavoriteIcon)
+        } else {
+            button.tag = "true"
+            button.setImageResource(markAsFavoriteIcon)
+        }
     }
 }

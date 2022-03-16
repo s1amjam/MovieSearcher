@@ -1,12 +1,15 @@
 package com.moviesearcher.watchlist
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -16,6 +19,7 @@ import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentWatchlistBinding
+import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import com.moviesearcher.watchlist.movie.adapter.MovieWatchlistAdapter
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
@@ -34,9 +38,6 @@ class WatchlistFragment : BaseFragment() {
     private lateinit var movieWatchlistButton: Button
     private lateinit var tvWatchlistButton: Button
     private lateinit var progressBar: ProgressBar
-
-    private var movieWatchlistIds: MutableList<Long> = mutableListOf()
-    private var tvWatchlistIds: MutableList<Long> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,7 +74,6 @@ class WatchlistFragment : BaseFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { movieItems ->
-                        movieItems.results?.forEach { it -> movieWatchlistIds.add(it.id!!.toLong()) }
                         createWatchlistAdapter(movieItems)
 
                         progressBar.visibility = View.GONE
@@ -101,7 +101,6 @@ class WatchlistFragment : BaseFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { tvItems ->
-                        tvItems.results?.forEach { it -> tvWatchlistIds.add(it.id!!.toLong()) }
                         val movieWatchlistResponse = MovieWatchlistResponse().apply {
                             val list = mutableListOf<MovieWatchlistResult>()
                             tvItems.results?.forEach {
@@ -148,12 +147,29 @@ class WatchlistFragment : BaseFragment() {
         val movieWatchlistAdapter = MovieWatchlistAdapter(
             movieItems,
             navController,
-            viewModel,
-            requireContext(),
-            accountId,
-            sessionId,
-            isTv
+            isTv,
+            object : MovieWatchlistAdapter.ItemClickListener {
+                override fun onItemClick(
+                    button: ImageButton,
+                    media: MutableMap<String, Long>,
+                    context: Context,
+                    lifecycleOwner: LifecycleOwner
+                ) {
+                    viewModel.postWatchlist(
+                        accountId,
+                        sessionId,
+                        WatchlistRequest(
+                            button.tag.toString().toBoolean(),
+                            media.values.first(),
+                            media.keys.first()
+                        )
+                    )
+
+                    viewModel.processWatchlistButtons(button)
+                }
+            }
         )
+
         watchlistRv.apply {
             watchlistRv.adapter = movieWatchlistAdapter
             layoutManager = LinearLayoutManager(context)

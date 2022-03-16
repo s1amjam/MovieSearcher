@@ -31,6 +31,7 @@ import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.favorite.FavoriteViewModel
+import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.ListViewModel
 import com.moviesearcher.list.lists.ListsViewModel
 import com.moviesearcher.movie.adapter.cast.MovieCastAdapter
@@ -38,6 +39,7 @@ import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.movie.adapter.recommendations.RecommendationsAdapter
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.movie.model.cast.Cast
+import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import java.util.concurrent.TimeUnit
 
@@ -538,21 +540,31 @@ class MovieInfoFragment : BaseFragment() {
         )
 
         markMovieAsFavoriteImageButton.setOnClickListener {
-            favoriteViewModel.markAsFavorite(
-                markMovieAsFavoriteImageButton,
-                viewLifecycleOwner,
-                mediaInfo,
-                requireContext()
+            favoriteViewModel.postMarkAsFavorite(
+                accountId,
+                sessionId,
+                MarkAsFavoriteRequest(
+                    markMovieAsFavoriteImageButton.tag.toString().toBoolean(),
+                    mediaInfo.values.first(),
+                    mediaInfo.keys.first()
+                )
             )
+
+            favoriteViewModel.processFavoriteButtons(markMovieAsFavoriteImageButton)
         }
 
         watchlistImageButton.setOnClickListener {
-            watchlistViewModel.addToWatchlist(
-                watchlistImageButton,
-                mediaInfo,
-                requireContext(),
-                viewLifecycleOwner
+            watchlistViewModel.postWatchlist(
+                accountId,
+                sessionId,
+                WatchlistRequest(
+                    watchlistImageButton.tag.toString().toBoolean(),
+                    mediaInfo.values.first(),
+                    mediaInfo.keys.first()
+                )
             )
+
+            watchlistViewModel.processWatchlistButtons(watchlistImageButton)
         }
     }
 

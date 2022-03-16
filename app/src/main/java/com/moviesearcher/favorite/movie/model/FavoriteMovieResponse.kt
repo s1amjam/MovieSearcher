@@ -4,11 +4,11 @@ import com.google.gson.annotations.SerializedName
 
 data class FavoriteMovieResponse(
     @SerializedName("page")
-    val page: Int?,
+    val page: Int? = null,
     @SerializedName("results")
-    val results: MutableList<ResultFavoriteMovie>?,
+    var results: MutableList<ResultFavoriteMovie>? = null,
     @SerializedName("total_pages")
-    val totalPages: Int?,
+    val totalPages: Int? = null,
     @SerializedName("total_results")
-    val totalResults: Int?
+    val totalResults: Int? = null
 )

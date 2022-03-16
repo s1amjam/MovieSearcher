@@ -3,6 +3,8 @@ package com.moviesearcher.favorite.movie.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageButton
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -12,7 +14,6 @@ import com.bumptech.glide.Glide
 import com.moviesearcher.R
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ExtendedCardViewBinding
-import com.moviesearcher.favorite.FavoriteViewModel
 import com.moviesearcher.favorite.FavoritesFragmentDirections
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.movie.model.ResultFavoriteMovie
@@ -20,8 +21,8 @@ import com.moviesearcher.favorite.movie.model.ResultFavoriteMovie
 class FavoriteMovieAdapter(
     private val favoriteMovieItems: FavoriteMovieResponse,
     private val navController: NavController,
-    private val favoriteViewModel: FavoriteViewModel,
-    private val context: Context,
+    private val itemClickListener: ItemClickListener,
+    private val isTv: Boolean = false,
 ) : RecyclerView.Adapter<FavoriteMovieAdapter.FavoriteMovieViewHolder>() {
 
     inner class FavoriteMovieViewHolder(val binding: ExtendedCardViewBinding) :
@@ -38,10 +39,6 @@ class FavoriteMovieAdapter(
         fun bind(movieItem: ResultFavoriteMovie) {
             val mediaInfo: MutableMap<String, Long> = mutableMapOf()
 
-            title.text = movieItem.title
-            releaseDate.text = movieItem.releaseDate?.replace("-", ".")
-            imageButtonRemoveFromFavorite.setImageResource(R.drawable.ic_round_star_filled_36)
-
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + movieItem.posterPath)
                 .placeholder(R.drawable.ic_placeholder)
@@ -49,28 +46,52 @@ class FavoriteMovieAdapter(
                 .override(400, 600)
                 .into(poster)
 
+            title.text = movieItem.title
+            releaseDate.text = movieItem.releaseDate?.replace("-", ".")
+            imageButtonRemoveFromFavorite.setImageResource(R.drawable.ic_round_star_filled_36)
             overview.text = movieItem.overview
             rating.text = movieItem.getAverage()
             cardView.id = movieItem.id?.toInt()!!
+            imageButtonRemoveFromFavorite.tag = "false"
 
-            mediaInfo["movie"] = cardView.id.toLong()
+            if (isTv) {
+                mediaInfo["tv"] = cardView.id.toLong()
 
-            imageButtonRemoveFromFavorite.setOnClickListener {
-                favoriteViewModel.markAsFavorite(
-                    imageButtonRemoveFromFavorite,
-                    binding.root.findViewTreeLifecycleOwner()!!,
-                    mediaInfo,
-                    context,
-                )
+                cardView.setOnClickListener {
+                    navController.navigate(
+                        FavoritesFragmentDirections
+                            .actionFragmentFavoritesToTvInfoFragment(movieItem.id)
+                    )
+                }
+            } else {
+                mediaInfo["movie"] = cardView.id.toLong()
+
+                cardView.setOnClickListener {
+                    navController.navigate(
+                        FavoritesFragmentDirections
+                            .actionFragmentFavoritesToMovieInfoFragment(movieItem.id)
+                    )
+                }
             }
 
-            cardView.setOnClickListener {
-                navController.navigate(
-                    FavoritesFragmentDirections
-                        .actionFragmentFavoritesToMovieInfoFragment(movieItem.id)
+            imageButtonRemoveFromFavorite.setOnClickListener {
+                itemClickListener.onItemClick(
+                    imageButtonRemoveFromFavorite,
+                    mediaInfo,
+                    binding.root.context,
+                    binding.root.findViewTreeLifecycleOwner()!!
                 )
             }
         }
+    }
+
+    interface ItemClickListener {
+        fun onItemClick(
+            button: ImageButton,
+            media: MutableMap<String, Long> = mutableMapOf(),
+            context: Context,
+            lifecycleOwner: LifecycleOwner
+        )
     }
 
     private val differCallback = object : DiffUtil.ItemCallback<ResultFavoriteMovie>() {

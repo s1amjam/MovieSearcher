@@ -3,6 +3,8 @@ package com.moviesearcher.watchlist.movie.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageButton
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -13,7 +15,6 @@ import com.moviesearcher.R
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.watchlist.WatchlistFragmentDirections
-import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.MovieWatchlistResult
 import kotlin.collections.set
@@ -21,11 +22,8 @@ import kotlin.collections.set
 class MovieWatchlistAdapter(
     private val watchlistItems: MovieWatchlistResponse,
     private val navController: NavController,
-    private val viewModel: WatchlistViewModel,
-    private val context: Context,
-    private val accountId: Long,
-    private val sessionId: String,
-    private val isTv: Boolean = false
+    private val isTv: Boolean = false,
+    private val itemClickListener: ItemClickListener
 ) : RecyclerView.Adapter<MovieWatchlistAdapter.WatchlistViewHolder>() {
 
     inner class WatchlistViewHolder(val binding: ExtendedCardViewBinding) :
@@ -79,14 +77,22 @@ class MovieWatchlistAdapter(
             }
 
             watchlistIb.setOnClickListener {
-                viewModel.addToWatchlist(
+                itemClickListener.onItemClick(
                     watchlistIb,
                     mediaInfo,
-                    context,
+                    binding.root.context,
                     binding.root.findViewTreeLifecycleOwner()!!
                 )
             }
         }
+    }
+
+    interface ItemClickListener {
+        fun onItemClick(button: ImageButton,
+                        media: MutableMap<String, Long> = mutableMapOf(),
+                        context: Context,
+                        lifecycleOwner: LifecycleOwner
+        )
     }
 
     private val differCallback = object : DiffUtil.ItemCallback<MovieWatchlistResult>() {

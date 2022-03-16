@@ -31,6 +31,7 @@ import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentTvInfoBinding
 import com.moviesearcher.favorite.FavoriteViewModel
+import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.list.ListViewModel
 import com.moviesearcher.list.lists.ListsViewModel
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
@@ -38,6 +39,7 @@ import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.tv.adapter.cast.TvCastAdapter
 import com.moviesearcher.tv.adapter.recommendations.TvRecommendationsAdapter
 import com.moviesearcher.tv.model.cast.Cast
+import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 
 private const val TAG = "TvInfoFragment"
@@ -590,21 +592,31 @@ class TvInfoFragment : BaseFragment() {
             )
 
             markTvAsFavoriteButton.setOnClickListener {
-                favoriteViewModel.markAsFavorite(
-                    markTvAsFavoriteButton,
-                    viewLifecycleOwner,
-                    mediaInfo,
-                    requireContext()
+                favoriteViewModel.postMarkAsFavorite(
+                    accountId,
+                    sessionId,
+                    MarkAsFavoriteRequest(
+                        markTvAsFavoriteButton.tag.toString().toBoolean(),
+                        mediaInfo.values.first(),
+                        mediaInfo.keys.first()
+                    )
                 )
+
+                favoriteViewModel.processFavoriteButtons(markTvAsFavoriteButton)
             }
 
             watchlistImageButton.setOnClickListener {
-                watchlistViewModel.addToWatchlist(
-                    watchlistImageButton,
-                    mediaInfo,
-                    requireContext(),
-                    viewLifecycleOwner
+                watchlistViewModel.postWatchlist(
+                    accountId,
+                    sessionId,
+                    WatchlistRequest(
+                        watchlistImageButton.tag.toString().toBoolean(),
+                        mediaInfo.values.first(),
+                        mediaInfo.keys.first()
+                    )
                 )
+
+                watchlistViewModel.processWatchlistButtons(watchlistImageButton)
             }
         }
     }
