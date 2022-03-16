@@ -151,7 +151,20 @@
         android:id="@+id/you_fragment"
         android:name="com.moviesearcher.you.YouFragment"
         android:label="fragment_you"
-        tools:layout="@layout/fragment_you" />
+        tools:layout="@layout/fragment_you" >
+        <action
+            android:id="@+id/action_you_fragment_to_fragment_my_lists"
+            app:destination="@id/fragment_my_lists" />
+        <action
+            android:id="@+id/action_you_fragment_to_fragment_favorites"
+            app:destination="@id/fragment_favorites" />
+        <action
+            android:id="@+id/action_you_fragment_to_fragment_watchlist"
+            app:destination="@id/fragment_watchlist" />
+        <action
+            android:id="@+id/action_you_fragment_to_fragment_rated"
+            app:destination="@id/fragment_rated" />
+    </fragment>
     <fragment
         android:id="@+id/videoFragment"
         android:name="com.moviesearcher.common.VideoFragment"

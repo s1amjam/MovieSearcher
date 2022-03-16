@@ -17,7 +17,6 @@ class HomeAdapter(
     private val movieItems: TrendingResponse,
     private val navController: NavController,
 ) : RecyclerView.Adapter<HomeAdapter.MovieHolder>() {
-    private lateinit var binding: MovieCardViewBinding
 
     inner class MovieHolder(binding: MovieCardViewBinding) : RecyclerView.ViewHolder(binding.root) {
         private val rating = binding.textViewRating
@@ -27,6 +26,13 @@ class HomeAdapter(
         private val cardView = binding.trendingCardView
 
         fun bind(movieItem: Result) {
+            Glide.with(this.itemView.context)
+                .load(Constants.IMAGE_URL + movieItem.posterPath)
+                .placeholder(R.drawable.ic_placeholder)
+                .centerCrop()
+                .override(400, 600)
+                .into(posterImageView)
+
             if (movieItem.title != null) {
                 title.text = movieItem.title
             } else if (movieItem.name != null) {
@@ -38,13 +44,6 @@ class HomeAdapter(
             } else if (movieItem.firstAirDate != null) {
                 releaseDate.text = movieItem.firstAirDate.replace("-", ".")
             }
-
-            Glide.with(this.itemView.context)
-                .load(Constants.IMAGE_URL + movieItem.posterPath)
-                .placeholder(R.drawable.ic_placeholder)
-                .centerCrop()
-                .override(400, 600)
-                .into(posterImageView)
 
             cardView.id = movieItem.id!!
             cardView.tag = movieItem.title
@@ -88,7 +87,7 @@ class HomeAdapter(
         parent: ViewGroup,
         viewType: Int
     ): MovieHolder {
-        binding = MovieCardViewBinding.inflate(
+        val binding = MovieCardViewBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

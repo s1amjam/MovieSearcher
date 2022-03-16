@@ -4,7 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -106,16 +110,16 @@ class YouFragment : BaseFragment() {
             accountLogoIv.visibility = View.VISIBLE
 
             watchlistsCardView.setOnClickListener {
-                navController.navigate(R.id.fragment_watchlist)
+                navController.navigate(YouFragmentDirections.actionYouFragmentToFragmentWatchlist())
             }
             listsCardView.setOnClickListener {
-                navController.navigate(R.id.fragment_my_lists)
+                navController.navigate(YouFragmentDirections.actionYouFragmentToFragmentMyLists())
             }
             favoritesCardView.setOnClickListener {
-                navController.navigate(R.id.fragment_favorites)
+                navController.navigate(YouFragmentDirections.actionYouFragmentToFragmentFavorites())
             }
             ratedCardView.setOnClickListener {
-                navController.navigate(R.id.fragment_rated)
+                navController.navigate(YouFragmentDirections.actionYouFragmentToFragmentRated())
             }
             buttonLogin.setText(R.string.logout_button)
         }
