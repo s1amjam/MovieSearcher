@@ -11,7 +11,7 @@
     <string name="tvs">Tv Series</string>
     <string name="tv_episodes">Tv Episodes</string>
     <string name="ratings">Ratings</string>
-    <string name="watchlists">Watchlists</string>
+    <string name="watchlist">Watchlist</string>
     <string name="create_new_list">Create New List</string>
     <string name="add_to_list">Add To List</string>
     <string name="description">Description (optional)</string>

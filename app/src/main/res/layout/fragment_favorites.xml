@@ -45,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/favorite_text_view"
         app:singleSelection="true">
@@ -56,8 +56,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/movies"
-            android:textColor="#2196F3"
-            app:strokeColor="#2196F3"
+            android:textColor="@color/md_theme_dark_background"
+            app:cornerRadius="8dp"
+            app:strokeColor="@color/md_theme_dark_background"
             app:strokeWidth="1dp" />
 
         <Button
@@ -66,8 +67,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tvs"
-            android:textColor="#2196F3"
-            app:strokeColor="#2196F3"
+            android:textColor="@color/md_theme_dark_background"
+            app:cornerRadius="8dp"
+            app:strokeColor="@color/md_theme_dark_background"
             app:strokeWidth="1dp" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
