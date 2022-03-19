@@ -581,7 +581,8 @@ class TvInfoFragment : BaseFragment() {
                 watchlistImageButton,
                 mediaInfo,
                 viewLifecycleOwner,
-                requireContext()
+                requireContext(),
+                true
             )
 
             favoriteViewModel.checkFavorites(

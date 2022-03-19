@@ -15,7 +15,6 @@ import com.moviesearcher.common.utils.Status
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -98,28 +97,30 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         return tvWatchlist
     }
 
-    private fun fetchWatchlistItemsIds() {
+    private fun fetchWatchlistItemsIds(isTv: Boolean) {
         viewModelScope.launch {
             watchlistItemsIds.postValue(Resource.loading(null))
             try {
                 coroutineScope {
-                    val moviesWatchlistFromApiDeferred =
-                        async { ApiService.create().getMovieWatchlist(accountId, sessionId) }
-                    val tvWatchlistFromApiDeferred =
-                        async { ApiService.create().getTvWatchlist(accountId, sessionId) }
+                    val watchlistIdsFromApi = mutableListOf<Long>()
 
-                    val moviesWatchlistFromApi = moviesWatchlistFromApiDeferred.await()
-                    val tvWatchlistFromApi = tvWatchlistFromApiDeferred.await()
+                    if (isTv) {
+                        val tvWatchlistFromApi =
+                            ApiService.create().getTvWatchlist(accountId, sessionId)
 
-                    val allWatchlistIdsFromApi = mutableListOf<Long>()
-                    moviesWatchlistFromApi.results?.forEach { it ->
-                        allWatchlistIdsFromApi.add(it.id!!.toLong())
+                        tvWatchlistFromApi.results?.forEach { it ->
+                            watchlistIdsFromApi.add(it.id!!.toLong())
+                        }
+                    } else {
+                        val moviesWatchlistFromApi =
+                            ApiService.create().getMovieWatchlist(accountId, sessionId)
+
+                        moviesWatchlistFromApi.results?.forEach { it ->
+                            watchlistIdsFromApi.add(it.id!!.toLong())
+                        }
                     }
-                    tvWatchlistFromApi.results?.forEach { it ->
-                        allWatchlistIdsFromApi.add(it.id!!.toLong())
-                    }
 
-                    watchlistItemsIds.postValue(Resource.success(allWatchlistIdsFromApi))
+                    watchlistItemsIds.postValue(Resource.success(watchlistIdsFromApi))
                 }
             } catch (e: Exception) {
                 watchlistItemsIds.postValue(Resource.error(e.toString(), null))
@@ -127,9 +128,9 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         }
     }
 
-    private fun getWatchlistItemsIds(): MutableLiveData<Resource<MutableList<Long>>> {
+    private fun getWatchlistItemsIds(isTv: Boolean): MutableLiveData<Resource<MutableList<Long>>> {
         if (watchlistItemsIds.value == null) {
-            fetchWatchlistItemsIds()
+            fetchWatchlistItemsIds(isTv)
         }
 
         return watchlistItemsIds
@@ -149,10 +150,11 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         button: ImageButton,
         media: MutableMap<String, Long>? = mutableMapOf(),
         lifecycleOwner: LifecycleOwner,
-        context: Context
+        context: Context,
+        isTv: Boolean = false
     ) {
         if (sessionId.isNotBlank()) {
-            getWatchlistItemsIds().observe(lifecycleOwner) { it ->
+            getWatchlistItemsIds(isTv).observe(lifecycleOwner) {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { movieItems ->

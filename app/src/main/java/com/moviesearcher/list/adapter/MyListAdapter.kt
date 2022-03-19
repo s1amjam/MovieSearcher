@@ -2,19 +2,14 @@ package com.moviesearcher.list.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
 import com.moviesearcher.R
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.utils.Constants
-import com.moviesearcher.common.utils.Status
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.list.ListViewModel
 import com.moviesearcher.list.MyListFragmentDirections
@@ -40,8 +35,12 @@ class MyListAdapter(
         private val cardView = binding.cardView
         private val imageButtonRemoveFromList = binding.imageButtonRemove
 
+        private val addToListDrawable = R.drawable.ic_baseline_list_add_36
+        private val addedToListDrawable = R.drawable.ic_baseline_list_added_36
+
         fun bind(movieItem: Item) {
-            val currentItemPosition = listItems.items?.indexOf(movieItem)!!
+            imageButtonRemoveFromList.setImageResource(addedToListDrawable)
+            imageButtonRemoveFromList.tag = "false"
 
             if (movieItem.title != null) {
                 title.text = movieItem.title
@@ -68,71 +67,22 @@ class MyListAdapter(
             cardView.tag = movieItem.title
 
             imageButtonRemoveFromList.setOnClickListener {
-                listViewModel.removeFromList(
-                    listId,
-                    sessionId,
-                    MediaId(movieItem.id!!.toLong())
-                ).observe(binding.root.findViewTreeLifecycleOwner()!!) { item ->
-                    when (item.status) {
-                        Status.SUCCESS -> {
-                            item.data?.let {
-                                listItems.items.remove(movieItem)
-                                notifyItemRemoved(currentItemPosition)
-
-                                val listItemRemovedSnackbar = Snackbar.make(
-                                    binding.root.rootView,
-                                    "\"${movieItem.name ?: movieItem.title}\" " +
-                                            "was removed from List",
-                                    BaseTransientBottomBar.LENGTH_LONG
-                                )
-
-                                listItemRemovedSnackbar.setAction("UNDO") {
-                                    listViewModel.addToList(
-                                        listId,
-                                        sessionId,
-                                        MediaId(movieItem.id.toLong()),
-                                    ).observe(binding.root.findViewTreeLifecycleOwner()!!) { item ->
-                                        when (item.status) {
-                                            Status.SUCCESS -> {
-                                                item.data?.let {
-                                                    listItems.items.add(
-                                                        oldPosition-1,
-                                                        movieItem
-                                                    )
-                                                    notifyItemInserted(oldPosition-1)
-                                                    Toast.makeText(
-                                                        itemView.context,
-                                                        "\"${movieItem.name ?: movieItem.title}\" " +
-                                                                "added back",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }
-                                                listItemRemovedSnackbar.show()
-                                            }
-                                            Status.LOADING -> {
-                                            }
-                                            Status.ERROR -> {
-                                                Toast.makeText(
-                                                    itemView.context,
-                                                    "Error while adding movie back",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        Status.LOADING -> {
-                        }
-                        Status.ERROR -> {
-                            Toast.makeText(
-                                itemView.context,
-                                "Error while adding movie back",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
+                if (imageButtonRemoveFromList.tag == "false") {
+                    listViewModel.removeFromList(
+                        listId,
+                        sessionId,
+                        MediaId(movieItem.id!!.toLong())
+                    )
+                    imageButtonRemoveFromList.setImageResource(addToListDrawable)
+                    imageButtonRemoveFromList.tag = "true"
+                } else {
+                    listViewModel.addToList(
+                        listId,
+                        sessionId,
+                        MediaId(movieItem.id!!.toLong()),
+                    )
+                    imageButtonRemoveFromList.setImageResource(addedToListDrawable)
+                    imageButtonRemoveFromList.tag = "false"
                 }
             }
 
