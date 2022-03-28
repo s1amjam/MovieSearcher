@@ -208,7 +208,8 @@ class MovieInfoFragment : BaseFragment() {
                         }
 
                         overviewTextView.setOnClickListener {
-                            MaterialAlertDialogBuilder(requireContext()).setMessage(movieInfo.overview)
+                            MaterialAlertDialogBuilder(requireContext())
+                                .setMessage(movieInfo.overview)
                                 .show()
                         }
 

@@ -26,6 +26,8 @@ import com.moviesearcher.databinding.FragmentPersonInfoBinding
 import com.moviesearcher.person.adapter.combinedcredits.CombinedCreditsAdapter
 import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
 import com.moviesearcher.person.model.images.Profile
+import java.time.LocalDate
+import java.time.Period
 
 private const val TAG = "PersonInfoFragment"
 
@@ -50,6 +52,7 @@ class PersonInfoFragment : BaseFragment() {
     private lateinit var personInfoCardView: CardView
     private lateinit var filmographyCardView: CardView
     private lateinit var imagesCardView: CardView
+    private lateinit var ageOfDeathTv: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,6 +81,7 @@ class PersonInfoFragment : BaseFragment() {
         personInfoCardView = binding.mainPersonInfoCardView
         filmographyCardView = binding.filmographyCardView
         imagesCardView = binding.imagesCardView
+        ageOfDeathTv = binding.ageOfDeathTv
 
         setupViewModel()
 
@@ -92,16 +96,30 @@ class PersonInfoFragment : BaseFragment() {
                             .override(300, 500)
                             .into(personPhotoImageView)
                         personName.text = personInfo.name
-                        personBorn.text = getString(R.string.born).format(personInfo.birthday)
+                        personBorn.text =
+                            getString(R.string.born).format(personInfo.birthday).replace("-", ".")
+
                         if (personInfo.deathday == null) {
                             personDied.visibility = View.GONE
+                        } else {
+                            val born = LocalDate.parse(personInfo.birthday)
+                            val died = LocalDate.parse(personInfo.deathday)
+
+                            val period: Period = Period.between(born, died)
+
+                            personDied.text =
+                                getString(R.string.died).format(personInfo.deathday)
+                                    .replace("-", ".")
+                            ageOfDeathTv.text =
+                                getString(R.string.aged).format(period.years.toString())
                         }
-                        personDied.text = getString(R.string.died).format(personInfo.deathday)
+
                         personBio.text = personInfo.biography
                         personKnownFor.text = personInfo.known_for_department
 
                         personBio.setOnClickListener {
-                            MaterialAlertDialogBuilder(requireContext()).setMessage(personInfo.biography)
+                            MaterialAlertDialogBuilder(requireContext())
+                                .setMessage(personInfo.biography)
                                 .show()
                         }
                     }

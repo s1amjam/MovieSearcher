@@ -112,12 +112,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="8dp"
                         android:ellipsize="end"
                         android:maxLines="7"
-                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/photo_image_view"
                         app:layout_constraintTop_toBottomOf="@+id/born_text_view" />
+
+                    <TextView
+                        android:id="@+id/age_of_death_tv"
+                        style="@style/Widget.MovieSearcher.TextSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        app:layout_constraintStart_toEndOf="@+id/died_text_view"
+                        app:layout_constraintTop_toTopOf="@+id/died_text_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
