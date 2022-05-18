@@ -7,11 +7,12 @@
     android:layout_height="match_parent"
     tools:context="movie.MovieInfoFragment">
 
-    <ProgressBar
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress_bar_movie_info"
-        style="?android:attr/progressBarStyle"
+        style="@style/Widget.MovieSearcher.ProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:indeterminate="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
