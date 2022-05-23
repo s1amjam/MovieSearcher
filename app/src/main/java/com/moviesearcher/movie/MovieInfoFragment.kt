@@ -446,11 +446,10 @@ class MovieInfoFragment : BaseFragment() {
                             }
                             imageAdapter.differ.submitList(imagesItems.backdrops)
 
-                            progressBar.visibility = View.GONE
                             imagesCardView.visibility = View.VISIBLE
-                        } else {
-                            progressBar.visibility = View.GONE
                         }
+
+                        progressBar.visibility = View.GONE
                     }
                 }
                 Status.LOADING -> {

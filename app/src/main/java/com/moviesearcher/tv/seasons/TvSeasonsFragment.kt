@@ -9,6 +9,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.databinding.FragmentTvSeasonsBinding
 
@@ -21,7 +22,7 @@ class TvSeasonsFragment : BaseFragment() {
     private val args by navArgs<TvSeasonsFragmentArgs>()
 
     private lateinit var tabLayout: TabLayout
-    private lateinit var episodesViewPager: ViewPager2
+    private lateinit var viewPager: ViewPager2
     private lateinit var episodesPagerAdapter: EpisodesPagerAdapter
 
     override fun onCreateView(
@@ -37,56 +38,32 @@ class TvSeasonsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tvId = args.tvId
-        var numberOfSeasons = args.numberOfSeasons
-        var seasonNumber = 1
-
-        episodesViewPager = binding.episodesViewPager
+        viewPager = binding.viewPager
         tabLayout = binding.tabLayout
 
-        while (numberOfSeasons > 0) {
-            tabLayout.addTab(tabLayout.newTab().setText(seasonNumber.toString()))
+        setupEpisodesAdapter()
 
-            seasonNumber++
-            numberOfSeasons--
-        }
-        //tabLayout.setupWithViewPager(episodesViewPager)
-
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                setupEpisodesUi(tab)
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                tab?.position
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                setupEpisodesUi(tab)
-            }
-        })
-
-        tabLayout.getTabAt(0)?.select()
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = (position + 1).toString()
+        }.attach()
     }
 
-    private fun setupEpisodesUi(tab: TabLayout.Tab?) {
-        episodesPagerAdapter =
-            EpisodesPagerAdapter(requireParentFragment(), (tabLayout.selectedTabPosition + 1).toString())
-        episodesViewPager.adapter = episodesPagerAdapter
-        episodesViewPager.currentItem = tab?.position!!
+    private fun setupEpisodesAdapter() {
+        episodesPagerAdapter = EpisodesPagerAdapter(requireParentFragment())
+        viewPager.adapter = episodesPagerAdapter
     }
 
-    inner class EpisodesPagerAdapter(fragment: Fragment, private val seasonNumber: String) :
+    inner class EpisodesPagerAdapter(fragment: Fragment) :
         FragmentStateAdapter(fragment) {
 
-        override fun getItemCount(): Int = 100
+        override fun getItemCount(): Int = args.numberOfSeasons
 
         override fun createFragment(position: Int): Fragment {
             val fragment = TvSeasonsViewPagerFragment()
 
             fragment.arguments = Bundle().apply {
                 putLong("id", args.tvId)
-                putString("seasonNumber", seasonNumber)
+                putString("seasonNumber", (position + 1).toString())
             }
             return fragment
         }

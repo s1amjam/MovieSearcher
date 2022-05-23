@@ -185,33 +185,38 @@ class PersonInfoFragment : BaseFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { imagesItems ->
-                        val imageAdapter = PersonImagesAdapter(
-                            imagesItems,
-                        )
+                        if (!imagesItems.profiles.isNullOrEmpty()) {
+                            val imageAdapter = PersonImagesAdapter(
+                                imagesItems,
+                            )
 
-                        var tenImages = imagesItems.profiles
+                            var tenImages = imagesItems.profiles
 
-                        while (tenImages?.size!! > 10) {
-                            tenImages = tenImages.dropLast(1) as MutableList<Profile>
+                            while (tenImages?.size!! > 10) {
+                                tenImages = tenImages.dropLast(1) as MutableList<Profile>
+                            }
+
+                            imagesItems.apply {
+                                profiles = tenImages
+                            }
+
+                            imagesRecyclerView.apply {
+                                adapter = imageAdapter
+                                layoutManager =
+                                    LinearLayoutManager(
+                                        requireContext(),
+                                        LinearLayoutManager.HORIZONTAL,
+                                        false
+                                    )
+                            }
+                            imageAdapter.differ.submitList(imagesItems.profiles)
+
+
+                            imagesCardView.visibility = View.VISIBLE
                         }
 
-                        imagesItems.apply {
-                            profiles = tenImages
-                        }
-
-                        imagesRecyclerView.apply {
-                            adapter = imageAdapter
-                            layoutManager =
-                                LinearLayoutManager(
-                                    requireContext(),
-                                    LinearLayoutManager.HORIZONTAL,
-                                    false
-                                )
-                        }
-                        imageAdapter.differ.submitList(imagesItems.profiles)
+                        progressBar.visibility = View.GONE
                     }
-                    progressBar.visibility = View.GONE
-                    imagesCardView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
                     imagesCardView.visibility = View.GONE
