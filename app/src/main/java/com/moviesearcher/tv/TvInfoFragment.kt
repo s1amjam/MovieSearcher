@@ -553,72 +553,80 @@ class TvInfoFragment : BaseFragment() {
                         }
                     }
                 }
+
+                expandActivitiesButton.setOnClickListener {
+                    if (activitiesConstraintLayout.visibility == View.GONE) {
+                        TransitionManager.beginDelayedTransition(mainCardView)
+                        expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_less_36)
+                        activitiesConstraintLayout.visibility = View.VISIBLE
+                    } else {
+                        expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_more_36)
+                        activitiesConstraintLayout.visibility = View.GONE
+                    }
+                }
+
+                watchlistViewModel.checkWatchlist(
+                    watchlistImageButton,
+                    mediaInfo,
+                    viewLifecycleOwner,
+                    requireContext(),
+                    true
+                )
+
+                favoriteViewModel.checkFavorites(
+                    markTvAsFavoriteButton,
+                    viewLifecycleOwner,
+                    mediaInfo,
+                    requireContext()
+                )
+
+                markTvAsFavoriteButton.setOnClickListener {
+                    favoriteViewModel.postMarkAsFavorite(
+                        accountId,
+                        sessionId,
+                        MarkAsFavoriteRequest(
+                            markTvAsFavoriteButton.tag.toString().toBoolean(),
+                            mediaInfo.values.first(),
+                            mediaInfo.keys.first()
+                        )
+                    )
+
+                    favoriteViewModel.processFavoriteButtons(markTvAsFavoriteButton)
+                }
+
+                watchlistImageButton.setOnClickListener {
+                    watchlistViewModel.postWatchlist(
+                        accountId,
+                        sessionId,
+                        WatchlistRequest(
+                            watchlistImageButton.tag.toString().toBoolean(),
+                            mediaInfo.values.first(),
+                            mediaInfo.keys.first()
+                        )
+                    )
+
+                    watchlistViewModel.processWatchlistButtons(watchlistImageButton)
+                }
             } else {
                 addToListImageButton.isClickable = false
-            }
 
-            expandActivitiesButton.setOnClickListener {
-                if (activitiesConstraintLayout.visibility == View.GONE) {
-                    TransitionManager.beginDelayedTransition(mainCardView)
-                    expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_less_36)
-                    activitiesConstraintLayout.visibility = View.VISIBLE
-                } else {
-                    expandActivitiesButton.setImageResource(R.drawable.ic_round_expand_more_36)
-                    activitiesConstraintLayout.visibility = View.GONE
+                expandActivitiesButton.setOnClickListener {
+                    Toast.makeText(
+                        requireContext(),
+                        "Please log in to have access to personal functions",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
+        }
 
-            episodeGuideButton.setOnClickListener {
-                findNavController().navigate(
-                    TvInfoFragmentDirections.actionTvInfoFragmentToTvSeasonsFragment(
-                        args.tvId,
-                        numberOfSeasons
-                    )
+        episodeGuideButton.setOnClickListener {
+            findNavController().navigate(
+                TvInfoFragmentDirections.actionTvInfoFragmentToTvSeasonsFragment(
+                    args.tvId,
+                    numberOfSeasons
                 )
-            }
-
-            watchlistViewModel.checkWatchlist(
-                watchlistImageButton,
-                mediaInfo,
-                viewLifecycleOwner,
-                requireContext(),
-                true
             )
-
-            favoriteViewModel.checkFavorites(
-                markTvAsFavoriteButton,
-                viewLifecycleOwner,
-                mediaInfo,
-                requireContext()
-            )
-
-            markTvAsFavoriteButton.setOnClickListener {
-                favoriteViewModel.postMarkAsFavorite(
-                    accountId,
-                    sessionId,
-                    MarkAsFavoriteRequest(
-                        markTvAsFavoriteButton.tag.toString().toBoolean(),
-                        mediaInfo.values.first(),
-                        mediaInfo.keys.first()
-                    )
-                )
-
-                favoriteViewModel.processFavoriteButtons(markTvAsFavoriteButton)
-            }
-
-            watchlistImageButton.setOnClickListener {
-                watchlistViewModel.postWatchlist(
-                    accountId,
-                    sessionId,
-                    WatchlistRequest(
-                        watchlistImageButton.tag.toString().toBoolean(),
-                        mediaInfo.values.first(),
-                        mediaInfo.keys.first()
-                    )
-                )
-
-                watchlistViewModel.processWatchlistButtons(watchlistImageButton)
-            }
         }
     }
 

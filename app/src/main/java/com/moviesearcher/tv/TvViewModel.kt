@@ -79,7 +79,7 @@ class TvViewModel(private val tvId: Long) : ViewModel() {
         viewModelScope.launch {
             videos.postValue(Resource.loading(null))
             try {
-                val videosFromApi = ApiService.create().videos(tvId)
+                val videosFromApi = ApiService.create().tvVideos(tvId)
                 videos.postValue(Resource.success(videosFromApi))
             } catch (e: Exception) {
                 videos.postValue(Resource.error(e.toString(), null))

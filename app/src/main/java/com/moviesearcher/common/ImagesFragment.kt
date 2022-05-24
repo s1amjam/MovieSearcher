@@ -60,10 +60,7 @@ class ImagesFragment : BaseFragment() {
                             it.data?.let { imagesItems ->
                                 val imagesAdapter = ImagesAdapter(imagesItems)
 
-                                imagesRecyclerView.apply {
-                                    adapter = imagesAdapter
-                                    layoutManager = GridLayoutManager(requireContext(), 2)
-                                }
+                                setupRecyclerView(imagesAdapter)
                                 imagesAdapter.differ.submitList(imagesItems.backdrops)
                             }
                         }
@@ -86,10 +83,7 @@ class ImagesFragment : BaseFragment() {
                             it.data?.let { imagesItems ->
                                 val imagesAdapter = ImagesAdapter(imagesItems)
 
-                                imagesRecyclerView.apply {
-                                    adapter = imagesAdapter
-                                    layoutManager = GridLayoutManager(requireContext(), 2)
-                                }
+                                setupRecyclerView(imagesAdapter)
                                 imagesAdapter.differ.submitList(imagesItems.backdrops)
                             }
                         }
@@ -113,10 +107,7 @@ class ImagesFragment : BaseFragment() {
                                 it.data?.let { imagesItems ->
                                     val imagesAdapter = PersonImagesAdapter(imagesItems)
 
-                                    imagesRecyclerView.apply {
-                                        adapter = imagesAdapter
-                                        layoutManager = GridLayoutManager(requireContext(), 2)
-                                    }
+                                    setupRecyclerView(imagesAdapter)
                                     imagesAdapter.differ.submitList(imagesItems.profiles)
                                 }
                             }
@@ -132,6 +123,13 @@ class ImagesFragment : BaseFragment() {
                         }
                     }
             }
+        }
+    }
+
+    private fun setupRecyclerView(imagesAdapter: RecyclerView.Adapter<*>) {
+        imagesRecyclerView.apply {
+            adapter = imagesAdapter
+            layoutManager = GridLayoutManager(requireContext(), 3)
         }
     }
 

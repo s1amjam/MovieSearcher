@@ -510,61 +510,69 @@ class MovieInfoFragment : BaseFragment() {
                     }
                 }
             }
+
+            expandActivitiesImageButton.setOnClickListener {
+                if (activitiesConstraintLayout.visibility == View.GONE) {
+                    TransitionManager.beginDelayedTransition(mainCardView)
+                    expandActivitiesImageButton.setImageResource(R.drawable.ic_round_expand_less_36)
+                    activitiesConstraintLayout.visibility = View.VISIBLE
+                } else {
+                    expandActivitiesImageButton.setImageResource(R.drawable.ic_round_expand_more_36)
+                    activitiesConstraintLayout.visibility = View.GONE
+                }
+            }
+
+            favoriteViewModel.checkFavorites(
+                markMovieAsFavoriteImageButton,
+                viewLifecycleOwner,
+                mediaInfo,
+                requireContext()
+            )
+
+            watchlistViewModel.checkWatchlist(
+                watchlistImageButton,
+                mediaInfo,
+                viewLifecycleOwner,
+                requireContext()
+            )
+
+            markMovieAsFavoriteImageButton.setOnClickListener {
+                favoriteViewModel.postMarkAsFavorite(
+                    accountId,
+                    sessionId,
+                    MarkAsFavoriteRequest(
+                        markMovieAsFavoriteImageButton.tag.toString().toBoolean(),
+                        mediaInfo.values.first(),
+                        mediaInfo.keys.first()
+                    )
+                )
+
+                favoriteViewModel.processFavoriteButtons(markMovieAsFavoriteImageButton)
+            }
+
+            watchlistImageButton.setOnClickListener {
+                watchlistViewModel.postWatchlist(
+                    accountId,
+                    sessionId,
+                    WatchlistRequest(
+                        watchlistImageButton.tag.toString().toBoolean(),
+                        mediaInfo.values.first(),
+                        mediaInfo.keys.first()
+                    )
+                )
+
+                watchlistViewModel.processWatchlistButtons(watchlistImageButton)
+            }
         } else {
             addToListImageButton.isClickable = false
-        }
 
-        expandActivitiesImageButton.setOnClickListener {
-            if (activitiesConstraintLayout.visibility == View.GONE) {
-                TransitionManager.beginDelayedTransition(mainCardView)
-                expandActivitiesImageButton.setImageResource(R.drawable.ic_round_expand_less_36)
-                activitiesConstraintLayout.visibility = View.VISIBLE
-            } else {
-                expandActivitiesImageButton.setImageResource(R.drawable.ic_round_expand_more_36)
-                activitiesConstraintLayout.visibility = View.GONE
+            expandActivitiesImageButton.setOnClickListener {
+                Toast.makeText(
+                    requireContext(),
+                    "Please log in to have access to personal functions",
+                    Toast.LENGTH_LONG
+                ).show()
             }
-        }
-
-        favoriteViewModel.checkFavorites(
-            markMovieAsFavoriteImageButton,
-            viewLifecycleOwner,
-            mediaInfo,
-            requireContext()
-        )
-
-        watchlistViewModel.checkWatchlist(
-            watchlistImageButton,
-            mediaInfo,
-            viewLifecycleOwner,
-            requireContext()
-        )
-
-        markMovieAsFavoriteImageButton.setOnClickListener {
-            favoriteViewModel.postMarkAsFavorite(
-                accountId,
-                sessionId,
-                MarkAsFavoriteRequest(
-                    markMovieAsFavoriteImageButton.tag.toString().toBoolean(),
-                    mediaInfo.values.first(),
-                    mediaInfo.keys.first()
-                )
-            )
-
-            favoriteViewModel.processFavoriteButtons(markMovieAsFavoriteImageButton)
-        }
-
-        watchlistImageButton.setOnClickListener {
-            watchlistViewModel.postWatchlist(
-                accountId,
-                sessionId,
-                WatchlistRequest(
-                    watchlistImageButton.tag.toString().toBoolean(),
-                    mediaInfo.values.first(),
-                    mediaInfo.keys.first()
-                )
-            )
-
-            watchlistViewModel.processWatchlistButtons(watchlistImageButton)
         }
     }
 

@@ -23,10 +23,9 @@
         android:id="@+id/account_logo_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:src="@drawable/ic_round_account_circle_24"
         app:layout_constraintBottom_toBottomOf="@+id/title_tv"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/watchlist_card_view"
         app:layout_constraintTop_toTopOf="@+id/title_tv" />
 
     <TextView
@@ -34,12 +33,13 @@
         style="@style/Widget.MovieSearcher.TextMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:text="@string/please_log_in"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/account_logo_iv"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/account_logo_iv"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginStart="0dp" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/watchlist_card_view"

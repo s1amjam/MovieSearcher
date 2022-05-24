@@ -13,7 +13,7 @@ object EncryptedSharedPrefs {
 
         return EncryptedSharedPreferences.create(
             context,
-            "AppPrefs",
+            "MuviPrefs",
             masterKey,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
