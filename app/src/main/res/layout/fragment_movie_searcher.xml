@@ -45,74 +45,23 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardview_movies_featured_today"
-                    style="@style/Widget.MovieSearcher.CardView.LargeCardView"
+                <include
+                    android:id="@+id/movies_cardview"
+                    layout="@layout/main_card_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textview_featured_today">
+                    app:layout_constraintTop_toBottomOf="@+id/textview_featured_today" />
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/textview_featured_movies"
-                            style="@style/Widget.MovieSearcher.TextMedium"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
-                            android:text="@string/movies"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/movie_recycler_view"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clipToPadding="false"
-                            android:orientation="horizontal"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="8dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/textview_featured_movies" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardview_tvs_featured_today"
-                    style="@style/Widget.MovieSearcher.CardView.LargeCardView"
+                <include
+                    android:id="@+id/tvs_cardview"
+                    layout="@layout/main_card_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cardview_movies_featured_today">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/textview_featured_tvs"
-                            style="@style/Widget.MovieSearcher.TextMedium"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
-                            android:text="@string/tvs"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/tv_recycler_view"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clipToPadding="false"
-                            android:orientation="horizontal"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="8dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/textview_featured_tvs" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    app:layout_constraintTop_toBottomOf="@+id/movies_cardview" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -133,29 +82,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardview_upcoming_movies"
-                    style="@style/Widget.MovieSearcher.CardView.LargeCardView"
+                <include
+                    android:id="@+id/upcoming_cardview"
+                    layout="@layout/main_card_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textview_upcoming">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/upcoming_movies_recycler_view"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clipToPadding="false"
-                            android:orientation="horizontal"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="8dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    app:layout_constraintTop_toBottomOf="@+id/textview_upcoming" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

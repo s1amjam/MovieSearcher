@@ -96,6 +96,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var mainCardView: CardView
     private lateinit var progressBar: ProgressBar
     private lateinit var recommendationsCardView: CardView
+    private lateinit var moreLikeThisTitle: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -109,7 +110,7 @@ class MovieInfoFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         castRecyclerView = binding.castRecyclerView
-        recommendationsRecyclerView = binding.recommendationsRecyclerView
+        recommendationsRecyclerView = binding.moreLikeThisCardview.recyclerView
         videoRecyclerView = binding.videoRecyclerView
         imagesRecyclerView = binding.imagesRecyclerView
 
@@ -144,7 +145,10 @@ class MovieInfoFragment : BaseFragment() {
         activitiesConstraintLayout = binding.activitiesConstraintLayout
         mainCardView = binding.mainMovieInfoCardView
         progressBar = binding.progressBarMovieInfo
-        recommendationsCardView = binding.recommendationsCardView
+        recommendationsCardView = binding.moreLikeThisCardview.cardView
+        moreLikeThisTitle = binding.moreLikeThisCardview.titleTextview
+
+        moreLikeThisTitle.text = getString(R.string.more_like_this)
 
         addToListImageButton.isVisible = sessionId != ""
         markMovieAsFavoriteImageButton.isVisible = sessionId != ""

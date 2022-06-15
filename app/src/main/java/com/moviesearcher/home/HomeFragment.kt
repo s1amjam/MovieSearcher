@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -13,6 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
@@ -37,6 +39,7 @@ class HomeFragment : BaseFragment() {
     private lateinit var upcomingMoviesCardView: CardView
     private lateinit var featuredConstraintLayout: ConstraintLayout
     private lateinit var upcomingConstraintLayout: ConstraintLayout
+    private lateinit var tvsTitle: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,14 +55,17 @@ class HomeFragment : BaseFragment() {
         navController = findNavController()
         mainLayout = binding.homeConstraintLayout
         progressBar = binding.progressBarMovieSearcherFragment
-        trendingMovieRecyclerView = binding.movieRecyclerView
-        trendingTvRecyclerView = binding.tvRecyclerView
-        upcomingMovieRecyclerView = binding.upcomingMoviesRecyclerView
-        trendingMoviesCardView = binding.cardviewMoviesFeaturedToday
-        trendingTvsCardView = binding.cardviewTvsFeaturedToday
-        upcomingMoviesCardView = binding.cardviewUpcomingMovies
+        trendingMovieRecyclerView = binding.moviesCardview.recyclerView
+        trendingTvRecyclerView = binding.tvsCardview.recyclerView
+        upcomingMovieRecyclerView = binding.upcomingCardview.recyclerView
+        trendingMoviesCardView = binding.moviesCardview.cardView
+        trendingTvsCardView = binding.tvsCardview.cardView
+        upcomingMoviesCardView = binding.upcomingCardview.cardView
         featuredConstraintLayout = binding.featuredCl
         upcomingConstraintLayout = binding.upcomingCl
+        tvsTitle = binding.tvsCardview.titleTextview
+
+        tvsTitle.text = getString(R.string.tvs)
 
         trendingMovieRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -166,8 +172,9 @@ class HomeFragment : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding?.movieRecyclerView?.adapter = null
-        _binding?.tvRecyclerView?.adapter = null
+        _binding?.moviesCardview?.recyclerView?.adapter = null
+        _binding?.tvsCardview?.recyclerView?.adapter = null
+        _binding?.upcomingCardview?.recyclerView?.adapter = null
         _binding = null
     }
 }

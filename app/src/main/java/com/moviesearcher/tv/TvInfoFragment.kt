@@ -97,6 +97,7 @@ class TvInfoFragment : BaseFragment() {
     private lateinit var episodeGuideButton: Button
     private lateinit var castCardView: CardView
     private lateinit var imagesCardView: CardView
+    private lateinit var moreLikeThisTitle: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -111,7 +112,7 @@ class TvInfoFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         castRecyclerView = binding.castRecyclerView
-        recommendationsRecyclerView = binding.recommendationsRecyclerView
+        recommendationsRecyclerView = binding.moreLikeThisCardview.recyclerView
         videoRecyclerView = binding.videoRecyclerView
         imagesRecyclerView = binding.imagesRecyclerView
 
@@ -145,10 +146,13 @@ class TvInfoFragment : BaseFragment() {
         activitiesConstraintLayout = binding.activitiesConstraintLayout
         mainCardView = binding.mainTvInfoCardView
         progressBar = binding.progressBarTvInfo
-        recommendationsCardView = binding.recommendationsCardView
+        recommendationsCardView = binding.moreLikeThisCardview.cardView
         episodeGuideButton = binding.episodeGuideButton
         castCardView = binding.castCv
         imagesCardView = binding.imagesCardView
+        moreLikeThisTitle = binding.moreLikeThisCardview.titleTextview
+
+        moreLikeThisTitle.text = getString(R.string.more_like_this)
 
         addToListImageButton.isVisible = sessionId != ""
         markTvAsFavoriteButton.isVisible = sessionId != ""

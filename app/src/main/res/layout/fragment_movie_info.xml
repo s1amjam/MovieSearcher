@@ -309,45 +309,20 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/recommendations_card_view"
-                style="@style/Widget.MovieSearcher.CardView.LargeCardView"
+            <include
+                android:id="@+id/more_like_this_cardview"
+                layout="@layout/main_card_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cast_cv">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/textview_more_like_this"
-                        style="@style/Widget.MovieSearcher.TextMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/more_like_this"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recommendations_recycler_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:orientation="horizontal"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="8dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/textview_more_like_this" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
+                app:layout_constraintTop_toBottomOf="@+id/cast_cv" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/video_card_view"
                 style="@style/Widget.MovieSearcher.CardView.LargeCardView"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recommendations_card_view">
+                app:layout_constraintTop_toBottomOf="@+id/more_like_this_cardview">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
