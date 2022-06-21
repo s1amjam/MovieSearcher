@@ -49,7 +49,7 @@ class MyListsAdapter(
         return MyListsViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = listItems.results?.size!!
+    override fun getItemCount(): Int = listItems.results.size
     override fun onBindViewHolder(holder: MyListsViewHolder, position: Int) {
         val binding = holder.binding
         //val imageButtonDeleteList: ImageButton = binding.imageButtonDeleteList
@@ -80,8 +80,8 @@ class MyListsAdapter(
 //                .create().show()
 //        }
 
-        val listItem = listItems.results?.get(position)
-        holder.bind(listItem!!)
+        val listItem = listItems.results[position]
+        holder.bind(listItem)
     }
 
     override fun getItemId(position: Int): Long {

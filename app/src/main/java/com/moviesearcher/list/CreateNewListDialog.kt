@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.common.utils.EncryptedSharedPrefs
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.databinding.DialogCreateNewListBinding
@@ -24,8 +24,7 @@ class CreateNewListDialog(private val viewModel: ListViewModel) : DialogFragment
         _binding = DialogCreateNewListBinding.inflate(LayoutInflater.from(context))
         val view = binding.root
 
-        val dialog = AlertDialog.Builder(requireContext())
-            .create()
+        val dialog = MaterialAlertDialogBuilder(requireContext()).create()
         dialog.setView(view)
 
         val listName: EditText = binding.editTextListName

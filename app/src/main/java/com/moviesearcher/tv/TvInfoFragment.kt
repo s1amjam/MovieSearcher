@@ -535,7 +535,7 @@ class TvInfoFragment : BaseFragment() {
                                     listViewModel.showAddToListMenu(
                                         v,
                                         R.menu.list_popup_menu,
-                                        it.results!!,
+                                        it.results,
                                         mediaInfo,
                                         viewLifecycleOwner,
                                         requireContext(),

@@ -492,7 +492,7 @@ class MovieInfoFragment : BaseFragment() {
                                 listViewModel.showAddToListMenu(
                                     v,
                                     R.menu.list_popup_menu,
-                                    it.results!!,
+                                    it.results,
                                     mediaInfo,
                                     viewLifecycleOwner,
                                     requireContext(),
@@ -506,6 +506,7 @@ class MovieInfoFragment : BaseFragment() {
                     }
                     Status.ERROR -> {
                         progressBar.visibility = View.GONE
+
                         Toast.makeText(
                             requireContext(),
                             ERROR_MESSAGE.format(lists.message),

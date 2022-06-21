@@ -5,9 +5,9 @@ import com.moviesearcher.list.model.Result
 
 data class ListsResponse(
     @SerializedName("page")
-    val page: Int?,
+    val page: Int,
     @SerializedName("results")
-    val results: MutableList<Result>?,
+    val results: MutableList<Result>,
     @SerializedName("total_pages")
     val totalPages: Int?,
     @SerializedName("total_results")
