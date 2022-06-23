@@ -25,6 +25,7 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
@@ -42,6 +43,7 @@ import com.moviesearcher.movie.model.cast.Cast
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import java.util.concurrent.TimeUnit
+import kotlin.collections.set
 
 private const val TAG = "MovieInfoFragment"
 
@@ -165,6 +167,7 @@ class MovieInfoFragment : BaseFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { movieInfo ->
+                        val dialog = PosterDialog(movieInfo.posterPath.toString())
                         val hours = TimeUnit.MINUTES.toHours(movieInfo.runtime?.toLong()!!)
                         val minutes = movieInfo.runtime.toLong() - TimeUnit.HOURS.toMinutes(hours)
                         val languages = mutableListOf<String>()
@@ -215,6 +218,10 @@ class MovieInfoFragment : BaseFragment() {
                             MaterialAlertDialogBuilder(requireContext())
                                 .setMessage(movieInfo.overview)
                                 .show()
+                        }
+
+                        posterImageView.setOnClickListener {
+                            dialog.show(childFragmentManager, "PosterDialogFragment")
                         }
 
                         mainConstraintLayout.visibility = View.VISIBLE

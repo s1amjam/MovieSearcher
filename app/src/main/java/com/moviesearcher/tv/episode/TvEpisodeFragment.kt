@@ -21,6 +21,7 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
@@ -115,6 +116,7 @@ class TvEpisodeFragment : BaseFragment() {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { tvInfo ->
+                            val dialog = PosterDialog(tvInfo.stillPath.toString())
                             Glide.with(this)
                                 .load(Constants.IMAGE_URL + tvInfo.stillPath)
                                 .placeholder(R.drawable.ic_placeholder)
@@ -164,6 +166,10 @@ class TvEpisodeFragment : BaseFragment() {
                             director.text =
                                 getString(R.string.director).format(directors.joinToString())
                             writer.text = getString(R.string.writer).format(writers.joinToString())
+
+                            tvInfoPosterImageView.setOnClickListener {
+                                dialog.show(childFragmentManager, "PosterDialogFragment")
+                            }
                         }
                         progressBar.visibility = View.GONE
                         tvInfoConstraintLayout.visibility = View.VISIBLE

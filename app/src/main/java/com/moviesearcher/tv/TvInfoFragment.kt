@@ -25,6 +25,7 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
@@ -169,6 +170,7 @@ class TvInfoFragment : BaseFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { tvInfo ->
+                        val dialog = PosterDialog(tvInfo.posterPath.toString())
                         var minutes: Long = 0
 
                         if (tvInfo.episodeRunTime?.isNotEmpty() == true) {
@@ -240,6 +242,10 @@ class TvInfoFragment : BaseFragment() {
                         overviewTextView.setOnClickListener {
                             MaterialAlertDialogBuilder(requireContext()).setMessage(tvInfo.overview)
                                 .show()
+                        }
+
+                        posterImageView.setOnClickListener {
+                            dialog.show(childFragmentManager, "PosterDialogFragment")
                         }
 
                         progressBar.visibility = View.GONE

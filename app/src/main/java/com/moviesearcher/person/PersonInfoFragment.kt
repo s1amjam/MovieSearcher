@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
@@ -89,6 +90,7 @@ class PersonInfoFragment : BaseFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { personInfo ->
+                        val dialog = PosterDialog(personInfo.profile_path.toString())
                         Glide.with(this)
                             .load(Constants.IMAGE_URL + personInfo.profile_path)
                             .placeholder(R.drawable.ic_placeholder)
@@ -121,6 +123,10 @@ class PersonInfoFragment : BaseFragment() {
                             MaterialAlertDialogBuilder(requireContext())
                                 .setMessage(personInfo.biography)
                                 .show()
+                        }
+
+                        personPhotoImageView.setOnClickListener {
+                            dialog.show(childFragmentManager, "PosterDialogFragment")
                         }
                     }
                     progressBar.visibility = View.GONE
