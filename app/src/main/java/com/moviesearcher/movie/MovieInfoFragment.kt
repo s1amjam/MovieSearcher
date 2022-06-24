@@ -26,9 +26,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
+import com.moviesearcher.common.RateDialog
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
+import com.moviesearcher.common.viewmodel.RateViewModel
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.favorite.FavoriteViewModel
@@ -60,6 +62,7 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var watchlistViewModel: WatchlistViewModel
     private lateinit var listViewModel: ListViewModel
     private lateinit var favoriteViewModel: FavoriteViewModel
+    private lateinit var rateViewModel: RateViewModel
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -167,7 +170,8 @@ class MovieInfoFragment : BaseFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { movieInfo ->
-                        val dialog = PosterDialog(movieInfo.posterPath.toString())
+                        val posterDialog = PosterDialog(movieInfo.posterPath.toString())
+                        val rateDialog = RateDialog(args.movieId, sessionId)
                         val hours = TimeUnit.MINUTES.toHours(movieInfo.runtime?.toLong()!!)
                         val minutes = movieInfo.runtime.toLong() - TimeUnit.HOURS.toMinutes(hours)
                         val languages = mutableListOf<String>()
@@ -221,7 +225,11 @@ class MovieInfoFragment : BaseFragment() {
                         }
 
                         posterImageView.setOnClickListener {
-                            dialog.show(childFragmentManager, "PosterDialogFragment")
+                            posterDialog.show(childFragmentManager, "PosterDialogFragment")
+                        }
+
+                        rateButton.setOnClickListener {
+                            rateDialog.show(childFragmentManager, "RateDialogFragment")
                         }
 
                         mainConstraintLayout.visibility = View.VISIBLE

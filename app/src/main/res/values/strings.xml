@@ -62,4 +62,6 @@
     <string name="remove">Remove</string>
     <string name="aged">(aged %s)</string>
     <string name="poster">poster</string>
+    <string name="rating_bar">rating bar</string>
+    <string name="rate">Rate</string>
 </resources>

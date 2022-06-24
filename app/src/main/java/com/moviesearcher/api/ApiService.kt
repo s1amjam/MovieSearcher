@@ -9,6 +9,7 @@ import com.moviesearcher.common.model.auth.SessionId
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
 import com.moviesearcher.common.model.images.ImagesResponse
+import com.moviesearcher.common.model.rate.Rate
 import com.moviesearcher.common.model.videos.VideosResponse
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Constants.ACCESS_TOKEN
@@ -286,4 +287,18 @@ interface ApiService {
         @Path("tv_id") tvId: Long?,
         @Path("season_number") seasonNumber: String?,
     ): TvSeasonResponse
+
+    @POST("movie/{movie_id}/rating")
+    suspend fun postMovieRating(
+        @Path("movie_id") movieId: Long,
+        @Query("session_id") sessionId: String,
+        @Body rate: Rate
+    ): ResponseWithCodeAndMessage
+
+    @POST("tv/{tv_id}/rating")
+    suspend fun postTveRating(
+        @Path("tv_id") movieId: Long,
+        @Query("session_id") sessionId: String,
+        @Body value: Double
+    ): ResponseWithCodeAndMessage
 }

@@ -25,6 +25,7 @@ class ViewModelFactory(
     private val listId: Int? = null,
     private val page: Int? = null,
     private val isFavorite: Boolean? = null,
+    private val value: Double? = null,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(WatchlistViewModel::class.java)) {
@@ -59,6 +60,9 @@ class ViewModelFactory(
         }
         if (modelClass.isAssignableFrom(ListsViewModel::class.java)) {
             return ListsViewModel(accountId!!, sessionId!!, page!!) as T
+        }
+        if (modelClass.isAssignableFrom(RateViewModel::class.java)) {
+            return RateViewModel() as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

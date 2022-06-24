@@ -172,15 +172,14 @@ class TvInfoFragment : BaseFragment() {
                     it.data?.let { tvInfo ->
                         val dialog = PosterDialog(tvInfo.posterPath.toString())
                         var minutes: Long = 0
-
-                        if (tvInfo.episodeRunTime?.isNotEmpty() == true) {
-                            minutes = tvInfo.episodeRunTime[0].toLong()
-                        }
-
                         val languages = mutableListOf<String>()
                         val locations = mutableListOf<String>()
                         val genres = tvInfo.genres
                         val lastAirDate: String
+
+                        if (tvInfo.episodeRunTime?.isNotEmpty() == true) {
+                            minutes = tvInfo.episodeRunTime[0].toLong()
+                        }
 
                         numberOfSeasons = tvInfo.numberOfSeasons!!
 
