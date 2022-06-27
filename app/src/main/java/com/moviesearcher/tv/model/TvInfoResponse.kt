@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 import com.moviesearcher.movie.model.Genre
 import com.moviesearcher.movie.model.ProductionCompany
 import com.moviesearcher.movie.model.ProductionCountry
-import java.math.RoundingMode
 
 data class TvInfoResponse(
     @SerializedName("backdrop_path")
@@ -69,8 +68,4 @@ data class TvInfoResponse(
     val voteAverage: Double?,
     @SerializedName("vote_count")
     val voteCount: Int?
-) {
-    fun getAverage(): String {
-        return voteAverage?.toBigDecimal()?.setScale(1, RoundingMode.UP).toString()
-    }
-}
+)

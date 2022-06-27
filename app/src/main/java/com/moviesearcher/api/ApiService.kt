@@ -9,7 +9,8 @@ import com.moviesearcher.common.model.auth.SessionId
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
 import com.moviesearcher.common.model.images.ImagesResponse
-import com.moviesearcher.common.model.rate.Rate
+import com.moviesearcher.common.model.rate.AccountStatesResponse
+import com.moviesearcher.common.model.rate.Rated
 import com.moviesearcher.common.model.videos.VideosResponse
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Constants.ACCESS_TOKEN
@@ -292,13 +293,25 @@ interface ApiService {
     suspend fun postMovieRating(
         @Path("movie_id") movieId: Long,
         @Query("session_id") sessionId: String,
-        @Body rate: Rate
+        @Body rate: Rated
     ): ResponseWithCodeAndMessage
 
     @POST("tv/{tv_id}/rating")
-    suspend fun postTveRating(
+    suspend fun postTvRating(
         @Path("tv_id") movieId: Long,
         @Query("session_id") sessionId: String,
         @Body value: Double
     ): ResponseWithCodeAndMessage
+
+    @GET("movie/{movie_id}/account_states")
+    suspend fun getMovieAccountStates(
+        @Path("movie_id") movieId: Long,
+        @Query("session_id") sessionId: String,
+    ): AccountStatesResponse
+
+    @GET("tv/{tv_id}/account_states")
+    suspend fun getTvAccountStates(
+        @Path("tv_id") tvId: Long,
+        @Query("session_id") sessionId: String,
+    ): AccountStatesResponse
 }

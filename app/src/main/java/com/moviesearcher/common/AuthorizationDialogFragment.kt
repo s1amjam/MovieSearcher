@@ -61,6 +61,8 @@ class AuthorizationDialogFragment : DialogFragment() {
         webView = binding.webViewAuthorizationDialog
         webView.settings.javaScriptEnabled = true
 
+        webView.reload()
+
         viewModel.getToken().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {

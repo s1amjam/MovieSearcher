@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
+import com.moviesearcher.common.toOneScale
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.watchlist.WatchlistFragmentDirections
@@ -51,7 +52,7 @@ class MovieWatchlistAdapter(
             releaseDate.text = movieItem.releaseDate?.replace("-", ".")
             cardView.tag = movieItem.title
             overview.text = movieItem.overview
-            rating.text = movieItem.getAverage()
+            rating.text = movieItem.voteAverage?.toOneScale()
             cardView.id = movieItem.id?.toInt()!!
             watchlistIb.setImageResource(R.drawable.ic_watchlist_added_36)
             watchlistIb.tag = "false"

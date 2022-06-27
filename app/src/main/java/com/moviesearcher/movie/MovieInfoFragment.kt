@@ -28,9 +28,9 @@ import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.RateDialog
 import com.moviesearcher.common.model.images.Backdrop
+import com.moviesearcher.common.toOneScale
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.RateViewModel
 import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.favorite.FavoriteViewModel
@@ -62,7 +62,6 @@ class MovieInfoFragment : BaseFragment() {
     private lateinit var watchlistViewModel: WatchlistViewModel
     private lateinit var listViewModel: ListViewModel
     private lateinit var favoriteViewModel: FavoriteViewModel
-    private lateinit var rateViewModel: RateViewModel
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -171,7 +170,7 @@ class MovieInfoFragment : BaseFragment() {
                 Status.SUCCESS -> {
                     it.data?.let { movieInfo ->
                         val posterDialog = PosterDialog(movieInfo.posterPath.toString())
-                        val rateDialog = RateDialog(args.movieId, sessionId)
+                        val rateDialog = RateDialog(args.movieId, sessionId, movieViewModel)
                         val hours = TimeUnit.MINUTES.toHours(movieInfo.runtime?.toLong()!!)
                         val minutes = movieInfo.runtime.toLong() - TimeUnit.HOURS.toMinutes(hours)
                         val languages = mutableListOf<String>()
@@ -194,7 +193,7 @@ class MovieInfoFragment : BaseFragment() {
                         releaseDateTextView.text = movieInfo.releaseDate?.dropLast(6)
                         overviewTextView.text = movieInfo.overview
                         voteAverageTextView.text =
-                            getString(R.string.vote).format(movieInfo.voteAverage.toString())
+                            getString(R.string.vote).format(movieInfo.voteAverage?.toOneScale())
                         voteCountTextView.text = movieInfo.voteCount.toString()
                         releaseDateDetailTextView.text = movieInfo.releaseDate?.replace("-", ".")
                         originCountryTextView.text =
@@ -228,8 +227,38 @@ class MovieInfoFragment : BaseFragment() {
                             posterDialog.show(childFragmentManager, "PosterDialogFragment")
                         }
 
-                        rateButton.setOnClickListener {
-                            rateDialog.show(childFragmentManager, "RateDialogFragment")
+                        if (sessionId.isNotEmpty()) {
+                            rateButton.setOnClickListener {
+                                rateDialog.show(childFragmentManager, "RateDialogFragment")
+                            }
+
+                            movieViewModel.getAccountStates().observe(viewLifecycleOwner) {
+                                when (it.status) {
+                                    Status.SUCCESS -> {
+                                        it.data?.let { accountState ->
+                                            if (accountState.rated.toString() != "false") {
+                                                rateButton.text =
+                                                    accountState.rated?.value.toString() +
+                                                            "\n(your rating)"
+                                            }
+                                        }
+                                    }
+                                    Status.LOADING -> {
+
+                                    }
+                                    Status.ERROR -> {
+
+                                    }
+                                }
+                            }
+                        } else {
+                            rateButton.setOnClickListener {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Please log in to rate the movie",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
 
                         mainConstraintLayout.visibility = View.VISIBLE
@@ -599,7 +628,8 @@ class MovieInfoFragment : BaseFragment() {
     private fun setupViewModel() {
         movieViewModel = ViewModelProvider(
             this, ViewModelFactory(
-                movieId = args.movieId
+                movieId = args.movieId,
+                sessionId = sessionId.ifEmpty { null }
             )
         ).get(MovieViewModel::class.java)
 

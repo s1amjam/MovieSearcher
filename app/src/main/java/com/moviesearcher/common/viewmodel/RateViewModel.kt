@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviesearcher.api.ApiService
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
-import com.moviesearcher.common.model.rate.Rate
+import com.moviesearcher.common.model.rate.Rated
 import com.moviesearcher.common.utils.Resource
 import kotlinx.coroutines.launch
 
@@ -16,7 +16,7 @@ class RateViewModel : ViewModel() {
     private fun fetchMovieRate(
         id: Long,
         sessionId: String,
-        rate: Rate
+        rate: Rated
     ) {
         viewModelScope.launch {
             movieRate.postValue(Resource.loading(null))
@@ -32,7 +32,7 @@ class RateViewModel : ViewModel() {
     fun postMovieRate(
         id: Long,
         sessionId: String,
-        rate: Rate
+        rate: Rated
     ): MutableLiveData<Resource<ResponseWithCodeAndMessage>> {
         fetchMovieRate(id, sessionId, rate)
 

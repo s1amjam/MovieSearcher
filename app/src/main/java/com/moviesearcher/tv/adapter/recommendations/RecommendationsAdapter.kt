@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
+import com.moviesearcher.common.toOneScale
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.TvCardViewBinding
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
 import com.moviesearcher.favorite.tv.model.ResultFavoriteTv
 import com.moviesearcher.tv.TvInfoFragmentDirections
-import com.moviesearcher.common.utils.Constants
 
 class TvRecommendationsAdapter(
     private val recommendationsItems: FavoriteTvResponse,
@@ -31,7 +32,7 @@ class TvRecommendationsAdapter(
         fun bind(recommendationsItem: ResultFavoriteTv) {
             title.text = recommendationsItem.name
             releaseDate.text = recommendationsItem.firstAirDate?.replace("-", ".")
-            rating.text = recommendationsItem.getAverage()
+            rating.text = recommendationsItem.voteAverage?.toOneScale()
 
             Glide.with(this.itemView.context)
                 .load(Constants.IMAGE_URL + recommendationsItem.posterPath)

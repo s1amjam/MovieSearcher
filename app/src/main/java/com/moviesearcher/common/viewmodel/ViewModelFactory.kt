@@ -25,14 +25,13 @@ class ViewModelFactory(
     private val listId: Int? = null,
     private val page: Int? = null,
     private val isFavorite: Boolean? = null,
-    private val value: Double? = null,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(WatchlistViewModel::class.java)) {
             return WatchlistViewModel(accountId!!, sessionId!!) as T
         }
         if (modelClass.isAssignableFrom(MovieViewModel::class.java)) {
-            return MovieViewModel(movieId!!) as T
+            return MovieViewModel(movieId!!, sessionId) as T
         }
         if (modelClass.isAssignableFrom(TvViewModel::class.java)) {
             return TvViewModel(tvId!!) as T

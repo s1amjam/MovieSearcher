@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
+import com.moviesearcher.common.toOneScale
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.MovieCardViewBinding
 import com.moviesearcher.movie.model.Result
@@ -47,7 +48,7 @@ class HomeAdapter(
 
             cardView.id = movieItem.id!!
             cardView.tag = movieItem.title
-            rating.text = movieItem.getAverage()
+            rating.text = movieItem.voteAverage?.toOneScale()
 
             cardView.setOnClickListener {
                 val movieId = it.id.toLong()

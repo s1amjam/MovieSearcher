@@ -1,7 +1,6 @@
 package com.moviesearcher.movie.model
 
 import com.google.gson.annotations.SerializedName
-import java.math.RoundingMode
 
 data class Result(
     @SerializedName("adult")
@@ -40,8 +39,4 @@ data class Result(
     val voteAverage: Double?,
     @SerializedName("vote_count")
     val voteCount: Int?
-) {
-    fun getAverage(): String {
-        return voteAverage?.toBigDecimal()?.setScale(1, RoundingMode.UP).toString()
-    }
-}
+)

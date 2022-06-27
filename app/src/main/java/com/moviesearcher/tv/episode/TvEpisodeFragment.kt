@@ -22,6 +22,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
+import com.moviesearcher.common.toOneScale
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
@@ -126,7 +127,8 @@ class TvEpisodeFragment : BaseFragment() {
                             tvInfoTitle.text = tvInfo.name
                             releaseDate.text = tvInfo.airDate?.replace("-", ".")
                             tvInfoOverview.text = tvInfo.overview
-                            voteAverage.text = getString(R.string.vote).format(tvInfo.getAverage())
+                            voteAverage.text =
+                                getString(R.string.vote).format(tvInfo.voteAverage?.toOneScale())
                             voteCount.text = tvInfo.voteCount.toString()
 
                             tvInfoOverview.setOnClickListener {

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
+import com.moviesearcher.common.toOneScale
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.favorite.FavoritesFragmentDirections
@@ -50,7 +51,7 @@ class FavoriteMovieAdapter(
             releaseDate.text = movieItem.releaseDate?.replace("-", ".")
             imageButtonRemoveFromFavorite.setImageResource(R.drawable.ic_round_star_filled_36)
             overview.text = movieItem.overview
-            rating.text = movieItem.getAverage()
+            rating.text = movieItem.voteAverage?.toOneScale()
             cardView.id = movieItem.id?.toInt()!!
             imageButtonRemoveFromFavorite.tag = "false"
 

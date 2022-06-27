@@ -27,6 +27,7 @@ import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.model.images.Backdrop
+import com.moviesearcher.common.toOneScale
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
@@ -212,7 +213,7 @@ class TvInfoFragment : BaseFragment() {
                         }
                         overviewTextView.text = tvInfo.overview
                         voteAverageTextView.text =
-                            getString(R.string.vote).format(tvInfo.getAverage())
+                            getString(R.string.vote).format(tvInfo.voteAverage?.toOneScale())
                         voteCountTextView.text = tvInfo.voteCount.toString()
                         releaseDateDetailTextView.text = tvInfo.firstAirDate?.replace("-", ".")
                         originCountryTextView.text =

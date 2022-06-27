@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviesearcher.api.ApiService
 import com.moviesearcher.common.model.images.ImagesResponse
+import com.moviesearcher.common.model.rate.AccountStatesResponse
 import com.moviesearcher.common.model.videos.VideosResponse
 import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
@@ -12,12 +13,14 @@ import com.moviesearcher.movie.model.MovieInfoResponse
 import com.moviesearcher.movie.model.cast.MovieCastResponse
 import kotlinx.coroutines.launch
 
-class MovieViewModel(private val movieId: Long) : ViewModel() {
+class MovieViewModel(private val movieId: Long, private val sessionId: String? = null) :
+    ViewModel() {
     private val info = MutableLiveData<Resource<MovieInfoResponse>>()
     private val cast = MutableLiveData<Resource<MovieCastResponse>>()
     private val recommendations = MutableLiveData<Resource<FavoriteMovieResponse>>()
     private val videos = MutableLiveData<Resource<VideosResponse>>()
     private val images = MutableLiveData<Resource<ImagesResponse>>()
+    private val accountStates = MutableLiveData<Resource<AccountStatesResponse>>()
 
     init {
         fetchMovieInfo()
@@ -25,6 +28,7 @@ class MovieViewModel(private val movieId: Long) : ViewModel() {
         fetchRecommendations()
         fetchVideos()
         fetchImages()
+        fetchAccountStates()
     }
 
     private fun fetchMovieInfo() {
@@ -105,5 +109,22 @@ class MovieViewModel(private val movieId: Long) : ViewModel() {
 
     fun getImages(): MutableLiveData<Resource<ImagesResponse>> {
         return images
+    }
+
+    private fun fetchAccountStates() {
+        viewModelScope.launch {
+            accountStates.postValue(Resource.loading(null))
+            try {
+                val accountStatesFromApi =
+                    ApiService.create().getMovieAccountStates(movieId, sessionId!!)
+                accountStates.postValue(Resource.success(accountStatesFromApi))
+            } catch (e: Exception) {
+                accountStates.postValue(Resource.error(e.toString(), null))
+            }
+        }
+    }
+
+    fun getAccountStates(): MutableLiveData<Resource<AccountStatesResponse>> {
+        return accountStates
     }
 }

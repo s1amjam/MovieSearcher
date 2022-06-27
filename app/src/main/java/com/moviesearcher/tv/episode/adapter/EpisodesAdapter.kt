@@ -10,10 +10,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.moviesearcher.R
+import com.moviesearcher.common.toOneScale
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.tv.seasons.TvSeasonsFragmentDirections
 import com.moviesearcher.tv.seasons.model.Episode
-import com.moviesearcher.common.utils.Constants
 
 class EpisodesAdapter(
     private val episodeItems: List<Episode>,
@@ -44,7 +45,7 @@ class EpisodesAdapter(
 
             title.text = tvEpisodeItem.name
             tvEpisodeItem.airDate
-            rating.text = tvEpisodeItem.getAverage()
+            rating.text = tvEpisodeItem.voteAverage?.toOneScale()
             overview.text = tvEpisodeItem.overview
             releaseDate.text = tvEpisodeItem.airDate
 
