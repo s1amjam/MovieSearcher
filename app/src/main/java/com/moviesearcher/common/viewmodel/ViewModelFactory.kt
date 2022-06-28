@@ -34,7 +34,7 @@ class ViewModelFactory(
             return MovieViewModel(movieId!!, sessionId) as T
         }
         if (modelClass.isAssignableFrom(TvViewModel::class.java)) {
-            return TvViewModel(tvId!!) as T
+            return TvViewModel(tvId!!, sessionId) as T
         }
         if (modelClass.isAssignableFrom(FavoriteViewModel::class.java)) {
             return FavoriteViewModel(sessionId!!, accountId!!, isFavorite!!) as T

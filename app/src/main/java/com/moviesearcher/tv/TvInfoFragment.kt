@@ -26,6 +26,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
+import com.moviesearcher.common.RateDialog
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.toOneScale
 import com.moviesearcher.common.utils.Constants
@@ -172,6 +173,7 @@ class TvInfoFragment : BaseFragment() {
                 Status.SUCCESS -> {
                     it.data?.let { tvInfo ->
                         val dialog = PosterDialog(tvInfo.posterPath.toString())
+                        val rateDialog = RateDialog(args.tvId, sessionId, tvViewModel = tvViewModel)
                         var minutes: Long = 0
                         val languages = mutableListOf<String>()
                         val locations = mutableListOf<String>()
@@ -246,6 +248,40 @@ class TvInfoFragment : BaseFragment() {
 
                         posterImageView.setOnClickListener {
                             dialog.show(childFragmentManager, "PosterDialogFragment")
+                        }
+
+                        if (sessionId.isNotEmpty()) {
+                            rateButton.setOnClickListener {
+                                rateDialog.show(childFragmentManager, "RateDialogFragment")
+                            }
+
+                            tvViewModel.getAccountStates().observe(viewLifecycleOwner) {
+                                when (it.status) {
+                                    Status.SUCCESS -> {
+                                        it.data?.let { accountState ->
+                                            if (accountState.rated.toString() != "false") {
+                                                rateButton.text =
+                                                    accountState.rated?.value.toString() +
+                                                            "\n(your rating)"
+                                            }
+                                        }
+                                    }
+                                    Status.LOADING -> {
+
+                                    }
+                                    Status.ERROR -> {
+
+                                    }
+                                }
+                            }
+                        } else {
+                            rateButton.setOnClickListener {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Please log in to rate the movie",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
 
                         progressBar.visibility = View.GONE
@@ -643,7 +679,8 @@ class TvInfoFragment : BaseFragment() {
     private fun setupViewModel() {
         tvViewModel = ViewModelProvider(
             this, ViewModelFactory(
-                tvId = args.tvId
+                tvId = args.tvId,
+                sessionId = sessionId.ifEmpty { null }
             )
         ).get(TvViewModel::class.java)
 

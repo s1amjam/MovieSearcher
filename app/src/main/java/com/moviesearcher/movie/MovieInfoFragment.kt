@@ -170,7 +170,8 @@ class MovieInfoFragment : BaseFragment() {
                 Status.SUCCESS -> {
                     it.data?.let { movieInfo ->
                         val posterDialog = PosterDialog(movieInfo.posterPath.toString())
-                        val rateDialog = RateDialog(args.movieId, sessionId, movieViewModel)
+                        val rateDialog =
+                            RateDialog(args.movieId, sessionId, movieViewModel = movieViewModel)
                         val hours = TimeUnit.MINUTES.toHours(movieInfo.runtime?.toLong()!!)
                         val minutes = movieInfo.runtime.toLong() - TimeUnit.HOURS.toMinutes(hours)
                         val languages = mutableListOf<String>()

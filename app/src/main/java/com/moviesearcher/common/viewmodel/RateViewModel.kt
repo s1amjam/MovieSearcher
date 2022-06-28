@@ -38,4 +38,30 @@ class RateViewModel : ViewModel() {
 
         return movieRate
     }
+
+    private fun fetchTvRate(
+        id: Long,
+        sessionId: String,
+        rate: Rated
+    ) {
+        viewModelScope.launch {
+            tvRate.postValue(Resource.loading(null))
+            try {
+                val tvRateFromApi = ApiService.create().postTvRating(id, sessionId, rate)
+                tvRate.postValue(Resource.success(tvRateFromApi))
+            } catch (e: Exception) {
+                tvRate.postValue(Resource.error(e.toString(), null))
+            }
+        }
+    }
+
+    fun postTvRate(
+        id: Long,
+        sessionId: String,
+        rate: Rated
+    ): MutableLiveData<Resource<ResponseWithCodeAndMessage>> {
+        fetchTvRate(id, sessionId, rate)
+
+        return tvRate
+    }
 }

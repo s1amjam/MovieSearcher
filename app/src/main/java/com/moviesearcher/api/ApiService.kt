@@ -300,7 +300,7 @@ interface ApiService {
     suspend fun postTvRating(
         @Path("tv_id") movieId: Long,
         @Query("session_id") sessionId: String,
-        @Body value: Double
+        @Body rate: Rated
     ): ResponseWithCodeAndMessage
 
     @GET("movie/{movie_id}/account_states")
