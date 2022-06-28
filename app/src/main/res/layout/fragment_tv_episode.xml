@@ -168,7 +168,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        app:layout_constraintEnd_toStartOf="@+id/rate_button_view"
+                        android:contentDescription="@string/rating_star"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/main_info_divider"
                         app:srcCompat="@drawable/ic_baseline_star_rate_24" />
@@ -178,7 +179,7 @@
                         style="@style/Widget.MovieSearcher.TextSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toStartOf="@+id/rate_button_view"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/rating_image_view" />
 
@@ -187,23 +188,9 @@
                         style="@style/Widget.MovieSearcher.TextSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        app:layout_constraintEnd_toStartOf="@+id/rate_button_view"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/text_view_rating" />
-
-                    <Button
-                        android:id="@+id/rate_button_view"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/rate_this"
-                        android:textColor="#2196F3"
-                        app:icon="@drawable/ic_baseline_star_rate_24"
-                        app:iconGravity="top"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/rating_image_view"
-                        app:layout_constraintTop_toTopOf="@+id/rating_image_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 

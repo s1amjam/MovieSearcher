@@ -55,7 +55,6 @@ class TvEpisodeFragment : BaseFragment() {
     private lateinit var voteCount: TextView
     private lateinit var tvInfoConstraintLayout: ConstraintLayout
     private lateinit var buttonSeeAllImages: Button
-    private lateinit var rateButton: Button
     private lateinit var director: TextView
     private lateinit var writer: TextView
     private lateinit var videoCardView: CardView
@@ -97,7 +96,6 @@ class TvEpisodeFragment : BaseFragment() {
         buttonSeeAllImages = binding.buttonSeeAllImages
         voteAverage = binding.textViewRating
         voteCount = binding.textViewVoteCount
-        rateButton = binding.rateButtonView
         director = binding.directorCastTextView
         writer = binding.writerCastTextView
         videoCardView = binding.videoCardView
