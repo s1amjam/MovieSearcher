@@ -22,7 +22,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
-import com.moviesearcher.common.toOneScale
+import com.moviesearcher.common.extensions.loadImage
+import com.moviesearcher.common.extensions.toOneScale
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
@@ -116,12 +117,7 @@ class TvEpisodeFragment : BaseFragment() {
                     Status.SUCCESS -> {
                         it.data?.let { tvInfo ->
                             val dialog = PosterDialog(tvInfo.stillPath.toString())
-                            Glide.with(this)
-                                .load(Constants.IMAGE_URL + tvInfo.stillPath)
-                                .placeholder(R.drawable.ic_placeholder)
-                                .centerCrop()
-                                .override(300, 500)
-                                .into(tvInfoPosterImageView)
+                            tvInfoPosterImageView.loadImage(Constants.IMAGE_URL + tvInfo.stillPath)
                             tvInfoTitle.text = tvInfo.name
                             releaseDate.text = tvInfo.airDate?.replace("-", ".")
                             tvInfoOverview.text = tvInfo.overview

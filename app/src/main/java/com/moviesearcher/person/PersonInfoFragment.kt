@@ -15,11 +15,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
+import com.moviesearcher.common.extensions.loadImage
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
@@ -91,12 +91,7 @@ class PersonInfoFragment : BaseFragment() {
                 Status.SUCCESS -> {
                     it.data?.let { personInfo ->
                         val dialog = PosterDialog(personInfo.profile_path.toString())
-                        Glide.with(this)
-                            .load(Constants.IMAGE_URL + personInfo.profile_path)
-                            .placeholder(R.drawable.ic_placeholder)
-                            .centerCrop()
-                            .override(300, 500)
-                            .into(personPhotoImageView)
+                        personPhotoImageView.loadImage(Constants.IMAGE_URL + personInfo.profile_path)
                         personName.text = personInfo.name
                         personBorn.text =
                             getString(R.string.born).format(personInfo.birthday).replace("-", ".")

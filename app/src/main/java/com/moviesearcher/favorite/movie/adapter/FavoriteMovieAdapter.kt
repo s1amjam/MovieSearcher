@@ -10,9 +10,9 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.moviesearcher.R
-import com.moviesearcher.common.toOneScale
+import com.moviesearcher.common.extensions.loadImage
+import com.moviesearcher.common.extensions.toOneScale
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ExtendedCardViewBinding
 import com.moviesearcher.favorite.FavoritesFragmentDirections
@@ -40,13 +40,7 @@ class FavoriteMovieAdapter(
         fun bind(movieItem: ResultFavoriteMovie) {
             val mediaInfo: MutableMap<String, Long> = mutableMapOf()
 
-            Glide.with(this.itemView.context)
-                .load(Constants.IMAGE_URL + movieItem.posterPath)
-                .placeholder(R.drawable.ic_placeholder)
-                .centerCrop()
-                .override(400, 600)
-                .into(poster)
-
+            poster.loadImage(Constants.IMAGE_URL + movieItem.posterPath, isCardView = true)
             title.text = movieItem.title
             releaseDate.text = movieItem.releaseDate?.replace("-", ".")
             imageButtonRemoveFromFavorite.setImageResource(R.drawable.ic_round_star_filled_36)

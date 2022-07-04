@@ -8,13 +8,12 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.moviesearcher.R
+import com.moviesearcher.common.extensions.loadImage
+import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.MovieCastItemBinding
 import com.moviesearcher.movie.MovieInfoFragmentDirections
 import com.moviesearcher.movie.model.cast.Cast
 import com.moviesearcher.movie.model.cast.MovieCastResponse
-import com.moviesearcher.common.utils.Constants
 
 class MovieCastAdapter(
     private val castItems: MovieCastResponse,
@@ -30,15 +29,9 @@ class MovieCastAdapter(
         private val castCardView: CardView = binding.castCardView
 
         fun bind(castItem: Cast) {
+            poster.loadImage(Constants.IMAGE_URL + castItem.profile_path, isCardView = true)
             name.text = castItem.name
             characterName.text = castItem.character
-
-            Glide.with(this.itemView.context)
-                .load(Constants.IMAGE_URL + castItem.profile_path)
-                .placeholder(R.drawable.ic_placeholder)
-                .centerCrop()
-                .override(400, 600)
-                .into(poster)
 
             castCardView.setOnClickListener {
                 navController.navigate(

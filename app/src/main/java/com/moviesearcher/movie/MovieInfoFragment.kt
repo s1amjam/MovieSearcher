@@ -19,7 +19,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionManager
-import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -27,8 +26,9 @@ import com.moviesearcher.R
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.RateDialog
+import com.moviesearcher.common.extensions.loadImage
+import com.moviesearcher.common.extensions.toOneScale
 import com.moviesearcher.common.model.images.Backdrop
-import com.moviesearcher.common.toOneScale
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
@@ -181,12 +181,7 @@ class MovieInfoFragment : BaseFragment() {
                         movieInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
                         movieInfo.productionCountries?.forEach { locations.add(it.name!!) }
 
-                        Glide.with(this)
-                            .load(Constants.IMAGE_URL + movieInfo.posterPath)
-                            .placeholder(R.drawable.ic_placeholder)
-                            .centerCrop()
-                            .override(300, 500)
-                            .into(posterImageView)
+                        posterImageView.loadImage(Constants.IMAGE_URL + movieInfo.posterPath)
                         titleTextView.text = movieInfo.title
                         runtimeTextView.text =
                             String.format("%02dh %02dm", hours, minutes).dropWhile { it == '0' }
@@ -415,12 +410,11 @@ class MovieInfoFragment : BaseFragment() {
                             if (officialTrailer != null) {
                                 videoItems.results.remove(officialTrailer)
 
-                                Glide.with(requireContext())
-                                    .load(Constants.YOUTUBE_PREVIEW_URL.format(officialTrailer.key))
-                                    .placeholder(R.drawable.ic_placeholder)
-                                    .centerCrop()
-                                    .override(800, 600)
-                                    .into(trailerPreviewImageView)
+                                trailerPreviewImageView.loadImage(
+                                    Constants.YOUTUBE_PREVIEW_URL.format(
+                                        officialTrailer.key
+                                    ), isYouTube = true
+                                )
 
                                 trailerNameTextView.text = officialTrailer.name
 

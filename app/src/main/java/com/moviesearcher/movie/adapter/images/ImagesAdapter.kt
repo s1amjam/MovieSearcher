@@ -5,12 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.moviesearcher.R
+import com.moviesearcher.common.extensions.loadImage
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.model.images.ImagesResponse
-import com.moviesearcher.databinding.ImagesItemBinding
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.databinding.ImagesItemBinding
 
 class ImagesAdapter(
     private val imagesItems: ImagesResponse,
@@ -23,12 +22,7 @@ class ImagesAdapter(
         fun bind(imageItem: Backdrop) {
             val imageResp = imageItem.filePath
 
-            Glide.with(this.itemView.context)
-                .load(Constants.IMAGE_URL + imageResp)
-                .placeholder(R.drawable.ic_placeholder)
-                .centerCrop()
-                .override(400, 600)
-                .into(image)
+            image.loadImage(Constants.IMAGE_URL + imageResp, isCardView = true)
         }
     }
 

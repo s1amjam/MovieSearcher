@@ -6,9 +6,8 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.moviesearcher.R
-import com.moviesearcher.common.toOneScale
+import com.moviesearcher.common.extensions.loadImage
+import com.moviesearcher.common.extensions.toOneScale
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.TvCardViewBinding
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
@@ -33,13 +32,10 @@ class TvRecommendationsAdapter(
             title.text = recommendationsItem.name
             releaseDate.text = recommendationsItem.firstAirDate?.replace("-", ".")
             rating.text = recommendationsItem.voteAverage?.toOneScale()
-
-            Glide.with(this.itemView.context)
-                .load(Constants.IMAGE_URL + recommendationsItem.posterPath)
-                .placeholder(R.drawable.ic_placeholder)
-                .centerCrop()
-                .override(400, 600)
-                .into(posterImageView)
+            posterImageView.loadImage(
+                Constants.IMAGE_URL + recommendationsItem.posterPath,
+                isCardView = true
+            )
 
             cardView.setOnClickListener {
                 navController.navigate(
