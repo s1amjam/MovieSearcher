@@ -1,14 +1,19 @@
 package com.moviesearcher.you
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -18,6 +23,7 @@ import com.moviesearcher.R
 import com.moviesearcher.common.AuthorizationDialogFragment
 import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.model.auth.SessionId
+import com.moviesearcher.common.utils.Constants.DARK_MODE
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.AuthViewModel
 import com.moviesearcher.databinding.FragmentYouBinding
@@ -34,6 +40,7 @@ class YouFragment : BaseFragment() {
     private lateinit var titleTv: TextView
     private lateinit var accountLogoIv: ImageView
     private lateinit var progressBar: ProgressBar
+    private lateinit var darkModeIb: ImageButton
 
     private lateinit var navController: NavController
 
@@ -50,6 +57,8 @@ class YouFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val isDarkMode = requireContext().getSharedPreferences(DARK_MODE, Context.MODE_PRIVATE)
+
         navController = findNavController()
         buttonLogin = binding.buttonLogin
         watchlistsCardView = binding.watchlistCardView
@@ -59,20 +68,44 @@ class YouFragment : BaseFragment() {
         titleTv = binding.titleTv
         accountLogoIv = binding.accountLogoIv
         progressBar = binding.progressBar
+        darkModeIb = binding.darkModeIb
+
+        fun getIsDarkMode(): Boolean {
+            return isDarkMode.getInt(DARK_MODE, 1) == MODE_NIGHT_YES
+        }
+
+        fun darkModeButtonCheck() {
+            if (getIsDarkMode()) {
+                darkModeIb.setImageResource(R.drawable.ic_baseline_light_mode_36)
+            }
+        }
 
         checkIfLoggedIn()
+        darkModeButtonCheck()
 
         buttonLogin.setOnClickListener {
-            if (sessionId.isNullOrEmpty()) {
+            if (sessionId.isEmpty()) {
                 doLogin()
             } else {
                 doLogout()
             }
         }
+
+        darkModeIb.setOnClickListener {
+            if (getIsDarkMode()) {
+                isDarkMode.edit().putInt(DARK_MODE, MODE_NIGHT_NO).apply()
+                AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
+                darkModeIb.setImageResource(R.drawable.ic_baseline_light_mode_36)
+            } else {
+                isDarkMode.edit().putInt(DARK_MODE, MODE_NIGHT_YES).apply()
+                AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
+                darkModeIb.setImageResource(R.drawable.ic_baseline_dark_mode_24)
+            }
+        }
     }
 
     private fun checkIfLoggedIn() {
-        if (sessionId.isNullOrEmpty()) {
+        if (sessionId.isEmpty()) {
             titleTv.setText(R.string.please_log_in)
             accountLogoIv.visibility = View.GONE
 

@@ -1,8 +1,10 @@
 package com.moviesearcher
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -10,6 +12,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.moviesearcher.common.utils.Constants.DARK_MODE
 import com.moviesearcher.common.utils.EncryptedSharedPrefs
 import com.moviesearcher.databinding.ActivityMovieSearcherBinding
 
@@ -31,6 +34,8 @@ class MovieSearcherActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityMovieSearcherBinding.inflate(layoutInflater)
         val view = binding.root
+        val prefs = getSharedPreferences(DARK_MODE, Context.MODE_PRIVATE)
+        val mode = prefs.getInt(DARK_MODE, 1)
         setContentView(view)
 
         encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(applicationContext)
@@ -58,6 +63,8 @@ class MovieSearcherActivity : AppCompatActivity() {
                 else -> super.onOptionsItemSelected(menuItem)
             }
         }
+
+        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     private fun setupNavigation() {

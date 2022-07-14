@@ -8,4 +8,5 @@ object Constants {
     const val SUCCESS_SESSION_URL = "https://www.themoviedb.org/authenticate/%s/allow"
     const val YOUTUBE_PREVIEW_URL = "https://i.ytimg.com/vi/%s/hqdefault.jpg"
     const val YOUTUBE_VIDEO_URL = "https://youtube.com/embed/%s"
+    const val DARK_MODE = "DARK_MODE"
 }
