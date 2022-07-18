@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/movie_searcher_constraint_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#E0E4E8">
+    android:layout_height="match_parent">
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress_bar_movie_searcher_fragment"

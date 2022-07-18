@@ -420,11 +420,14 @@ class MovieInfoFragment : BaseFragment() {
 
                                 trailerCardView.setOnClickListener {
                                     findNavController().navigate(
-                                        MovieInfoFragmentDirections.actionMovieInfoFragmentToVideoFragment(
-                                            officialTrailer.key!!
-                                        )
+                                        MovieInfoFragmentDirections
+                                            .actionMovieInfoFragmentToVideoFragment(
+                                                officialTrailer.key!!
+                                            )
                                     )
                                 }
+                            } else {
+                                trailerCardView.visibility = View.GONE
                             }
 
                             videoRecyclerView.apply {

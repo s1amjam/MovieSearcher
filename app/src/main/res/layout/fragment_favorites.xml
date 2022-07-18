@@ -57,9 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/movies"
-            android:textColor="@color/md_theme_dark_background"
             app:cornerRadius="8dp"
-            app:strokeColor="@color/md_theme_dark_background"
             app:strokeWidth="1dp" />
 
         <Button
@@ -68,9 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tvs"
-            android:textColor="@color/md_theme_dark_background"
             app:cornerRadius="8dp"
-            app:strokeColor="@color/md_theme_dark_background"
             app:strokeWidth="1dp" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 

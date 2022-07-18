@@ -27,8 +27,8 @@ import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.RateDialog
 import com.moviesearcher.common.extensions.loadImage
-import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.extensions.toOneScale
+import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.ViewModelFactory
@@ -466,6 +466,8 @@ class TvInfoFragment : BaseFragment() {
                                             )
                                         )
                                     }
+                                } else {
+                                    trailerCardView.visibility = View.GONE
                                 }
 
                                 videoRecyclerView.apply {
