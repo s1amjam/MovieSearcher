@@ -32,9 +32,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/main_tv_info_card_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="5dp"
+                style="@style/Widget.MovieSearcher.CardView.MainInfoCardView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -209,8 +207,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="@string/rate_this"
-                        android:textColor="#2196F3"
-                        app:icon="@drawable/ic_baseline_star_rate_24"
+                        android:textColor="?attr/colorControlNormal"
                         app:iconGravity="top"
                         app:layout_constraintEnd_toStartOf="@+id/expand_activities_button"
                         app:layout_constraintStart_toEndOf="@+id/rating_image_view"
@@ -449,6 +446,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="32dp"
                         android:text="@string/see_all"
+                        android:textColor="?attr/colorControlNormal"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -32,7 +31,6 @@ class YouFragment : BaseFragment() {
     private var _binding: FragmentYouBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var buttonLogin: Button
     private lateinit var watchlistsCardView: CardView
     private lateinit var listsCardView: CardView
     private lateinit var favoritesCardView: CardView
@@ -41,6 +39,7 @@ class YouFragment : BaseFragment() {
     private lateinit var accountLogoIv: ImageView
     private lateinit var progressBar: ProgressBar
     private lateinit var darkModeIb: ImageButton
+    private lateinit var loginIb: ImageButton
 
     private lateinit var navController: NavController
 
@@ -60,7 +59,7 @@ class YouFragment : BaseFragment() {
         val isDarkMode = requireContext().getSharedPreferences(DARK_MODE, Context.MODE_PRIVATE)
 
         navController = findNavController()
-        buttonLogin = binding.buttonLogin
+        loginIb = binding.loginIb
         watchlistsCardView = binding.watchlistCardView
         listsCardView = binding.listsCardView
         favoritesCardView = binding.favoritesCardView
@@ -83,7 +82,7 @@ class YouFragment : BaseFragment() {
         checkIfLoggedIn()
         darkModeButtonCheck()
 
-        buttonLogin.setOnClickListener {
+        loginIb.setOnClickListener {
             if (sessionId.isEmpty()) {
                 doLogin()
             } else {
@@ -137,7 +136,7 @@ class YouFragment : BaseFragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            buttonLogin.setText(R.string.login_button)
+            loginIb.setImageResource(R.drawable.ic_round_login_36)
         } else {
             titleTv.text = encryptedSharedPrefs.getString("username", "")
             accountLogoIv.visibility = View.VISIBLE
@@ -154,7 +153,7 @@ class YouFragment : BaseFragment() {
             ratedCardView.setOnClickListener {
                 navController.navigate(YouFragmentDirections.actionYouFragmentToFragmentRated())
             }
-            buttonLogin.setText(R.string.logout_button)
+            loginIb.setImageResource(R.drawable.ic_round_logout_24)
         }
     }
 
@@ -194,7 +193,7 @@ class YouFragment : BaseFragment() {
 
                         Toast.makeText(
                             requireContext(),
-                            "You was successfully logged out",
+                            "You've been successfully logged out",
                             Toast.LENGTH_SHORT
                         ).show()
 
