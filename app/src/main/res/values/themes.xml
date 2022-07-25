@@ -136,4 +136,12 @@
     <style name="ThemeOverlay.App.CircularProgressIndicator" parent="">
         <item name="colorPrimary">@color/md_theme_dark_surface</item>
     </style>
+
+    <style name="Widget.MovieSearcher.SeeAllButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">32dp</item>
+        <item name="android:text">@string/see_all</item>
+        <item name="android:textColor">?attr/colorControlNormal</item>
+    </style>
 </resources>

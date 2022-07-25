@@ -63,10 +63,8 @@ class TvEpisodeFragment : BaseFragment() {
     private lateinit var trailerName: TextView
     private lateinit var trailerCardView: CardView
     private lateinit var genresChipGroup: ChipGroup
-    private lateinit var numberOfEpisodes: TextView
     private lateinit var mainCardView: CardView
     private lateinit var progressBar: ProgressBar
-    private lateinit var episodeGuideButton: Button
     private lateinit var imagesCardView: CardView
 
     override fun onCreateView(
@@ -103,10 +101,8 @@ class TvEpisodeFragment : BaseFragment() {
         trailerPreview = binding.previewTrailerImageView
         trailerName = binding.trailerNameTextView
         trailerCardView = binding.trailerCardView
-        numberOfEpisodes = binding.numberOfEpisodesTextView
         mainCardView = binding.mainTvInfoCardView
         progressBar = binding.progressBarTvInfo
-        episodeGuideButton = binding.episodeGuideButton
         imagesCardView = binding.imagesCardView
 
         setupViewModel()

@@ -32,9 +32,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/main_tv_info_card_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="5dp"
+                style="@style/Widget.MovieSearcher.CardView.MainInfoCardView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -86,33 +84,14 @@
                         app:layout_constraintStart_toEndOf="@+id/runtime_text_view"
                         app:layout_constraintTop_toTopOf="@+id/runtime_text_view" />
 
-                    <Button
-                        android:id="@+id/episode_guide_button"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="@string/episode_guide"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/release_date_text_view" />
-
-                    <TextView
-                        android:id="@+id/number_of_episodes_text_view"
-                        style="@style/Widget.MovieSearcher.TextSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/episode_guide_button"
-                        app:layout_constraintStart_toEndOf="@+id/episode_guide_button"
-                        app:layout_constraintTop_toTopOf="@+id/episode_guide_button" />
-
                     <ImageView
                         android:id="@+id/tv_info_poster_image_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/episode_guide_button" />
+                        app:layout_constraintTop_toBottomOf="@+id/tv_series_text_view" />
 
                     <HorizontalScrollView
                         android:id="@+id/chip_horizontal_view"
@@ -351,11 +330,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_see_all_images"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="32dp"
-                        android:text="@string/see_all"
+                        style="@style/Widget.MovieSearcher.SeeAllButton"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 

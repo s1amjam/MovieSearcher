@@ -410,12 +410,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_see_all_images"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="32dp"
-                        android:text="@string/see_all"
-                        android:textColor="?attr/colorControlNormal"
+                        style="@style/Widget.MovieSearcher.SeeAllButton"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
