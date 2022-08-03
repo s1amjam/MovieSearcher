@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/home_fragment">
+
+    <fragment
+        android:id="@+id/movie_info_fragment"
+        android:name="com.moviesearcher.movie.MovieInfoFragment"
+        android:label="fragment_movie_info"
+        tools:layout="@layout/fragment_movie_info">
+        <argument
+            android:name="movie_id"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_movie_info_fragment_to_search_result_fragment"
+            app:destination="@id/search_result_fragment" />
+        <action
+            android:id="@+id/action_movie_info_fragment_self"
+            app:destination="@id/movie_info_fragment" />
+        <action
+            android:id="@+id/action_movie_info_fragment_to_videoFragment"
+            app:destination="@id/videoFragment" />
+        <action
+            android:id="@+id/action_movie_info_fragment_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
+        <action
+            android:id="@+id/action_movie_info_fragment_to_personInfoFragment"
+            app:destination="@id/personInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/home_fragment"
+        android:name="com.moviesearcher.home.HomeFragment"
+        android:label="HomeFragment">
+        <action
+            android:id="@+id/action_home_fragment_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_search_result_fragment"
+            app:destination="@id/search_result_fragment" />
+    </fragment>
+    <activity
+        android:id="@+id/movie_searcher_activity"
+        android:name="com.moviesearcher.MovieSearcherActivity"
+        android:label="activity_movie_searcher"
+        tools:layout="@layout/activity_movie_searcher" />
+    <fragment
+        android:id="@+id/tv_info_fragment"
+        android:name="com.moviesearcher.tv.TvInfoFragment"
+        android:label="TvInfoFragment">
+        <argument
+            android:name="tv_id"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_tv_info_fragment_to_search_result_fragment"
+            app:destination="@id/search_result_fragment" />
+        <action
+            android:id="@+id/action_tv_info_fragment_self"
+            app:destination="@id/tv_info_fragment" />
+        <action
+            android:id="@+id/action_tv_info_fragment_to_videoFragment"
+            app:destination="@id/videoFragment" />
+        <action
+            android:id="@+id/action_tv_info_fragment_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
+        <action
+            android:id="@+id/action_tv_info_fragment_to_personInfoFragment"
+            app:destination="@id/personInfoFragment" />
+        <action
+            android:id="@+id/action_tv_info_fragment_to_tvSeasonsFragment"
+            app:destination="@id/tvSeasonsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/search_result_fragment"
+        android:name="com.moviesearcher.search.SearchResultFragment"
+        android:label="SearchResultFragment">
+        <action
+            android:id="@+id/action_search_result_fragment_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
+        <action
+            android:id="@+id/action_search_result_fragment_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_my_lists"
+        android:name="com.moviesearcher.list.lists.MyListsFragment"
+        android:label="fragment_my_lists"
+        tools:layout="@layout/fragment_my_lists">
+        <action
+            android:id="@+id/action_my_lists_fragment_to_myListFragment"
+            app:destination="@id/fragment_my_list" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_my_list"
+        android:name="com.moviesearcher.list.MyListFragment"
+        android:label="fragment_my_list"
+        tools:layout="@layout/fragment_my_list">
+        <argument
+            android:name="list_id"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_fragment_my_list_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
+        <action
+            android:id="@+id/action_fragment_my_list_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_favorites"
+        android:name="com.moviesearcher.favorite.FavoritesFragment"
+        android:label="fragment_favorites"
+        tools:layout="@layout/fragment_favorites">
+        <action
+            android:id="@+id/action_fragment_favorites_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
+        <action
+            android:id="@+id/action_fragment_favorites_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_rated"
+        android:name="com.moviesearcher.rated.RatedFragment"
+        android:label="fragment_ratings"
+        tools:layout="@layout/fragment_rated">
+        <action
+            android:id="@+id/action_rated_fragment_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
+        <action
+            android:id="@+id/action_rated_fragment_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_watchlist"
+        android:name="com.moviesearcher.watchlist.WatchlistFragment"
+        android:label="WatchlistFragment">
+        <action
+            android:id="@+id/action_watchlistFragment_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
+        <action
+            android:id="@+id/action_watchlistFragment_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_search_result_fragment"
+        app:destination="@id/search_result_fragment" />
+    <fragment
+        android:id="@+id/you_fragment"
+        android:name="com.moviesearcher.you.YouFragment"
+        android:label="fragment_you"
+        tools:layout="@layout/fragment_you" >
+        <action
+            android:id="@+id/action_you_fragment_to_fragment_my_lists"
+            app:destination="@id/fragment_my_lists" />
+        <action
+            android:id="@+id/action_you_fragment_to_fragment_favorites"
+            app:destination="@id/fragment_favorites" />
+        <action
+            android:id="@+id/action_you_fragment_to_fragment_watchlist"
+            app:destination="@id/fragment_watchlist" />
+        <action
+            android:id="@+id/action_you_fragment_to_fragment_rated"
+            app:destination="@id/fragment_rated" />
+    </fragment>
+    <fragment
+        android:id="@+id/videoFragment"
+        android:name="com.moviesearcher.common.VideoFragment"
+        android:label="fragment_video"
+        tools:layout="@layout/fragment_video">
+        <argument
+            android:name="video_key"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/imagesFragment"
+        android:name="com.moviesearcher.common.ImagesFragment"
+        android:label="ImagesFragment">
+        <argument
+            android:name="movie_id"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="person_id"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="tv_id"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/personInfoFragment"
+        android:name="com.moviesearcher.person.PersonInfoFragment"
+        android:label="PersonInfoFragment">
+        <argument
+            android:name="person_id"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_personInfoFragment_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
+        <action
+            android:id="@+id/action_personInfoFragment_to_movie_info_fragment"
+            app:destination="@id/movie_info_fragment" />
+        <action
+            android:id="@+id/action_personInfoFragment_to_tv_info_fragment"
+            app:destination="@id/tv_info_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tvSeasonsFragment"
+        android:name="com.moviesearcher.tv.seasons.TvSeasonsFragment"
+        android:label="TvSeasonsFragment">
+        <argument
+            android:name="tv_id"
+            app:argType="long" />
+        <argument
+            android:name="number_of_seasons"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_tvSeasonsFragment_to_tvEpisodeFragment"
+            app:destination="@id/tvEpisodeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tvSeasonsViewPagerFragment"
+        android:name="com.moviesearcher.tv.seasons.TvSeasonsViewPagerFragment"
+        android:label="TvSeasonsViewPagerFragment">
+        <action
+            android:id="@+id/action_tvSeasonsViewPagerFragment_to_tvEpisodeFragment"
+            app:destination="@id/tvEpisodeFragment" />
+        <argument
+            android:name="id"
+            app:argType="string" />
+        <argument
+            android:name="seasonNumber"
+            android:defaultValue="1"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/tvEpisodeFragment"
+        android:name="com.moviesearcher.tv.episode.TvEpisodeFragment"
+        android:label="TvEpisodeFragment">
+        <argument
+            android:name="tv_id"
+            app:argType="long" />
+        <argument
+            android:name="season_number"
+            app:argType="string" />
+        <argument
+            android:name="episode_number"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_tvEpisodeFragment_to_videoFragment"
+            app:destination="@id/videoFragment" />
+        <action
+            android:id="@+id/action_tvEpisodeFragment_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
+        <action
+            android:id="@+id/action_tvEpisodeFragment_to_tvSeasonsFragment"
+            app:destination="@id/tvSeasonsFragment" />
+        <action
+            android:id="@+id/action_tvEpisodeFragment_to_personInfoFragment"
+            app:destination="@id/personInfoFragment" />
+    </fragment>
+</navigation>

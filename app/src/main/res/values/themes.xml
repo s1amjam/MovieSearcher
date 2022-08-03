@@ -1,16 +1,147 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.MovieSearcher" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+<resources>
+
+    <style name="Theme.MovieSearcher" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorOutline">@color/md_theme_light_outline</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
+        <item name="materialCardViewStyle">@style/Widget.MovieSearcher.CardView.LargeCardView</item>
+        <item name="android:statusBarColor">@color/md_theme_light_onSurface</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.CardView.LargeCardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="colorOutline">@color/transparent</item>
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">0dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="cardCornerRadius">0dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.CardView.SmallCardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="colorOutline">@color/transparent</item>
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">0dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="cardCornerRadius">10dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.CardView.ExtendedCardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="colorOutline">@color/transparent</item>
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">0dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="cardCornerRadius">10dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.CardView.LineCardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="colorOutline">@color/transparent</item>
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">0dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="cardCornerRadius">10dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.CardView.MainInfoCardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">0dp</item>
+        <item name="strokeColor">@color/transparent</item>
+        <item name="cardElevation">8dp</item>
+        <item name="cardCornerRadius">0dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.Chip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipStrokeColor">@color/transparent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">?android:attr/textAppearance</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.TextLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:textSize">35sp</item>
+        <item name="android:fontFamily">@font/sf_pro_display_bold</item>
+        <item name="fontFamily">@font/sf_pro_display_bold</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.TextMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/sf_pro_display_medium</item>
+        <item name="fontFamily">@font/sf_pro_display_medium</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.TextSmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/sf_pro_display_regular</item>
+        <item name="fontFamily">@font/sf_pro_display_regular</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.TextSmallBold" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/sf_pro_display_bold</item>
+        <item name="fontFamily">@font/sf_pro_display_bold</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.ProgressBar" parent="Widget.MaterialComponents.CircularProgressIndicator">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.CircularProgressIndicator</item>
+        <item name="trackThickness">20dp</item>
+    </style>
+
+    <style name="ThemeOverlay.App.CircularProgressIndicator" parent="">
+        <item name="colorPrimary">@color/md_theme_dark_surface</item>
+    </style>
+
+    <style name="Widget.MovieSearcher.SeeAllButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">32dp</item>
+        <item name="android:text">@string/see_all</item>
+        <item name="android:textColor">?attr/colorControlNormal</item>
     </style>
 </resources>
