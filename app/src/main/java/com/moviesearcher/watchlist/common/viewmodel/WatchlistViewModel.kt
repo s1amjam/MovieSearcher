@@ -9,18 +9,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviesearcher.R
 import com.moviesearcher.api.ApiService
+import com.moviesearcher.common.credentials.CredentialsHolder
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.TvWatchlistResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-const val ERROR_MESSAGE = "Something went wrong '%s'"
+@HiltViewModel
+class WatchlistViewModel @Inject constructor(private val credentialsHolder: CredentialsHolder) :
+    ViewModel() {
 
-class WatchlistViewModel(private val accountId: Long, private val sessionId: String) : ViewModel() {
     private val movieWatchlist = MutableLiveData<Resource<MovieWatchlistResponse>>()
     private val tvWatchlist = MutableLiveData<Resource<TvWatchlistResponse>>()
     private val watchlistItemsIds = MutableLiveData<Resource<MutableList<Long>>>()
@@ -34,7 +39,10 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
             movieWatchlist.postValue(Resource.loading(null))
             try {
                 val moviesWatchlistFromApi =
-                    ApiService.create().getMovieWatchlist(accountId, sessionId)
+                    ApiService.create().getMovieWatchlist(
+                        credentialsHolder.getAccountId(),
+                        credentialsHolder.getSessionId()
+                    )
                 movieWatchlist.postValue(Resource.success(moviesWatchlistFromApi))
             } catch (e: Exception) {
                 movieWatchlist.postValue(Resource.error(e.toString(), null))
@@ -68,11 +76,13 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
     }
 
     fun postWatchlist(
-        accountId: Long,
-        sessionId: String,
         watchlistRequest: WatchlistRequest
     ): MutableLiveData<Resource<ResponseWithCodeAndMessage>> {
-        fetchWatchlist(accountId, sessionId, watchlistRequest)
+        fetchWatchlist(
+            credentialsHolder.getAccountId(),
+            credentialsHolder.getSessionId(),
+            watchlistRequest
+        )
 
         return watchlist
     }
@@ -81,7 +91,10 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         viewModelScope.launch {
             tvWatchlist.postValue(Resource.loading(null))
             try {
-                val tvWatchlistFromApi = ApiService.create().getTvWatchlist(accountId, sessionId)
+                val tvWatchlistFromApi = ApiService.create().getTvWatchlist(
+                    credentialsHolder.getAccountId(),
+                    credentialsHolder.getSessionId()
+                )
                 tvWatchlist.postValue(Resource.success(tvWatchlistFromApi))
             } catch (e: Exception) {
                 tvWatchlist.postValue(Resource.error(e.toString(), null))
@@ -106,14 +119,20 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
 
                     if (isTv) {
                         val tvWatchlistFromApi =
-                            ApiService.create().getTvWatchlist(accountId, sessionId)
+                            ApiService.create().getTvWatchlist(
+                                credentialsHolder.getAccountId(),
+                                credentialsHolder.getSessionId()
+                            )
 
                         tvWatchlistFromApi.results?.forEach { it ->
                             watchlistIdsFromApi.add(it.id!!.toLong())
                         }
                     } else {
                         val moviesWatchlistFromApi =
-                            ApiService.create().getMovieWatchlist(accountId, sessionId)
+                            ApiService.create().getMovieWatchlist(
+                                credentialsHolder.getAccountId(),
+                                credentialsHolder.getSessionId()
+                            )
 
                         moviesWatchlistFromApi.results?.forEach { it ->
                             watchlistIdsFromApi.add(it.id!!.toLong())
@@ -153,7 +172,7 @@ class WatchlistViewModel(private val accountId: Long, private val sessionId: Str
         context: Context,
         isTv: Boolean = false
     ) {
-        if (sessionId.isNotBlank()) {
+        if (credentialsHolder.getSessionId().isNotBlank()) {
             getWatchlistItemsIds(isTv).observe(lifecycleOwner) {
                 when (it.status) {
                     Status.SUCCESS -> {

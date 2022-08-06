@@ -7,30 +7,38 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.credentials.CredentialsHolder
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMyListBinding
 import com.moviesearcher.list.adapter.MyListAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-private const val TAG = "FavoritesFragment"
+@AndroidEntryPoint
+class MyListFragment : Fragment() {
 
-class MyListFragment : BaseFragment() {
     private var _binding: FragmentMyListBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel by viewModels<ListViewModel>()
+
+    @Inject
+    lateinit var credentialsHolder: CredentialsHolder
+    private val sessionId: String
+        get() = credentialsHolder.getSessionId()
 
     private val args by navArgs<MyListFragmentArgs>()
 
     private lateinit var progressBar: ProgressBar
     private lateinit var myListRecyclerView: RecyclerView
     private lateinit var emptyListTextView: TextView
-
-    private lateinit var viewModel: ListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,9 +57,7 @@ class MyListFragment : BaseFragment() {
         progressBar = binding.progressBarList
         emptyListTextView = binding.emptyListTv
 
-        setupViewModel()
-
-        viewModel.getMyList().observe(viewLifecycleOwner) {
+        viewModel.getMyList(args.listId).observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { myListItems ->
@@ -95,13 +101,6 @@ class MyListFragment : BaseFragment() {
                 }
             }
         }
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(listId = args.listId)
-        ).get(ListViewModel::class.java)
     }
 
     override fun onDestroyView() {

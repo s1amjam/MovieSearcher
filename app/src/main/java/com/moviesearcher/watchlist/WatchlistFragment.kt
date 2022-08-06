@@ -9,29 +9,29 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentWatchlistBinding
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
 import com.moviesearcher.watchlist.movie.adapter.MovieWatchlistAdapter
 import com.moviesearcher.watchlist.movie.model.MovieWatchlistResponse
 import com.moviesearcher.watchlist.tv.model.MovieWatchlistResult
+import dagger.hilt.android.AndroidEntryPoint
 
-private const val TAG = "WatchlistFragment"
-
-class WatchlistFragment : BaseFragment() {
+@AndroidEntryPoint
+class WatchlistFragment : Fragment() {
     private var _binding: FragmentWatchlistBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: WatchlistViewModel
+    private val viewModel by viewModels<WatchlistViewModel>()
 
     private lateinit var navController: NavController
     private lateinit var watchlistRv: RecyclerView
@@ -57,7 +57,6 @@ class WatchlistFragment : BaseFragment() {
         tvWatchlistButton = binding.tvWatchlistButton
         progressBar = binding.watchlistPb
 
-        setupViewModel()
         setupMovieUi()
 
         movieWatchlistButton.setOnClickListener {
@@ -156,8 +155,6 @@ class WatchlistFragment : BaseFragment() {
                     lifecycleOwner: LifecycleOwner
                 ) {
                     viewModel.postWatchlist(
-                        accountId,
-                        sessionId,
                         WatchlistRequest(
                             button.tag.toString().toBoolean(),
                             media.values.first(),
@@ -178,15 +175,6 @@ class WatchlistFragment : BaseFragment() {
         movieWatchlistAdapter.differ.submitList(movieItems.results)
 
         return movieWatchlistAdapter
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(
-                sessionId = sessionId, accountId = accountId
-            )
-        ).get(WatchlistViewModel::class.java)
     }
 
     override fun onDestroyView() {

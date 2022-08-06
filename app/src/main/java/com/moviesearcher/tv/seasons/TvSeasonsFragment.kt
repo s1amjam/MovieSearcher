@@ -10,12 +10,11 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.utils.Constants.SEASON_NUMBER
+import com.moviesearcher.common.utils.Constants.TV_ID
 import com.moviesearcher.databinding.FragmentTvSeasonsBinding
 
-private const val TAG = "TvSeasonsFragment"
-
-class TvSeasonsFragment : BaseFragment() {
+class TvSeasonsFragment : Fragment() {
     private var _binding: FragmentTvSeasonsBinding? = null
     private val binding get() = _binding!!
 
@@ -62,8 +61,8 @@ class TvSeasonsFragment : BaseFragment() {
             val fragment = TvSeasonsViewPagerFragment()
 
             fragment.arguments = Bundle().apply {
-                putLong("id", args.tvId)
-                putString("seasonNumber", (position + 1).toString())
+                putLong(TV_ID, args.tvId)
+                putString(SEASON_NUMBER, (position + 1).toString())
             }
             return fragment
         }

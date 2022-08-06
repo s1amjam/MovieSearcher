@@ -5,28 +5,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentImagesBinding
 import com.moviesearcher.movie.MovieViewModel
 import com.moviesearcher.movie.adapter.images.ImagesAdapter
 import com.moviesearcher.person.PersonViewModel
 import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
 import com.moviesearcher.tv.TvViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-class ImagesFragment : BaseFragment() {
+@AndroidEntryPoint
+class ImagesFragment : Fragment() {
     private var _binding: FragmentImagesBinding? = null
     private val binding get() = _binding!!
 
     private val args by navArgs<ImagesFragmentArgs>()
 
-    private lateinit var movieViewModel: MovieViewModel
-    private lateinit var tvViewModel: TvViewModel
-    private lateinit var personViewModel: PersonViewModel
+    private val movieViewModel by viewModels<MovieViewModel>()
+    private val tvViewModel by viewModels<TvViewModel>()
+    private val personViewModel by viewModels<PersonViewModel>()
 
     private lateinit var imagesRecyclerView: RecyclerView
 
@@ -43,17 +46,16 @@ class ImagesFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         imagesRecyclerView = binding.photosRecyclerView
 
-        setupViewModel()
         setupUi()
     }
 
     private fun setupUi() {
-        val movieId = args.movieId?.toLong()
-        val tvId = args.tvId?.toLong()
-        val personId = args.personId?.toLong()
+        val movieId = args.movieId
+        val tvId = args.tvId
+        val personId = args.personId
 
         when {
-            movieId != null -> {
+            movieId != 0L -> {
                 movieViewModel.getImages().observe(viewLifecycleOwner) {
                     when (it.status) {
                         Status.SUCCESS -> {
@@ -76,7 +78,7 @@ class ImagesFragment : BaseFragment() {
                     }
                 }
             }
-            tvId != null -> {
+            tvId != 0L -> {
                 tvViewModel.getImages().observe(viewLifecycleOwner) {
                     when (it.status) {
                         Status.SUCCESS -> {
@@ -99,7 +101,7 @@ class ImagesFragment : BaseFragment() {
                     }
                 }
             }
-            personId != null -> {
+            personId != 0L -> {
                 personViewModel.getPersonImages()
                     .observe(viewLifecycleOwner) {
                         when (it.status) {
@@ -130,28 +132,6 @@ class ImagesFragment : BaseFragment() {
         imagesRecyclerView.apply {
             adapter = imagesAdapter
             layoutManager = GridLayoutManager(requireContext(), 3)
-        }
-    }
-
-    private fun setupViewModel() {
-        if (args.movieId != null) {
-            movieViewModel = ViewModelProvider(
-                this, ViewModelFactory(
-                    movieId = args.movieId?.toLong()
-                )
-            ).get(MovieViewModel::class.java)
-        } else if (args.tvId != null) {
-            tvViewModel = ViewModelProvider(
-                this, ViewModelFactory(
-                    tvId = args.tvId?.toLong()
-                )
-            ).get(TvViewModel::class.java)
-        } else if (args.personId != null) {
-            personViewModel = ViewModelProvider(
-                this, ViewModelFactory(
-                    personId = args.personId!!.toLong()
-                )
-            ).get(PersonViewModel::class.java)
         }
     }
 

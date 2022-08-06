@@ -1,7 +1,6 @@
 package com.moviesearcher
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -13,18 +12,14 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.moviesearcher.common.utils.Constants.DARK_MODE
-import com.moviesearcher.common.utils.EncryptedSharedPrefs
 import com.moviesearcher.databinding.ActivityMovieSearcherBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-private const val TAG = "MovieSearcherActivity"
-
+@AndroidEntryPoint
 class MovieSearcherActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMovieSearcherBinding
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-
-    private lateinit var encryptedSharedPrefs: SharedPreferences
-    private lateinit var sessionId: String
 
     private lateinit var navigationView: BottomNavigationView
     private lateinit var navController: NavController
@@ -38,12 +33,9 @@ class MovieSearcherActivity : AppCompatActivity() {
         val mode = prefs.getInt(DARK_MODE, 1)
         setContentView(view)
 
-        encryptedSharedPrefs = EncryptedSharedPrefs.sharedPrefs(applicationContext)
-        sessionId = encryptedSharedPrefs.getString("sessionId", "").toString()
-
         setupNavigation()
 
-        navigationView.setOnNavigationItemSelectedListener { menuItem ->
+        navigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.home -> {
                     navController.navigate(R.id.home_fragment)

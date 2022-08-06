@@ -9,19 +9,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviesearcher.R
 import com.moviesearcher.api.ApiService
+import com.moviesearcher.common.credentials.CredentialsHolder
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.tv.model.FavoriteTvResponse
-import com.moviesearcher.list.ERROR_MESSAGE
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FavoriteViewModel(
-    private val sessionId: String,
-    private val accountId: Long,
-    isFavorite: Boolean
+@HiltViewModel
+class FavoriteViewModel @Inject constructor(
+    private val credentialsHolder: CredentialsHolder
 ) : ViewModel() {
     private val favoriteMovies = MutableLiveData<Resource<FavoriteMovieResponse>>()
     private val favoriteTvs = MutableLiveData<Resource<FavoriteTvResponse>>()
@@ -30,14 +32,15 @@ class FavoriteViewModel(
     private val markAsFavoriteIcon = R.drawable.ic_round_star_outline_36
     private val removeFromFavoriteIcon = R.drawable.ic_round_star_filled_36
 
-    private var _isFavorite = isFavorite
-
     private fun fetchFavoriteMovie() {
         viewModelScope.launch {
             favoriteMovies.postValue(Resource.loading(null))
             try {
                 val favoriteMovieFromApi =
-                    ApiService.create().getFavoriteMovies(accountId, sessionId)
+                    ApiService.create().getFavoriteMovies(
+                        credentialsHolder.getAccountId(),
+                        credentialsHolder.getSessionId()
+                    )
                 favoriteMovies.postValue(Resource.success(favoriteMovieFromApi))
             } catch (e: Exception) {
                 favoriteMovies.postValue(Resource.error(e.toString(), null))
@@ -57,7 +60,10 @@ class FavoriteViewModel(
         viewModelScope.launch {
             favoriteTvs.postValue(Resource.loading(null))
             try {
-                val favoriteTvFromApi = ApiService.create().getFavoriteTvs(accountId, sessionId)
+                val favoriteTvFromApi = ApiService.create().getFavoriteTvs(
+                    credentialsHolder.getAccountId(),
+                    credentialsHolder.getSessionId()
+                )
                 favoriteTvs.postValue(Resource.success(favoriteTvFromApi))
             } catch (e: Exception) {
                 favoriteTvs.postValue(Resource.error(e.toString(), null))
@@ -158,12 +164,12 @@ class FavoriteViewModel(
         }
     }
 
-    fun postMarkAsFavorite(
-        accountId: Long,
-        sessionId: String,
-        markAsFavoriteRequest: MarkAsFavoriteRequest
-    ): MutableLiveData<Resource<ResponseWithCodeAndMessage>> {
-        fetchMarkAsFavorite(accountId, sessionId, markAsFavoriteRequest)
+    fun postMarkAsFavorite(markAsFavoriteRequest: MarkAsFavoriteRequest):
+            MutableLiveData<Resource<ResponseWithCodeAndMessage>> {
+        fetchMarkAsFavorite(
+            credentialsHolder.getAccountId(),
+            credentialsHolder.getSessionId(), markAsFavoriteRequest
+        )
 
         return markAsFavorite
     }

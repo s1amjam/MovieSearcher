@@ -151,7 +151,7 @@
         android:id="@+id/you_fragment"
         android:name="com.moviesearcher.you.YouFragment"
         android:label="fragment_you"
-        tools:layout="@layout/fragment_you" >
+        tools:layout="@layout/fragment_you">
         <action
             android:id="@+id/action_you_fragment_to_fragment_my_lists"
             app:destination="@id/fragment_my_lists" />
@@ -180,19 +180,16 @@
         android:label="ImagesFragment">
         <argument
             android:name="movie_id"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
+            android:defaultValue="0L"
+            app:argType="long" />
         <argument
             android:name="person_id"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
+            android:defaultValue="0L"
+            app:argType="long" />
         <argument
             android:name="tv_id"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
+            android:defaultValue="0L"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/personInfoFragment"

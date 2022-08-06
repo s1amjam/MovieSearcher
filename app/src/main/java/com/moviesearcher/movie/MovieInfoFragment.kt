@@ -13,7 +13,8 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,15 +24,16 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
-import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.RateDialog
+import com.moviesearcher.common.credentials.CredentialsHolder
 import com.moviesearcher.common.extensions.loadImage
 import com.moviesearcher.common.extensions.toOneScale
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
+import com.moviesearcher.common.utils.Constants.LIST_ID
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMovieInfoBinding
 import com.moviesearcher.favorite.FavoriteViewModel
 import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
@@ -44,12 +46,13 @@ import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.movie.model.cast.Cast
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlin.collections.set
 
-private const val TAG = "MovieInfoFragment"
-
-class MovieInfoFragment : BaseFragment() {
+@AndroidEntryPoint
+class MovieInfoFragment : Fragment() {
     private var _binding: FragmentMovieInfoBinding? = null
     private val binding get() = _binding!!
 
@@ -57,11 +60,16 @@ class MovieInfoFragment : BaseFragment() {
 
     private val args by navArgs<MovieInfoFragmentArgs>()
 
-    private lateinit var movieViewModel: MovieViewModel
-    private lateinit var listsViewModel: ListsViewModel
-    private lateinit var watchlistViewModel: WatchlistViewModel
-    private lateinit var listViewModel: ListViewModel
-    private lateinit var favoriteViewModel: FavoriteViewModel
+    @Inject
+    lateinit var credentialsHolder: CredentialsHolder
+    private val sessionId: String
+        get() = credentialsHolder.getSessionId()
+
+    private val movieViewModel by viewModels<MovieViewModel>()
+    private val listsViewModel by viewModels<ListsViewModel>()
+    private val watchlistViewModel by viewModels<WatchlistViewModel>()
+    private val listViewModel by viewModels<ListViewModel>()
+    private val favoriteViewModel by viewModels<FavoriteViewModel>()
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -160,11 +168,10 @@ class MovieInfoFragment : BaseFragment() {
 
         mediaInfo["movie"] = args.movieId
 
-        setupViewModel()
-        setupUi()
+        setupUi(savedInstanceState)
     }
 
-    private fun setupUi() {
+    private fun setupUi(savedInstanceState: Bundle?) {
         movieViewModel.getMovieInfo().observe(viewLifecycleOwner) { it ->
             when (it.status) {
                 Status.SUCCESS -> {
@@ -234,8 +241,9 @@ class MovieInfoFragment : BaseFragment() {
                                         it.data?.let { accountState ->
                                             if (accountState.rated.toString() != "false") {
                                                 rateButton.text =
-                                                    accountState.rated?.value.toString() +
-                                                            "\n(your rating)"
+                                                    getString(R.string.your_rating).format(
+                                                        accountState.rated?.value.toString()
+                                                    )
                                             }
                                         }
                                     }
@@ -515,7 +523,7 @@ class MovieInfoFragment : BaseFragment() {
 
         seeAllImagesButton.setOnClickListener {
             val action = MovieInfoFragmentDirections.actionMovieInfoFragmentToImagesFragment()
-            action.movieId = args.movieId.toString()
+            action.movieId = args.movieId
 
             findNavController().navigate(action)
         }
@@ -525,7 +533,7 @@ class MovieInfoFragment : BaseFragment() {
 
             listsViewModel.getLists().observe(viewLifecycleOwner) { lists ->
                 lists.data?.results?.get(0)?.id?.toInt()
-                    ?.let { it1 -> setupListViewModel(it1, args.movieId) }
+                    ?.let { it1 -> savedInstanceState?.putInt(LIST_ID, it1) }
 
                 when (lists.status) {
                     Status.SUCCESS -> {
@@ -585,8 +593,6 @@ class MovieInfoFragment : BaseFragment() {
 
             markMovieAsFavoriteImageButton.setOnClickListener {
                 favoriteViewModel.postMarkAsFavorite(
-                    accountId,
-                    sessionId,
                     MarkAsFavoriteRequest(
                         markMovieAsFavoriteImageButton.tag.toString().toBoolean(),
                         mediaInfo.values.first(),
@@ -599,8 +605,6 @@ class MovieInfoFragment : BaseFragment() {
 
             watchlistImageButton.setOnClickListener {
                 watchlistViewModel.postWatchlist(
-                    accountId,
-                    sessionId,
                     WatchlistRequest(
                         watchlistImageButton.tag.toString().toBoolean(),
                         mediaInfo.values.first(),
@@ -620,48 +624,6 @@ class MovieInfoFragment : BaseFragment() {
                     Toast.LENGTH_LONG
                 ).show()
             }
-        }
-    }
-
-    private fun setupViewModel() {
-        movieViewModel = ViewModelProvider(
-            this, ViewModelFactory(
-                movieId = args.movieId,
-                sessionId = sessionId.ifEmpty { null }
-            )
-        ).get(MovieViewModel::class.java)
-
-        if (sessionId.isNotEmpty()) {
-            listsViewModel = ViewModelProvider(
-                this, ViewModelFactory(
-                    sessionId, accountId, page = 1
-                )
-            ).get(ListsViewModel::class.java)
-
-            watchlistViewModel = ViewModelProvider(
-                this,
-                ViewModelFactory(
-                    sessionId, accountId
-                )
-            ).get(WatchlistViewModel::class.java)
-
-            favoriteViewModel = ViewModelProvider(
-                this,
-                ViewModelFactory(
-                    sessionId, accountId, isFavorite = true
-                )
-            ).get(FavoriteViewModel::class.java)
-        }
-    }
-
-    private fun setupListViewModel(listId: Int, movieId: Long) {
-        if (sessionId.isNotEmpty()) {
-            listViewModel = ViewModelProvider(
-                this,
-                ViewModelFactory(
-                    listId = listId, movieId = movieId
-                )
-            ).get(ListViewModel::class.java)
         }
     }
 

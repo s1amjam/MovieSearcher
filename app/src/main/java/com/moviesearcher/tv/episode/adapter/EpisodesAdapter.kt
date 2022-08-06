@@ -18,8 +18,8 @@ import com.moviesearcher.tv.seasons.model.Episode
 class EpisodesAdapter(
     private val episodeItems: List<Episode>,
     private val navController: NavController,
-    private val seasonNumber: String?,
-    private val tvId: Long?,
+    private val seasonNumber: String,
+    private val tvId: Long,
 ) : RecyclerView.Adapter<EpisodesAdapter.TvEpisodeViewHolder>() {
 
     inner class TvEpisodeViewHolder(binding: ExtendedCardViewBinding) :
@@ -45,8 +45,8 @@ class EpisodesAdapter(
             cardView.setOnClickListener {
                 navController.navigate(
                     TvSeasonsFragmentDirections.actionTvSeasonsFragmentToTvEpisodeFragment(
-                        tvId!!,
-                        seasonNumber!!,
+                        tvId,
+                        seasonNumber,
                         tvEpisodeItem.episodeNumber!!
                     )
                 )

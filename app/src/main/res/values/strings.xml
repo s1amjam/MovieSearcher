@@ -66,4 +66,5 @@
     <string name="rate">Rate</string>
     <string name="rating_star">rating star</string>
     <string name="dark_theme_button">Dark theme button</string>
+    <string name="your_rating">%s\n(your rating)</string>
 </resources>

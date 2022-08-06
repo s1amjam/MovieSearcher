@@ -20,11 +20,11 @@ import androidx.fragment.app.viewModels
 import com.moviesearcher.common.model.account.Avatar
 import com.moviesearcher.common.model.auth.RequestToken
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Constants.SUCCESS_SESSION_URL
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.AuthViewModel
 import com.moviesearcher.databinding.FragmentAuthorizationDialogBinding
-import com.moviesearcher.watchlist.common.viewmodel.ERROR_MESSAGE
 
 class AuthorizationDialogFragment : DialogFragment() {
     private var _binding: FragmentAuthorizationDialogBinding? = null

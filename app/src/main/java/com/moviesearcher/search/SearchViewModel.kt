@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.moviesearcher.api.ApiService
 import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.search.model.SearchResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {

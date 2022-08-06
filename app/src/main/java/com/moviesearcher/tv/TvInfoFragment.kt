@@ -13,7 +13,8 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,15 +24,16 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
-import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.RateDialog
+import com.moviesearcher.common.credentials.CredentialsHolder
 import com.moviesearcher.common.extensions.loadImage
 import com.moviesearcher.common.extensions.toOneScale
 import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
+import com.moviesearcher.common.utils.Constants.LIST_ID
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentTvInfoBinding
 import com.moviesearcher.favorite.FavoriteViewModel
 import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
@@ -44,10 +46,12 @@ import com.moviesearcher.tv.adapter.recommendations.TvRecommendationsAdapter
 import com.moviesearcher.tv.model.cast.Cast
 import com.moviesearcher.watchlist.common.model.WatchlistRequest
 import com.moviesearcher.watchlist.common.viewmodel.WatchlistViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-private const val TAG = "TvInfoFragment"
+@AndroidEntryPoint
+class TvInfoFragment : Fragment() {
 
-class TvInfoFragment : BaseFragment() {
     private var _binding: FragmentTvInfoBinding? = null
     private val binding get() = _binding!!
 
@@ -56,11 +60,16 @@ class TvInfoFragment : BaseFragment() {
     private val args by navArgs<TvInfoFragmentArgs>()
     private var numberOfSeasons: Int = 0
 
-    private lateinit var tvViewModel: TvViewModel
-    private lateinit var listsViewModel: ListsViewModel
-    private lateinit var watchlistViewModel: WatchlistViewModel
-    private lateinit var listViewModel: ListViewModel
-    private lateinit var favoriteViewModel: FavoriteViewModel
+    @Inject
+    lateinit var credentialsHolder: CredentialsHolder
+    private val sessionId: String
+        get() = credentialsHolder.getSessionId()
+
+    private val tvViewModel by viewModels<TvViewModel>()
+    private val listsViewModel by viewModels<ListsViewModel>()
+    private val watchlistViewModel by viewModels<WatchlistViewModel>()
+    private val listViewModel by viewModels<ListViewModel>()
+    private val favoriteViewModel by viewModels<FavoriteViewModel>()
 
     private lateinit var castRecyclerView: RecyclerView
     private lateinit var recommendationsRecyclerView: RecyclerView
@@ -164,10 +173,10 @@ class TvInfoFragment : BaseFragment() {
         mediaInfo["tv"] = args.tvId
 
         setupViewModel()
-        setupUi()
+        setupUi(savedInstanceState)
     }
 
-    private fun setupUi() {
+    private fun setupUi(savedInstanceState: Bundle?) {
         tvViewModel.getTvInfo().observe(viewLifecycleOwner) { it ->
             when (it.status) {
                 Status.SUCCESS -> {
@@ -184,7 +193,11 @@ class TvInfoFragment : BaseFragment() {
                             minutes = tvInfo.episodeRunTime[0].toLong()
                         }
 
-                        numberOfSeasons = tvInfo.numberOfSeasons!!
+                        tvInfo.numberOfSeasons.let {
+                            if (it != null) {
+                                numberOfSeasons = it
+                            }
+                        }
 
                         tvInfo.spokenLanguages?.forEach { languages.add(it.name!!) }
                         tvInfo.productionCountries?.forEach { locations.add(it.name!!) }
@@ -258,8 +271,9 @@ class TvInfoFragment : BaseFragment() {
                                         it.data?.let { accountState ->
                                             if (accountState.rated.toString() != "false") {
                                                 rateButton.text =
-                                                    accountState.rated?.value.toString() +
-                                                            "\n(your rating)"
+                                                    getString(R.string.your_rating).format(
+                                                        accountState.rated?.value.toString()
+                                                    )
                                             }
                                         }
                                     }
@@ -556,7 +570,7 @@ class TvInfoFragment : BaseFragment() {
 
             seeAllImagesButton.setOnClickListener {
                 val action = TvInfoFragmentDirections.actionTvInfoFragmentToImagesFragment()
-                action.tvId = args.tvId.toString()
+                action.tvId = args.tvId
 
                 findNavController().navigate(action)
             }
@@ -566,7 +580,7 @@ class TvInfoFragment : BaseFragment() {
 
                 listsViewModel.getLists().observe(viewLifecycleOwner) { lists ->
                     lists.data?.results?.get(0)?.id?.toInt()
-                        ?.let { it1 -> setupListViewModel(it1, args.tvId) }
+                        ?.let { it1 -> savedInstanceState?.putInt(LIST_ID, it1) }
 
                     when (lists.status) {
                         Status.SUCCESS -> {
@@ -626,8 +640,6 @@ class TvInfoFragment : BaseFragment() {
 
                 markTvAsFavoriteButton.setOnClickListener {
                     favoriteViewModel.postMarkAsFavorite(
-                        accountId,
-                        sessionId,
                         MarkAsFavoriteRequest(
                             markTvAsFavoriteButton.tag.toString().toBoolean(),
                             mediaInfo.values.first(),
@@ -640,8 +652,6 @@ class TvInfoFragment : BaseFragment() {
 
                 watchlistImageButton.setOnClickListener {
                     watchlistViewModel.postWatchlist(
-                        accountId,
-                        sessionId,
                         WatchlistRequest(
                             watchlistImageButton.tag.toString().toBoolean(),
                             mediaInfo.values.first(),
@@ -675,45 +685,7 @@ class TvInfoFragment : BaseFragment() {
     }
 
     private fun setupViewModel() {
-        tvViewModel = ViewModelProvider(
-            this, ViewModelFactory(
-                tvId = args.tvId,
-                sessionId = sessionId.ifEmpty { null }
-            )
-        ).get(TvViewModel::class.java)
 
-        if (sessionId.isNotEmpty()) {
-            listsViewModel = ViewModelProvider(
-                this, ViewModelFactory(
-                    sessionId, accountId, page = 1
-                )
-            ).get(ListsViewModel::class.java)
-
-            watchlistViewModel = ViewModelProvider(
-                this,
-                ViewModelFactory(
-                    sessionId, accountId
-                )
-            ).get(WatchlistViewModel::class.java)
-
-            favoriteViewModel = ViewModelProvider(
-                this,
-                ViewModelFactory(
-                    sessionId, accountId, isFavorite = true
-                )
-            ).get(FavoriteViewModel::class.java)
-        }
-    }
-
-    private fun setupListViewModel(listId: Int, tvId: Long) {
-        if (sessionId.isNotEmpty()) {
-            listViewModel = ViewModelProvider(
-                this,
-                ViewModelFactory(
-                    listId = listId, movieId = tvId
-                )
-            ).get(ListViewModel::class.java)
-        }
     }
 
     override fun onDestroyView() {

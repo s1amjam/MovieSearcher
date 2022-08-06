@@ -7,27 +7,35 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.credentials.CredentialsHolder
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentMyListsBinding
 import com.moviesearcher.list.lists.adapter.MyListsAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-private const val TAG = "MyListsFragment"
+@AndroidEntryPoint
+class MyListsFragment : Fragment() {
 
-class MyListsFragment : BaseFragment() {
     private var _binding: FragmentMyListsBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var credentialsHolder: CredentialsHolder
+    private val sessionId: String
+        get() = credentialsHolder.getSessionId()
+
+    private val viewModel by viewModels<ListsViewModel>()
 
     private lateinit var myListsRecyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var noListsTv: TextView
-
-    private lateinit var viewModel: ListsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,8 +55,6 @@ class MyListsFragment : BaseFragment() {
         myListsRecyclerView.layoutManager = LinearLayoutManager(context)
         noListsTv = binding.noListsTv
 
-        setupViewModel()
-
         viewModel.getLists().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
@@ -58,7 +64,11 @@ class MyListsFragment : BaseFragment() {
                             noListsTv.visibility = View.VISIBLE
                         } else {
                             myListsRecyclerView.adapter =
-                                MyListsAdapter(myListItems, findNavController(), sessionId)
+                                MyListsAdapter(
+                                    myListItems,
+                                    findNavController(),
+                                    sessionId
+                                )
 
                             progressBar.visibility = View.GONE
                             noListsTv.visibility = View.GONE
@@ -81,14 +91,6 @@ class MyListsFragment : BaseFragment() {
                 }
             }
         }
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this, ViewModelFactory(
-                sessionId, accountId, page = 1
-            )
-        ).get(ListsViewModel::class.java)
     }
 
     override fun onDestroyView() {

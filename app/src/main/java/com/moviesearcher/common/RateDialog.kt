@@ -2,7 +2,6 @@ package com.moviesearcher.common
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -11,13 +10,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
 import com.moviesearcher.common.model.rate.AccountStatesResponse
 import com.moviesearcher.common.model.rate.Rated
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.RateViewModel
 import com.moviesearcher.databinding.RateDialogBinding
 import com.moviesearcher.movie.MovieViewModel
 import com.moviesearcher.tv.TvViewModel
-import com.moviesearcher.watchlist.common.viewmodel.ERROR_MESSAGE
 
 class RateDialog(
     private val id: Long,
@@ -29,7 +28,7 @@ class RateDialog(
     private val binding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        _binding = RateDialogBinding.inflate(LayoutInflater.from(context))
+        _binding = RateDialogBinding.inflate(layoutInflater)
         val view = binding.root
         val rateButton = binding.rateButton
         val cancelButton = binding.cancelButton

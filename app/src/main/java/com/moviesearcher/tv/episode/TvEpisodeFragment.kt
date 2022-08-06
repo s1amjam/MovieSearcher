@@ -11,7 +11,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,13 +21,12 @@ import com.bumptech.glide.Glide
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
-import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.extensions.loadImage
 import com.moviesearcher.common.extensions.toOneScale
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentTvEpisodeBinding
 import com.moviesearcher.movie.adapter.video.VideoAdapter
 import com.moviesearcher.tv.episode.adapter.cast.TvEpisodeCastAdapter
@@ -34,15 +34,13 @@ import com.moviesearcher.tv.episode.adapter.images.EpisodeImagesAdapter
 import com.moviesearcher.tv.episode.model.Crew
 import com.moviesearcher.tv.episode.model.image.Still
 
-private const val TAG = "TvEpisodeFragment"
-
-class TvEpisodeFragment : BaseFragment() {
+class TvEpisodeFragment : Fragment() {
     private var _binding: FragmentTvEpisodeBinding? = null
     private val binding get() = _binding!!
 
     private val args by navArgs<TvEpisodeFragmentArgs>()
 
-    private lateinit var viewModel: TvEpisodeViewModel
+    private val viewModel by viewModels<TvEpisodeViewModel>()
 
     private lateinit var tvInfoCastRecyclerView: RecyclerView
     private lateinit var videoRecyclerView: RecyclerView
@@ -66,6 +64,7 @@ class TvEpisodeFragment : BaseFragment() {
     private lateinit var mainCardView: CardView
     private lateinit var progressBar: ProgressBar
     private lateinit var imagesCardView: CardView
+    private lateinit var castCv: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -104,28 +103,29 @@ class TvEpisodeFragment : BaseFragment() {
         mainCardView = binding.mainTvInfoCardView
         progressBar = binding.progressBarTvInfo
         imagesCardView = binding.imagesCardView
+        castCv = binding.castCv
 
-        setupViewModel()
+        viewModel.getTvEpisode().observe(viewLifecycleOwner) { it ->
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { tvInfo ->
+                        val dialog = PosterDialog(tvInfo.stillPath.toString())
+                        tvInfoPosterImageView.loadImage(Constants.IMAGE_URL + tvInfo.stillPath)
+                        tvInfoTitle.text = tvInfo.name
+                        releaseDate.text = tvInfo.airDate?.replace("-", ".")
+                        tvInfoOverview.text = tvInfo.overview
+                        voteAverage.text =
+                            getString(R.string.vote).format(tvInfo.voteAverage?.toOneScale())
+                        voteCount.text = tvInfo.voteCount.toString()
 
-        viewModel.getTvEpisode()
-            .observe(viewLifecycleOwner) {
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        it.data?.let { tvInfo ->
-                            val dialog = PosterDialog(tvInfo.stillPath.toString())
-                            tvInfoPosterImageView.loadImage(Constants.IMAGE_URL + tvInfo.stillPath)
-                            tvInfoTitle.text = tvInfo.name
-                            releaseDate.text = tvInfo.airDate?.replace("-", ".")
-                            tvInfoOverview.text = tvInfo.overview
-                            voteAverage.text =
-                                getString(R.string.vote).format(tvInfo.voteAverage?.toOneScale())
-                            voteCount.text = tvInfo.voteCount.toString()
+                        tvInfoOverview.setOnClickListener {
+                            MaterialAlertDialogBuilder(requireContext()).setMessage(tvInfo.overview)
+                                .show()
+                        }
 
-                            tvInfoOverview.setOnClickListener {
-                                MaterialAlertDialogBuilder(requireContext()).setMessage(tvInfo.overview)
-                                    .show()
-                            }
-
+                        if (tvInfo.crew?.isEmpty() == true) {
+                            castCv.visibility = View.GONE
+                        } else {
                             val tvCastAdapter = TvEpisodeCastAdapter(tvInfo, findNavController())
                             val directors = mutableListOf<String>()
                             val writers = mutableListOf<String>()
@@ -151,35 +151,53 @@ class TvEpisodeFragment : BaseFragment() {
                             tvCastAdapter.differ.submitList(tvInfo.crew)
 
                             tvInfo.crew?.filter { it.department == "Directing" }
-                                .also { it -> it?.forEach { directors.add(it.name!!) } }
+                                .also { it ->
+                                    it?.forEach {
+                                        it.name?.let { it1 -> directors.add(it1) }
+                                    }
+                                }
                             tvInfo.crew?.filter { it.department == "Writing" }
-                                .also { it -> it?.forEach { writers.add(it.name!!) } }
+                                .also { it ->
+                                    it?.forEach {
+                                        it.name?.let { it1 -> writers.add(it1) }
+                                    }
+                                }
 
-                            director.text =
-                                getString(R.string.director).format(directors.joinToString())
-                            writer.text = getString(R.string.writer).format(writers.joinToString())
-
-                            tvInfoPosterImageView.setOnClickListener {
-                                dialog.show(childFragmentManager, "PosterDialogFragment")
+                            if (directors.isEmpty()) {
+                                director.visibility = View.GONE
+                            } else {
+                                director.text =
+                                    getString(R.string.director).format(directors.joinToString())
+                            }
+                            if (writers.isEmpty()) {
+                                writer.visibility = View.GONE
+                            } else {
+                                writer.text =
+                                    getString(R.string.writer).format(writers.joinToString())
                             }
                         }
-                        progressBar.visibility = View.GONE
-                        tvInfoConstraintLayout.visibility = View.VISIBLE
+
+                        tvInfoPosterImageView.setOnClickListener {
+                            dialog.show(childFragmentManager, "PosterDialogFragment")
+                        }
                     }
-                    Status.LOADING -> {
-                        tvInfoConstraintLayout.visibility = View.GONE
-                        progressBar.visibility = View.VISIBLE
-                    }
-                    Status.ERROR -> {
-                        Toast.makeText(
-                            requireContext(),
-                            ERROR_MESSAGE.format(it.message),
-                            Toast.LENGTH_LONG
-                        ).show()
-                        progressBar.visibility = View.GONE
-                    }
+                    progressBar.visibility = View.GONE
+                    tvInfoConstraintLayout.visibility = View.VISIBLE
+                }
+                Status.LOADING -> {
+                    tvInfoConstraintLayout.visibility = View.GONE
+                    progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ERROR_MESSAGE.format(it.message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    progressBar.visibility = View.GONE
                 }
             }
+        }
 
         viewModel.getTvEpisodeVideos()
             .observe(viewLifecycleOwner) { it ->
@@ -316,20 +334,10 @@ class TvEpisodeFragment : BaseFragment() {
         buttonSeeAllImages.setOnClickListener {
             val action =
                 TvEpisodeFragmentDirections.actionTvEpisodeFragmentToImagesFragment()
-            action.tvId = tvId.toString()
+            action.tvId = tvId
 
             findNavController().navigate(action)
         }
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this, ViewModelFactory(
-                tvId = args.tvId,
-                episodeNumber = args.episodeNumber,
-                seasonNumber = args.seasonNumber
-            )
-        ).get(TvEpisodeViewModel::class.java)
     }
 
     override fun onDestroyView() {

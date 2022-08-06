@@ -1,20 +1,25 @@
 package com.moviesearcher.tv.episode
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviesearcher.api.ApiService
 import com.moviesearcher.common.model.videos.VideosResponse
+import com.moviesearcher.common.utils.Constants.EPISODE_NUMBER
+import com.moviesearcher.common.utils.Constants.SEASON_NUMBER
+import com.moviesearcher.common.utils.Constants.TV_ID
 import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.tv.episode.model.TvEpisodeResponse
 import com.moviesearcher.tv.episode.model.image.EpisodeImageResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TvEpisodeViewModel(
-    private val tvId: Long,
-    private val seasonNumber: String,
-    private val episodeNumber: Int,
-) : ViewModel() {
+@HiltViewModel
+class TvEpisodeViewModel @Inject constructor(private val savedStateHandle: SavedStateHandle) :
+    ViewModel() {
+
     private val tvEpisodeImages = MutableLiveData<Resource<EpisodeImageResponse>>()
     private val episodeVideos = MutableLiveData<Resource<VideosResponse>>()
     private val tvEpisode = MutableLiveData<Resource<TvEpisodeResponse>>()
@@ -30,7 +35,18 @@ class TvEpisodeViewModel(
             tvEpisode.postValue(Resource.loading(null))
             try {
                 val tvEpisodeFromApi =
-                    ApiService.create().getTvEpisode(tvId, seasonNumber, episodeNumber)
+                    savedStateHandle.get<Long>(TV_ID)?.let {
+                        savedStateHandle.get<String>(SEASON_NUMBER)
+                            ?.let { it1 ->
+                                savedStateHandle.get<Int>(EPISODE_NUMBER)?.let { it2 ->
+                                    ApiService.create().getTvEpisode(
+                                        it,
+                                        it1,
+                                        it2
+                                    )
+                                }
+                            }
+                    }
                 tvEpisode.postValue(Resource.success(tvEpisodeFromApi))
             } catch (e: Exception) {
                 tvEpisode.postValue(Resource.error(e.toString(), null))
@@ -47,7 +63,18 @@ class TvEpisodeViewModel(
             tvEpisodeImages.postValue(Resource.loading(null))
             try {
                 val tvEpisodeImagesFromApi =
-                    ApiService.create().getTvEpisodeImages(tvId, seasonNumber, episodeNumber)
+                    savedStateHandle.get<Long>(TV_ID)?.let {
+                        savedStateHandle.get<String>(SEASON_NUMBER)
+                            ?.let { it1 ->
+                                savedStateHandle.get<Int>(EPISODE_NUMBER)?.let { it2 ->
+                                    ApiService.create().getTvEpisodeImages(
+                                        it,
+                                        it1,
+                                        it2
+                                    )
+                                }
+                            }
+                    }
                 tvEpisodeImages.postValue(Resource.success(tvEpisodeImagesFromApi))
             } catch (e: Exception) {
                 tvEpisodeImages.postValue(Resource.error(e.toString(), null))
@@ -64,7 +91,18 @@ class TvEpisodeViewModel(
             episodeVideos.postValue(Resource.loading(null))
             try {
                 val tvEpisodeVideosFromApi =
-                    ApiService.create().getTvEpisodeVideos(tvId, seasonNumber, episodeNumber)
+                    savedStateHandle.get<Long>(TV_ID)?.let {
+                        savedStateHandle.get<String>(SEASON_NUMBER)
+                            ?.let { it1 ->
+                                savedStateHandle.get<Int>(EPISODE_NUMBER)?.let { it2 ->
+                                    ApiService.create().getTvEpisodeVideos(
+                                        it,
+                                        it1,
+                                        it2
+                                    )
+                                }
+                            }
+                    }
                 episodeVideos.postValue(Resource.success(tvEpisodeVideosFromApi))
             } catch (e: Exception) {
                 episodeVideos.postValue(Resource.error(e.toString(), null))

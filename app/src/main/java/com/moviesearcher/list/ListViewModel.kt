@@ -9,12 +9,16 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviesearcher.R
 import com.moviesearcher.api.ApiService
 import com.moviesearcher.common.model.common.MediaId
 import com.moviesearcher.common.model.common.ResponseWithCodeAndMessage
+import com.moviesearcher.common.utils.Constants.ADDED_TO_LIST
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
+import com.moviesearcher.common.utils.Constants.MOVIE_ID
 import com.moviesearcher.common.utils.Resource
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.list.model.CreateNewList
@@ -22,12 +26,13 @@ import com.moviesearcher.list.model.CreateNewListResponse
 import com.moviesearcher.list.model.ListResponse
 import com.moviesearcher.list.model.Result
 import com.moviesearcher.list.model.add.AddToListResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-const val ERROR_MESSAGE = "Something went wrong '%s'"
-
-class ListViewModel(private val listId: Int? = null, private val movieId: Long? = null) :
+@HiltViewModel
+class ListViewModel @Inject constructor(private val savedStateHandle: SavedStateHandle) :
     ViewModel() {
     private val checkedItem = MutableLiveData<Resource<MutableMap<Int, Boolean>>>()
     private val myList = MutableLiveData<Resource<ListResponse>>()
@@ -36,10 +41,6 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
     private val createNewList = MutableLiveData<Resource<CreateNewListResponse>>()
     private val removeFromList = MutableLiveData<Resource<ResponseWithCodeAndMessage>>()
 
-    init {
-        fetchMyList()
-    }
-
     private fun fetchCheckedItem(listId: MutableList<Int>) {
         viewModelScope.launch {
             checkedItem.postValue(Resource.loading(null))
@@ -47,9 +48,12 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
                 coroutineScope {
                     listId.forEach {
                         val checkedItemsFromApiDeferred =
-                            ApiService.create().checkItemStatus(it, movieId!!)
+                            savedStateHandle.get<Long>(MOVIE_ID)?.let { it1 ->
+                                ApiService.create()
+                                    .checkItemStatus(it, it1)
+                            }
 
-                        checkedItems[it] = checkedItemsFromApiDeferred.itemPresent!!
+                        checkedItems[it] = checkedItemsFromApiDeferred?.itemPresent!!
                     }
                     checkedItem.postValue(Resource.success(checkedItems))
                 }
@@ -63,11 +67,11 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
         return checkedItem
     }
 
-    private fun fetchMyList() {
+    private fun fetchMyList(listId: Int) {
         viewModelScope.launch {
             myList.postValue(Resource.loading(null))
             try {
-                val recommendationsFromApi = ApiService.create().getListInfo(listId!!)
+                val recommendationsFromApi = ApiService.create().getListInfo(listId)
                 myList.postValue(Resource.success(recommendationsFromApi))
             } catch (e: Exception) {
                 myList.postValue(Resource.error(e.toString(), null))
@@ -75,7 +79,8 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
         }
     }
 
-    fun getMyList(): MutableLiveData<Resource<ListResponse>> {
+    fun getMyList(listId: Int): MutableLiveData<Resource<ListResponse>> {
+        fetchMyList(listId)
         return myList
     }
 
@@ -175,8 +180,8 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
         }
 
         resultList.forEach {
-            popup.menu.add(Menu.NONE, it.id!!.toInt(), Menu.NONE, it.name)
-            itemsId.add(it.id.toInt())
+            it.id?.toInt()?.let { it1 -> popup.menu.add(Menu.NONE, it1, Menu.NONE, it.name) }
+            it.id?.let { it1 -> itemsId.add(it1.toInt()) }
         }
 
         fetchCheckedItem(itemsId)
@@ -190,43 +195,46 @@ class ListViewModel(private val listId: Int? = null, private val movieId: Long? 
 
                             if (it.value) {
                                 menuItem.isEnabled = false
-                                if (!menuItem.title.contains("(added)")) {
-                                    menuItem.title = menuItem.title.toString() + " (added)"
+                                if (!menuItem.title.contains(ADDED_TO_LIST)) {
+                                    menuItem.title = menuItem.title.toString() + ADDED_TO_LIST
                                 }
                             } else {
                                 popup.menu.findItem(it.key).setOnMenuItemClickListener {
-                                    addToList(
-                                        it.itemId,
-                                        sessionId,
-                                        MediaId(media?.values?.first()!!)
-                                    ).observe(lifecycleOwner) { item ->
-                                        when (item.status) {
-                                            Status.SUCCESS -> {
-                                                item.data?.let {
-                                                    menuItem.isEnabled = false
-                                                    if (!menuItem.title.contains("(added)")) {
-                                                        menuItem.title =
-                                                            menuItem.title.toString() + " (added)"
-                                                    }
+                                    media?.values?.first()?.let { it2 -> MediaId(it2) }
+                                        ?.let { it3 ->
+                                            addToList(
+                                                it.itemId,
+                                                sessionId,
+                                                it3
+                                            ).observe(lifecycleOwner) { item ->
+                                                when (item.status) {
+                                                    Status.SUCCESS -> {
+                                                        item.data?.let {
+                                                            menuItem.isEnabled = false
+                                                            if (!menuItem.title.contains(ADDED_TO_LIST)) {
+                                                                menuItem.title =
+                                                                    menuItem.title.toString() + ADDED_TO_LIST
+                                                            }
 
-                                                    Toast.makeText(
-                                                        context,
-                                                        "Added to List",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
+                                                            Toast.makeText(
+                                                                context,
+                                                                "Added to List",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        }
+                                                    }
+                                                    Status.LOADING -> {
+                                                    }
+                                                    Status.ERROR -> {
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Error adding to List",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
                                                 }
                                             }
-                                            Status.LOADING -> {
-                                            }
-                                            Status.ERROR -> {
-                                                Toast.makeText(
-                                                    context,
-                                                    "Error adding to List",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
                                         }
-                                    }
 
                                     true
                                 }

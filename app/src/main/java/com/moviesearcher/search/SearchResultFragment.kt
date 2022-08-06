@@ -10,27 +10,26 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentSearchResultBinding
 import com.moviesearcher.search.adapter.SearchAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
-private const val TAG = "SearchResultFragment"
-
-class SearchResultFragment : BaseFragment() {
+@AndroidEntryPoint
+class SearchResultFragment : Fragment() {
     private var _binding: FragmentSearchResultBinding? = null
     private val binding get() = _binding!!
 
+    private val viewModel by viewModels<SearchViewModel>()
+
     private lateinit var searchResultRecyclerView: RecyclerView
-    private lateinit var viewModel: SearchViewModel
-
     private lateinit var progressBar: ProgressBar
-
     private lateinit var nothingWasFoundTv: TextView
     private lateinit var searchView: SearchView
 
@@ -53,8 +52,6 @@ class SearchResultFragment : BaseFragment() {
         searchView = binding.searchView
 
         nothingWasFoundTv.visibility = View.INVISIBLE
-
-        setupViewModel()
 
         searchView.requestFocus()
 
@@ -132,10 +129,10 @@ class SearchResultFragment : BaseFragment() {
         inputMethodService.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this, ViewModelFactory()
-        ).get(SearchViewModel::class.java)
+    fun hideKeyboard(view: View) {
+        val inputMethodService =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodService.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     override fun onDestroyView() {

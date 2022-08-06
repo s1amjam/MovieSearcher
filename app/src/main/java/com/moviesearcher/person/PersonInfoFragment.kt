@@ -10,35 +10,45 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.moviesearcher.R
-import com.moviesearcher.common.BaseFragment
 import com.moviesearcher.common.PosterDialog
+import com.moviesearcher.common.credentials.CredentialsHolder
 import com.moviesearcher.common.extensions.loadImage
 import com.moviesearcher.common.utils.Constants
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentPersonInfoBinding
 import com.moviesearcher.person.adapter.combinedcredits.CombinedCreditsAdapter
 import com.moviesearcher.person.adapter.combinedcredits.images.PersonImagesAdapter
 import com.moviesearcher.person.model.images.Profile
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.Period
+import javax.inject.Inject
 
-private const val TAG = "PersonInfoFragment"
+@AndroidEntryPoint
+class PersonInfoFragment : Fragment() {
 
-class PersonInfoFragment : BaseFragment() {
     private var _binding: FragmentPersonInfoBinding? = null
     private val binding get() = _binding!!
 
     private val args by navArgs<PersonInfoFragmentArgs>()
 
-    private lateinit var viewModel: PersonViewModel
+    private val viewModel by viewModels<PersonViewModel>()
+
+    @Inject
+    lateinit var credentialsHolder: CredentialsHolder
+    private val sessionId: String
+        get() = credentialsHolder.getSessionId()
+    private val accountId: Long
+        get() = credentialsHolder.getAccountId()
 
     private lateinit var filmographyRecyclerView: RecyclerView
     private lateinit var imagesRecyclerView: RecyclerView
@@ -83,8 +93,6 @@ class PersonInfoFragment : BaseFragment() {
         filmographyCardView = binding.filmographyCardView
         imagesCardView = binding.imagesCardView
         ageOfDeathTv = binding.ageOfDeathTv
-
-        setupViewModel()
 
         viewModel.getPerson().observe(viewLifecycleOwner) {
             when (it.status) {
@@ -237,18 +245,10 @@ class PersonInfoFragment : BaseFragment() {
         buttonSeeAllImages.setOnClickListener {
             val action =
                 PersonInfoFragmentDirections.actionPersonInfoFragmentToImagesFragment()
-            action.personId = personId.toString()
+            action.personId = personId
 
             findNavController().navigate(action)
         }
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this, ViewModelFactory(
-                personId = args.personId
-            )
-        ).get(PersonViewModel::class.java)
     }
 
     override fun onDestroyView() {

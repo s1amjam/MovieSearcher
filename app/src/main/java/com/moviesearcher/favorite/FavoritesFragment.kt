@@ -10,28 +10,28 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
-import com.moviesearcher.common.viewmodel.ViewModelFactory
 import com.moviesearcher.databinding.FragmentFavoritesBinding
 import com.moviesearcher.favorite.model.MarkAsFavoriteRequest
 import com.moviesearcher.favorite.movie.adapter.FavoriteMovieAdapter
 import com.moviesearcher.favorite.movie.model.FavoriteMovieResponse
 import com.moviesearcher.favorite.movie.model.ResultFavoriteMovie
+import dagger.hilt.android.AndroidEntryPoint
 
-private const val TAG = "FavoritesFragment"
-
-class FavoritesFragment : BaseFragment() {
+@AndroidEntryPoint
+class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var favoriteMoviesRecyclerView: RecyclerView
-    private lateinit var viewModel: FavoriteViewModel
+    private val viewModel by viewModels<FavoriteViewModel>()
 
     private lateinit var favoriteMoviesButton: Button
     private lateinit var favoriteTvsButton: Button
@@ -57,7 +57,6 @@ class FavoritesFragment : BaseFragment() {
         progressBar = binding.progressBarFavorites
         noFavoritesTv = binding.dontHaveFavoritesTextView
 
-        setupViewModel()
         setupUi()
     }
 
@@ -169,8 +168,6 @@ class FavoritesFragment : BaseFragment() {
                     lifecycleOwner: LifecycleOwner
                 ) {
                     viewModel.postMarkAsFavorite(
-                        accountId,
-                        sessionId,
                         MarkAsFavoriteRequest(
                             button.tag.toString().toBoolean(),
                             media.values.first(),
@@ -189,16 +186,6 @@ class FavoritesFragment : BaseFragment() {
             layoutManager = LinearLayoutManager(context)
         }
         favoriteMovieAdapter.differ.submitList(favoriteMovieItems.results)
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this, ViewModelFactory(
-                sessionId,
-                accountId,
-                isFavorite = false
-            )
-        ).get(FavoriteViewModel::class.java)
     }
 
     override fun onDestroyView() {

@@ -1,6 +1,7 @@
 package com.moviesearcher.you
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,22 +15,36 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.moviesearcher.R
 import com.moviesearcher.common.AuthorizationDialogFragment
-import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.credentials.CredentialsHolder
 import com.moviesearcher.common.model.auth.SessionId
 import com.moviesearcher.common.utils.Constants.DARK_MODE
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
+import com.moviesearcher.common.utils.Constants.USER_DATA
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.common.viewmodel.AuthViewModel
 import com.moviesearcher.databinding.FragmentYouBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class YouFragment : BaseFragment() {
+@AndroidEntryPoint
+class YouFragment : Fragment() {
+
     private var _binding: FragmentYouBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var credentialsHolder: CredentialsHolder
+    private val sessionId: String
+        get() = credentialsHolder.getSessionId()
+
+    private val viewModel: AuthViewModel by viewModels()
 
     private lateinit var watchlistsCardView: CardView
     private lateinit var listsCardView: CardView
@@ -43,11 +58,8 @@ class YouFragment : BaseFragment() {
 
     private lateinit var navController: NavController
 
-    private val viewModel: AuthViewModel by viewModels()
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentYouBinding.inflate(inflater, container, false)
         return binding.root
@@ -57,6 +69,7 @@ class YouFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val isDarkMode = requireContext().getSharedPreferences(DARK_MODE, Context.MODE_PRIVATE)
+        val userData = requireContext().getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
 
         navController = findNavController()
         loginIb = binding.loginIb
@@ -79,14 +92,14 @@ class YouFragment : BaseFragment() {
             }
         }
 
-        checkIfLoggedIn()
+        checkIfLoggedIn(userData)
         darkModeButtonCheck()
 
         loginIb.setOnClickListener {
             if (sessionId.isEmpty()) {
-                doLogin()
+                doLogin(userData)
             } else {
-                doLogout()
+                doLogout(userData)
             }
         }
 
@@ -103,7 +116,7 @@ class YouFragment : BaseFragment() {
         }
     }
 
-    private fun checkIfLoggedIn() {
+    private fun checkIfLoggedIn(userData: SharedPreferences) {
         if (sessionId.isEmpty()) {
             titleTv.setText(R.string.please_log_in)
             accountLogoIv.visibility = View.GONE
@@ -138,7 +151,7 @@ class YouFragment : BaseFragment() {
             }
             loginIb.setImageResource(R.drawable.ic_round_login_36)
         } else {
-            titleTv.text = encryptedSharedPrefs.getString("username", "")
+            titleTv.text = userData.getString("username", "")
             accountLogoIv.visibility = View.VISIBLE
 
             watchlistsCardView.setOnClickListener {
@@ -157,7 +170,7 @@ class YouFragment : BaseFragment() {
         }
     }
 
-    private fun doLogin() {
+    private fun doLogin(userData: SharedPreferences) {
         AuthorizationDialogFragment().show(parentFragmentManager, AuthorizationDialogFragment.TAG)
         setFragmentResultListener("accountResponse") { _, bundle ->
             val sessionId = bundle.getString("sessionId")
@@ -168,23 +181,22 @@ class YouFragment : BaseFragment() {
             val name = bundle.getString("name")
 
             if (!sessionId.isNullOrEmpty()) {
-                this.sessionId = sessionId.toString()
+                credentialsHolder.putSessionId(sessionId.toString())
+                credentialsHolder.putAccountId(accountId)
 
-                with(encryptedSharedPrefs.edit()) {
-                    putString("sessionId", sessionId)
+                with(userData.edit()) {
                     putString("avatar", avatar)
-                    putLong("accountId", accountId)
                     putString("username", username)
                     putString("includeAdult", includeAdult.toString())
                     putString("name", name)
                     apply()
                 }
-                checkIfLoggedIn()
+                checkIfLoggedIn(userData)
             }
         }
     }
 
-    private fun doLogout() {
+    private fun doLogout(userData: SharedPreferences) {
         viewModel.getDeleteSession(SessionId(sessionId)).observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
@@ -197,9 +209,9 @@ class YouFragment : BaseFragment() {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        encryptedSharedPrefs.edit().clear().apply()
-                        sessionId = ""
-                        checkIfLoggedIn()
+                        userData.edit().clear().apply()
+                        credentialsHolder.putSessionId("")
+                        checkIfLoggedIn(userData)
                     }
                 }
                 Status.LOADING -> {

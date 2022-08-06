@@ -9,20 +9,21 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.R
-import com.moviesearcher.common.BaseFragment
+import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
 import com.moviesearcher.movie.model.TrendingResponse
+import dagger.hilt.android.AndroidEntryPoint
 
-private const val TAG = "HomeFragment"
-
-class HomeFragment : BaseFragment() {
+@AndroidEntryPoint
+class HomeFragment : Fragment() {
     private var _binding: FragmentMovieSearcherBinding? = null
     private val binding get() = _binding!!
 

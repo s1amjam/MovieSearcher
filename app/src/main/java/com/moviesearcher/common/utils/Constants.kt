@@ -9,4 +9,13 @@ object Constants {
     const val YOUTUBE_PREVIEW_URL = "https://i.ytimg.com/vi/%s/hqdefault.jpg"
     const val YOUTUBE_VIDEO_URL = "https://youtube.com/embed/%s"
     const val DARK_MODE = "DARK_MODE"
+    const val ERROR_MESSAGE = "Something went wrong '%s'"
+    const val MOVIE_ID = "movie_id"
+    const val TV_ID = "tv_id"
+    const val SEASON_NUMBER = "season_number"
+    const val EPISODE_NUMBER = "episode_number"
+    const val PERSON_ID = "person_id"
+    const val USER_DATA = "user_data"
+    const val ADDED_TO_LIST = " (added)"
+    const val LIST_ID = "list_id"
 }
