@@ -19,7 +19,6 @@ import com.moviesearcher.R
 import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.databinding.FragmentMovieSearcherBinding
-import com.moviesearcher.movie.model.TrendingResponse
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -75,16 +74,17 @@ class HomeFragment : Fragment() {
         upcomingMovieRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        setupObserver()
+        setupObservers()
     }
 
-    private fun setupObserver() {
+    private fun setupObservers() {
         viewModel.getTrendingMovies().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { trendingMovies ->
-                        val adapter = createAdapter(trendingMovies)
+                        val adapter = createAdapter()
                         trendingMovieRecyclerView.adapter = adapter
+                        adapter.submitList(trendingMovies.results)
                     }
                     progressBar.visibility = View.GONE
                     featuredConstraintLayout.visibility = View.VISIBLE
@@ -110,8 +110,9 @@ class HomeFragment : Fragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { trendingTvs ->
-                        val adapter = createAdapter(trendingTvs)
+                        val adapter = createAdapter()
                         trendingTvRecyclerView.adapter = adapter
+                        adapter.submitList(trendingTvs.results)
                     }
                     progressBar.visibility = View.GONE
                     featuredConstraintLayout.visibility = View.VISIBLE
@@ -137,8 +138,9 @@ class HomeFragment : Fragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { upcomingMovies ->
-                        val adapter = createAdapter(upcomingMovies)
+                        val adapter = createAdapter()
                         upcomingMovieRecyclerView.adapter = adapter
+                        adapter.submitList(upcomingMovies.results)
                     }
                     progressBar.visibility = View.GONE
                     upcomingConstraintLayout.visibility = View.VISIBLE
@@ -161,14 +163,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun createAdapter(movieItems: TrendingResponse): HomeAdapter {
-        val trendingAdapter = HomeAdapter(
-            movieItems,
-            navController,
-        )
-        trendingAdapter.differ.submitList(movieItems.results)
-
-        return trendingAdapter
+    private fun createAdapter(): HomeAdapter {
+        return HomeAdapter(navController)
     }
 
     override fun onDestroyView() {

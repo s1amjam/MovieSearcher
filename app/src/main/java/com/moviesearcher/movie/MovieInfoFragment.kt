@@ -289,7 +289,7 @@ class MovieInfoFragment : Fragment() {
                 Status.SUCCESS -> {
                     it.data?.let { castItems ->
                         if (!castItems.cast.isNullOrEmpty()) {
-                            val movieCastAdapter = MovieCastAdapter(castItems, findNavController())
+                            val movieCastAdapter = MovieCastAdapter(findNavController())
                             var tenCast = castItems.cast
 
                             while (tenCast?.size!! > 10) {
@@ -309,7 +309,7 @@ class MovieInfoFragment : Fragment() {
                                         false
                                     )
                             }
-                            movieCastAdapter.differ.submitList(castItems.cast)
+                            movieCastAdapter.submitList(castItems.cast)
 
                             val director = castItems.crew?.find { it.job == "Director" }?.name
                             if (director?.isNotEmpty() == true) {

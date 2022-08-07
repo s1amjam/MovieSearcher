@@ -1,9 +1,7 @@
 package com.moviesearcher.list
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -19,9 +17,8 @@ class CreateNewListDialog(private val viewModel: ListViewModel) : DialogFragment
     private var _binding: DialogCreateNewListBinding? = null
     private val binding get() = _binding!!
 
-    @SuppressLint("UseGetLayoutInflater")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        _binding = DialogCreateNewListBinding.inflate(LayoutInflater.from(context))
+        _binding = DialogCreateNewListBinding.inflate(layoutInflater)
         val view = binding.root
 
         val dialog = MaterialAlertDialogBuilder(requireContext()).create()
