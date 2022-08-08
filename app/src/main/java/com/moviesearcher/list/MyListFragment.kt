@@ -40,6 +40,8 @@ class MyListFragment : Fragment() {
     private lateinit var myListRecyclerView: RecyclerView
     private lateinit var emptyListTextView: TextView
 
+    private lateinit var adapter: MyListAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,6 +59,11 @@ class MyListFragment : Fragment() {
         progressBar = binding.progressBarList
         emptyListTextView = binding.emptyListTv
 
+        setupAdapter()
+        setupObserver()
+    }
+
+    private fun setupObserver() {
         viewModel.getMyList(args.listId).observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
@@ -65,20 +72,9 @@ class MyListFragment : Fragment() {
                             progressBar.visibility = View.GONE
                             emptyListTextView.visibility = View.VISIBLE
                         } else {
-                            val myListAdapter = MyListAdapter(
-                                myListItems,
-                                findNavController(),
-                                args.listId,
-                                sessionId,
-                                viewModel
-                            )
                             binding.listTitleTextView.text = myListItems.name
 
-                            myListRecyclerView.apply {
-                                adapter = myListAdapter
-                                layoutManager = LinearLayoutManager(context)
-                            }
-                            myListAdapter.differ.submitList(myListItems.items)
+                            adapter.submitList(myListItems.items)
 
                             progressBar.visibility = View.GONE
                             emptyListTextView.visibility = View.GONE
@@ -101,6 +97,18 @@ class MyListFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun setupAdapter() {
+        adapter = MyListAdapter(
+            findNavController(),
+            args.listId,
+            sessionId,
+            viewModel
+        )
+
+        myListRecyclerView.adapter = adapter
+        myListRecyclerView.layoutManager = LinearLayoutManager(context)
     }
 
     override fun onDestroyView() {

@@ -158,7 +158,6 @@ class FavoritesFragment : Fragment() {
         isTv: Boolean = false
     ) {
         val favoriteMovieAdapter = FavoriteMovieAdapter(
-            favoriteMovieItems,
             findNavController(),
             object : FavoriteMovieAdapter.ItemClickListener {
                 override fun onItemClick(
@@ -185,7 +184,7 @@ class FavoritesFragment : Fragment() {
             adapter = favoriteMovieAdapter
             layoutManager = LinearLayoutManager(context)
         }
-        favoriteMovieAdapter.differ.submitList(favoriteMovieItems.results)
+        favoriteMovieAdapter.submitList(favoriteMovieItems.results)
     }
 
     override fun onDestroyView() {

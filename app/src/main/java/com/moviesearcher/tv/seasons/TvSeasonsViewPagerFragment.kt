@@ -19,7 +19,6 @@ import com.moviesearcher.common.utils.Constants.TV_ID
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.databinding.FragmentTvSeasonsViewPagerBinding
 import com.moviesearcher.tv.episode.adapter.EpisodesAdapter
-import com.moviesearcher.tv.seasons.model.TvSeasonResponse
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,6 +32,8 @@ class TvSeasonsViewPagerFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var tvSeasonsConstraintLayout: ConstraintLayout
     private lateinit var noEpisodesTv: TextView
+
+    private lateinit var adapter: EpisodesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +53,7 @@ class TvSeasonsViewPagerFragment : Fragment() {
         progressBar = binding.tvSeasonsProgressBar
         noEpisodesTv = binding.noEpisodesTv
 
+        setupAdapter()
         setupUi()
     }
 
@@ -63,7 +65,7 @@ class TvSeasonsViewPagerFragment : Fragment() {
                         if (episodeItems.episodes?.isEmpty() == true) {
                             noEpisodesTv.visibility = View.VISIBLE
                         } else {
-                            setupSeasonsUi(episodeItems)
+                            adapter.submitList(episodeItems.episodes)
 
                             progressBar.visibility = View.GONE
                             tvSeasonsConstraintLayout.visibility = View.VISIBLE
@@ -87,26 +89,20 @@ class TvSeasonsViewPagerFragment : Fragment() {
         }
     }
 
-    private fun setupSeasonsUi(episodeItems: TvSeasonResponse) {
-        val episodesAdapter = episodeItems.episodes?.let {
-            EpisodesAdapter(
-                it,
-                findNavController(),
-                requireArguments()[SEASON_NUMBER] as String,
-                requireArguments()[TV_ID] as Long
-            )
-        }
+    private fun setupAdapter() {
+        adapter = EpisodesAdapter(
+            findNavController(),
+            requireArguments()[SEASON_NUMBER] as String,
+            requireArguments()[TV_ID] as Long
+        )
 
-        recyclerView.apply {
-            adapter = episodesAdapter
-            layoutManager =
-                LinearLayoutManager(
-                    requireContext(),
-                    LinearLayoutManager.VERTICAL,
-                    false
-                )
-        }
-        episodesAdapter?.differ?.submitList(episodeItems.episodes)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager =
+            LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+            )
     }
 
     override fun onDestroyView() {

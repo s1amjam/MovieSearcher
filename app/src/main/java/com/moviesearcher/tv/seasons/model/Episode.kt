@@ -10,7 +10,7 @@ data class Episode(
     val episodeNumber: Int?,
     @SerializedName("guest_stars")
     val guestStars: List<GuestStar>?,
-    val id: Int?,
+    val id: Long?,
     val name: String?,
     val overview: String?,
     @SerializedName("production_code")

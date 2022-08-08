@@ -109,6 +109,7 @@ class MovieInfoFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var recommendationsCardView: CardView
     private lateinit var moreLikeThisTitle: TextView
+    private lateinit var imagesAdapter: ImagesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -168,10 +169,11 @@ class MovieInfoFragment : Fragment() {
 
         mediaInfo["movie"] = args.movieId
 
-        setupUi(savedInstanceState)
+        setupImagesAdapter()
+        setupObservers(savedInstanceState)
     }
 
-    private fun setupUi(savedInstanceState: Bundle?) {
+    private fun setupObservers(savedInstanceState: Bundle?) {
         movieViewModel.getMovieInfo().observe(viewLifecycleOwner) { it ->
             when (it.status) {
                 Status.SUCCESS -> {
@@ -476,9 +478,6 @@ class MovieInfoFragment : Fragment() {
                 Status.SUCCESS -> {
                     it.data?.let { imagesItems ->
                         if (!imagesItems.backdrops.isNullOrEmpty()) {
-                            val imageAdapter = ImagesAdapter(
-                                imagesItems,
-                            )
                             var tenImages = imagesItems.backdrops
 
                             while (tenImages?.size!! > 10) {
@@ -489,16 +488,7 @@ class MovieInfoFragment : Fragment() {
                                 backdrops = tenImages
                             }
 
-                            imagesRecyclerView.apply {
-                                adapter = imageAdapter
-                                layoutManager =
-                                    LinearLayoutManager(
-                                        requireContext(),
-                                        LinearLayoutManager.HORIZONTAL,
-                                        false
-                                    )
-                            }
-                            imageAdapter.differ.submitList(imagesItems.backdrops)
+                            imagesAdapter.submitList(imagesItems.backdrops)
 
                             imagesCardView.visibility = View.VISIBLE
                         }
@@ -625,6 +615,18 @@ class MovieInfoFragment : Fragment() {
                 ).show()
             }
         }
+    }
+
+    private fun setupImagesAdapter() {
+        imagesAdapter = ImagesAdapter()
+
+        imagesRecyclerView.adapter = imagesAdapter
+        imagesRecyclerView.layoutManager =
+            LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
     }
 
     override fun onDestroyView() {

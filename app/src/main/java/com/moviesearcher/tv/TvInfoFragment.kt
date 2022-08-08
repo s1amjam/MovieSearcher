@@ -110,6 +110,7 @@ class TvInfoFragment : Fragment() {
     private lateinit var castCardView: CardView
     private lateinit var imagesCardView: CardView
     private lateinit var moreLikeThisTitle: TextView
+    private lateinit var imagesAdapter: ImagesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -172,7 +173,7 @@ class TvInfoFragment : Fragment() {
 
         mediaInfo["tv"] = args.tvId
 
-        setupViewModel()
+        setupImagesAdapter()
         setupUi(savedInstanceState)
     }
 
@@ -522,9 +523,6 @@ class TvInfoFragment : Fragment() {
                     Status.SUCCESS -> {
                         it.data?.let { imagesItems ->
                             if (!imagesItems.backdrops.isNullOrEmpty()) {
-                                val imageAdapter = ImagesAdapter(
-                                    imagesItems,
-                                )
                                 var tenImages = imagesItems.backdrops
 
                                 while (tenImages?.size!! > 10) {
@@ -535,16 +533,7 @@ class TvInfoFragment : Fragment() {
                                     backdrops = tenImages
                                 }
 
-                                imagesRecyclerView.apply {
-                                    adapter = imageAdapter
-                                    layoutManager =
-                                        LinearLayoutManager(
-                                            requireContext(),
-                                            LinearLayoutManager.HORIZONTAL,
-                                            false
-                                        )
-                                }
-                                imageAdapter.differ.submitList(imagesItems.backdrops)
+                                imagesAdapter.submitList(imagesItems.backdrops)
 
                                 progressBar.visibility = View.GONE
                                 imagesCardView.visibility = View.VISIBLE
@@ -684,8 +673,16 @@ class TvInfoFragment : Fragment() {
         }
     }
 
-    private fun setupViewModel() {
+    private fun setupImagesAdapter() {
+        imagesAdapter = ImagesAdapter()
 
+        imagesRecyclerView.adapter = imagesAdapter
+        imagesRecyclerView.layoutManager =
+            LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
     }
 
     override fun onDestroyView() {

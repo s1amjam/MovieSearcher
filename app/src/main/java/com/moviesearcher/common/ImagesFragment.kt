@@ -33,6 +33,8 @@ class ImagesFragment : Fragment() {
 
     private lateinit var imagesRecyclerView: RecyclerView
 
+    private lateinit var imagesAdapter: ImagesAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,10 +48,11 @@ class ImagesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         imagesRecyclerView = binding.photosRecyclerView
 
-        setupUi()
+        setupMovieAdapter()
+        setupObservers()
     }
 
-    private fun setupUi() {
+    private fun setupObservers() {
         val movieId = args.movieId
         val tvId = args.tvId
         val personId = args.personId
@@ -60,10 +63,7 @@ class ImagesFragment : Fragment() {
                     when (it.status) {
                         Status.SUCCESS -> {
                             it.data?.let { imagesItems ->
-                                val imagesAdapter = ImagesAdapter(imagesItems)
-
-                                setupRecyclerView(imagesAdapter)
-                                imagesAdapter.differ.submitList(imagesItems.backdrops)
+                                imagesAdapter.submitList(imagesItems.backdrops)
                             }
                         }
                         Status.LOADING -> {
@@ -83,10 +83,7 @@ class ImagesFragment : Fragment() {
                     when (it.status) {
                         Status.SUCCESS -> {
                             it.data?.let { imagesItems ->
-                                val imagesAdapter = ImagesAdapter(imagesItems)
-
-                                setupRecyclerView(imagesAdapter)
-                                imagesAdapter.differ.submitList(imagesItems.backdrops)
+                                imagesAdapter.submitList(imagesItems.backdrops)
                             }
                         }
                         Status.LOADING -> {
@@ -109,7 +106,6 @@ class ImagesFragment : Fragment() {
                                 it.data?.let { imagesItems ->
                                     val imagesAdapter = PersonImagesAdapter(imagesItems)
 
-                                    setupRecyclerView(imagesAdapter)
                                     imagesAdapter.differ.submitList(imagesItems.profiles)
                                 }
                             }
@@ -128,11 +124,11 @@ class ImagesFragment : Fragment() {
         }
     }
 
-    private fun setupRecyclerView(imagesAdapter: RecyclerView.Adapter<*>) {
-        imagesRecyclerView.apply {
-            adapter = imagesAdapter
-            layoutManager = GridLayoutManager(requireContext(), 3)
-        }
+    private fun setupMovieAdapter() {
+        imagesAdapter = ImagesAdapter()
+
+        imagesRecyclerView.adapter = imagesAdapter
+        imagesRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
     }
 
     override fun onDestroyView() {

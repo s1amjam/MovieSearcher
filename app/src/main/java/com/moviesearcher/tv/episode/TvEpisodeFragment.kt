@@ -25,7 +25,6 @@ import com.moviesearcher.common.PosterDialog
 import com.moviesearcher.common.extensions.loadImage
 import com.moviesearcher.common.extensions.toOneScale
 import com.moviesearcher.common.utils.Constants
-import com.moviesearcher.common.utils.Constants.ERROR_MESSAGE
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.databinding.FragmentTvEpisodeBinding
 import com.moviesearcher.movie.adapter.video.VideoAdapter
@@ -66,6 +65,8 @@ class TvEpisodeFragment : Fragment() {
     private lateinit var imagesCardView: CardView
     private lateinit var castCv: CardView
 
+    private lateinit var tvCastAdapter: TvEpisodeCastAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -78,7 +79,6 @@ class TvEpisodeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val tvId = args.tvId
 
         tvInfoCastRecyclerView = binding.castRecyclerView
         videoRecyclerView = binding.videoRecyclerView
@@ -105,6 +105,13 @@ class TvEpisodeFragment : Fragment() {
         imagesCardView = binding.imagesCardView
         castCv = binding.castCv
 
+        setupAdapter()
+        setupObservers()
+
+
+    }
+
+    private fun setupObservers() {
         viewModel.getTvEpisode().observe(viewLifecycleOwner) { it ->
             when (it.status) {
                 Status.SUCCESS -> {
@@ -126,10 +133,11 @@ class TvEpisodeFragment : Fragment() {
                         if (tvInfo.crew?.isEmpty() == true) {
                             castCv.visibility = View.GONE
                         } else {
-                            val tvCastAdapter = TvEpisodeCastAdapter(tvInfo, findNavController())
                             val directors = mutableListOf<String>()
                             val writers = mutableListOf<String>()
                             var tenCast = tvInfo.crew
+
+                            tvCastAdapter.submitList(tvInfo.crew)
 
                             while (tenCast?.size!! > 10) {
                                 tenCast = tenCast.dropLast(1) as MutableList<Crew>?
@@ -138,17 +146,6 @@ class TvEpisodeFragment : Fragment() {
                             tvInfo.apply {
                                 crew = tenCast
                             }
-
-                            tvInfoCastRecyclerView.apply {
-                                adapter = tvCastAdapter
-                                layoutManager =
-                                    LinearLayoutManager(
-                                        requireContext(),
-                                        LinearLayoutManager.HORIZONTAL,
-                                        false
-                                    )
-                            }
-                            tvCastAdapter.differ.submitList(tvInfo.crew)
 
                             tvInfo.crew?.filter { it.department == "Directing" }
                                 .also { it ->
@@ -191,7 +188,7 @@ class TvEpisodeFragment : Fragment() {
                 Status.ERROR -> {
                     Toast.makeText(
                         requireContext(),
-                        ERROR_MESSAGE.format(it.message),
+                        Constants.ERROR_MESSAGE.format(it.message),
                         Toast.LENGTH_LONG
                     ).show()
                     progressBar.visibility = View.GONE
@@ -270,7 +267,7 @@ class TvEpisodeFragment : Fragment() {
                     Status.ERROR -> {
                         Toast.makeText(
                             requireContext(),
-                            ERROR_MESSAGE.format(it.message),
+                            Constants.ERROR_MESSAGE.format(it.message),
                             Toast.LENGTH_LONG
                         ).show()
                         progressBar.visibility = View.GONE
@@ -323,7 +320,7 @@ class TvEpisodeFragment : Fragment() {
                     Status.ERROR -> {
                         Toast.makeText(
                             requireContext(),
-                            ERROR_MESSAGE.format(it.message),
+                            Constants.ERROR_MESSAGE.format(it.message),
                             Toast.LENGTH_LONG
                         ).show()
                         progressBar.visibility = View.GONE
@@ -334,9 +331,22 @@ class TvEpisodeFragment : Fragment() {
         buttonSeeAllImages.setOnClickListener {
             val action =
                 TvEpisodeFragmentDirections.actionTvEpisodeFragmentToImagesFragment()
-            action.tvId = tvId
+            action.tvId = args.tvId
 
             findNavController().navigate(action)
+        }
+    }
+
+    private fun setupAdapter() {
+        tvCastAdapter = TvEpisodeCastAdapter(findNavController())
+        tvInfoCastRecyclerView.apply {
+            adapter = tvCastAdapter
+            layoutManager =
+                LinearLayoutManager(
+                    requireContext(),
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+                )
         }
     }
 

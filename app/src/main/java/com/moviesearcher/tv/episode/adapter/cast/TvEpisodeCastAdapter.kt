@@ -2,76 +2,83 @@ package com.moviesearcher.tv.episode.adapter.cast
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.cardview.widget.CardView
 import androidx.navigation.NavController
-import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.moviesearcher.common.extensions.loadImage
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.MovieCastItemBinding
 import com.moviesearcher.tv.episode.TvEpisodeFragmentDirections
 import com.moviesearcher.tv.episode.model.Crew
-import com.moviesearcher.tv.episode.model.TvEpisodeResponse
 
 class TvEpisodeCastAdapter(
-    private val castItems: TvEpisodeResponse,
     private val navController: NavController
-) : RecyclerView.Adapter<TvEpisodeCastAdapter.TvEpisodeCastHolder>() {
-    private lateinit var binding: MovieCastItemBinding
+) : ListAdapter<Crew, TvEpisodeCastAdapter.TvEpisodeCastHolder>(
+    AsyncDifferConfig.Builder(
+        DiffCallback()
+    ).build()
+) {
 
-    inner class TvEpisodeCastHolder(binding: MovieCastItemBinding) :
+    inner class TvEpisodeCastHolder(private val binding: MovieCastItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private val name = binding.textViewName
-        private val characterName = binding.textViewCharacterName
-        private val poster: ImageView = binding.posterImageView
         private val roles = mutableListOf<String>()
-        private val castCardView: CardView = binding.castCardView
+
+        init {
+            binding.castCardView.setOnClickListener {
+                currentList[adapterPosition].id?.let { it1 ->
+                    navController.navigate(
+                        TvEpisodeFragmentDirections.actionTvEpisodeFragmentToPersonInfoFragment(
+                            it1.toLong()
+                        )
+                    )
+                }
+            }
+        }
 
         fun bind(castItem: Crew) {
-            name.text = castItem.name
-            characterName.text = roles.joinToString()
-            poster.loadImage(Constants.IMAGE_URL + castItem.profilePath, isCardView = true)
-
-            castCardView.setOnClickListener {
-                navController.navigate(
-                    TvEpisodeFragmentDirections.actionTvEpisodeFragmentToPersonInfoFragment(
-                        castItem.id?.toLong()!!
-                    )
+            binding.apply {
+                textViewName.text = castItem.name
+                textViewCharacterName.text = roles.joinToString()
+                posterImageView.loadImage(
+                    Constants.IMAGE_URL + castItem.profilePath,
+                    isCardView = true
                 )
             }
         }
     }
 
-    private val differCallback = object : DiffUtil.ItemCallback<Crew>() {
-        override fun areItemsTheSame(oldItem: Crew, newItem: Crew): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Crew, newItem: Crew): Boolean {
-            return oldItem == newItem
-        }
-    }
-
-    val differ = AsyncListDiffer(this, differCallback)
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): TvEpisodeCastAdapter.TvEpisodeCastHolder {
-        binding = MovieCastItemBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+        return TvEpisodeCastHolder(
+            MovieCastItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
-
-        return TvEpisodeCastHolder(binding)
     }
 
-    override fun getItemCount(): Int = castItems.crew?.size!!
     override fun onBindViewHolder(holder: TvEpisodeCastAdapter.TvEpisodeCastHolder, position: Int) {
-        val reply = differ.currentList[position]
-        holder.bind(reply)
+        holder.bind(currentList[position])
+    }
+
+    private class DiffCallback : DiffUtil.ItemCallback<Crew>() {
+        override fun areItemsTheSame(
+            oldItem: Crew,
+            newItem: Crew
+        ): Boolean {
+            return oldItem.id == newItem.id;
+        }
+
+        override fun areContentsTheSame(
+            oldItem: Crew,
+            newItem: Crew
+        ): Boolean {
+            return oldItem == newItem
+        }
     }
 }
