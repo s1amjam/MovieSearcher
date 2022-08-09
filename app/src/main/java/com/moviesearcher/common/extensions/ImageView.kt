@@ -8,7 +8,8 @@ fun ImageView.loadImage(uri: String, isYouTube: Boolean = false, isCardView: Boo
     Glide.with(this)
         .load(uri)
         .placeholder(R.drawable.ic_placeholder)
-        .centerCrop().apply {
+        .centerCrop().
+        apply {
             if (isYouTube) {
                 override(800, 600)
             } else if (isCardView) {

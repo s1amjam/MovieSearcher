@@ -1,47 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/my_lists_item_constraint_layout"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/material_card_view_my_lists_item"
+    style="@style/Widget.MovieSearcher.CardView.LineCardView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/material_card_view_my_lists_item"
-        style="@style/Widget.MovieSearcher.CardView.LineCardView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <LinearLayout
+        android:id="@+id/material_card_view_constraint_layout_my_lists_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/material_card_view_constraint_layout_my_lists_item"
+        <TextView
+            android:id="@+id/text_view_my_lists_item_name"
+            style="@style/Widget.MovieSearcher.TextMedium"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
 
-            <TextView
-                android:id="@+id/text_view_my_lists_item_name"
-                style="@style/Widget.MovieSearcher.TextMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <!--            //bug on API side https://trello.com/c/slruAstb/75-return-a-proper-response-when-lists-are-deleted-->
-            <!--            <ImageButton-->
-            <!--                android:id="@+id/image_button_delete_list"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_marginTop="8dp"-->
-            <!--                android:layout_marginEnd="8dp"-->
-            <!--                android:src="@android:drawable/ic_delete"-->
-            <!--                app:layout_constraintEnd_toEndOf="parent"-->
-            <!--                app:layout_constraintTop_toTopOf="parent" />-->
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!--            //bug on API side https://trello.com/c/slruAstb/75-return-a-proper-response-when-lists-are-deleted-->
+        <!--            <ImageButton-->
+        <!--                android:id="@+id/image_button_delete_list"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_marginTop="8dp"-->
+        <!--                android:layout_marginEnd="8dp"-->
+        <!--                android:src="@android:drawable/ic_delete"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent" />-->
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

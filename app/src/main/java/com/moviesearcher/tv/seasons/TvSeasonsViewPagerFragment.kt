@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -30,7 +30,7 @@ class TvSeasonsViewPagerFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private lateinit var tvSeasonsConstraintLayout: ConstraintLayout
+    private lateinit var tvSeasonsLinearLayout: LinearLayout
     private lateinit var noEpisodesTv: TextView
 
     private lateinit var adapter: EpisodesAdapter
@@ -49,7 +49,7 @@ class TvSeasonsViewPagerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView = binding.tvSeasonsRecyclerView
-        tvSeasonsConstraintLayout = binding.tvSeasonsRecyclerViewConstraintLayout
+        tvSeasonsLinearLayout = binding.tvSeasonsRecyclerViewLinearLayout
         progressBar = binding.tvSeasonsProgressBar
         noEpisodesTv = binding.noEpisodesTv
 
@@ -68,13 +68,13 @@ class TvSeasonsViewPagerFragment : Fragment() {
                             adapter.submitList(episodeItems.episodes)
 
                             progressBar.visibility = View.GONE
-                            tvSeasonsConstraintLayout.visibility = View.VISIBLE
+                            tvSeasonsLinearLayout.visibility = View.VISIBLE
                         }
                         progressBar.visibility = View.GONE
                     }
                 }
                 Status.LOADING -> {
-                    tvSeasonsConstraintLayout.visibility = View.GONE
+                    tvSeasonsLinearLayout.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }
                 Status.ERROR -> {

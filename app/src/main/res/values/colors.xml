@@ -61,4 +61,5 @@
     <color name="error">#BA1B1B</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="yellow_star">#F8DE04</color>
+    <color name="small_card_dark">#2F2D33</color>
 </resources>

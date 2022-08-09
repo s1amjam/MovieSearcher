@@ -73,6 +73,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
+                        android:contentDescription="@string/photo_of_person"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/known_for_text_view" />
 
@@ -134,20 +135,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/main_person_info_card_view">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/filmography_text_view"
                         style="@style/Widget.MovieSearcher.TextMedium"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:text="@string/filmography"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:text="@string/filmography" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/filmography_recycler_view"
@@ -156,10 +156,8 @@
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:paddingStart="16dp"
-                        android:paddingEnd="8dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/filmography_text_view" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        android:paddingEnd="8dp" />
+                </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
@@ -172,7 +170,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
 
                     <TextView
                         android:id="@+id/textview_images"

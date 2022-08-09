@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -33,12 +33,11 @@ class HomeFragment : Fragment() {
     private lateinit var trendingTvRecyclerView: RecyclerView
     private lateinit var upcomingMovieRecyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private lateinit var mainLayout: ConstraintLayout
     private lateinit var trendingMoviesCardView: CardView
     private lateinit var trendingTvsCardView: CardView
     private lateinit var upcomingMoviesCardView: CardView
-    private lateinit var featuredConstraintLayout: ConstraintLayout
-    private lateinit var upcomingConstraintLayout: ConstraintLayout
+    private lateinit var featuredLl: LinearLayout
+    private lateinit var upcomingLl: LinearLayout
     private lateinit var tvsTitle: TextView
 
     override fun onCreateView(
@@ -53,7 +52,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
-        mainLayout = binding.homeConstraintLayout
         progressBar = binding.progressBarMovieSearcherFragment
         trendingMovieRecyclerView = binding.moviesCardview.recyclerView
         trendingTvRecyclerView = binding.tvsCardview.recyclerView
@@ -61,8 +59,8 @@ class HomeFragment : Fragment() {
         trendingMoviesCardView = binding.moviesCardview.cardView
         trendingTvsCardView = binding.tvsCardview.cardView
         upcomingMoviesCardView = binding.upcomingCardview.cardView
-        featuredConstraintLayout = binding.featuredCl
-        upcomingConstraintLayout = binding.upcomingCl
+        featuredLl = binding.featuredCl
+        upcomingLl = binding.upcomingCl
         tvsTitle = binding.tvsCardview.titleTextview
 
         tvsTitle.text = getString(R.string.tvs)
@@ -87,11 +85,11 @@ class HomeFragment : Fragment() {
                         adapter.submitList(trendingMovies.results)
                     }
                     progressBar.visibility = View.GONE
-                    featuredConstraintLayout.visibility = View.VISIBLE
+                    featuredLl.visibility = View.VISIBLE
                     trendingMoviesCardView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
-                    featuredConstraintLayout.visibility = View.GONE
+                    featuredLl.visibility = View.GONE
                     trendingMoviesCardView.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }
@@ -115,11 +113,11 @@ class HomeFragment : Fragment() {
                         adapter.submitList(trendingTvs.results)
                     }
                     progressBar.visibility = View.GONE
-                    featuredConstraintLayout.visibility = View.VISIBLE
+                    featuredLl.visibility = View.VISIBLE
                     trendingTvsCardView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
-                    featuredConstraintLayout.visibility = View.GONE
+                    featuredLl.visibility = View.GONE
                     trendingTvsCardView.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }
@@ -143,11 +141,11 @@ class HomeFragment : Fragment() {
                         adapter.submitList(upcomingMovies.results)
                     }
                     progressBar.visibility = View.GONE
-                    upcomingConstraintLayout.visibility = View.VISIBLE
+                    upcomingLl.visibility = View.VISIBLE
                     upcomingMoviesCardView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
-                    upcomingConstraintLayout.visibility = View.GONE
+                    upcomingLl.visibility = View.GONE
                     upcomingMoviesCardView.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }

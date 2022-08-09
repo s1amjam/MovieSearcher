@@ -32,4 +32,18 @@
     <style name="ThemeOverlay.App.CircularProgressIndicator" parent="">
         <item name="colorPrimary">@color/md_theme_dark_onSurfaceVariant</item>
     </style>
+
+    <style name="Widget.MovieSearcher.CardView.SmallCardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="colorOutline">@color/transparent</item>
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">0dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="cardCornerRadius">10dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="cardBackgroundColor">@color/small_card_dark</item>
+    </style>
 </resources>

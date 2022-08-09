@@ -67,4 +67,6 @@
     <string name="rating_star">rating star</string>
     <string name="dark_theme_button">Dark theme button</string>
     <string name="your_rating">%s\n(your rating)</string>
+    <string name="preview_trailer_image">Preview trailer image</string>
+    <string name="photo_of_person">photo of person</string>
 </resources>
