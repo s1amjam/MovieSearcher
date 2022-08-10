@@ -64,6 +64,8 @@ class PersonInfoFragment : Fragment() {
     private lateinit var filmographyCardView: CardView
     private lateinit var imagesCardView: CardView
     private lateinit var ageOfDeathTv: TextView
+    private lateinit var personImagesAdapter: PersonImagesAdapter
+    private lateinit var filmographyAdapter: CombinedCreditsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -94,6 +96,40 @@ class PersonInfoFragment : Fragment() {
         imagesCardView = binding.imagesCardView
         ageOfDeathTv = binding.ageOfDeathTv
 
+        setupAdapters()
+        setupObservers()
+
+        buttonSeeAllImages.setOnClickListener {
+            val action =
+                PersonInfoFragmentDirections.actionPersonInfoFragmentToImagesFragment()
+            action.personId = personId
+
+            findNavController().navigate(action)
+        }
+    }
+
+    private fun setupAdapters() {
+        personImagesAdapter = PersonImagesAdapter() {
+            PosterDialog(it).show(childFragmentManager, "PosterDialog")
+        }
+        filmographyAdapter = CombinedCreditsAdapter(findNavController())
+
+        imagesRecyclerView.adapter = personImagesAdapter
+        imagesRecyclerView.layoutManager = LinearLayoutManager(
+            requireContext(), LinearLayoutManager.HORIZONTAL,
+            false
+        )
+
+        filmographyRecyclerView.adapter = filmographyAdapter
+        filmographyRecyclerView.layoutManager =
+            LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+    }
+
+    private fun setupObservers() {
         viewModel.getPerson().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
@@ -154,23 +190,7 @@ class PersonInfoFragment : Fragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { combinedCreditsItems ->
-                        val filmographyAdapter = CombinedCreditsAdapter(
-                            combinedCreditsItems,
-                            findNavController(),
-                            accountId,
-                            sessionId,
-                        )
-
-                        filmographyRecyclerView.apply {
-                            adapter = filmographyAdapter
-                            layoutManager =
-                                LinearLayoutManager(
-                                    requireContext(),
-                                    LinearLayoutManager.HORIZONTAL,
-                                    false
-                                )
-                        }
-                        filmographyAdapter.differ.submitList(combinedCreditsItems.cast)
+                        filmographyAdapter.submitList(combinedCreditsItems.cast)
                     }
                     progressBar.visibility = View.GONE
                     filmographyCardView.visibility = View.VISIBLE
@@ -195,10 +215,6 @@ class PersonInfoFragment : Fragment() {
                 Status.SUCCESS -> {
                     it.data?.let { imagesItems ->
                         if (!imagesItems.profiles.isNullOrEmpty()) {
-                            val imageAdapter = PersonImagesAdapter(
-                                imagesItems,
-                            )
-
                             var tenImages = imagesItems.profiles
 
                             while (tenImages?.size!! > 10) {
@@ -209,17 +225,7 @@ class PersonInfoFragment : Fragment() {
                                 profiles = tenImages
                             }
 
-                            imagesRecyclerView.apply {
-                                adapter = imageAdapter
-                                layoutManager =
-                                    LinearLayoutManager(
-                                        requireContext(),
-                                        LinearLayoutManager.HORIZONTAL,
-                                        false
-                                    )
-                            }
-                            imageAdapter.differ.submitList(imagesItems.profiles)
-
+                            personImagesAdapter.submitList(imagesItems.profiles)
 
                             imagesCardView.visibility = View.VISIBLE
                         }
@@ -240,14 +246,6 @@ class PersonInfoFragment : Fragment() {
                     progressBar.visibility = View.GONE
                 }
             }
-        }
-
-        buttonSeeAllImages.setOnClickListener {
-            val action =
-                PersonInfoFragmentDirections.actionPersonInfoFragmentToImagesFragment()
-            action.personId = personId
-
-            findNavController().navigate(action)
         }
     }
 

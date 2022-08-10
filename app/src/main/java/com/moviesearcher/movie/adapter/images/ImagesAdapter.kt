@@ -11,12 +11,20 @@ import com.moviesearcher.common.model.images.Backdrop
 import com.moviesearcher.common.utils.Constants
 import com.moviesearcher.databinding.ImagesItemBinding
 
-class ImagesAdapter : ListAdapter<Backdrop, ImagesAdapter.ImagesHolder>(
-    AsyncDifferConfig.Builder(DiffCallback()).build()
-) {
+class ImagesAdapter(private val onClick: (String) -> Unit) :
+    ListAdapter<Backdrop, ImagesAdapter.ImagesHolder>(
+        AsyncDifferConfig.Builder(DiffCallback()).build()
+    ) {
 
     inner class ImagesHolder(private val binding: ImagesItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.imagesCardView.setOnClickListener {
+                onClick(currentList[adapterPosition].filePath.toString())
+            }
+        }
+
         fun bind(imageItem: Backdrop) {
             binding.apply {
                 imageImageView.loadImage(

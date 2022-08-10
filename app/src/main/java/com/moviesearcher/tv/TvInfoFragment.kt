@@ -674,7 +674,9 @@ class TvInfoFragment : Fragment() {
     }
 
     private fun setupImagesAdapter() {
-        imagesAdapter = ImagesAdapter()
+        imagesAdapter = ImagesAdapter() {
+            PosterDialog(it).show(childFragmentManager, "PosterDialog")
+        }
 
         imagesRecyclerView.adapter = imagesAdapter
         imagesRecyclerView.layoutManager =

@@ -33,7 +33,8 @@ class ImagesFragment : Fragment() {
 
     private lateinit var imagesRecyclerView: RecyclerView
 
-    private lateinit var imagesAdapter: ImagesAdapter
+    private lateinit var movieImagesAdapter: ImagesAdapter
+    private lateinit var personImagesAdapter: PersonImagesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +49,7 @@ class ImagesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         imagesRecyclerView = binding.photosRecyclerView
 
-        setupMovieAdapter()
+        setupAdapter()
         setupObservers()
     }
 
@@ -63,7 +64,7 @@ class ImagesFragment : Fragment() {
                     when (it.status) {
                         Status.SUCCESS -> {
                             it.data?.let { imagesItems ->
-                                imagesAdapter.submitList(imagesItems.backdrops)
+                                movieImagesAdapter.submitList(imagesItems.backdrops)
                             }
                         }
                         Status.LOADING -> {
@@ -83,7 +84,7 @@ class ImagesFragment : Fragment() {
                     when (it.status) {
                         Status.SUCCESS -> {
                             it.data?.let { imagesItems ->
-                                imagesAdapter.submitList(imagesItems.backdrops)
+                                movieImagesAdapter.submitList(imagesItems.backdrops)
                             }
                         }
                         Status.LOADING -> {
@@ -104,9 +105,7 @@ class ImagesFragment : Fragment() {
                         when (it.status) {
                             Status.SUCCESS -> {
                                 it.data?.let { imagesItems ->
-                                    val imagesAdapter = PersonImagesAdapter(imagesItems)
-
-                                    imagesAdapter.differ.submitList(imagesItems.profiles)
+                                    personImagesAdapter.submitList(imagesItems.profiles)
                                 }
                             }
                             Status.LOADING -> {
@@ -124,11 +123,24 @@ class ImagesFragment : Fragment() {
         }
     }
 
-    private fun setupMovieAdapter() {
-        imagesAdapter = ImagesAdapter()
+    private fun showPosterDialog(posterPath: String) {
+        PosterDialog(posterPath).show(childFragmentManager, "PosterDialog")
+    }
 
-        imagesRecyclerView.adapter = imagesAdapter
+    private fun setupAdapter() {
         imagesRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
+
+        if (args.personId != 0L) {
+            personImagesAdapter = PersonImagesAdapter() {
+                showPosterDialog(it)
+            }
+            imagesRecyclerView.adapter = personImagesAdapter
+        } else {
+            movieImagesAdapter = ImagesAdapter() {
+                showPosterDialog(it)
+            }
+            imagesRecyclerView.adapter = movieImagesAdapter
+        }
     }
 
     override fun onDestroyView() {
