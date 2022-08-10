@@ -8,14 +8,22 @@ import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.moviesearcher.common.utils.EncryptedSharedPrefs
+import com.moviesearcher.common.credentials.CredentialsHolder
 import com.moviesearcher.common.utils.Status
 import com.moviesearcher.databinding.DialogCreateNewListBinding
 import com.moviesearcher.list.model.CreateNewList
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CreateNewListDialog(private val viewModel: ListViewModel) : DialogFragment() {
     private var _binding: DialogCreateNewListBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var credentialsHolder: CredentialsHolder
+    private val sessionId: String
+        get() = credentialsHolder.getSessionId()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogCreateNewListBinding.inflate(layoutInflater)
@@ -38,8 +46,6 @@ class CreateNewListDialog(private val viewModel: ListViewModel) : DialogFragment
         }
 
         buttonCreate.setOnClickListener {
-            val sessionId = EncryptedSharedPrefs.sharedPrefs(requireContext())
-                .getString("sessionId", "").toString()
             val createNewList =
                 CreateNewList(listName.text.toString(), listDescription.text.toString(), "en")
 

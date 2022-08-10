@@ -3,7 +3,7 @@ package com.moviesearcher.common.di
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
+import androidx.security.crypto.MasterKeys
 import com.moviesearcher.common.credentials.CredentialsHolder
 import com.moviesearcher.common.credentials.CredentialsHolderImpl
 import dagger.Module
@@ -20,14 +20,13 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSecuredSharedPrefs(@ApplicationContext context: Context): SharedPreferences {
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
+        val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+        val mainKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
 
         return EncryptedSharedPreferences.create(
-            context,
             "MuviPrefs",
-            masterKey,
+            mainKeyAlias,
+            context,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
